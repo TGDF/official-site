@@ -41,6 +41,7 @@ gem 'omniauth-facebook'
 
 # Front End
 gem 'simple_form'
+gem 'slim-rails'
 
 # API
 gem 'grape'
