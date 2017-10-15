@@ -1,0 +1,24 @@
+AllCops:
+  DisplayCopNames: true
+  Include:
+    - Rakefile
+    - config.ru
+    - config/initializer/*
+  Exclude:
+    - db/**/*
+    - bin/*
+    - config/**/*
+    - node_modules/**/*
+Rails:
+  Enabled: true
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*_spec.rb
+    - spec/support/*
+    - Guardfile
+Style/FileName:
+  Exclude:
+    - Gemfile
+    - Guardfile
+Style/Documentation:
+  Enabled: false
