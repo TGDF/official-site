@@ -1,0 +1,20 @@
+.login-box
+  .login-logo
+    = link_to root_path do
+      / TODO: Change Logo
+      b Admin
+      | LTE
+  .login-box-body
+    p.login-box-msg = t('.hint')
+    = simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+      / TODO: Add icon
+      = f.input :email, label: false, required: false, autofocus: true, placeholder: 'Email', wrapper_html: { class: 'has-feedback' }
+      = f.input :password, label: false, required: false, placeholder: 'Password', wrapper_html: { class: 'has-feedback' }
+      .row
+        .col-xs-8
+          / TODO: Add iCheck support
+          = f.input :remember_me, as: :boolean if devise_mapping.rememberable?
+        .col-xs-4
+          = f.submit "Log in", class: 'btn btn-primary btn-block btn-flat'
+      .social-auth-links.text-center
+      = render "admin_users/shared/links"

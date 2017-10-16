@@ -1,0 +1,5 @@
+zh-TW:
+  admin_users:
+    sessions:
+      new:
+        hint: Sign in to start your session
