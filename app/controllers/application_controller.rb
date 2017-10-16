@@ -16,6 +16,6 @@ class ApplicationController < ActionController::Base
   end
 
   def admin_portal?
-    params[:namespace] == :admin
+    params[:controller].start_with?('admin/')
   end
 end
