@@ -1,0 +1,9 @@
+.user-panel
+  .pull-left.image
+    = image_tag current_admin_user.avatar(size: 160), class: 'img-circle'
+  .pull-left.info
+    p = current_admin_user.display_name
+    = link_to destroy_admin_user_session_path, method: :delete do
+      i.fa.fa-circle.text-success
+      | Online
+

@@ -2,12 +2,12 @@
  * Admin Portal
  */
 
-let $layout;
+
+const initAdminLTE = () => {
+  $('body').layout().data('lte.layout').activate();
+  $('[data-widget="tree"]').tree();
+}
 
 document.addEventListener('turbolinks:load', () => {
-  if (!$layout) {
-    $layout = $('body').layout().data('lte.layout');
-  }
-
-  $layout.activate();
+  initAdminLTE();
 });

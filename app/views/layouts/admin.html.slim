@@ -4,26 +4,13 @@ html
     = csrf_meta_tags
 
     = stylesheet_link_tag    'admin', media: 'all', 'data-turbolinks-track': 'reload'
+    = stylesheet_link_tag    'https://use.fontawesome.com/b2e3e84e95.css', media: 'all'
     = javascript_include_tag 'admin', 'data-turbolinks-track': 'reload'
-    = javascript_pack_tag 'admin', 'data-turbolinks-track': 'reload'
+    = javascript_pack_tag    'admin', 'data-turbolinks-track': 'reload'
 
   body.hold-transition.skin-black.sidebar-mini
     .wrapper
-      / TODO: Move to shared/_header
-      header.main-header
-        / TODO: Replace TGDF Logo
-        = link_to admin_root_path, class: 'logo' do
-          span.logo-mini
-            b A
-            | LT
-          span.logo-lg
-            b Admin
-            | LTE
-        nav.navbar.navbar-static-top
-          .navbar-custom-menu
-            / TODO: Add top nav items
-      / TODO: Move to shared/_sidebar
-      aside.main-sidebar
-        section.sidebar
+      = render 'admin/shared/header'
+      = render 'admin/shared/sidebar'
       .content-wrapper
         = yield
