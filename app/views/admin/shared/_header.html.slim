@@ -18,13 +18,7 @@ header.main-header
           ul.dropdown-menu
             li.header =  t('.all_sites')
             / TODO: Create helper to build it
-            li = link_to admin_root_url(host: Settings.site.default_domain) do
-              = fa_icon('star')
-              | &nbsp;
-              = Settings.site.name
+            = admin_navbar_site_item(Settings.site.name, Settings.site.default_domain, icon: 'star')
             - @navbar_sites.each do |site|
-              li = link_to admin_root_url(host: site.domain) do
-                = fa_icon('square')
-                | &nbsp;
-                = site.name
+              = admin_navbar_site_item(site.name, site.domain)
             li.footer = link_to t('.view_all'), root_path
