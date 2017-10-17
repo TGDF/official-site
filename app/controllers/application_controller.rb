@@ -1,13 +1,9 @@
 class ApplicationController < ActionController::Base
+  include TenantSite
+
   protect_from_forgery with: :exception
 
   layout :layout_by_resource
-
-  helper_method :tenant_site?
-
-  def tenant_site?
-    Apartment::Tenant.current != 'public'
-  end
 
   private
 
