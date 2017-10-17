@@ -2,8 +2,9 @@ aside.main-sidebar
   section.sidebar
     = render 'admin/shared/user_panel'
     ul.sidebar-menu(data-widget="tree")
-      = admin_sidebar_header t('.system')
       = admin_sidebar_item t('.dashboard'), admin_root_path, icon: 'dashboard'
-      = admin_sidebar_treeview t('.sites'), icon: 'sitemap' do
-        = admin_sidebar_item t('.list'), '#', icon: 'list'
-        = admin_sidebar_item t('.new'), '#', icon: 'plus'
+      - unless tenant_site?
+        = admin_sidebar_header t('.system')
+        = admin_sidebar_treeview t('.sites'), icon: 'sitemap' do
+          = admin_sidebar_item t('.list'), '#', icon: 'list'
+          = admin_sidebar_item t('.new'), '#', icon: 'plus'

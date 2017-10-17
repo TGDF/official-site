@@ -3,6 +3,12 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
 
+  helper_method :tenant_site?
+
+  def tenant_site?
+    Apartment::Tenant.current != 'public'
+  end
+
   private
 
   def layout_by_resource
