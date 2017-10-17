@@ -1,4 +1,7 @@
 default: &default
+  site:
+    default_domain: <%= ENV['SITE_DEFAULT_DOMAIN'] || 'tgdf.tw' %>
+    name: <%= ENV['SITE_NAME'] || '台北遊戲開發者論壇' %>
 
 development:
   <<: *default

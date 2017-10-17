@@ -7,7 +7,7 @@ require 'apartment/elevators/domain'
 # Apartment Configuration
 #
 Apartment.configure do |config|
-  config.excluded_models = %w[Site]
+  config.excluded_models = %w[Site AdminUser]
 
   config.tenant_names = lambda {
     Site.pluck(:domain).map { |domain| domain.tr('.', '_') }

@@ -30,6 +30,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'bcrypt', '~> 3.1.7'
 
 # Config
+gem 'rails-i18n'
 gem 'settingslogic'
 
 # Multi-Tenancy
