@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   namespace :admin do
     root 'dashboard#index'
 
-    resources :sites
+    constraints ->(_req) { Apartment::Tenant.current == 'public' } do
+      resources :sites
+    end
   end
 end
