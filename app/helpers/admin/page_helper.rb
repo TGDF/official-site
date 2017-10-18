@@ -24,8 +24,8 @@ module Admin
       content_tag(:div, class: ['box-body', options[:class]].join(' '), &block)
     end
 
-    def admin_box_footer
-      # TODO: Implement box footer
+    def admin_box_footer(&block)
+      content_tag(:div, class: 'box-footer', &block)
     end
   end
 end

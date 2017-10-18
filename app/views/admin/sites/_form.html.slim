@@ -1,0 +1,6 @@
+= simple_form_for [:admin, @site] do |f|
+  = admin_box_body do
+    = f.input :name
+    = f.input :domain
+  = admin_box_footer do
+    = f.submit class: 'btn btn-primary'
