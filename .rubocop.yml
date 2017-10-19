@@ -9,6 +9,7 @@ AllCops:
     - bin/*
     - config/**/*
     - node_modules/**/*
+TargetRubyVersion: 2.4
 Rails:
   Enabled: true
 Metrics/BlockLength:

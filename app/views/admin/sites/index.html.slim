@@ -1,0 +1,17 @@
+= admin_page_header t('.sites'), t('.manage_sites_on_system')
+.content
+  .row
+    .col-md-12
+      = admin_box do
+        = admin_box_header t('.sites'), class: 'with-border'
+        = admin_box_body class: 'no-padding' do
+          table.table.table-striped
+            thead
+              tr
+                th.table__id-column #
+                th = t('.name')
+                th = t('.domain')
+                th = t('.actions')
+            tbody
+              = render @sites
+
