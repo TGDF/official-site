@@ -10,7 +10,7 @@ module TenantSite
 
   def current_site
     return default_site unless tenant_site?
-    Site.find_by(domain: Apartment::Tenant.current.tr('_', '.'))
+    Site.find_by(tenant_name: Apartment::Tenant.current)
   end
 
   def tenant_site?
@@ -20,6 +20,10 @@ module TenantSite
   private
 
   def default_site
-    Site.new(domain: Settings.site.default_domain, name: Settings.site.name)
+    Site.new(
+      domain: Settings.site.default_domain,
+      name: Settings.site.name,
+      tenant_name: 'public'
+    )
   end
 end
