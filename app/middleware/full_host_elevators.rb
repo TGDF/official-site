@@ -9,6 +9,6 @@ class FullHostElevators < Apartment::Elevators::Generic
   def parse_tenant_name(request)
     return nil if request.host.blank?
 
-    request.host.tr('.', '_')
+    Site.find_by(domain: request.host)&.tenant_name
   end
 end
