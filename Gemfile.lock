@@ -90,6 +90,9 @@ GEM
     ffi (1.9.18-java)
     ffi (1.9.18-x64-mingw32)
     ffi (1.9.18-x86-mingw32)
+    fuubar (2.2.0)
+      rspec-core (~> 3.0)
+      ruby-progressbar (~> 1.4)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
     grape (1.0.1)
@@ -341,6 +344,7 @@ DEPENDENCIES
   dotenv-rails
   factory_girl
   faker
+  fuubar
   grape
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
