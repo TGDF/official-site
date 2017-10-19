@@ -65,8 +65,9 @@ group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
 
-  gem 'overcommit'
-  gem 'rubocop', '~> 0.49'
+  gem 'brakeman', require: false
+  gem 'overcommit', require: false
+  gem 'rubocop', '~> 0.49', require: false
 
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'

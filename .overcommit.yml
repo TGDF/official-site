@@ -27,6 +27,10 @@ PreCommit:
     exclude:
       - '**/db/structure.sql' # Ignore trailing whitespace in generated files
 
+PrePush:
+  Brakeman:
+    enabled: true
+
 PostCheckout:
   IndexTags:
     enabled: true # Generate a tags file with `ctags` each time HEAD changes

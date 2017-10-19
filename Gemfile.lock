@@ -53,6 +53,7 @@ GEM
     bcrypt (3.1.11-x64-mingw32)
     bcrypt (3.1.11-x86-mingw32)
     bindex (0.5.0)
+    brakeman (4.0.1)
     builder (3.2.3)
     byebug (9.1.0)
     childprocess (0.8.0)
@@ -334,6 +335,7 @@ PLATFORMS
 
 DEPENDENCIES
   apartment
+  brakeman
   byebug
   devise
   dotenv-rails
