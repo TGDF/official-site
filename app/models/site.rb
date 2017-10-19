@@ -6,6 +6,7 @@ class Site < ApplicationRecord
   validates :domain, format: /\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]+\z/ix
 
   scope :recent, -> { order(updated_at: :desc) }
+  default_scope -> { order(created_at: :desc) }
 
   def tenant_name
     domain.tr('.', '_')

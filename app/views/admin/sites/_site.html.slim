@@ -3,4 +3,4 @@ tr
   td = site.name
   td = link_to site.domain, root_url(host: site.domain), target: '_blank'
   td
-    / TODO: Add actions
+    = link_to t('.edit'), edit_admin_site_path(site), class: 'btn btn-primary'

@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     root 'dashboard#index'
 
     constraints ->(_req) { Apartment::Tenant.current == 'public' } do
-      resources :sites
+      resources :sites, expect: :show
     end
   end
 end

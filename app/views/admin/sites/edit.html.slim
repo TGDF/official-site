@@ -1,0 +1,7 @@
+= admin_page_header t('.update'), t('.edit_exists_site')
+.content
+  .row
+    .col-md-12
+      = admin_box do
+        = admin_box_header t('.update'), class: 'with-border'
+        = render 'form'
