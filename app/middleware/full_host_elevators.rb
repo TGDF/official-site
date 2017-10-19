@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FullHostElevators < Apartment::Elevators::Generic
   def call(*args)
     super

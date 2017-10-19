@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module SidebarHelper
     def admin_sidebar_header(name)

@@ -1,4 +1,5 @@
 AllCops:
+  TargetRubyVersion: 2.4
   DisplayCopNames: true
   Include:
     - Rakefile
@@ -9,7 +10,6 @@ AllCops:
     - bin/*
     - config/**/*
     - node_modules/**/*
-TargetRubyVersion: 2.4
 Rails:
   Enabled: true
 Metrics/BlockLength:

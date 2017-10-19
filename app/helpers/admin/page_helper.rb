@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module PageHelper
     def admin_page_header(title, description = nil)

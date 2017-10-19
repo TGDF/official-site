@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module NavbarHelper
     def admin_navbar_site_item(name, host, icon: 'square')

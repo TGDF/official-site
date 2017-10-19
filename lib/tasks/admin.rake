@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :admin do
   desc 'Create a new admin user'
   task create: :environment do
