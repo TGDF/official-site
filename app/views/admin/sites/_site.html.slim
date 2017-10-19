@@ -3,4 +3,7 @@ tr
   td = site.name
   td = link_to site.domain, root_url(host: site.domain), target: '_blank'
   td
-    = link_to t('.edit'), edit_admin_site_path(site), class: 'btn btn-primary'
+    .btn-group
+      = link_to t('.edit'), edit_admin_site_path(site), class: 'btn btn-primary'
+      / TODO: Create helper
+      = link_to t('.destroy'), admin_site_path(site), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

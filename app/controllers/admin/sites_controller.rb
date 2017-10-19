@@ -23,6 +23,12 @@ module Admin
       render :edit
     end
 
+    def destroy
+      # TODO: Add error message if destroy failed
+      @site.destroy
+      redirect_to admin_sites_path
+    end
+
     protected
 
     def site_params
