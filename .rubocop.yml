@@ -9,6 +9,8 @@ AllCops:
     - db/**/*
     - bin/*
     - config/**/*
+    - vendor/ruby/**/*
+    - vendor/bundle/**/*
     - node_modules/**/*
 Rails:
   Enabled: true
