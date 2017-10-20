@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root 'dashboard#index'
-    resources :news, expect: :show do
+    resources :news, except: :show do
       get :preview
     end
 

@@ -2,7 +2,9 @@
 
 module Admin
   class NewsController < Admin::BaseController
-    def index; end
+    def index
+      @news = News.all
+    end
 
     def new; end
 

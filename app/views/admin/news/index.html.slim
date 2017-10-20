@@ -1,0 +1,18 @@
+= admin_page_header t('.news'), t('.publish_news')
+.content
+  .row
+    .col-md-12
+      = admin_box do
+        = admin_box_header t('.news'), class: 'with-border'
+        = admin_box_body class: 'no-padding' do
+          table.table.table-striped
+            thead
+              tr
+                th.table__id-column #
+                th = t('.title')
+                th = t('.author')
+                th = t('.status')
+                th = t('.actions')
+            tbody
+              = render @news
+
