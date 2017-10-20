@@ -2,6 +2,8 @@
 
 module Admin
   class NewsController < Admin::BaseController
+    before_action -> { @news = News.find(params[:id]) }, except: :index
+
     def index
       @news = News.all
     end
@@ -14,7 +16,11 @@ module Admin
 
     def update; end
 
-    def destroy; end
+    def destroy
+      # TODO: Add policy manager to limit admin or author can delete
+      @news.destroy
+      redirect_to admin_news_index_path
+    end
 
     def preview; end
   end
