@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   # Devise
   devise_for :admin_users, path: :admin
@@ -6,6 +8,9 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root 'dashboard#index'
+    resources :news, expect: :show do
+      get :preview
+    end
 
     constraints ->(_req) { Apartment::Tenant.current == 'public' } do
       resources :sites, expect: :show
