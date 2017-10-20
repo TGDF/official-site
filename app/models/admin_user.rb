@@ -6,6 +6,8 @@ class AdminUser < ApplicationRecord
   devise :database_authenticatable, :lockable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  has_many :news, as: :author
+
   # TODO: Add display name field
   def display_name
     email.split('@').first
