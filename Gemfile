@@ -54,12 +54,14 @@ group :development, :test do
 
   gem 'dotenv-rails'
 
+  gem 'coveralls', require: false
   gem 'factory_girl'
   gem 'faker'
   gem 'fuubar'
   gem 'rspec-rails'
   gem 'shoulda'
   gem 'shoulda-matchers'
+  gem 'simplecov', require: false
 end
 
 group :development do
