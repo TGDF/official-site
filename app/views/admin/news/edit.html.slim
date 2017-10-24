@@ -1,0 +1,7 @@
+= admin_page_header t('.edit'), t('.edit_news')
+.content
+  .row
+    .col-md-12
+      = admin_box do
+        = admin_box_header t('.edit'), class: 'with-border'
+        = render 'form'

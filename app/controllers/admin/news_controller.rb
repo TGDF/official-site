@@ -21,7 +21,10 @@ module Admin
 
     def edit; end
 
-    def update; end
+    def update
+      return redirect_to admin_news_index_path if @news.update(news_params)
+      render :edit
+    end
 
     def destroy
       # TODO: Add policy manager to limit admin or author can delete
