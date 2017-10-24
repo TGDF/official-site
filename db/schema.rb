@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171019023214) do
+ActiveRecord::Schema.define(version: 20171020021027) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,20 @@ ActiveRecord::Schema.define(version: 20171019023214) do
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_admin_users_on_unlock_token", unique: true
+  end
+
+  create_table "news", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "content", null: false
+    t.string "author_type"
+    t.bigint "author_id"
+    t.string "slug", null: false
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_type", "author_id"], name: "index_news_on_author_type_and_author_id"
+    t.index ["slug"], name: "index_news_on_slug", unique: true
+    t.index ["status"], name: "index_news_on_status"
   end
 
   create_table "sites", force: :cascade do |t|
