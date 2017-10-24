@@ -1,0 +1,7 @@
+= simple_form_for [:admin, @news] do |f|
+  = admin_box_body do
+    = f.input :title
+    = f.input :slug
+    = f.input :content, input_html: { data: { editor: true }, rows: 20 }
+  = admin_box_footer do
+    = f.submit class: 'btn btn-primary'

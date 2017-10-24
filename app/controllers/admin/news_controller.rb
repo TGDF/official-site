@@ -2,15 +2,22 @@
 
 module Admin
   class NewsController < Admin::BaseController
-    before_action -> { @news = News.find(params[:id]) }, except: :index
+    before_action :find_news, except: %i[index new create]
 
     def index
       @news = News.all
     end
 
-    def new; end
+    def new
+      @news = News.new
+    end
 
-    def create; end
+    def create
+      @news = News.new(news_params)
+      @news.author = current_admin_user
+      return redirect_to admin_news_index_path if @news.save
+      render :new
+    end
 
     def edit; end
 
@@ -23,5 +30,15 @@ module Admin
     end
 
     def preview; end
+
+    private
+
+    def find_news
+      @news = News.find(params[:id])
+    end
+
+    def news_params
+      params.require(:news).permit(:title, :slug, :content)
+    end
   end
 end
