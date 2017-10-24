@@ -2,6 +2,7 @@
   = admin_box_body do
     = f.input :title
     = f.input :slug
+    = f.input :status, collection: ['draft', 'published']
     = f.input :content, input_html: { data: { editor: true }, rows: 20 }
   = admin_box_footer do
     = f.submit class: 'btn btn-primary'

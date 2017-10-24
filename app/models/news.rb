@@ -3,6 +3,8 @@
 class News < ApplicationRecord
   belongs_to :author, polymorphic: true
 
+  default_scope -> { where.not(status: :deleted) }
+
   enum status: {
     draft:     0,
     published: 1,

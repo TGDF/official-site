@@ -31,7 +31,7 @@ module Admin
 
     def destroy
       # TODO: Add policy manager to limit admin or author can delete
-      @news.destroy
+      @news.update(status: :deleted)
       redirect_to admin_news_index_path
     end
 
@@ -44,7 +44,7 @@ module Admin
     end
 
     def news_params
-      params.require(:news).permit(:title, :slug, :content)
+      params.require(:news).permit(:title, :slug, :status, :content)
     end
   end
 end
