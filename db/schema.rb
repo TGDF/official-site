@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171020021027) do
+ActiveRecord::Schema.define(version: 20171024172310) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,6 +48,17 @@ ActiveRecord::Schema.define(version: 20171020021027) do
     t.index ["author_type", "author_id"], name: "index_news_on_author_type_and_author_id"
     t.index ["slug"], name: "index_news_on_slug", unique: true
     t.index ["status"], name: "index_news_on_status"
+  end
+
+  create_table "news_translations", force: :cascade do |t|
+    t.integer "news_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "title"
+    t.text "content"
+    t.index ["locale"], name: "index_news_translations_on_locale"
+    t.index ["news_id"], name: "index_news_translations_on_news_id"
   end
 
   create_table "sites", force: :cascade do |t|
