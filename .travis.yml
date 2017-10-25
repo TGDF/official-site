@@ -8,12 +8,11 @@ cache:
   bundler: true
   directories:
     - node_modules
-# TODO: Add javascript check
-# before_install:
-#   - nvm install 8.0.0
-#   - npm install -g yarn
+before_install:
+  - nvm install 8.0.0
+  - npm install -g yarn
 before_script:
-#  - yarn install
+  - yarn install
   - bundle exec rake db:create
   - bundle exec rake db:schema:load
 script:
