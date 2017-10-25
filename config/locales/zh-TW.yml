@@ -1,4 +1,8 @@
 zh-TW:
+  locale:
+    name:
+      zh-TW: 繁體中文
+      en: English
   admin_users:
     sessions:
       new:

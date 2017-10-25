@@ -1,2 +1,8 @@
-h1 Index
-= Apartment::Tenant.current
+/ TODO: Implement front-end
+h1 TGDF
+
+section#news
+  - @news.each do |news|
+    article
+      h2 = news.title
+      = sanitize news.content

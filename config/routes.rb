@@ -4,7 +4,9 @@ Rails.application.routes.draw do
   # Devise
   devise_for :admin_users, path: :admin
 
-  root 'pages#index'
+  scope '(:locale)', locale: /#{Settings.locales.join('|')}/ do
+    root to: 'pages#index'
+  end
 
   namespace :admin do
     root 'dashboard#index'
