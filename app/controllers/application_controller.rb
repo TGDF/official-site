@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
 
+  before_action :set_locale
+
   helper_method :current_locale
 
   def current_locale
@@ -27,5 +29,10 @@ class ApplicationController < ActionController::Base
 
   def admin_portal?
     params[:controller].start_with?('admin/')
+  end
+
+  def set_locale
+    cookies[:locale] = current_locale if params[:locale]
+    I18n.locale = cookies[:locale] || current_locale
   end
 end
