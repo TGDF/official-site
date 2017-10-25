@@ -10,11 +10,15 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root 'dashboard#index'
+
     resources :news, except: :show do
       member do
         get :preview
       end
     end
+
+    resources :partner_types, expect: :show
+    resources :partners, except: :show
 
     constraints ->(_req) { Apartment::Tenant.current == 'public' } do
       resources :sites, expect: :show
