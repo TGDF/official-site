@@ -1,0 +1,9 @@
+- Globalize.with_locale(admin_current_resource_locale) do
+  = simple_form_for [:admin, @partner] do |f|
+    = admin_box_body do
+      = f.input :name
+      = f.association :type
+      = f.input :logo
+      = f.hidden_field :locale, value: admin_current_resource_locale
+    = admin_box_footer do
+      = f.submit class: 'btn btn-primary'
