@@ -5,5 +5,6 @@ class Partner < ApplicationRecord
 
   validates :name, :logo, presence: true
 
+  translates :name
   mount_uploader :logo, LogoUploader
 end
