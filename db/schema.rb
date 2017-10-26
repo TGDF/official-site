@@ -70,10 +70,10 @@ ActiveRecord::Schema.define(version: 20171025102310) do
   create_table "partners", force: :cascade do |t|
     t.string "name"
     t.string "logo"
-    t.bigint "partner_type_id"
+    t.bigint "type_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["partner_type_id"], name: "index_partners_on_partner_type_id"
+    t.index ["type_id"], name: "index_partners_on_type_id"
   end
 
   create_table "sites", force: :cascade do |t|
@@ -86,5 +86,5 @@ ActiveRecord::Schema.define(version: 20171025102310) do
     t.index ["tenant_name"], name: "index_sites_on_tenant_name"
   end
 
-  add_foreign_key "partners", "partner_types"
+  add_foreign_key "partners", "partner_types", column: "type_id"
 end
