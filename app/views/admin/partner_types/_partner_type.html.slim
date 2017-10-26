@@ -1,0 +1,8 @@
+tr
+  td = partner_type.id
+  td = partner_type.name
+  td
+    .btn-group
+      = link_to t('.edit'), edit_admin_partner_type_path(partner_type), class: 'btn btn-primary'
+      / TODO: Create helper
+      = link_to t('.destroy'), admin_partner_type_path(partner_type), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }
