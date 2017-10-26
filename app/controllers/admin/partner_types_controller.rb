@@ -27,6 +27,11 @@ module Admin
       render :edit
     end
 
+    def destroy
+      @type.destroy
+      redirect_to admin_partner_types_path
+    end
+
     private
 
     def find_type
