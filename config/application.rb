@@ -27,7 +27,7 @@ module Tgdf
 
     # Don't generate system test files.
     config.generators do |g|
-      g.test_framework false
+      g.test_framework :rspec
       g.stylesheets    false
       g.javascripts    false
       g.helper         false
