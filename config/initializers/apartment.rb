@@ -9,9 +9,7 @@ require 'apartment/elevators/domain'
 Apartment.configure do |config|
   config.excluded_models = %w[Site AdminUser]
 
-  config.tenant_names = lambda {
-    Site.pluck(:domain).map { |domain| domain.tr('.', '_') }
-  }
+  config.tenant_names = lambda { Site.pluck(:tenant_name) }
   config.use_sql = true
 
   # config.persistent_schemas = %w{ hstore }
