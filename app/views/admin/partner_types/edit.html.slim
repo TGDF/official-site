@@ -1,0 +1,8 @@
+= admin_page_header t('.edit'), t('.edit_partner_type')
+.content
+  .row
+    .col-md-12
+      = admin_navtab_box do
+        / TODO: Add customize header
+        = admin_locale_navtab
+        = render 'form'
