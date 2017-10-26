@@ -2,4 +2,6 @@
 
 class PartnerType < ApplicationRecord
   validates :name, presence: true
+
+  translates :name
 end
