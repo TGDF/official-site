@@ -68,6 +68,10 @@ GEM
     capybara-selenium (0.0.6)
       capybara
       selenium-webdriver
+    carrierwave (1.2.1)
+      activemodel (>= 4.0.0)
+      activesupport (>= 4.0.0)
+      mime-types (>= 1.16)
     childprocess (0.8.0)
       ffi (~> 1.0, >= 1.0.11)
     coderay (1.1.2)
@@ -273,6 +277,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    rmagick (2.16.0)
     rspec-core (3.6.0)
       rspec-support (~> 3.6.0)
     rspec-expectations (3.6.0)
@@ -416,6 +421,7 @@ DEPENDENCIES
   byebug
   capybara
   capybara-selenium
+  carrierwave (~> 1.2)
   coveralls
   devise
   dotenv-rails
@@ -433,6 +439,7 @@ DEPENDENCIES
   puma (~> 3.7)
   rails (~> 5.1.4)
   rails-i18n
+  rmagick
   rspec-rails
   rubocop (~> 0.49)
   sassc-rails

@@ -47,6 +47,10 @@ gem 'globalize', '~> 5.1.0.beta2'
 gem 'simple_form'
 gem 'slim-rails'
 
+# Utilities
+gem 'carrierwave', '~> 1.2'
+gem 'rmagick'
+
 # API
 gem 'grape'
 
