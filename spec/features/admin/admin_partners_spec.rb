@@ -34,4 +34,29 @@ RSpec.feature 'Admin::Partners', type: :feature do
       expect(page).to have_content('Example')
     end
   end
+
+  describe '#edit' do
+    before { @type = create(:partner) }
+
+    it 'can edit partner' do
+      visit edit_admin_partner_path(@type)
+      fill_in 'partner_name', with: 'New Partner Name'
+      click_button '更新Partner'
+      expect(page).to have_content('New Partner Name')
+    end
+  end
+
+  describe '#destroy' do
+    before { @type = create(:partner) }
+
+    it 'can destroy partner type' do
+      visit admin_partners_path
+
+      within first('td', text: @type.name).first(:xpath, './/..') do
+        click_on 'Destroy'
+      end
+
+      expect(page).not_to have_content(@type.name)
+    end
+  end
 end
