@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171025075751) do
+ActiveRecord::Schema.define(version: 20171026090756) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,6 +61,42 @@ ActiveRecord::Schema.define(version: 20171025075751) do
     t.index ["news_id"], name: "index_news_translations_on_news_id"
   end
 
+  create_table "partner_translations", force: :cascade do |t|
+    t.integer "partner_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
+    t.index ["locale"], name: "index_partner_translations_on_locale"
+    t.index ["partner_id"], name: "index_partner_translations_on_partner_id"
+  end
+
+  create_table "partner_type_translations", force: :cascade do |t|
+    t.integer "partner_type_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
+    t.index ["locale"], name: "index_partner_type_translations_on_locale"
+    t.index ["partner_type_id"], name: "index_partner_type_translations_on_partner_type_id"
+  end
+
+  create_table "partner_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "partners", force: :cascade do |t|
+    t.string "name"
+    t.string "logo"
+    t.bigint "type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["type_id"], name: "index_partners_on_type_id"
+  end
+
   create_table "sites", force: :cascade do |t|
     t.string "domain", null: false
     t.string "name", null: false
@@ -71,4 +107,5 @@ ActiveRecord::Schema.define(version: 20171025075751) do
     t.index ["tenant_name"], name: "index_sites_on_tenant_name"
   end
 
+  add_foreign_key "partners", "partner_types", column: "type_id"
 end
