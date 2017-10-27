@@ -49,7 +49,7 @@ gem 'slim-rails'
 
 # Utilities
 gem 'carrierwave', '~> 1.2'
-gem 'rmagick'
+gem 'mini_magick'
 
 # API
 gem 'grape'
