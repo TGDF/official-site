@@ -47,7 +47,7 @@ RSpec.feature 'Admin::Partners', type: :feature do
   describe '#destroy' do
     before { @partner = create(:partner) }
 
-    it 'can destroy partner type' do
+    it 'can destroy partner' do
       visit admin_partners_path
 
       within first('td', text: @partner.name).first(:xpath, './/..') do
