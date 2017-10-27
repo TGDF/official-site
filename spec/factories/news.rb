@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :news do
     title { Faker::Lorem.sentence }
-    slug { Faker::Lorem.word }
+    sequence(:slug) { |id| "#{Faker::Lorem.word}_#{id}" }
     content { Faker::Lorem.paragraph }
     author { create(:admin_user) }
   end

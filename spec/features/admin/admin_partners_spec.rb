@@ -36,10 +36,8 @@ RSpec.feature 'Admin::Partners', type: :feature do
   end
 
   describe '#edit' do
-    before { @type = create(:partner) }
-
     it 'can edit partner' do
-      visit edit_admin_partner_path(@type)
+      visit edit_admin_partner_path(partner)
       fill_in 'partner_name', with: 'New Partner Name'
       click_button '更新Partner'
       expect(page).to have_content('New Partner Name')
@@ -47,16 +45,16 @@ RSpec.feature 'Admin::Partners', type: :feature do
   end
 
   describe '#destroy' do
-    before { @type = create(:partner) }
+    before { @partner = create(:partner) }
 
     it 'can destroy partner type' do
       visit admin_partners_path
 
-      within first('td', text: @type.name).first(:xpath, './/..') do
+      within first('td', text: @partner.name).first(:xpath, './/..') do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@type.name)
+      expect(page).not_to have_content(@partner.name)
     end
   end
 end
