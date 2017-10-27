@@ -12,6 +12,11 @@ before_install:
   - nvm install 8.0.0
   - npm install -g yarn
 before_script:
+  # CodeClimate
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+  # Setup environment
   - yarn install
   - bundle exec rake db:create
   - bundle exec rake db:schema:load
@@ -21,4 +26,5 @@ script:
   - bundle exec rubocop
   - bundle exec rspec
   - bundle exec brakeman
-
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
