@@ -1,0 +1,7 @@
+- Globalize.with_locale(admin_current_resource_locale) do
+  = simple_form_for [:admin, @level] do |f|
+    = admin_box_body do
+      = f.input :name
+      = f.hidden_field :locale, value: admin_current_resource_locale
+    = admin_box_footer do
+      = f.submit class: 'btn btn-primary'

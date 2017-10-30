@@ -1,2 +1,7 @@
-h1 Admin::SponsorLevels#edit
-p Find me in app/views/admin/sponsor_levels/edit.html.slim
+= admin_page_header t('.edit'), t('.edit_sponsor_level')
+.content
+  .row
+    .col-md-12
+      = admin_navtab_box do
+        = admin_locale_navtab
+        = render 'form'

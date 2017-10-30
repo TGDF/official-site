@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class SponsorLevel < ApplicationRecord
-  validates :name, presence: true
-
+  # FIXME: If globalize for rails 5 is ready, prevent to add `attribute`
+  attribute :name
   translates :name
+
+  validates :name, presence: true
 end

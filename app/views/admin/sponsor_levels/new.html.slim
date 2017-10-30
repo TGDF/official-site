@@ -1,2 +1,7 @@
-h1 Admin::SponsorLevels#new
-p Find me in app/views/admin/sponsor_levels/new.html.slim
+= admin_page_header t('.create'), t('.add_sponsor_level')
+.content
+  .row
+    .col-md-12
+      = admin_box do
+        = admin_box_header t('.create'), class: 'with-border'
+        = render 'form'
