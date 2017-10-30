@@ -1,0 +1,14 @@
+= admin_page_header t('.levels'), t('.manager_sponsor_levels')
+.content
+  .row
+    .col-md-12
+      = admin_box do
+        = admin_box_body class: 'no-padding' do
+          table.table.table-striped
+            thead
+              tr
+                th.table__id-column #
+                th = t('.name')
+                th.col-md-3 = t('.actions')
+            tbody
+              = render @levels
