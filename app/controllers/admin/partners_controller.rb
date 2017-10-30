@@ -37,7 +37,9 @@ module Admin
     end
 
     def partner_params
-      params.require(:partner).permit(:name, :logo, :type_id, :locale)
+      params.require(:partner).permit(
+        :name, :logo, :remove_logo, :type_id, :url, :locale
+      )
     end
   end
 end
