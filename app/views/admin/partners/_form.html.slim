@@ -2,8 +2,13 @@
   = simple_form_for [:admin, @partner] do |f|
     = admin_box_body do
       = f.input :name
+      = f.input :url
       = f.association :type
-      = f.input :logo
+      = f.input :logo do
+        = f.input_field :logo
+        -if @partner.logo.present?
+          = image_tag @partner.logo
+          = f.input :remove_logo, as: :boolean
       = f.hidden_field :locale, value: admin_current_resource_locale
     = admin_box_footer do
       = f.submit class: 'btn btn-primary'
