@@ -2,4 +2,6 @@
 
 class SponsorLevel < ApplicationRecord
   validates :name, presence: true
+
+  translates :name
 end
