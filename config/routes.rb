@@ -17,11 +17,14 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :partner_types, expect: :show
+    resources :partner_types, except: :show
     resources :partners, except: :show
 
+    resources :sponsor_levels, except: :show
+    resources :sponsors, except: :show
+
     constraints ->(_req) { Apartment::Tenant.current == 'public' } do
-      resources :sites, expect: :show
+      resources :sites, except: :show
     end
   end
 end
