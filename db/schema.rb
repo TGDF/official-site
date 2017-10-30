@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171026090756) do
+ActiveRecord::Schema.define(version: 20171030020923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,12 @@ ActiveRecord::Schema.define(version: 20171026090756) do
     t.string "tenant_name"
     t.index ["domain"], name: "index_sites_on_domain"
     t.index ["tenant_name"], name: "index_sites_on_tenant_name"
+  end
+
+  create_table "sponsor_levels", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "partners", "partner_types", column: "type_id"
