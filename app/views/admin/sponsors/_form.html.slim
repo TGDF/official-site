@@ -1,0 +1,14 @@
+- Globalize.with_locale(admin_current_resource_locale) do
+  = simple_form_for [:admin, @sponsor] do |f|
+    = admin_box_body do
+      = f.input :name
+      = f.input :url
+      = f.association :level
+      = f.input :logo do
+        = f.input_field :logo
+        -if @sponsor.logo.present?
+          = image_tag @sponsor.logo
+          = f.input :remove_logo, as: :boolean
+      = f.hidden_field :locale, value: admin_current_resource_locale
+    = admin_box_footer do
+      = f.submit class: 'btn btn-primary'
