@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171030023048) do
+ActiveRecord::Schema.define(version: 20171031022031) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,5 +123,26 @@ ActiveRecord::Schema.define(version: 20171030023048) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sponsor_translations", force: :cascade do |t|
+    t.integer "sponsor_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
+    t.index ["locale"], name: "index_sponsor_translations_on_locale"
+    t.index ["sponsor_id"], name: "index_sponsor_translations_on_sponsor_id"
+  end
+
+  create_table "sponsors", force: :cascade do |t|
+    t.string "name"
+    t.string "logo"
+    t.string "url"
+    t.bigint "level_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["level_id"], name: "index_sponsors_on_level_id"
+  end
+
   add_foreign_key "partners", "partner_types", column: "type_id"
+  add_foreign_key "sponsors", "sponsor_levels", column: "level_id"
 end
