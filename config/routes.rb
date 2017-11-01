@@ -23,6 +23,8 @@ Rails.application.routes.draw do
     resources :sponsor_levels, except: :show
     resources :sponsors, except: :show
 
+    resources :speakers, except: :show
+
     constraints ->(_req) { Apartment::Tenant.current == 'public' } do
       resources :sites, except: :show
     end
