@@ -1,0 +1,13 @@
+- Globalize.with_locale(admin_current_resource_locale) do
+  = simple_form_for [:admin, @speaker] do |f|
+    = admin_box_body do
+      = f.input :name
+      = f.input :description
+      = f.input :avatar do
+        = f.input_field :avatar
+        -if @speaker.avatar.present?
+          = image_tag @speaker.avatar
+          = f.input :remove_avatar, as: :boolean
+      = f.hidden_field :locale, value: admin_current_resource_locale
+    = admin_box_footer do
+      = f.submit class: 'btn btn-primary'
