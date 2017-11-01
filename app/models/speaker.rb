@@ -6,7 +6,7 @@ class Speaker < ApplicationRecord
   attribute :description
   translates :name, :description
 
-  mount_uploader :logo, LogoUploader
+  mount_uploader :avatar, AvatarUploader
 
   validates :name, :description, :avatar, presence: true
 end
