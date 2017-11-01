@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171031133908) do
+ActiveRecord::Schema.define(version: 20171101162824) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,9 +107,20 @@ ActiveRecord::Schema.define(version: 20171031133908) do
     t.index ["tenant_name"], name: "index_sites_on_tenant_name"
   end
 
+  create_table "speaker_translations", force: :cascade do |t|
+    t.integer "speaker_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
+    t.text "description"
+    t.index ["locale"], name: "index_speaker_translations_on_locale"
+    t.index ["speaker_id"], name: "index_speaker_translations_on_speaker_id"
+  end
+
   create_table "speakers", force: :cascade do |t|
     t.string "name"
-    t.string "description"
+    t.text "description"
     t.string "avatar"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
