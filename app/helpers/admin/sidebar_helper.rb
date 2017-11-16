@@ -26,7 +26,7 @@ module Admin
       options = { class: 'treeview' }
 
       items = capture { yield if block_given? }
-      if items.to_srt.match?(/class="[^"]*active[^"]*"/)
+      if items.to_str.match?(/class="[^"]*active[^"]*"/)
         options[:class] += ' active menu-open'
       end
       content_tag :li, options do
