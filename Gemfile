@@ -52,6 +52,8 @@ gem 'slim-rails'
 # Utilities
 gem 'carrierwave', '~> 1.2'
 gem 'mini_magick'
+gem 'oj'
+gem 'rollbar'
 
 # API
 gem 'grape'
