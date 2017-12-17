@@ -17,6 +17,8 @@ Rails.application.routes.draw do
       end
     end
 
+    resource :profile, only: %i[edit update]
+
     resources :partner_types, except: :show
     resources :partners, except: :show
 
