@@ -27,3 +27,6 @@ aside.main-sidebar
         = admin_sidebar_treeview t('.speaker'), icon: 'users'
           = admin_sidebar_item t('.list'), admin_speakers_path, icon: 'list'
           = admin_sidebar_item t('.new'), new_admin_speaker_path, icon: 'plus'
+        = admin_sidebar_treeview t('.agenda'), icon: 'file-text'
+          = admin_sidebar_item t('.list'), admin_agendas_path, icon: 'list'
+          = admin_sidebar_item t('.new'), new_admin_agenda_path, icon: 'plus'

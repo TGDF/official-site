@@ -1,0 +1,7 @@
+= admin_page_header t('.edit'), t('.edit_agenda')
+.content
+  .row
+    .col-md-12
+      = admin_navtab_box do
+        = admin_locale_navtab
+        = render 'form'
