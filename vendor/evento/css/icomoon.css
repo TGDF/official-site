@@ -1,0 +1,135 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('../fonts/icomoon.eot?vdw2jk');
+  src:  url('../fonts/icomoon.eot?vdw2jk#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?vdw2jk') format('truetype'),
+    url('../fonts/icomoon.woff?vdw2jk') format('woff'),
+    url('../fonts/icomoon.svg?vdw2jk#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-add:before {
+  content: "\e900";
+}
+.icon-back-arrow-circular-symbol:before {
+  content: "\e901";
+}
+.icon-business:before {
+  content: "\e902";
+}
+.icon-calendar-with-spring-binder-and-date-blocks:before {
+  content: "\e903";
+}
+.icon-clock:before {
+  content: "\e904";
+}
+.icon-clock-1:before {
+  content: "\e905";
+}
+.icon-close:before {
+  content: "\e906";
+}
+.icon-contact:before {
+  content: "\e907";
+}
+.icon-email-filled-closed-envelope:before {
+  content: "\e908";
+}
+.icon-gesture:before {
+  content: "\e909";
+}
+.icon-hexagon:before {
+  content: "\e90a";
+}
+.icon-letter:before {
+  content: "\e90b";
+}
+.icon-letter-1:before {
+  content: "\e90c";
+}
+.icon-luxury:before {
+  content: "\e90d";
+}
+.icon-magnifying-glass:before {
+  content: "\e90e";
+}
+.icon-mathematics:before {
+  content: "\e90f";
+}
+.icon-minus-symbol:before {
+  content: "\e910";
+}
+.icon-pdf:before {
+  content: "\e911";
+}
+.icon-people:before {
+  content: "\e912";
+}
+.icon-phone-receiver:before {
+  content: "\e913";
+}
+.icon-play:before {
+  content: "\e914";
+}
+.icon-right-arrow-circular-button:before {
+  content: "\e915";
+}
+.icon-right-arrow-circular-button-1:before {
+  content: "\e916";
+}
+.icon-science:before {
+  content: "\e917";
+}
+.icon-science-1:before {
+  content: "\e918";
+}
+.icon-signs:before {
+  content: "\e919";
+}
+.icon-technology:before {
+  content: "\e91a";
+}
+.icon-technology-1:before {
+  content: "\e91b";
+}
+.icon-telephone:before {
+  content: "\e91c";
+}
+.icon-tool:before {
+  content: "\e91d";
+}
+.icon-word-document:before {
+  content: "\e91e";
+}
+.icon-world:before {
+  content: "\e91f";
+}
+.icon-writing:before {
+  content: "\e920";
+}
+.icon-home:before {
+  content: "\e921";
+}
+.icon-home2:before {
+  content: "\e922";
+}
+.icon-home3:before {
+  content: "\e923";
+}
+
