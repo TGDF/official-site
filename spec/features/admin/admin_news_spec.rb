@@ -25,6 +25,10 @@ RSpec.feature 'Admin::News', type: :feature do
       fill_in 'news_title', with: 'Example'
       fill_in 'news_slug', with: 'example'
       fill_in 'news_content', with: 'Example Content'
+      attach_file(
+        'news_thumbnail',
+        Rails.root.join('spec', 'support', 'brands', 'logos', 'TGDF.png')
+      )
       click_button '新增News'
       expect(page).to have_content('Example')
     end

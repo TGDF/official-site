@@ -44,7 +44,12 @@ module Admin
     end
 
     def news_params
-      params.require(:news).permit(:title, :slug, :status, :content, :locale)
+      params
+        .require(:news)
+        .permit(
+          :title, :slug, :status, :thumbnail, :remove_thumbnail,
+          :content, :locale
+        )
     end
   end
 end

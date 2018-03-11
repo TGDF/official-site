@@ -6,7 +6,7 @@
       = f.association :level
       = f.input :logo do
         = f.input_field :logo
-        -if @sponsor.logo.present?
+        - if @sponsor.logo.present?
           = image_tag @sponsor.logo
           = f.input :remove_logo, as: :boolean
       = f.hidden_field :locale, value: admin_current_resource_locale
