@@ -6,7 +6,7 @@ class AdminUser < ApplicationRecord
   devise :database_authenticatable, :lockable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_many :news, as: :author
+  has_many :news, as: :author, dependent: :nullify, inverse_of: :author
 
   # TODO: Add display name field
   def display_name
