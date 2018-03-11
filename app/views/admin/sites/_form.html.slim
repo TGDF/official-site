@@ -3,5 +3,6 @@
     = f.input :name
     = f.input :domain
     = f.input :tenant_name if @site.new_record?
+    = f.input :description, as: :text, input_html: { data: { editor: true }, rows: 20 }
   = admin_box_footer do
     = f.submit class: 'btn btn-primary'
