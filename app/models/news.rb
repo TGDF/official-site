@@ -8,13 +8,15 @@ class News < ApplicationRecord
   attribute  :content
   translates :title, :content
 
+  mount_uploader :thumbnail, ThumbnailUploader
+
   enum status: {
     draft:     0,
     published: 1,
     deleted:   2
   }
 
-  validates :title, :content, :slug, presence: true
+  validates :title, :content, :slug, :thumbnail, presence: true
   validates :slug, uniqueness: true
 
   default_scope -> { where.not(status: :deleted) }

@@ -1,0 +1,1038 @@
+
+/* Large Layout: 1200px. */
+@media only screen and (min-width: 1200px){
+.container {padding: 0;}
+.container-fluid{padding: 0;}    
+ 
+    
+}
+
+
+
+/* Medium screen  */ 
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+   
+/*** 
+=============================================
+    Mainmenu area style
+=============================================
+***/     
+.mainmenu-area .logo {
+    padding-right: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.main-menu .navigation > li.dropdown > a {
+    margin-right: 10px;
+}
+.main-menu .navigation > li.dropdown > a:after {
+    display: none;
+}    
+.main-menu .navigation li a {
+    padding: 41px 5px 39px;
+}  
+   
+    
+    
+/*** 
+=============================================
+    Footer Area style
+=============================================
+***/    
+.footer-social-links ul li {
+    border-right: none;
+    max-width: 310px;
+    min-height: 40px;
+    line-height: 40px;
+}    
+.footer-social-links ul li:first-child {
+    border-left: none;
+}  
+.footer-social-links ul li a {
+    padding: 25px 0;
+}
+
+/*** 
+=============================================
+    Event Schedule Area style
+=============================================
+***/      
+.event-schedule-tab #tabmenu-carousel {
+    width: 900px;
+    margin: 0 auto;
+}    
+.event-schedule-area .nav-tabs {
+    max-width: 765px;
+}    
+.event-schedule-area .nav-tabs li a {
+    padding: 15px 32px;
+}    
+
+/*** 
+=============================================
+    Latest Blog Area style
+=============================================
+***/  
+.latest-blog-area {
+    padding-bottom: 110px;
+    padding-top: 88px;
+}    
+.latest-blog-area .owl-theme .owl-nav {
+    left: 37px;
+    bottom: 10px;
+}    
+
+/*** 
+=============================================
+    Single speaker area style
+=============================================
+***/  
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .left {
+    position: relative;
+    float: none !important;
+}    
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .right {
+    float: none !important;
+    margin: 20px 0 0;
+    border-top: 1px solid #F7F7F7;
+    padding: 15px 0 0;
+}    
+
+/*** 
+=============================================
+    Cart area style
+=============================================
+***/      
+.cart-middle .apply-coupon .apply-coupon-button button {
+    padding: 16px 30px 14px;
+}    
+
+/*** 
+=============================================
+    Cart area style
+=============================================
+***/        
+.checkout-area .form.billing-info {
+    padding-bottom: 50px;
+}    
+
+/*** 
+=============================================
+    Schedule Single Area style
+=============================================
+***/      
+.schedule-single-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 50px;
+}    
+
+/*** 
+=============================================
+    Blog Large Area style
+=============================================
+***/    
+.blog-large-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 60px;
+}    
+
+/*** 
+=============================================
+    Blog Grid Area style
+=============================================
+***/    
+.blog-grid-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 60px;
+}        
+    
+/*** 
+=============================================
+    Blog Single Area style
+=============================================
+***/   
+.blog-single-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 60px;
+}    
+    
+    
+    
+   
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+}    
+ 
+
+
+/* Tablet Layout: 768px. */
+@media only screen and (min-width: 768px) and (max-width: 991px) {    
+  
+/*** 
+=============================================
+    Mainmenu Area style
+=============================================
+***/ 
+.mainmenu-area.stricky {
+    position: relative;
+    background: #000;
+} 
+.mainmenu-area.stricky-fixed {
+    position: fixed;
+    background: #000000;
+}    
+.mainmenu-area .logo {
+    display: block;
+    padding-right: 0;
+    padding-top: 15px;
+    padding-bottom: 0px;
+    float: none !important;
+    text-align: center;
+}
+.main-menu .navigation li a {
+    padding: 21px 7px 19px;
+}
+.main-menu .navigation > li.dropdown > a {
+    margin-right: 5px;
+}
+.main-menu .navigation > li.dropdown > a:after {
+    display: none;
+} 
+.mainmenu-area .buy-ticket-button {
+    float: right;
+    margin: 6px 0;
+}    
+   
+
+  
+/*** 
+=============================================
+    Footer Area style
+=============================================
+***/    
+.single-footer-widget.mar-top50 {
+    margin-top: 40px;
+}    
+.footer-social-links ul li:first-child {
+    border-left: none;
+}
+.footer-social-links ul li {
+    border-right: none;
+    max-width: 240px;
+    width: 100%;
+    min-height: 50px;
+}
+.footer-social-links ul li a {
+    padding: 30px 0;
+}    
+.copyright-text p {
+    text-align: center;
+    margin: 0 0 5px;
+}    
+.footer-menu {
+    overflow: hidden;
+    float: none;
+    text-align: center;
+}    
+.footer-menu li {
+    display: inline-block;
+    float: none;
+    margin-right: 0;
+    line-height: 26px;
+    margin: 0 10px;
+}
+
+/*** 
+=============================================
+    Event Schedule Area style
+=============================================
+***/     
+.event-schedule-tab #tabmenu-carousel {
+    width: 700px;
+    margin: 0 auto;
+}    
+.event-schedule-area .nav-tabs {
+    max-width: 550px;
+}    
+.event-schedule-area .nav-tabs li a {
+    padding: 15px 13px;
+}    
+.event-schedule-area .nav-tabs li a p {
+    font-size: 14px;
+}        
+.event-schedule-area .nav-tabs li a h3 {
+    font-size: 16px;
+}
+.event-schedule-area .accordion-box .accordion.last {
+    margin: 0 0 30px;
+}    
+.event-schedule-area .schedules-button {
+    margin-top: 10px;
+}    
+
+/*** 
+=============================================
+    Event Area style
+=============================================
+***/     
+.event-area .single-team-member {
+    width: 50%;
+}    
+
+/*** 
+=============================================
+    Latest Blog Area style
+=============================================
+***/  
+.latest-blog-area {
+    padding-bottom: 140px;
+    padding-top: 88px;
+}      
+.latest-blog-area .single-blog-item .text-holder .meta-info {
+    margin-top: 20px;
+}    
+.latest-blog-area .owl-theme .owl-nav {
+    bottom: -10px;
+}    
+ 
+/*** 
+=============================================
+    Single speaker area style
+=============================================
+***/  
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .left {
+    position: relative;
+    float: none !important;
+}    
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .right {
+    float: none !important;
+    margin: 20px 0 0;
+    border-top: 1px solid #F7F7F7;
+    padding: 15px 0 0;
+}        
+.single-speaker-area .top-content .text-holder {
+    margin: 25px 0 0;
+}    
+ 
+/*** 
+=============================================
+    About area style
+=============================================
+***/     
+.about-area .text-holder {
+    margin-bottom: 40px;
+} 
+ 
+/*** 
+=============================================
+    Home Map Area style
+=============================================
+***/     
+.home-map-area .contact-info {
+    top: 15%;
+    bottom: 15%;
+    left: 15px;
+} 
+
+/*** 
+=============================================
+    Breadcrumb Area style
+=============================================
+***/     
+.breadcrumb-area {
+    padding-top: 135px;
+    padding-bottom: 132px;
+}    
+
+/*** 
+=============================================
+    Gallery Area style
+=============================================
+***/       
+.gallery-area .single-project-item .img-holder .overlay-style-one .box .content .bottom a.title {
+    font-size: 15px;
+}    
+
+/*** 
+=============================================
+    Cart area style
+=============================================
+***/    
+.cart-middle .apply-coupon .apply-coupon-button button {
+    padding: 16px 30px 14px;
+}    
+    
+/*** 
+=============================================
+    Checkout area style
+=============================================
+***/        
+.checkout-area .form.billing-info {
+    padding-bottom: 50px;
+}  
+.checkout-area .table {
+    margin-bottom: 30px;
+}    
+    
+/*** 
+=============================================
+    Schedule Single Area style
+=============================================
+***/            
+.schedule-single-area .schedule-content .botton-text-holder .text-box {
+    margin-top: 30px;
+}    
+.schedule-single-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 50px;
+} 
+    
+
+/*** 
+=============================================
+    Blog Large Area style
+=============================================
+***/      
+.blog-large-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 60px;
+}        
+ 
+/*** 
+=============================================
+    Blog Grid Area style
+=============================================
+***/    
+.blog-grid-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 60px;
+}
+ 
+/*** 
+=============================================
+    Blog modern area style
+=============================================
+***/       
+.blog-modern-area .single-blog-item .img-holder {
+    margin-bottom: 30px;
+    margin-top: 30px;
+}    
+     
+/*** 
+=============================================
+    Blog Single Area style
+=============================================
+***/   
+.blog-single-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 60px;
+}    
+
+/*** 
+=============================================
+    Contact Area style
+=============================================
+***/      
+.contact-area .contact-info {
+    display: block;
+    margin: 60px 0 0;
+}    
+    
+    
+.main-slider .slide-content h1{
+    font-size: 50px;
+    padding: 10px 0;
+}    
+    
+ 
+    
+    
+    
+    
+    
+    
+ 
+    
+}
+
+/* Mobile Layout: 320px. */
+@media only screen and (max-width: 767px) {
+    
+/*** 
+=============================================
+    Mainmenu area style
+=============================================
+***/ 
+.mainmenu-area.stricky {
+    position: relative;
+    background: #000;
+} 
+.mainmenu-area.stricky-fixed {
+    position: fixed !important;
+    background: #000000;
+}
+.mainmenu-area .logo {
+    display: inline-block;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    position: relative;
+    z-index: 9999;
+}   
+.mainmenu-right-box {
+    position: absolute;
+    top: 0;
+    right: 80px;
+    z-index: 999;
+}     
+.mainmenu-area .buy-ticket-button {
+    float: right;
+    margin: 16px 0;
+} 
+.mainmenu-area .buy-ticket-button a{
+    padding: 14px 20px 14px;        
+}    
+    
+.main-menu {
+    display: block;
+    float: none !important;
+    padding-bottom: 0;
+    padding-top: 0;
+    z-index: 5;
+    width: 100%;
+}
+.main-menu .navigation li {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+}   
+.main-menu .collapse {
+    border: 0px solid #eabb06 !important;
+    border-radius: 0px !important;
+    float: none;
+    margin: 0;
+    max-height: 290px;
+    overflow: auto;
+    padding: 0;
+    width: 100%;
+}   
+.main-menu .collapse.in, 
+.main-menu .collapsing {
+    border: 0px solid #4b4b4b;
+    border-radius: 3px;
+    margin: 0 0 20px;
+    padding: 0;
+    border-top: none;
+}    
+.main-menu .navbar-header{
+    position:relative;
+    float:none;
+    display:block;
+    text-align: right;
+    width:100%;
+    padding: 0;
+    right:0px;
+    z-index:12;
+}        
+.main-menu .navbar-header .navbar-toggle {
+    display: inline-block;
+    z-index: 7;
+    border: 2px solid #fff;
+    float: none;
+    margin: 20px 0;
+    border-radius: 0;
+    padding: 11px 9px;
+}
+.main-menu .navbar-header .navbar-toggle .icon-bar {
+    background: #F07C08 none repeat scroll 0 0;
+    font-weight: 700;
+} 
+    
+.main-menu .navbar-collapse > .navigation {
+    background: #ef760c;
+    float: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+}        
+.main-menu .navbar-collapse > .navigation > li{
+    margin:0px !important;
+    float:none !important;
+    width:100%;
+    padding: 0;
+} 
+.main-menu .navbar-collapse .navigation > li > ul > li {
+    border-bottom: 0px solid #12226d;
+}    
+.main-menu .navigation li.dropdown > a:after{
+    display:none !important;
+}
+.main-menu .navigation > li > a:before{
+    display: none;
+}
+.main-menu .navbar-collapse > .navigation > li > a{
+    padding:10px 10px !important;
+}     
+.main-menu .navbar-collapse > .navigation > li > ul,
+.main-menu .navbar-collapse > .navigation > li > ul > li > ul{
+    position:relative;
+    border:none;
+    float:none;
+    visibility:visible;
+    opacity:1;
+    display:none;
+    margin:0px;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    width:100%;
+    background: none;
+    border-radius:0px;
+    -webkit-border-radius:0px;
+    -ms-border-radius:0px;
+    -o-border-radius:0px;
+    -moz-border-radius:0px;
+    transition:none !important;
+    -webkit-transition:none !important;
+    -ms-transition:none !important;
+    -o-transition:none !important;
+    -moz-transition:none !important;
+}    
+.main-menu .navbar-collapse > .navigation > li > ul,
+.main-menu .navbar-collapse > .navigation > li > ul > li > ul{
+    border-top: 0px solid rgba(255,255,255,1) !important;	
+}
+    
+.main-menu .navbar-collapse > .navigation > li,
+.main-menu .navbar-collapse > .navigation > li > ul > li,
+.main-menu .navbar-collapse > .navigation > li > ul > li > ul > li{
+    border-top: 1px solid #ff9b1a !important;
+    opacity:1 !important;
+    top:0px !important;
+    left:0px !important;
+    visibility:visible !important;
+}
+.main-menu .navbar-collapse > .navigation > li:last-child,
+.main-menu .navbar-collapse > .navigation > li > ul > li:last-child,
+.main-menu .navbar-collapse > .navigation > li > ul > li > ul > li:last-child{
+    border-top: 1px solid #ff9b1a !important;
+}
+.main-menu .navbar-collapse > .navigation > li > a,
+.main-menu .navbar-collapse > .navigation > li > ul > li > ul > li > a{
+    padding:10px 10px !important;
+    line-height:22px;
+    margin: 0;
+    color:#ffffff;
+    background:#f28a03;
+    text-align:left;
+} 
+.main-menu .navbar-collapse > .navigation > li > ul > li > a{
+    padding: 10px 20px; 
+    line-height:22px;
+    color:#ffffff;
+    background:#ef760c;
+    text-align:left;
+} 
+.main-menu .navbar-collapse > .navigation > li > ul > li:hover > a{
+    padding: 10px 10px;         
+}    
+    
+.main-menu .navbar-collapse .navigation > li > ul li a::before{
+    display: none;
+}  
+.main-menu .navbar-collapse > .navigation > li:hover > a,
+.main-menu .navbar-collapse > .navigation > li > ul > li:hover > a,
+.main-menu .navbar-collapse > .navigation > li > ul > li > ul > li:hover > a,
+.main-menu .navbar-collapse > .navigation > li.current > a{
+    background: #da7c03;
+    color: #222222 !important;
+}        
+.main-menu .navbar-collapse > .navigation li.dropdown .dropdown-btn{
+    display:block;
+} 
+    
+/*** 
+=============================================
+    Breadcrumb Area style
+=============================================
+***/     
+.breadcrumb-area {
+    padding-top: 135px;
+    padding-bottom: 132px;
+}       
+   
+/*** 
+=============================================
+    Footer Area style
+=============================================
+***/    
+.single-footer-widget.mar-top50 {
+    margin-top: 40px;
+} 
+.single-footer-widget.mar-bottom-50 {
+    margin-bottom: 40px;
+} 
+.single-footer-widget .title {
+    padding-bottom: 20px;
+    margin-top: 18px;
+}    
+.single-footer-widget .latest-post .single-post .text-holder a.post-title {
+    font-size: 13px;
+    top: -3px;
+}      
+.footer-social-links ul li:first-child {
+    border-left: none;
+}
+.footer-social-links ul li {
+    border-right: none;
+    max-width: 50%;
+    width: 100%;
+    min-height: 50px;
+}
+.footer-social-links ul li a {
+    padding: 30px 0;
+}    
+.copyright-text p {
+    text-align: center;
+    margin: 0 0 5px;
+}    
+.footer-menu {
+    overflow: hidden;
+    float: none;
+    text-align: center;
+}    
+.footer-menu li {
+    display: inline-block;
+    float: none;
+    margin-right: 0;
+    line-height: 26px;
+    margin: 0 10px;
+}
+    
+/*** 
+=============================================
+    Event Schedule Area style
+=============================================
+***/      
+.event-schedule-tab #tabmenu-carousel {
+    width: 300px;
+    margin: 0 auto;
+}    
+.event-schedule-area .nav-tabs {
+    max-width: 200px;
+} 
+.event-schedule-area .nav-tabs li {
+    float: none;
+    margin: 0 0 5px;
+    display: block;
+    border-right: none;
+}    
+.event-schedule-area .nav-tabs li a {
+    padding: 15px 13px;
+}    
+.event-schedule-area .nav-tabs li a p {
+    font-size: 16px;
+}        
+.event-schedule-area .nav-tabs li a h3 {
+    font-size: 20px;
+}
+.event-schedule-area .accordion-box .accordion.last {
+    margin: 0 0 30px;
+}      
+.event-schedule-area .schedules-button {
+    margin-top: 10px;
+}    
+.event-schedule-area .accordion-box .accordion .single-box-content .bottom-content .button {
+    float: none !important;
+} 
+.event-schedule-area .accordion-box .accordion .single-box-content .bottom-content .social-share {
+    float: none !important;
+    margin: 15px 0 0;
+} 
+    
+    
+/*** 
+=============================================
+    Event Area style
+=============================================
+***/     
+.event-area .single-team-member {
+    width: 100%;
+}    
+
+/*** 
+=============================================
+    Latest Blog Area style
+=============================================
+***/  
+.latest-blog-area {
+    padding-bottom: 140px;
+    padding-top: 88px;
+}      
+.latest-blog-area .single-blog-item .text-holder .meta-info {
+    margin-top: 20px;
+}    
+.latest-blog-area .owl-theme .owl-nav {
+    bottom: -10px;
+}    
+
+/*** 
+=============================================
+    Single speaker area style
+=============================================
+***/  
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .left {
+    position: relative;
+    float: none !important;
+}    
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .right {
+    float: none !important;
+    margin: 20px 0 0;
+    border-top: 1px solid #F7F7F7;
+    padding: 15px 0 0;
+}        
+.single-speaker-area .top-content .text-holder {
+    margin: 25px 0 0;
+}    
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content {
+    padding: 25px 15px 25px;
+}    
+ 
+/*** 
+=============================================
+    About area style
+=============================================
+***/     
+.about-area .text-holder {
+    margin-bottom: 40px;
+}
+    
+/*** 
+=============================================
+    Home Map Area style
+=============================================
+***/     
+.home-map-area .contact-info {
+    left: 15px;
+    top: 15%;
+    bottom: 15%;
+    max-width: 300px;
+    padding: 35px 10px 25px;
+}
+ 
+/*** 
+=============================================
+    Gallery area gallery page style
+=============================================
+***/       
+.gallery-area.gallery-page .single-project-item.span-4 {
+    width: 100%;
+    float: none;
+    max-width: 600px;
+    margin: 0 auto;
+}    
+
+/*** 
+=============================================
+    Cart area style
+=============================================
+***/
+.cart-top-text {
+    padding: 12px 30px 25px;
+    margin-bottom: 35px;
+}    
+.cart-top-text .text {
+    float: none !important;
+    text-align: center;
+} 
+.cart-top-text .button {
+    float: none !important;
+    text-align: center;
+}    
+.cart-middle .update-cart {
+    float: left !important;
+    margin: 10px 0;
+}
+.cart-middle .apply-coupon {
+    padding-left: 0;
+    position: relative;
+}  
+.cart-middle .apply-coupon input[type="text"] {
+    position: relative;
+    width: 225px;
+    margin-bottom: 10px;
+}
+    
+/*** 
+=============================================
+    Checkout area style
+=============================================
+***/        
+.checkout-area .form.billing-info {
+    padding-bottom: 50px;
+}  
+.checkout-area .table {
+    margin-bottom: 30px;
+} 
+    
+/*** 
+=============================================
+    Schedule Single Area style
+=============================================
+***/            
+.schedule-single-area .schedule-content .botton-text-holder .text-box {
+    margin-top: 30px;
+}    
+.schedule-single-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 50px;
+}
+    
+
+/*** 
+=============================================
+    Blog Large Area style
+=============================================
+***/      
+.blog-large-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 60px;
+}        
+    
+/*** 
+=============================================
+    Blog Grid Area style
+=============================================
+***/    
+.blog-grid-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 60px;
+}        
+    
+/*** 
+=============================================
+    Blog modern area style
+=============================================
+***/       
+.blog-modern-area .single-blog-item .img-holder {
+    margin-bottom: 30px;
+    margin-top: 30px;
+}    
+     
+/*** 
+=============================================
+    Blog Single Area style
+=============================================
+***/   
+.blog-single-area .sidebar-wrapper {
+    padding-left: 0;
+    margin-top: 60px;
+}    
+.blog-single-area .middle-content-box .img-holder, 
+.blog-single-area .middle-content-box .text-holder {
+    display: block;
+}         
+.blog-single-area .middle-content-box .text-holder {
+    padding-left: 0px;
+    margin-top: 30px;
+}    
+
+/*** 
+=============================================
+    Contact Area style
+=============================================
+***/      
+.contact-area .contact-info {
+    display: block;
+    margin: 60px 0 0;
+}
+ 
+/*** 
+=============================================
+    In slider Area countdown style
+=============================================
+***/  
+.timer-box {
+    position: relative;
+    height: auto;
+    text-align: center;
+}        
+.countdown-timer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 42px 0 18px;
+    background: #222;
+}  
+.countdown-timer li {
+    position: relative;
+    display: block;
+    float: none;
+    width: 150px;
+    margin: 0 auto;
+    padding: 0 30px 22px;
+    border-right: none;
+    line-height: 30px;
+    text-align: center;
+}
+   
+    
+    
+    
+    
+    
+ 
+    
+    
+}      
+
+/* Wide Mobile Layout: 480px. */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+
+
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media only screen and (max-width: 767px){
+	
+.main-slider .slide-content .medium-title {
+    font-size: 20px;
+    line-height: 1.2em;
+    padding-bottom: 10px;
+}
+    
+.main-slider .slide-content h1 {
+    font-size: 30px;
+    line-height: 1em;
+    padding: 15px 0;
+}
+.main-slider .text{
+    margin: 0px 0 0;
+}
+    
+
+    
+}

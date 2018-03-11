@@ -1,0 +1,13 @@
+section.about-area.sec-pding
+  .container
+    .sec-title
+      .underlay
+        h2 = t('.know', site_name: t('site_name')).html_safe
+      h1 = t('site_name')
+    .row
+      .col-md-6
+        .text-holder
+          = t('site_introduce').html_safe
+      .col-md-6
+        .img-holder
+          = image_tag('about/about-img.jpg')

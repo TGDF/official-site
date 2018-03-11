@@ -26,6 +26,7 @@ PreCommit:
     enabled: true
     exclude:
       - '**/db/structure.sql' # Ignore trailing whitespace in generated files
+      - vendor/evento/**/*
 
 PrePush:
   Brakeman:

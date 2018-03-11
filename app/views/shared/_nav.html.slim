@@ -1,0 +1,20 @@
+section.mainmenu-area.stricky.stricky-fixed
+  .container
+    .row
+      .col-lg-12.clearfix
+        .logo.pull-left
+          = link_to root_path
+            = image_tag 'logo.png', style: 'max-height: 60px;'
+        nav.main-menu.pull-left
+          .navbar-header
+            button.navbar-toggle[type="button" data-toggle="collapse" data-target=".navbar-collapse"]
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+          .navbar-collapse.collapse.clearfix
+            ul.navigation.clearfix
+              / TODO: Provide nav helper
+              = nav_item t('.home'), root_path
+        .mainmenu-right-box.pull-right
+          .buy-ticket-button
+            = link_to t('.buy_ticket'), root_path, class: 'thm-btn'
