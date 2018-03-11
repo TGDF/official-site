@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Partner < ApplicationRecord
-  belongs_to :type, class_name: 'PartnerType'
+  belongs_to :type, class_name: 'PartnerType', inverse_of: nil
 
   # FIXME: If globalize for rails 5 is ready, prevent to add `attribute`
   attribute :name
