@@ -7,7 +7,7 @@ section.about-area.sec-pding
     .row
       .col-md-6
         .text-holder
-          = t('site_introduce').html_safe
+          = sanitize current_site.description || t('site_introduce')
       .col-md-6
         .img-holder
           = image_tag('about/about-img.jpg')
