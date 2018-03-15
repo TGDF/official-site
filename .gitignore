@@ -28,3 +28,4 @@ coverage/
 
 config/database.*.yml
 config/secrets.*.yml
+config/settings.*.yml
