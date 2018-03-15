@@ -19,9 +19,10 @@ Metrics/BlockLength:
     - spec/**/*_spec.rb
     - spec/support/*
     - Guardfile
-Style/FileName:
+Naming/FileName:
   Exclude:
     - Gemfile
     - Guardfile
+    - Capfile
 Style/Documentation:
   Enabled: false
