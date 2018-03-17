@@ -2,6 +2,6 @@
 
 class PagesController < ApplicationController
   def index
-    @news = News.published
+    @news = News.published.limit(Settings.news.latest.size)
   end
 end

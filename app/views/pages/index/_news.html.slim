@@ -5,9 +5,9 @@ section.latest-blog-area
         h2 = t('.latest_news').html_safe
       h1 = t('.latest_news').html_safe
     .row
-      - @news.each do |news|
-        .col-md-12
-          .blog-carousel
+      .col-md-12
+        .blog-carousel
+          - @news.each do |news|
             .single-blog-item
               .row
                 .col-md-6

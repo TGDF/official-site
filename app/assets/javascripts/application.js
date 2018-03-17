@@ -11,4 +11,8 @@
 // about supported directives.
 //
 //= require rails-ujs
+//= require jquery
+// == Theme Begin ==
+//= require owl.carousel.min
+// == Theme End ==
 //= require turbolinks
