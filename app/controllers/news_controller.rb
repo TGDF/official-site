@@ -2,6 +2,8 @@
 
 class NewsController < ApplicationController
   def show
-    # TODO
+    @news = News.find(params[:id])
+    @page_name = @news.title
+    @page_bg = @news.thumbnail_url
   end
 end

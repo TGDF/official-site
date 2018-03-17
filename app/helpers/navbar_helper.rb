@@ -3,7 +3,7 @@
 module NavbarHelper
   def current_path_under?(path)
     path = url_for(path)
-    return false if path == admin_root_path && request.path != path
+    return false if path == root_path && request.path != path
     uri = URI(path)
     current_path_match?(uri) && current_params_under?(uri)
   end
