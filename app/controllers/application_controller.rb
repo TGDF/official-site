@@ -11,6 +11,10 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_locale
 
+  def default_url_options(options = {})
+    { locale: cookies[:locale] }.merge(options)
+  end
+
   def current_locale
     ([params[:locale]] & Settings.locales).first || I18n.default_locale.to_s
   end
@@ -33,6 +37,7 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     cookies[:locale] = current_locale if params[:locale]
+    cookies.delete(:locale) if params[:locale] == 'zh-TW'
     I18n.locale = cookies[:locale] || current_locale
   end
 end

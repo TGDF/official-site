@@ -12,13 +12,11 @@ section.latest-blog-area
               .row
                 .col-md-6
                   .img-holder
-                    / TODO: News Thumbnail
                     = image_tag news.thumbnail_url(:thumb)
                     .overlay-style-one
                       .box
                         .content
-                          / TODO: Link to news
-                          = link_to '#' do
+                          = link_to news do
                             i.fa.fa-link
                     .post-date
                       h3
@@ -27,11 +25,9 @@ section.latest-blog-area
                         | #{news.created_at.strftime('%b')}
                 .col-md-6
                   .text-holder
-                    / TODO: Link to news
-                    = link_to '#'
+                    = link_to news do
                       h3.blog-title = news.title
                     .text
                       = sanitize truncate(news.content, length: 150, escape: false)
-                      / TODO: Link to news
-                      = link_to '#', class: 'read-more' do
+                      = link_to news, class: 'read-more' do
                         = t('.read_more')
