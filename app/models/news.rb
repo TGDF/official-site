@@ -19,5 +19,5 @@ class News < ApplicationRecord
   validates :title, :content, :slug, :thumbnail, presence: true
   validates :slug, uniqueness: true
 
-  default_scope -> { where.not(status: :deleted) }
+  default_scope -> { where.not(status: :deleted).order(created_at: :desc) }
 end

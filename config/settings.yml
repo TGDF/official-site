@@ -5,6 +5,9 @@ default: &default
   locales:
     - zh-TW
     - en
+  news:
+    latest:
+      size: <%= (ENV['NEWS_LATEST_SIZE'] || 5).to_i %>
 
 development:
   <<: *default

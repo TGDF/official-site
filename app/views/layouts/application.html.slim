@@ -9,10 +9,12 @@ html
     = stylesheet_link_tag    'https://use.fontawesome.com/b2e3e84e95.css', media: 'all'
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = javascript_pack_tag    'application', 'data-turbolinks-track': 'reload'
   body
     .boxed_wrapper
       / TODO: Add preloader javascript
       / .preloader
       = render 'shared/nav'
+      = render_breadcrumb
       = yield
       = render 'shared/footer'

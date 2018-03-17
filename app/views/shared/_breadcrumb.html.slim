@@ -1,0 +1,19 @@
+section.breadcrumb-area[style="background-image: url(#{@page_bg})"]
+	.container
+    .row
+      .col-md-12
+        .breadcrumbs
+          h1 = @page_name
+
+/ TODO: Render real breadcrumb
+section.breadcrumb-bottom-area
+  .container
+    .row
+      .col-md-12
+        .breadcrumb-bottom
+          .left.pull-left
+            ul
+              li = link_to 'Home', root_path
+              li
+                i.fa.fa-angle-right
+              li.active = @page_name

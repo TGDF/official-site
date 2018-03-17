@@ -1,0 +1,18 @@
+section#blog-area.blog-single-area
+  .container
+    .row
+       .col-lg-8.col-md-12.col-sm-12.col-xs-12
+         .blog-post
+           .single-blog-item
+             .img-holder
+               = image_tag @news.thumbnail_url(:thumb)
+               .post-date
+                  h3
+                    | #{@news.created_at.day}
+                    br
+                    | #{@news.created_at.strftime('%b')}
+             .text-holder
+               h3.blog-title = @news.title
+               .text = sanitize @news.content
+       .col-lg-4.col-md-6.col-sm-7.col-xs-12
+         .sidebar-wrapper

@@ -46,6 +46,7 @@ gem 'omniauth-facebook'
 
 # Front End
 gem 'globalize', '~> 5.1.0.beta2'
+gem 'jquery-rails'
 gem 'simple_form'
 gem 'slim-rails'
 
