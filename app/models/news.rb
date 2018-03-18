@@ -19,5 +19,9 @@ class News < ApplicationRecord
   validates :title, :content, :slug, :thumbnail, presence: true
   validates :slug, uniqueness: true
 
-  default_scope -> { where.not(status: :deleted).order(created_at: :desc) }
+  scope :latest, lambda { |count = Settings.news.latest.size|
+    order(created_at: :desc).limit(count)
+  }
+
+  default_scope -> { where.not(status: :deleted) }
 end

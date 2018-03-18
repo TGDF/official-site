@@ -1,3 +1,6 @@
+- title @news.title
+- banner @news.thumbnail_url(:large)
+
 section#blog-area.blog-single-area
   .container
     .row
@@ -5,7 +8,7 @@ section#blog-area.blog-single-area
          .blog-post
            .single-blog-item
              .img-holder
-               = image_tag @news.thumbnail_url(:thumb)
+               = image_tag @news.thumbnail_url(:medium)
                .post-date
                   h3
                     | #{@news.created_at.day}
@@ -16,3 +19,22 @@ section#blog-area.blog-single-area
                .text = sanitize @news.content
        .col-lg-4.col-md-6.col-sm-7.col-xs-12
          .sidebar-wrapper
+           .single-sidebar.wow.fadeInUp[data-wow-delay="0s" data-wow-duration="1s" data-wow-offset="0"]
+             .sec-title
+               h3 = t('.latest_news')
+             ul.popular-post
+              - @latest.each do |news|
+                li
+                  .img-holder
+                    = image_tag news.thumbnail_url(:small_square)
+                    .overlay-style-one
+                      .box
+                        .content
+                          = link_to news do
+                            i.fa.fa-link
+                  .title-holder
+                    = link_to news do
+                      h5.post-title = news.title
+                    h6.post-date
+                      i.fa.fa-calendar
+                      = l news.created_at, format: :short

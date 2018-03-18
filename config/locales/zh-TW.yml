@@ -13,6 +13,7 @@ zh-TW:
   shared:
     nav:
       home: 首頁
+      news: 新聞
       buy_ticket: 購票
   pages:
     index:
@@ -21,6 +22,13 @@ zh-TW:
       news:
         latest_news: 最新<span>消息</span>
         read_more: 了解更多
+  news:
+    index:
+      title: 最新消息
+    show:
+      latest_news: 最新消息
+    news:
+      read_more: 了解更多
   admin_users:
     sessions:
       new:

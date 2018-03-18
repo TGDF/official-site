@@ -13,8 +13,8 @@ section.mainmenu-area.stricky.stricky-fixed
               span.icon-bar
           .navbar-collapse.collapse.clearfix
             ul.navigation.clearfix
-              / TODO: Provide nav helper
               = nav_item t('.home'), root_path
+              = nav_item t('.news'), news_index_path
         .mainmenu-right-box.pull-right
           .buy-ticket-button
             = link_to t('.buy_ticket'), root_path, class: 'thm-btn'
