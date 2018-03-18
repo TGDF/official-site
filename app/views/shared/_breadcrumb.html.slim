@@ -1,9 +1,9 @@
-section.breadcrumb-area[style="background-image: url(#{@page_bg})"]
+section.breadcrumb-area[style="background-image: url(#{content_for :page_banner})"]
 	.container
     .row
       .col-md-12
         .breadcrumbs
-          h1 = @page_name
+          h1 = content_for(:page_title)
 
 / TODO: Render real breadcrumb
 section.breadcrumb-bottom-area
@@ -16,4 +16,4 @@ section.breadcrumb-bottom-area
               li = link_to 'Home', root_path
               li
                 i.fa.fa-angle-right
-              li.active = @page_name
+              li.active = content_for(:page_title)

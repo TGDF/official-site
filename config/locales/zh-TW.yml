@@ -13,6 +13,7 @@ zh-TW:
   shared:
     nav:
       home: 首頁
+      news: 新聞
       buy_ticket: 購票
   pages:
     index:
