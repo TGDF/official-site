@@ -6,6 +6,7 @@ class NewsController < ApplicationController
   end
 
   def show
+    @latest = News.published.latest
     @news = News.find(params[:id])
   end
 end
