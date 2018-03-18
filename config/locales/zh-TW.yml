@@ -21,6 +21,11 @@ zh-TW:
       news:
         latest_news: 最新<span>消息</span>
         read_more: 了解更多
+  news:
+    index:
+      title: 最新消息
+    news:
+      read_more: 了解更多
   admin_users:
     sessions:
       new:

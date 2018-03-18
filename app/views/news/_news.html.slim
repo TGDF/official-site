@@ -1,0 +1,23 @@
+.single-blog-item
+  .row
+    .col-md-6
+      .img-holder
+        = image_tag news.thumbnail_url(:thumb)
+        .overlay-style-one
+          .box
+            .content
+              = link_to news do
+                i.fa.fa-link
+        .post-date
+          h3
+            | #{news.created_at.day}
+            br
+            | #{news.created_at.strftime('%b')}
+    .col-md-6
+      .text-holder
+        = link_to news do
+          h3.blog-title = news.title
+        .text
+          = sanitize truncate(news.content, length: 150, escape: false)
+          = link_to news, class: 'read-more' do
+            = t('.read_more')
