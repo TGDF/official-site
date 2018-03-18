@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     cookies[:locale] = current_locale if params[:locale]
-    cookies.delete(:locale) if params[:locale] == 'zh-TW'
+    cookies.delete(:locale) if params[:locale] == I18n.default_locale.to_s
     I18n.locale = cookies[:locale] || current_locale
   end
 end

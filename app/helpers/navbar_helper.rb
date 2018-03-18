@@ -3,14 +3,14 @@
 module NavbarHelper
   def current_path_under?(path)
     path = url_for(path)
-    return false if path == root_path && request.path != path
+    return false if path == root_path && request_path != path
     uri = URI(path)
     current_path_match?(uri) && current_params_under?(uri)
   end
 
   def current_path_match?(uri)
-    return request.path.start_with?(uri.path) if params[:id].present?
-    request.path == uri.path
+    return request_path.start_with?(uri.path) if params[:id].present?
+    request_path == uri.path
   end
 
   def current_params_under?(uri)
@@ -23,5 +23,11 @@ module NavbarHelper
     content_tag :li, class: style.join(' ') do
       link_to name, path, options
     end
+  end
+
+  private
+
+  def request_path
+    request.path.sub(%r{#{I18n.default_locale.to_s}[\/]?}, '')
   end
 end
