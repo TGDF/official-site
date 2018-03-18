@@ -25,6 +25,8 @@ zh-TW:
   news:
     index:
       title: 最新消息
+    show:
+      latest_news: 最新消息
     news:
       read_more: 了解更多
   admin_users:
