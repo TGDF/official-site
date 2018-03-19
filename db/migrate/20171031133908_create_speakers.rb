@@ -1,8 +1,8 @@
 class CreateSpeakers < ActiveRecord::Migration[5.1]
   def change
     create_table :speakers do |t|
-      t.string :name
-      t.string :description
+      t.jsonb :name, default: {}
+      t.jsonb :description, default: {}
       t.string :avatar
 
       t.timestamps

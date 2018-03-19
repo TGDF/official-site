@@ -1,8 +1,8 @@
 class CreateNews < ActiveRecord::Migration[5.1]
   def change
     create_table :news do |t|
-      t.string :title, null: false
-      t.text :content, null: false
+      t.jsonb :title, default: {}
+      t.jsonb :content, default: {}
       t.references :author, polymorphic: true, index: true
       t.string :slug, null: false
       t.integer :status, default: 0
