@@ -1,6 +1,7 @@
 = simple_form_for [:admin, @site] do |f|
   = admin_box_body do
-    = f.input :name
+    / TODO: Upgrade mobility to support jsonb in form
+    = f.input :name, as: :string
     = f.input :domain
     = f.input :tenant_name if @site.new_record?
     = f.input :description, as: :text, input_html: { data: { editor: true }, rows: 20 }
