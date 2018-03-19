@@ -1,7 +1,7 @@
-- Globalize.with_locale(admin_current_resource_locale) do
+- Mobility.with_locale(admin_current_resource_locale) do
   = simple_form_for [:admin, @news] do |f|
     = admin_box_body do
-      = f.input :title
+      = f.input :title, as: :string
       = f.input :slug
       = f.input :status, collection: ['draft', 'published']
       = f.input :content, as: :text, input_html: { data: { editor: true }, rows: 20 }

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
+  # TODO: Replace with I18n.available_locales
   def available_locales
     Settings.locales
   end
