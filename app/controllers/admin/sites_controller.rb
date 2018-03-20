@@ -13,16 +13,20 @@ module Admin
     end
 
     def create
-      @site = Site.new(site_params)
-      return redirect_to admin_sites_path if @site.save
-      render :new
+      Mobility.with_locale(I18n.default_locale) do
+        @site = Site.new(site_params)
+        return redirect_to admin_sites_path if @site.save
+        render :new
+      end
     end
 
     def edit; end
 
     def update
-      return redirect_to admin_sites_path if @site.update(site_params)
-      render :edit
+      Mobility.with_locale(admin_current_resource_locale) do
+        return redirect_to admin_sites_path if @site.update(site_params)
+        render :edit
+      end
     end
 
     def destroy
