@@ -13,16 +13,22 @@ module Admin
     end
 
     def create
-      @partner = Partner.new(partner_params)
-      return redirect_to admin_partners_path if @partner.save
-      render :new
+      Mobility.with_locale(admin_current_resource_locale) do
+        @partner = Partner.new(partner_params)
+        return redirect_to admin_partners_path if @partner.save
+        render :new
+      end
     end
 
     def edit; end
 
     def update
-      return redirect_to admin_partners_path if @partner.update(partner_params)
-      render :edit
+      Mobility.with_locale(admin_current_resource_locale) do
+        if @partner.update(partner_params)
+          return redirect_to admin_partners_path
+        end
+        render :edit
+      end
     end
 
     def destroy
@@ -38,7 +44,7 @@ module Admin
 
     def partner_params
       params.require(:partner).permit(
-        :name, :logo, :remove_logo, :type_id, :url, :locale
+        :name, :logo, :remove_logo, :type_id, :url
       )
     end
   end

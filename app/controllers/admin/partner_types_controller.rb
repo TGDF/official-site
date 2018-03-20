@@ -13,18 +13,22 @@ module Admin
     end
 
     def create
-      @type = PartnerType.create(partner_type_params)
-      return redirect_to admin_partner_types_path if @type.save
-      render :new
+      Mobility.with_locale(admin_current_resource_locale) do
+        @type = PartnerType.create(partner_type_params)
+        return redirect_to admin_partner_types_path if @type.save
+        render :new
+      end
     end
 
     def edit; end
 
     def update
-      if @type.update(partner_type_params)
-        return redirect_to admin_partner_types_path
+      Mobility.with_locale(admin_current_resource_locale) do
+        if @type.update(partner_type_params)
+          return redirect_to admin_partner_types_path
+        end
+        render :edit
       end
-      render :edit
     end
 
     def destroy
@@ -39,7 +43,7 @@ module Admin
     end
 
     def partner_type_params
-      params.require(:partner_type).permit(:name, :locale)
+      params.require(:partner_type).permit(:name)
     end
   end
 end

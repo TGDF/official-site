@@ -13,16 +13,22 @@ module Admin
     end
 
     def create
-      @sponsor = Sponsor.new(sponsor_params)
-      return redirect_to admin_sponsors_path if @sponsor.save
-      render :new
+      Mobility.with_locale(admin_current_resource_locale) do
+        @sponsor = Sponsor.new(sponsor_params)
+        return redirect_to admin_sponsors_path if @sponsor.save
+        render :new
+      end
     end
 
     def edit; end
 
     def update
-      return redirect_to admin_sponsors_path if @sponsor.update(sponsor_params)
-      render :edit
+      Mobility.with_locale(admin_current_resource_locale) do
+        if @sponsor.update(sponsor_params)
+          return redirect_to admin_sponsors_path
+        end
+        render :edit
+      end
     end
 
     def destroy
@@ -38,7 +44,7 @@ module Admin
 
     def sponsor_params
       params.require(:sponsor).permit(
-        :name, :logo, :remove_logo, :level_id, :url, :locale
+        :name, :logo, :remove_logo, :level_id, :url
       )
     end
   end

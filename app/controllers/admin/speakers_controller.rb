@@ -13,16 +13,22 @@ module Admin
     end
 
     def create
-      @speaker = Speaker.new(speaker_params)
-      return redirect_to admin_speakers_path if @speaker.save
-      render :new
+      Mobility.with_locale(admin_current_resource_locale) do
+        @speaker = Speaker.new(speaker_params)
+        return redirect_to admin_speakers_path if @speaker.save
+        render :new
+      end
     end
 
     def edit; end
 
     def update
-      return redirect_to admin_speakers_path if @speaker.update(speaker_params)
-      render :edit
+      Mobility.with_locale(admin_current_resource_locale) do
+        if @speaker.update(speaker_params)
+          return redirect_to admin_speakers_path
+        end
+        render :edit
+      end
     end
 
     def destroy
@@ -39,7 +45,7 @@ module Admin
     def speaker_params
       params
         .require(:speaker)
-        .permit(:name, :description, :avatar, :remove_avatar, :locale)
+        .permit(:name, :description, :avatar, :remove_avatar)
     end
   end
 end

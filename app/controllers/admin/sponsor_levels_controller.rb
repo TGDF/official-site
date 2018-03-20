@@ -13,18 +13,22 @@ module Admin
     end
 
     def create
-      @level = SponsorLevel.new(sponsor_level_params)
-      return redirect_to admin_sponsor_levels_path if @level.save
-      render :new
+      Mobility.with_locale(admin_current_resource_locale) do
+        @level = SponsorLevel.new(sponsor_level_params)
+        return redirect_to admin_sponsor_levels_path if @level.save
+        render :new
+      end
     end
 
     def edit; end
 
     def update
-      if @level.update(sponsor_level_params)
-        return redirect_to admin_sponsor_levels_path
+      Mobility.with_locale(admin_current_resource_locale) do
+        if @level.update(sponsor_level_params)
+          return redirect_to admin_sponsor_levels_path
+        end
+        render :edit
       end
-      render :edit
     end
 
     def destroy
@@ -39,7 +43,7 @@ module Admin
     end
 
     def sponsor_level_params
-      params.require(:sponsor_level).permit(:name, :locale)
+      params.require(:sponsor_level).permit(:name)
     end
   end
 end
