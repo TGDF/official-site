@@ -10,6 +10,5 @@
         - if @news.thumbnail.present?
           = image_tag @news.thumbnail_url(:thumb)
           = f.input :remove_thumbnail, as: :boolean
-      = f.hidden_field :locale, value: admin_current_resource_locale
     = admin_box_footer do
       = f.submit class: 'btn btn-primary'

@@ -24,6 +24,10 @@ module Tgdf
     config.load_defaults 5.1
 
     config.i18n.default_locale = :'zh-TW'
+    config.i18n.available_locales = [
+      :'zh-TW',
+      :en
+    ]
 
     # Don't generate system test files.
     config.generators do |g|

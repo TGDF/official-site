@@ -2,11 +2,6 @@
 
 module Admin
   module PageHelper
-    def admin_current_resource_locale
-      ([params[:resource_locale]] & available_locales).first ||
-        I18n.default_locale.to_s
-    end
-
     def admin_page_header(title, description = nil)
       content_tag :section, class: 'content-header' do
         content_tag :h1 do
@@ -37,8 +32,8 @@ module Admin
 
     def admin_locale_navtab
       admin_navtab_nav do
-        available_locales.each do |locale|
-          concat admin_locale_navtab_item(locale)
+        I18n.available_locales.each do |locale|
+          concat admin_locale_navtab_item(locale.to_s)
         end
       end
     end

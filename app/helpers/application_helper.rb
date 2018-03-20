@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
-  # TODO: Replace with I18n.available_locales
-  def available_locales
-    Settings.locales
-  end
-
   def render_breadcrumb
     return if current_path_under?(root_path)
     render 'shared/breadcrumb'

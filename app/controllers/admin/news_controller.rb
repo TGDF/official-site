@@ -16,7 +16,7 @@ module Admin
     end
 
     def create
-      Mobility.with_locale(news_locale) do
+      Mobility.with_locale(admin_current_resource_locale) do
         @news = News.new(news_params)
         @news.author = current_admin_user
         return redirect_to admin_news_index_path if @news.save
@@ -27,7 +27,7 @@ module Admin
     def edit; end
 
     def update
-      Mobility.with_locale(news_locale) do
+      Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to admin_news_index_path if @news.update(news_params)
         render :edit
       end
@@ -54,13 +54,6 @@ module Admin
           :title, :slug, :status, :thumbnail, :remove_thumbnail,
           :content
         )
-    end
-
-    def news_locale
-      params
-        .require(:news)
-        .fetch(:locale, I18n.default_locale)
-        .to_sym
     end
   end
 end

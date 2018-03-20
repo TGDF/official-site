@@ -16,7 +16,8 @@ class ApplicationController < ActionController::Base
   end
 
   def current_locale
-    ([params[:locale]] & Settings.locales).first || I18n.default_locale.to_s
+    (([params[:locale]&.to_sym] & I18n.available_locales).first ||
+     I18n.default_locale).to_s
   end
 
   private
