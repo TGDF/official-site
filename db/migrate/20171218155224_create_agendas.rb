@@ -1,8 +1,8 @@
 class CreateAgendas < ActiveRecord::Migration[5.1]
   def change
     create_table :agendas do |t|
-      t.string :subject
-      t.text :description
+      t.jsonb :subject, default: {}
+      t.jsonb :description, default: {}
 
       t.timestamps
     end

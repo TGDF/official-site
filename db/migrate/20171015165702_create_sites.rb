@@ -2,7 +2,7 @@ class CreateSites < ActiveRecord::Migration[5.1]
   def change
     create_table :sites do |t|
       t.string :domain, null: false
-      t.string :name, null: false
+      t.jsonb :name, default: {}
 
       t.timestamps
     end

@@ -36,27 +36,16 @@ ActiveRecord::Schema.define(version: 20180311161304) do
     t.index ["unlock_token"], name: "index_admin_users_on_unlock_token", unique: true
   end
 
-  create_table "agenda_translations", force: :cascade do |t|
-    t.integer "agenda_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "subject"
-    t.text "description"
-    t.index ["agenda_id"], name: "index_agenda_translations_on_agenda_id"
-    t.index ["locale"], name: "index_agenda_translations_on_locale"
-  end
-
   create_table "agendas", force: :cascade do |t|
-    t.string "subject"
-    t.text "description"
+    t.jsonb "subject", default: {}
+    t.jsonb "description", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "news", force: :cascade do |t|
-    t.string "title"
-    t.text "content"
+    t.jsonb "title", default: {}
+    t.jsonb "content", default: {}
     t.string "author_type"
     t.bigint "author_id"
     t.string "slug", null: false
@@ -69,45 +58,14 @@ ActiveRecord::Schema.define(version: 20180311161304) do
     t.index ["status"], name: "index_news_on_status"
   end
 
-  create_table "news_translations", force: :cascade do |t|
-    t.integer "news_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "title"
-    t.text "content"
-    t.index ["locale"], name: "index_news_translations_on_locale"
-    t.index ["news_id"], name: "index_news_translations_on_news_id"
-  end
-
-  create_table "partner_translations", force: :cascade do |t|
-    t.integer "partner_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name"
-    t.index ["locale"], name: "index_partner_translations_on_locale"
-    t.index ["partner_id"], name: "index_partner_translations_on_partner_id"
-  end
-
-  create_table "partner_type_translations", force: :cascade do |t|
-    t.integer "partner_type_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name"
-    t.index ["locale"], name: "index_partner_type_translations_on_locale"
-    t.index ["partner_type_id"], name: "index_partner_type_translations_on_partner_type_id"
-  end
-
   create_table "partner_types", force: :cascade do |t|
-    t.string "name"
+    t.jsonb "name", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "partners", force: :cascade do |t|
-    t.string "name"
+    t.jsonb "name", default: {}
     t.string "logo"
     t.bigint "type_id"
     t.datetime "created_at", null: false
@@ -118,62 +76,31 @@ ActiveRecord::Schema.define(version: 20180311161304) do
 
   create_table "sites", force: :cascade do |t|
     t.string "domain", null: false
-    t.string "name", null: false
+    t.jsonb "name", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "tenant_name"
-    t.text "description"
+    t.jsonb "description", default: {}
     t.index ["domain"], name: "index_sites_on_domain"
     t.index ["tenant_name"], name: "index_sites_on_tenant_name"
   end
 
-  create_table "speaker_translations", force: :cascade do |t|
-    t.integer "speaker_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name"
-    t.text "description"
-    t.index ["locale"], name: "index_speaker_translations_on_locale"
-    t.index ["speaker_id"], name: "index_speaker_translations_on_speaker_id"
-  end
-
   create_table "speakers", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
+    t.jsonb "name", default: {}
+    t.jsonb "description", default: {}
     t.string "avatar"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "sponsor_level_translations", force: :cascade do |t|
-    t.integer "sponsor_level_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name"
-    t.index ["locale"], name: "index_sponsor_level_translations_on_locale"
-    t.index ["sponsor_level_id"], name: "index_sponsor_level_translations_on_sponsor_level_id"
-  end
-
   create_table "sponsor_levels", force: :cascade do |t|
-    t.string "name"
+    t.jsonb "name", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "sponsor_translations", force: :cascade do |t|
-    t.integer "sponsor_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name"
-    t.index ["locale"], name: "index_sponsor_translations_on_locale"
-    t.index ["sponsor_id"], name: "index_sponsor_translations_on_sponsor_id"
   end
 
   create_table "sponsors", force: :cascade do |t|
-    t.string "name"
+    t.jsonb "name", default: {}
     t.string "logo"
     t.string "url"
     t.bigint "level_id"

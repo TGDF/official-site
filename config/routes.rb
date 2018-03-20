@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   # Devise
   devise_for :admin_users, path: :admin
 
-  scope '(:locale)', locale: /#{Settings.locales.join('|')}/ do
+  scope '(:locale)', locale: /#{I18n.available_locales.join('|')}/ do
     root to: 'pages#index'
     resources :news, only: %i[index show]
   end

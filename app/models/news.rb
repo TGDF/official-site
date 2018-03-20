@@ -3,9 +3,6 @@
 class News < ApplicationRecord
   belongs_to :author, polymorphic: true
 
-  # FIXME: If globalize for rails 5 is ready, prevent to add `attribute`
-  attribute :title
-  attribute  :content
   translates :title, :content
 
   mount_uploader :thumbnail, ThumbnailUploader
