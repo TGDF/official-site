@@ -16,7 +16,7 @@ module Admin
     end
 
     def create
-      Mobility.with_locale(admin_current_resource_locale) do
+      Mobility.with_locale(I18n.default_locale) do
         @news = News.new(news_params)
         @news.author = current_admin_user
         return redirect_to admin_news_index_path if @news.save

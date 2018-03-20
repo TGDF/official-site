@@ -13,7 +13,7 @@ module Admin
     end
 
     def create
-      Mobility.with_locale(admin_current_resource_locale) do
+      Mobility.with_locale(I18n.default_locale) do
         @level = SponsorLevel.new(sponsor_level_params)
         return redirect_to admin_sponsor_levels_path if @level.save
         render :new

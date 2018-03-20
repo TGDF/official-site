@@ -13,7 +13,7 @@ module Admin
     end
 
     def create
-      Mobility.with_locale(admin_current_resource_locale) do
+      Mobility.with_locale(I18n.default_locale) do
         @agenda = Agenda.new(agenda_params)
         return redirect_to admin_agendas_path if @agenda.save
         render :new
