@@ -69,7 +69,7 @@ group :development, :test do
   gem 'faker'
   gem 'fuubar'
   gem 'rspec-rails'
-  gem 'shoulda'
+  gem 'shoulda', '~> 3.5.0'
   gem 'shoulda-matchers'
   gem 'simplecov', require: false
 
