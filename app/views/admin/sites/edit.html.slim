@@ -2,6 +2,7 @@
 .content
   .row
     .col-md-12
-      = admin_box do
-        = admin_box_header t('.update'), class: 'with-border'
+      = admin_navtab_box do
+        / TODO: Add customize header
+        = admin_locale_navtab
         = render 'form'

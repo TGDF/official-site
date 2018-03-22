@@ -13,7 +13,7 @@ module Admin
     end
 
     def create
-      Mobility.with_locale(admin_current_resource_locale) do
+      Mobility.with_locale(I18n.default_locale) do
         @type = PartnerType.create(partner_type_params)
         return redirect_to admin_partner_types_path if @type.save
         render :new

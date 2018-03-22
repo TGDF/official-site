@@ -22,7 +22,7 @@ module TenantSite
   def default_site
     Site.new(
       domain: Settings.site.default_domain,
-      name: Settings.site.name,
+      name: I18n.t('site_name'),
       tenant_name: 'public'
     )
   end

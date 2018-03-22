@@ -2,22 +2,14 @@
 
 class ApplicationController < ActionController::Base
   include TenantSite
+  include Localizable
 
   protect_from_forgery with: :exception
 
   layout :layout_by_resource
 
-  before_action :set_locale
-
-  helper_method :current_locale
-
   def default_url_options(options = {})
-    { locale: cookies[:locale] }.merge(options)
-  end
-
-  def current_locale
-    (([params[:locale]&.to_sym] & I18n.available_locales).first ||
-     I18n.default_locale).to_s
+    { lang: current_locale }.merge(options)
   end
 
   private
@@ -34,11 +26,5 @@ class ApplicationController < ActionController::Base
 
   def admin_portal?
     params[:controller].start_with?('admin/')
-  end
-
-  def set_locale
-    cookies[:locale] = current_locale if params[:locale]
-    cookies.delete(:locale) if params[:locale] == I18n.default_locale.to_s
-    I18n.locale = cookies[:locale] || current_locale
   end
 end
