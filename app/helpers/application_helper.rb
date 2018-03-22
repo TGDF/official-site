@@ -2,7 +2,8 @@
 
 module ApplicationHelper
   def render_breadcrumb
-    return if current_path_under?(root_path)
+    return if current_page?(root_path)
+    return if current_page?('/')
     render 'shared/breadcrumb'
   end
 
