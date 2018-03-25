@@ -64,7 +64,7 @@ group :development, :test do
 
   gem 'dotenv-rails'
 
-  gem 'coveralls', require: false
+  gem 'coveralls', '~> 0.8.2', require: false
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'fuubar'
