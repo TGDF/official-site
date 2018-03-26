@@ -8,7 +8,9 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import blogSlider from './blog_slider';
+import initHomeSlider from './home_slider';
 
 document.addEventListener('turbolinks:load', function() {
   blogSlider();
+  initHomeSlider();
 });
