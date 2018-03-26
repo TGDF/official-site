@@ -8,3 +8,59 @@ body {
 .mainmenu-area.stricky {
   border-bottom: none;
 }
+
+.rev_slider {
+  .owl-theme {
+    .owl-nav {
+      width: 100%;
+
+      position: absolute;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      [class*=owl-] {
+        width: 60px;
+        height: 60px;
+
+        position: absolute;
+
+        padding: 10px;
+        margin: 0;
+
+        background: #FFF;
+
+        border-radius: 0;
+        box-sizing: border-box;
+
+        box-shadow: 0 0 2px 2px rgba(0, 0, 0, .05);
+
+        transition: all .3s;
+
+        &:hover {
+          background: rgba(255, 255, 255, .75);
+
+          span {
+            transform: scale(1.5);
+          }
+        }
+
+        span {
+          color: black;
+          font-size: 15px;
+          line-height: 40px;
+
+          transition: all .3s;
+        }
+      }
+    }
+
+    .owl-prev {
+      left: 0;
+    }
+
+    .owl-next {
+      right: 0;
+    }
+  }
+}

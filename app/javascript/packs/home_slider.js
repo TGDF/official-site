@@ -1,5 +1,5 @@
-export default function() {
-  const $el = $('.blog-carousel');
+export default function initHomeSlider() {
+  const $el = $("#rev_slider_one ul");
   if($el.length) {
     const childCount = $el.children().length;
 
