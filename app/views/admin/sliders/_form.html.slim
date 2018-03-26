@@ -1,0 +1,8 @@
+= simple_form_for [:admin, @slider] do |f|
+  = admin_box_body do
+    = f.input :image do
+      = f.input_field :image
+      -if @slider.image.present?
+        = image_tag @slider.image_url(:thumb)
+  = admin_box_footer do
+    = f.submit class: 'btn btn-primary'
