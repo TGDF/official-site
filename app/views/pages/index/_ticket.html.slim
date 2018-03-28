@@ -5,23 +5,16 @@ section.pricing-plan-area
         h2 = t('.get_tickets')
       h1 = t('.get_tickets')
     .row
-      - ['Bronze', 'Sliver', 'Gloden'].each do |plan|
+      - Settings.ticket.types.each do |plan|
           .col-lg-4.col-md-4.col-sm-12.col-xs-12.text-center
             .single-price-box
               .table-header
                 .top
-                  h3 #{plan.titleize} Plan
+                  h3 = t("ticket.type.#{plan}")
                 .package
                   h1
                     b NTD $
                     | &nbsp;1000
-                  h3 Attend Only First Day
-              .price-list
-                ul
-                  li.gray-bg Conference Seats
-                  li Free Lunch and Snacks
-                  li.gray-bg Custom Badge
-                  li Paid Certificate
-                  li.gray-bg Day One Workshop
+                  h3 = t("ticket.description.#{plan}")
               .table-footer
-                a.thm-btn.gra[href="#"] Buy Ticket
+                a.thm-btn.gra[href="#"] = t('ticket.buy_now')

@@ -1,6 +1,7 @@
 @import 'evento';
 @import 'responsive';
 
+// FIXME: Below are monkey patch, should fixed in next year
 body {
   padding-top: 100px;
 }
@@ -69,4 +70,8 @@ body {
   a {
     color: #ea531c;
   }
+}
+
+.pricing-plan-area .single-price-box .table-header .package h3 {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }

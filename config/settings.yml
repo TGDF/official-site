@@ -4,6 +4,11 @@ default: &default
   news:
     latest:
       size: <%= (ENV['NEWS_LATEST_SIZE'] || 5).to_i %>
+  ticket:
+    types:
+      - personal
+      - group
+      - student
 
 development:
   <<: *default
