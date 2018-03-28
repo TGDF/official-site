@@ -10,4 +10,6 @@
           li
             = image_tag slider.image_url(:large)
 = render 'pages/index/about'
+/ TODO: Refactor - show ticket information only per-year sites
+= render 'pages/index/ticket' unless current_site.new_record?
 = render 'pages/index/news'
