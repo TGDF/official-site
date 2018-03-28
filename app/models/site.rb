@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Site < ApplicationRecord
+  include Site::HasTicketOptions
+
   translates :name, :description
 
   mount_uploader :logo, SiteLogoUploader
