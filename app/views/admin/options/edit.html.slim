@@ -1,0 +1,18 @@
+= admin_page_header t('.edit'), t('.edit_options')
+.content
+  .row
+    .col-md-12
+      = admin_box do
+        = simple_form_for current_site, url: admin_options_path do |f|
+          = admin_box_header t('.edit_options')
+          = admin_box_body do
+            = f.input :ticket_early_personal_price, as: :integer
+            = f.input :ticket_personal_price, as: :integer
+            = f.input :ticket_early_group_price, as: :integer
+            = f.input :ticket_group_price, as: :integer
+            = f.input :ticket_early_student_price, as: :integer
+            = f.input :ticket_student_price, as: :integer
+            = f.input :ticket_early_bird_due_to, as: :date
+            = f.input :ticket_buy_link
+          = admin_box_footer do
+            = f.submit class: 'btn btn-primary'

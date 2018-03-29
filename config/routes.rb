@@ -31,6 +31,10 @@ Rails.application.routes.draw do
     resources :speakers, except: :show
     resources :agendas, except: :show
 
+    constraints ->(req) { Apartment::Tenant.current != 'public' } do
+      resource :options, only: %w[edit update]
+    end
+
     constraints ->(_req) { Apartment::Tenant.current == 'public' } do
       resources :sites, except: :show
     end
