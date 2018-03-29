@@ -28,6 +28,16 @@ class Site
       def ticket_early_bird_due_to
         Time.zone.parse(super)
       end
+
+      def ticket_early_bird_due_to=(date)
+        date = case date
+               when Hash then date.values.join('-')
+               when Array then date.join('-')
+               else date
+               end
+        date = Time.zone.parse(date.to_s)
+        super
+      end
     end
   end
 end
