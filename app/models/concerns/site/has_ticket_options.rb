@@ -26,6 +26,7 @@ class Site
                 numericality: { allow_blank: true }
 
       def ticket_early_bird_due_to
+        return if super.nil?
         Time.zone.parse(super)
       end
 
