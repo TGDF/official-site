@@ -7,5 +7,6 @@
       = f.input :logo, as: :file
       = f.input :tenant_name if @site.new_record?
       = f.input :description, as: :text, input_html: { data: { editor: true }, rows: 20 }
+      = f.input :figure, as: :file
     = admin_box_footer do
       = f.submit class: 'btn btn-primary'
