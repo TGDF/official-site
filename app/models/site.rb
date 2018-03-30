@@ -6,6 +6,7 @@ class Site < ApplicationRecord
   translates :name, :description
 
   mount_uploader :logo, SiteLogoUploader
+  mount_uploader :figure, SiteFigureUploader
 
   validates :name, :domain, :tenant_name, presence: true
   validates :domain, format: /\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]+\z/ix

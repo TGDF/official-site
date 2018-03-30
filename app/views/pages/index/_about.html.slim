@@ -10,4 +10,4 @@ section.about-area.sec-pding
           = sanitize current_site.description || t('site_introduce')
       .col-md-6
         .img-holder
-          = image_tag('about/about-img.jpg')
+          = image_tag current_site.figure_url
