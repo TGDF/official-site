@@ -15,5 +15,10 @@ section.pricing-plan-area
                   h1
                     b NTD $ #{ticket_price_for(plan)}
                   h3 = t("ticket.description.#{plan}")
+              .price-list
+                ul
+                  li.gray-bg = t("ticket.info.#{plan}.origin_price", price: ticket_price_for(plan, false))
+                  li = t("ticket.info.#{plan}.early_bird_price", price: ticket_price_for(plan, false), date: l(current_site.ticket_early_bird_due_to.to_date, format: :long))
+                  = ticket_others_info_for(plan)
               .table-footer
                 = link_to t('ticket.buy_now'), current_site.ticket_buy_link, class: 'thm-btn gra', target: '_blank'
