@@ -19,18 +19,16 @@ zh-TW:
     buy_now: 立即購票
     info:
       student:
-        origin_price: 原始票價為 NTD $%{price}
-        early_bird_price: 到 %{date}前早鳥票為 NTD $%{price}
+        origin_price: 原價為 NTD $%{price}
+        early_bird_price: 早鳥票優惠至 %{date} 截止
         others:
-          - 其他說明
-          - 其他說明
       group:
-        origin_price: 原始票價為 NTD $%{price}
-        early_bird_price: 到 %{date}前早鳥票為 NTD $%{price}
+        origin_price: 原價為 NTD $%{price}
+        early_bird_price: 早鳥票優惠至 %{date} 截止
         others:
       personal:
-        origin_price: 原始票價為 NTD $%{price}
-        early_bird_price: 到 %{date}前早鳥票為 NTD $%{price}
+        origin_price: 原價為 NTD $%{price}
+        early_bird_price: 早鳥票優惠至 %{date} 截止
         others:
   locale:
     name:
