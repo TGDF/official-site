@@ -1,2 +1,59 @@
 en:
-  site_name: Taipei Game Developer Forum
+  site_name: Taipei Game Developers Forum
+  site_introduce:
+    >
+      <p>English introduction</p>
+      <p>(To be added.)</p>
+  ticket:
+    type:
+      student: Student Pass
+      group: Group Pass
+      personal: Individual Pass
+    description:
+      student: Relevant student ID checking on-site required.
+      group: Any group with at least 2 people is eligible.
+      personal: Access to all sessions for one person. 
+    early_bird: Early Bird
+    buy_now: Register
+    info:
+      student:
+        origin_price: Full price NTD $%{price}
+        early_bird_price: Early Bird period ends on %{date}
+        others:
+      group:
+        origin_price: Full price NTD $%{price}
+        early_bird_price: Early Bird period ends on %{date}
+        others:
+      personal:
+        origin_price: Full price NTD $%{price}
+        early_bird_price: Early Bird period ends on %{date}
+        others:
+  locale:
+    name:
+      zh-TW: 繁體中文
+      en: English
+  shared:
+    nav:
+      home: Home
+      news: News
+      buy_ticket: Register
+  pages:
+    index:
+      about:
+        know: About <span>%{site_name}</span>
+      news:
+        latest_news: Latest news
+        read_more: Learn more
+      ticket:
+        get_tickets: Passes & Prices
+  news:
+    index:
+      title: News
+    show:
+      latest_news: News
+    news:
+      read_more: Learn more
+  admin_users:
+    sessions:
+      new:
+        hint: Sign in to start your session
