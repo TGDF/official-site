@@ -75,3 +75,15 @@ body {
 .pricing-plan-area .single-price-box .table-header .package h3 {
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
+
+@media only screen and (max-width: 767px) {
+  body {
+    padding-top: 80px;
+  }
+}
+
+@media only screen and (max-width: 991px) and (min-width: 768px) {
+  body {
+    padding-top: 135px;
+  }
+}
