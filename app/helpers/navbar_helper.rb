@@ -24,4 +24,12 @@ module NavbarHelper
       link_to name, path, options
     end
   end
+
+  def language_toggle_button
+    target_language = (current_locale || :'zh-TW') == :'zh-TW' ? :en : :'zh-TW'
+    content_tag :div, class: 'language-toggler' do
+      link_to t("locale.name.#{target_language}"),
+              url_for(lang: target_language)
+    end
+  end
 end
