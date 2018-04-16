@@ -10,7 +10,7 @@ module TenantSite
 
   def current_site
     return default_site unless tenant_site?
-    Site.find_by(tenant_name: Apartment::Tenant.current)
+    @current_site ||= Site.find_by(tenant_name: Apartment::Tenant.current)
   end
 
   def tenant_site?

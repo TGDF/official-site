@@ -16,5 +16,6 @@ section.mainmenu-area.stricky.stricky-fixed
               = nav_item t('.home'), root_path
               = nav_item t('.news'), news_index_path
         .mainmenu-right-box.pull-right
+          = language_toggle_button
           .buy-ticket-button
             = link_to t('.buy_ticket'), root_path, class: 'thm-btn'
