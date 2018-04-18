@@ -5,7 +5,14 @@ module Localizable
 
   included do
     before_action :set_locale
+    before_action :rewrite_locale_path
     helper_method :current_locale
+  end
+
+  def rewrite_locale_path
+    return unless request.path =~ /zh-TW/
+    # NOTE: turbolinks-rails didn't rewrite url for now
+    redirect_to url_for(lang: nil)
   end
 
   def current_locale

@@ -76,9 +76,25 @@ body {
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
+.language-toggler {
+  float: right;
+
+  margin: 26px 0;
+  padding-left:20px;
+  line-height: 48px;
+}
+
 @media only screen and (max-width: 767px) {
   body {
     padding-top: 80px;
+  }
+
+  .buy-ticket-button {
+    display: none;
+  }
+
+  .language-toggler {
+    margin: 16px 0;
   }
 }
 
@@ -87,3 +103,4 @@ body {
     padding-top: 135px;
   }
 }
+
