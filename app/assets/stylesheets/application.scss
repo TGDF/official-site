@@ -104,3 +104,20 @@ body {
   }
 }
 
+.text-holder {
+  ul, ol {
+    padding-left: 40px;
+  }
+
+  ul {
+    list-style: initial;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li {
+    list-style: inherit;
+  }
+}
