@@ -18,7 +18,7 @@ class SiteFigureUploader < CarrierWave::Uploader::Base
   process resize_to_fill: [570, 360]
 
   def extension_whitelist
-    %w[png]
+    %w[png jpg jpeg]
   end
 
   def filename
