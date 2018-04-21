@@ -52,6 +52,7 @@ gem 'slim-rails'
 
 # Utilities
 gem 'carrierwave', '~> 1.2'
+gem 'gretel'
 gem 'mini_magick'
 gem 'oj'
 gem 'rollbar'

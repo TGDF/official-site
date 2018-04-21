@@ -5,15 +5,22 @@ section.breadcrumb-area[style="background-image: url(#{content_for :page_banner}
         .breadcrumbs
           h1 = content_for(:page_title)
 
-/ TODO: Render real breadcrumb
-section.breadcrumb-bottom-area
-  .container
-    .row
-      .col-md-12
-        .breadcrumb-bottom
-          .left.pull-left
-            ul
-              li = link_to 'Home', root_path
-              li
-                i.fa.fa-angle-right
-              li.active = content_for(:page_title)
+- breadcrumbs.tap do |links|
+  - if links.any?
+    section.breadcrumb-bottom-area
+      .container
+        .row
+          .col-md-12
+            .breadcrumb-bottom
+              .left.pull-left
+                / TODO: Refactor after renew theme
+                ul
+                  - links.each_with_index do |link, index|
+                    li[class="#{link.current? ? "active" : nil}"]
+                      - if link.current?
+                        = link.text
+                      - else
+                        = link_to link.text, link.url
+                    - unless index + 1 == links.size
+                      li
+                        i.fa.fa-angle-right
