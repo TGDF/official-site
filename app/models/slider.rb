@@ -3,5 +3,12 @@
 class Slider < ApplicationRecord
   mount_uploader :image, SliderUploader
 
-  validates :image, presence: true
+  enum language: {
+    'zh-TW': 0,
+    en: 1
+  }
+
+  validates :image, :language, presence: true
+
+  scope :localized, -> { where(language: I18n.locale) }
 end
