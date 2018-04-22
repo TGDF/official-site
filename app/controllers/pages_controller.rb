@@ -4,6 +4,6 @@ class PagesController < ApplicationController
   def index
     @news = News.published.latest
                 .limit(Settings.news.latest.size)
-    @sliders = Slider.all
+    @sliders = Slider.localized
   end
 end
