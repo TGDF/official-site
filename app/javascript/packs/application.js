@@ -14,3 +14,8 @@ document.addEventListener('turbolinks:load', function() {
   blogSlider();
   initHomeSlider();
 });
+
+document.addEventListener('turbolinks:before-cache', function() {
+  $("#rev_slider_one ul").trigger('destroy.owl.carousel').find('.owl-stage-outer').children().unwrap();;
+  $(".blog-carousel").trigger('destroy.owl.carousel').find('.owl-stage-outer').children().unwrap();;
+});
