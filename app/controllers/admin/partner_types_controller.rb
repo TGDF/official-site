@@ -43,7 +43,7 @@ module Admin
     end
 
     def partner_type_params
-      params.require(:partner_type).permit(:name)
+      params.require(:partner_type).permit(:name, :order)
     end
   end
 end

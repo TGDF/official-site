@@ -4,6 +4,7 @@
       = f.input :name, as: :string
       = f.input :url
       = f.association :type
+      = f.input :order
       = f.input :logo do
         = f.input_field :logo
         -if @partner.logo.present?
