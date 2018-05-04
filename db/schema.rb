@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180422041752) do
+ActiveRecord::Schema.define(version: 20180504141403) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(version: 20180422041752) do
     t.jsonb "name", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "order", default: 0
   end
 
   create_table "partners", force: :cascade do |t|
@@ -71,6 +72,7 @@ ActiveRecord::Schema.define(version: 20180422041752) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "url"
+    t.integer "order", default: 0
     t.index ["type_id"], name: "index_partners_on_type_id"
   end
 

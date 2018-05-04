@@ -2,5 +2,6 @@
   = simple_form_for [:admin, @type] do |f|
     = admin_box_body do
       = f.input :name, as: :string
+      = f.input :order
     = admin_box_footer do
       = f.submit class: 'btn btn-primary'
