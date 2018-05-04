@@ -8,4 +8,6 @@ class Sponsor < ApplicationRecord
   mount_uploader :logo, LogoUploader
 
   validates :name, :logo, presence: true
+
+  default_scope -> { order(order: :asc) }
 end
