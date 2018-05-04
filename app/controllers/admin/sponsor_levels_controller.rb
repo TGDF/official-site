@@ -43,7 +43,7 @@ module Admin
     end
 
     def sponsor_level_params
-      params.require(:sponsor_level).permit(:name)
+      params.require(:sponsor_level).permit(:name, :order)
     end
   end
 end
