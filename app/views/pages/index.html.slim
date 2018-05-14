@@ -13,3 +13,4 @@
 / TODO: Refactor - show ticket information only per-year sites
 = render 'pages/index/ticket' unless current_site.new_record?
 = render 'pages/index/news'
+= render 'pages/index/partner' if Partner.any?
