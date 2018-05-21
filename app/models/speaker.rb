@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Speaker < ApplicationRecord
-  translates :name, :description
+  translates :name, :title, :description
 
   mount_uploader :avatar, AvatarUploader
 
