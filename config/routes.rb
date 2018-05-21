@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   scope '(:lang)', lang: /#{I18n.available_locales.join('|')}/ do
     root to: 'pages#index'
     resources :news, only: %i[index show]
+    resources :speakers, only: %i[index show]
   end
 
   namespace :admin do
