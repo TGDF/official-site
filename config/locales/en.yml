@@ -12,7 +12,7 @@ en:
     description:
       student: Relevant student ID checking on-site required.
       group: Any group with at least 2 people is eligible.
-      personal: Access to all sessions for one person. 
+      personal: Access to all sessions for one person.
     early_bird: Early Bird
     buy_now: Register
     info:
@@ -36,6 +36,7 @@ en:
     nav:
       home: Home
       news: News
+      speakers: Speakers
       buy_ticket: Register
   pages:
     index:
@@ -53,6 +54,10 @@ en:
       latest_news: News
     news:
       read_more: Learn more
+  speakers:
+    index:
+      title: Speakers
+      speakers: Speakers
   admin_users:
     sessions:
       new:
