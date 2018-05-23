@@ -21,5 +21,5 @@ section.team-area-v2
                       p = truncate strip_tags(speaker.description), length: 150
 
             .text-holder.text-center
-              h3 = speaker.name
+              h3 = link_to speaker.name, speaker
               span = speaker.title

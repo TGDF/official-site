@@ -1,0 +1,19 @@
+- title @speaker.name
+- # TODO: Add banner config
+- breadcrumb :speaker, @speaker
+
+section.single-speaker-area
+  .container
+    .row
+      .col-md-12
+        .top-content
+          .row
+            .col-md-4
+              .img-holder = image_tag @speaker.avatar_url(:v1_large)
+            .col-md-8
+              .text-holder
+                .title
+                  h2 = @speaker.name
+                  span = @speaker.title
+                .text
+                  = sanitize @speaker.description
