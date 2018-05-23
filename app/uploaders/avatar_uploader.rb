@@ -15,11 +15,13 @@ class AvatarUploader < CarrierWave::Uploader::Base
       "/#{mounted_as}/#{model.id}"
   end
 
-  process resize_to_fit: [400, 400]
+  version :v1 do
+    process resize_to_fill: [270, 260]
+  end
 
-  # version :thumb do
-  #   process resize_to_fit: [50, 50]
-  # end
+  version :v1_large do
+    process resize_to_fill: [370, 290]
+  end
 
   # Add a white list of extensions which are allowed to be uploaded.
   # For images you might use something like this:

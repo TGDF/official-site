@@ -1,0 +1,25 @@
+- title t('.title')
+- breadcrumb :speakers
+/ TODO: Set page banner
+
+section.team-area-v2
+  .container
+    .sec-title.text-center
+      .underlay.text-center
+        h2 = t('.speakers')
+      h1 = t('.speakers')
+    .row
+      - @speakers.each do |speaker|
+        .col-lg-3.col-md-6.col-sm-6.col-xs-12
+          .single-team-member
+            .img-holder
+              = image_tag speaker.avatar_url(:v1)
+              .overlay-style-one
+                .box
+                  .content
+                    .text
+                      p = truncate strip_tags(speaker.description), length: 150
+
+            .text-holder.text-center
+              h3 = link_to speaker.name, speaker
+              span = speaker.title

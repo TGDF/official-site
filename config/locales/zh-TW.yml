@@ -38,6 +38,7 @@ zh-TW:
     nav:
       home: 首頁
       news: 新聞
+      speakers: 講者
       buy_ticket: 購票
   pages:
     index:
@@ -55,6 +56,10 @@ zh-TW:
       latest_news: 最新消息
     news:
       read_more: 了解更多
+  speakers:
+    index:
+      title: 講者
+      speakers: 講者列表
   admin_users:
     sessions:
       new:
