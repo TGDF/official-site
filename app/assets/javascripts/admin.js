@@ -14,4 +14,13 @@
 //= require turbolinks
 //= require jquery/dist/jquery
 //= require bootstrap/dist/js/bootstrap
+//= require select2
 //= require admin-lte/dist/js/adminlte
+
+$(document).on('turbolinks:load', function() {
+  $('.select2').select2({ theme: 'bootstrap' });
+});
+
+$(document).on('turbolinks:before-cache', function() {
+  $('.select2-hidden-accessible').select2('destroy');
+});
