@@ -58,6 +58,8 @@ en:
     index:
       title: Speakers
       speakers: Speakers
+    show:
+      sessions_by: "Sessions by %{speaker}"
   admin_users:
     sessions:
       new:

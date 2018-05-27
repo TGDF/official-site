@@ -17,3 +17,20 @@ section.single-speaker-area
                   span = @speaker.title
                 .text
                   = sanitize @speaker.description
+    .row
+      .col-md-12
+        .bottom-content
+            .title-two
+              h2 = t('.sessions_by', speaker: @speaker.name)
+              span.border
+            ul.schedule.mar-btm60
+              - @speaker.agendas.each do |agenda|
+                li.schedule-single
+                  .inner-content
+                    .left.pull-left
+                      .time
+                        span.flaticon-clock
+                        h2 TBA
+                      .title
+                        h3 = agenda.subject
+                        p = truncate strip_tags(agenda.description), length: 150

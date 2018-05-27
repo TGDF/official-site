@@ -43,7 +43,7 @@ module Admin
     def agenda_params
       params
         .require(:agenda)
-        .permit(:subject, :description)
+        .permit(:subject, :description, speaker_ids: [])
     end
   end
 end

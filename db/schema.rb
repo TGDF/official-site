@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180521144529) do
+ActiveRecord::Schema.define(version: 20180527122215) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,15 @@ ActiveRecord::Schema.define(version: 20180521144529) do
     t.jsonb "description", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "agendas_speakers", force: :cascade do |t|
+    t.bigint "agenda_id"
+    t.bigint "speaker_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agenda_id"], name: "index_agendas_speakers_on_agenda_id"
+    t.index ["speaker_id"], name: "index_agendas_speakers_on_speaker_id"
   end
 
   create_table "news", force: :cascade do |t|
@@ -124,6 +133,8 @@ ActiveRecord::Schema.define(version: 20180521144529) do
     t.index ["level_id"], name: "index_sponsors_on_level_id"
   end
 
+  add_foreign_key "agendas_speakers", "agendas"
+  add_foreign_key "agendas_speakers", "speakers"
   add_foreign_key "partners", "partner_types", column: "type_id"
   add_foreign_key "sponsors", "sponsor_levels", column: "level_id"
 end

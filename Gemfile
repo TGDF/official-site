@@ -47,6 +47,7 @@ gem 'omniauth-facebook'
 # Front End
 gem 'jquery-rails'
 gem 'mobility'
+gem 'select2-rails'
 gem 'simple_form'
 gem 'slim-rails'
 

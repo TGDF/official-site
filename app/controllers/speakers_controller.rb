@@ -6,6 +6,6 @@ class SpeakersController < ApplicationController
   end
 
   def show
-    @speaker = Speaker.find(params[:id])
+    @speaker = Speaker.includes(:agendas).find(params[:id])
   end
 end
