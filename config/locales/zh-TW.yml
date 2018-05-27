@@ -60,6 +60,8 @@ zh-TW:
     index:
       title: 講者
       speakers: 講者列表
+    show:
+      sessions_by: "%{speaker}的議程"
   admin_users:
     sessions:
       new:
