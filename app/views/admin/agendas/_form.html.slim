@@ -3,5 +3,6 @@
     = admin_box_body do
       = f.input :subject, as: :string
       = f.input :description, as: :text, input_html: { data: { editor: true }, rows: 20 }
+      = f.association :speakers
     = admin_box_footer do
       = f.submit class: 'btn btn-primary'
