@@ -1,6 +1,7 @@
 tr
   td = speaker.id
   td = speaker.name
+  td = speaker.order
   td
     .btn-group
       = link_to t('.edit'), edit_admin_speaker_path(speaker), class: 'btn btn-primary'

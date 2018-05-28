@@ -8,5 +8,7 @@ class Speaker < ApplicationRecord
   has_many :agendas_speakers, dependent: :destroy
   has_many :agendas, through: :agendas_speakers
 
+  default_scope -> { order(order: :asc) }
+
   validates :name, :description, :avatar, presence: true
 end
