@@ -45,7 +45,7 @@ module Admin
     def speaker_params
       params
         .require(:speaker)
-        .permit(:name, :title, :description, :avatar, :remove_avatar)
+        .permit(:name, :title, :description, :avatar, :remove_avatar, :order)
     end
   end
 end

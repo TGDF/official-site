@@ -3,6 +3,7 @@
     = admin_box_body do
       = f.input :name, as: :string
       = f.input :title, as: :string
+      = f.input :order
       = f.input :description, as: :text, input_html: { data: { editor: true }, rows: 20 }
       = f.input :avatar do
         = f.input_field :avatar
