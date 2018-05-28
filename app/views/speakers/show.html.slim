@@ -29,8 +29,8 @@ section.single-speaker-area
                   .inner-content
                     .left.pull-left
                       .time
-                        span.flaticon-clock
+                        span.fa.fa-clock-o[style="display: inline;"]
                         h2 TBA
                       .title
                         h3 = agenda.subject
-                        p = truncate strip_tags(agenda.description), length: 150
+                        = sanitize agenda.description
