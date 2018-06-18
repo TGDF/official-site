@@ -1,0 +1,9 @@
+tr
+  td = agenda_day.id
+  td = agenda_day.label
+  td = agenda_day.date
+  td
+    .btn-group
+      = link_to t('.edit'), edit_admin_agenda_day_path(agenda_day), class: 'btn btn-primary'
+      / TODO: Create helper
+      = link_to t('.destroy'), admin_agenda_day_path(agenda_day), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

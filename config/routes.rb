@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     resources :agendas, except: :show
     resources :rooms, except: :show
     resources :agenda_times, except: :show
+    resources :agenda_days, except: :show
 
     constraints ->(req) { Apartment::Tenant.current != 'public' } do
       resource :options, only: %w[edit update]
