@@ -1,0 +1,15 @@
+li.schedule-single
+  - if time_iteration.first?
+    .header
+      h3
+        span #{day.label} -
+        | &nbsp;#{day.date}
+  .inner-content
+    .left.pull-left
+      .time
+        span.flaticon-clock
+        h2 = time.label
+      .title
+        = link_to '#' do
+          h3 TODO
+        p TODO
