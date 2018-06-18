@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class AgendaTime < ApplicationRecord
-  has_many :agendas, dependent: :nullify
+  has_many :agendas, foreign_key: :time_id, dependent: :nullify,
+                     inverse_of: :time
   belongs_to :day, class_name: 'AgendaDay', inverse_of: :times
 
   validates :label, presence: true
