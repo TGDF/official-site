@@ -2,7 +2,7 @@
 
 class AgendaDay < ApplicationRecord
   has_many :times, class_name: 'AgendaTime', inverse_of: :day,
-                   dependent: :destroy
+                   dependent: :destroy, foreign_key: :day_id
 
   validates :label, presence: true
 
