@@ -20,9 +20,14 @@ RSpec.feature 'Admin::AgendaTimes', type: :feature do
   end
 
   describe '#new' do
+    before do
+      @agenda_day = create(:agenda_day)
+    end
+
     it 'can add new agenda_time' do
       visit new_admin_agenda_time_path
       fill_in 'agenda_time_label', with: 'Example'
+      select @agenda_day.name, from: 'agenda_time_day_id'
       click_button '新增Agenda time'
       expect(page).to have_content('Example')
     end
