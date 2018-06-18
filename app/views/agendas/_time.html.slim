@@ -1,0 +1,13 @@
+li.schedule-single
+  - if time_iteration.first?
+    .header
+      h3
+        span #{day.label} -
+        | &nbsp;#{day.date}
+  .inner-content
+    .left.col-md-2
+      .time
+        span.flaticon-clock
+        h2 = time.label
+    .right.col-md-10
+      = render partial: 'agenda', collection: time.agendas.sort{ |agenda| agenda.room.order }

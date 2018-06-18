@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     root to: 'pages#index'
     resources :news, only: %i[index show]
     resources :speakers, only: %i[index show]
+    resource :agenda, only: %i[show]
   end
 
   namespace :admin do

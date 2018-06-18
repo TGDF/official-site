@@ -121,3 +121,19 @@ body {
     list-style: inherit;
   }
 }
+
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .right a {
+  padding: 6px 15px 5px;
+}
+
+.single-speaker-area .bottom-content .schedule .schedule-single:hover .inner-content .right a {
+  background: transparent;
+  color: #8a8a8a;
+}
+
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .right a:hover {
+  background: #F18107;
+  color: #ffffff;
+}
+
+

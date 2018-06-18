@@ -1,0 +1,12 @@
+- title t('shared.nav.agenda')
+- # TODO: Add banner config
+- breadcrumb :agenda
+
+section.single-speaker-area.schedule-list-area
+  .container
+    .row
+      .col-md-12
+        .bottom-content
+          - @days.each do |day|
+            ul.schedule.mar-btm60
+              = render partial: 'time', collection: day.times, locals: { day: day }

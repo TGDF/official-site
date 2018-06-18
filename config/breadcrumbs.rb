@@ -19,3 +19,7 @@ crumb :speaker do |speaker|
   link speaker.name, speaker_path(speaker)
   parent :speakers
 end
+
+crumb :agenda do
+  link t('shared.nav.agenda'), agenda_path
+end
