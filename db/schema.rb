@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180618081616) do
+ActiveRecord::Schema.define(version: 20180618084920) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,6 +48,8 @@ ActiveRecord::Schema.define(version: 20180618081616) do
     t.integer "order", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "day_id"
+    t.index ["day_id"], name: "index_agenda_times_on_day_id"
   end
 
   create_table "agendas", force: :cascade do |t|
@@ -155,6 +157,7 @@ ActiveRecord::Schema.define(version: 20180618081616) do
     t.index ["level_id"], name: "index_sponsors_on_level_id"
   end
 
+  add_foreign_key "agenda_times", "agenda_days", column: "day_id"
   add_foreign_key "agendas_speakers", "agendas"
   add_foreign_key "agendas_speakers", "speakers"
   add_foreign_key "partners", "partner_types", column: "type_id"

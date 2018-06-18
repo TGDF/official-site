@@ -1,6 +1,7 @@
 = simple_form_for [:admin, @agenda_time] do |f|
   = admin_box_body do
     = f.input :label, as: :string
+    = f.association :day
     = f.input :order
   = admin_box_footer do
     = f.submit class: 'btn btn-primary'
