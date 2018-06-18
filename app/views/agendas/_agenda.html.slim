@@ -1,0 +1,7 @@
+.title
+  h3 = agenda.subject
+  p = agenda.room.name
+  p
+    - agenda.speakers.each do |speaker|
+      = link_to speaker.name, speaker
+      | &nbsp;

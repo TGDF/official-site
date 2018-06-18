@@ -2,6 +2,6 @@
 
 class AgendasController < ApplicationController
   def show
-    @days = AgendaDay.all.includes(:times)
+    @days = AgendaDay.all.includes(times: { agendas: %i[room speakers] })
   end
 end

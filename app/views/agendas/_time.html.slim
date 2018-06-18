@@ -5,11 +5,9 @@ li.schedule-single
         span #{day.label} -
         | &nbsp;#{day.date}
   .inner-content
-    .left.pull-left
+    .left.col-md-2
       .time
         span.flaticon-clock
         h2 = time.label
-      .title
-        = link_to '#' do
-          h3 TODO
-        p TODO
+    .right.col-md-10
+      = render partial: 'agenda', collection: time.agendas.sort{ |agenda| agenda.room.order }
