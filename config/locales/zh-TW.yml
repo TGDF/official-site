@@ -1,11 +1,7 @@
+---
 zh-TW:
   site_name: 台北遊戲開發者論壇
-  site_introduce:
-    >
-      <p>2017 年即將邁入第六屆的台北遊戲開發者論壇（TGDF，Taipei Game Developers Forum），為台灣最大型之年度專業遊戲論壇活動，每年吸引近千名海內外開發者共襄盛舉參加。</p>
-      <p>此活動曾經邀請過重量級遊戲開發講人士如「洛克人之父」稻船敬二、「紀念碑谷」製作人 Neil Mcfarland、VR 遊戲公司「Owlchemy Labs」創辦人 Alex Schwartz 等，亦有大量海內外深度遊戲設計、程式、美術專題講座與課程。自 2015 年起 TGDF 更加入 VR 體驗區、「TGDF Indie Space 獨立遊戲空間」展示區、以及商談媒合服務等。</p>
-      <p>今年 TGDF 預計將邀請擔任《Sega Rally》、《Rez》、《伊甸之子》及《Rez Infinite》的名製作人水口哲也、《世界二》OXON 執行長王樑華等人帶來精采分享外，更有《Voez》雷亞遊戲、《不思議迷宮》廈門青瓷數碼等海內外講師蒞臨演講。</p>
-      <p>在專業演講之外，本屆的 TGDF Indie Space 更將擴大規模，將開放給來自國內報名與海外邀請共五十餘組的獨立遊戲團隊進行展示，為遊戲開發同好提供一個公開的交流展示平台。此外，本屆亦增設商務媒合區，HR 人才招募區、VR 展示區等，希望以更多元的體驗內容，讓遊戲開發者滿載而歸。</p>
+  site_introduce: "<p>2017 年即將邁入第六屆的台北遊戲開發者論壇（TGDF，Taipei Game Developers Forum），為台灣最大型之年度專業遊戲論壇活動，每年吸引近千名海內外開發者共襄盛舉參加。</p> <p>此活動曾經邀請過重量級遊戲開發講人士如「洛克人之父」稻船敬二、「紀念碑谷」製作人 Neil Mcfarland、VR 遊戲公司「Owlchemy Labs」創辦人 Alex Schwartz 等，亦有大量海內外深度遊戲設計、程式、美術專題講座與課程。自 2015 年起 TGDF 更加入 VR 體驗區、「TGDF Indie Space 獨立遊戲空間」展示區、以及商談媒合服務等。</p> <p>今年 TGDF 預計將邀請擔任《Sega Rally》、《Rez》、《伊甸之子》及《Rez Infinite》的名製作人水口哲也、《世界二》OXON 執行長王樑華等人帶來精采分享外，更有《Voez》雷亞遊戲、《不思議迷宮》廈門青瓷數碼等海內外講師蒞臨演講。</p> <p>在專業演講之外，本屆的 TGDF Indie Space 更將擴大規模，將開放給來自國內報名與海外邀請共五十餘組的獨立遊戲團隊進行展示，為遊戲開發同好提供一個公開的交流展示平台。此外，本屆亦增設商務媒合區，HR 人才招募區、VR 展示區等，希望以更多元的體驗內容，讓遊戲開發者滿載而歸。</p>\n"
   ticket:
     type:
       student: 學生票
@@ -19,17 +15,17 @@ zh-TW:
     buy_now: 立即購票
     info:
       student:
-        origin_price: 原價為 NTD $%{price}
-        early_bird_price: 早鳥票優惠至 %{date} 截止
-        others:
+        origin_price: "原價為 NTD $%{price}"
+        early_bird_price: "早鳥票優惠至 %{date} 截止"
+        others: ~
       group:
-        origin_price: 原價為 NTD $%{price}
-        early_bird_price: 早鳥票優惠至 %{date} 截止
-        others:
+        origin_price: "原價為 NTD $%{price}"
+        early_bird_price: "早鳥票優惠至 %{date} 截止"
+        others: ~
       personal:
-        origin_price: 原價為 NTD $%{price}
-        early_bird_price: 早鳥票優惠至 %{date} 截止
-        others:
+        origin_price: "原價為 NTD $%{price}"
+        early_bird_price: "早鳥票優惠至 %{date} 截止"
+        others: ~
   locale:
     name:
       zh-TW: 繁體中文
@@ -44,7 +40,7 @@ zh-TW:
   pages:
     index:
       about:
-        know: 了解<span>%{site_name}</span>
+        know: "了解<span>%{site_name}</span>"
       news:
         latest_news: 最新<span>消息</span>
         read_more: 了解更多
@@ -66,4 +62,4 @@ zh-TW:
   admin_users:
     sessions:
       new:
-        hint: Sign in to start your session
+        hint: "Sign in to start your session"
