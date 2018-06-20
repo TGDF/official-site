@@ -10,4 +10,4 @@ li.schedule-single
         span.fa.fa-clock-o[style="display: inline;"]
         h2 = time.label
       .title
-        = render(partial: 'agenda', collection: time.agendas.sort{ |agenda| agenda.room.order }) || 'TBA'
+        = render(partial: 'agenda', collection: time.agendas.sort{ |agenda| agenda.room&.order || 0 }) || 'TBA'
