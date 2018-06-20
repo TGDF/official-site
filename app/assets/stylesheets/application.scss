@@ -135,6 +135,10 @@ body {
 
   h3 a {
     color: black;
+
+    &:hover {
+      color: #ea531c;
+    }
   }
 }
 
