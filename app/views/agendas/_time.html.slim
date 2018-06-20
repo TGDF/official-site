@@ -5,9 +5,9 @@ li.schedule-single
         span #{day.label} -
         | &nbsp;#{day.date}
   .inner-content
-    .left.col-md-2
+    .left
       .time
-        span.flaticon-clock
+        span.fa.fa-clock-o[style="display: inline;"]
         h2 = time.label
-    .right.col-md-10
-      = render partial: 'agenda', collection: time.agendas.sort{ |agenda| agenda.room.order }
+      .title
+        = render(partial: 'agenda', collection: time.agendas.sort{ |agenda| agenda.room.order }) || 'TBA'

@@ -126,9 +126,25 @@ body {
   padding: 6px 15px 5px;
 }
 
-.single-speaker-area .bottom-content .schedule .schedule-single:hover .inner-content .right a {
+.schedule-single .agenda {
+  margin-bottom: 1em;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h3 a {
+    color: black;
+  }
+}
+
+.single-speaker-area .bottom-content .schedule .schedule-single:hover {
   background: transparent;
-  color: #8a8a8a;
+
+  .inner-content .right a {
+    background: transparent;
+    color: #8a8a8a;
+  }
 }
 
 .single-speaker-area .bottom-content .schedule .schedule-single .inner-content .right a:hover {
@@ -136,4 +152,6 @@ body {
   color: #ffffff;
 }
 
-
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .left .time {
+  width: 255px;
+}
