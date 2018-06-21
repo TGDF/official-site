@@ -30,7 +30,7 @@ section.single-speaker-area
                     .left.pull-left
                       .time
                         span.fa.fa-clock-o[style="display: inline;"]
-                        h2 = agenda.time.name
+                        h2 = agenda.time&.name || 'TBA'
                       .title
                         h3 = agenda.subject
                         = sanitize agenda.description
