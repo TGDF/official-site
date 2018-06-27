@@ -23,3 +23,7 @@ end
 crumb :agenda do
   link t('shared.nav.agenda'), agenda_path
 end
+
+crumb :sponsors do
+  link t('shared.nav.sponsors'), sponsors_path
+end

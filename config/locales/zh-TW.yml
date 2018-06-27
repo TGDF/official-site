@@ -36,6 +36,7 @@ zh-TW:
       news: 新聞
       speakers: 講者
       agenda: 議程
+      sponsors: 合作夥伴
       buy_ticket: 購票
   pages:
     index:
@@ -59,6 +60,9 @@ zh-TW:
       speakers: 講者列表
     show:
       sessions_by: "%{speaker}的議程"
+  sponsors:
+    index:
+      title: 合作夥伴
   admin_users:
     sessions:
       new:

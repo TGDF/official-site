@@ -36,6 +36,7 @@ en:
       news: News
       speakers: Speakers
       agenda: Agenda
+      sponsors: Sponsors
       buy_ticket: Register
   pages:
     index:
@@ -59,6 +60,9 @@ en:
       speakers: Speakers
     show:
       sessions_by: "Sessions by %{speaker}"
+  sponsors:
+    index:
+      title: Sponsors
   admin_users:
     sessions:
       new:
