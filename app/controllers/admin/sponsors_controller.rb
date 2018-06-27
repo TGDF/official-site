@@ -44,7 +44,7 @@ module Admin
 
     def sponsor_params
       params.require(:sponsor).permit(
-        :name, :logo, :remove_logo, :level_id, :url, :order
+        :name, :logo, :remove_logo, :level_id, :url, :order, :description
       )
     end
   end

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     resources :news, only: %i[index show]
     resources :speakers, only: %i[index show]
     resource :agenda, only: %i[show]
+    resources :sponsors, only: %i[index]
   end
 
   namespace :admin do
