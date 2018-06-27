@@ -221,7 +221,7 @@ GEM
       childprocess (~> 0.6, >= 0.6.3)
       iniparse (~> 1.4)
     parallel (1.12.1)
-    parser (2.5.0.4)
+    parser (2.5.1.0)
       ast (~> 2.4.0)
     pg (0.21.0)
     pg (0.21.0-x64-mingw32)
