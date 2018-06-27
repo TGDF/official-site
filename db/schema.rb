@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180618130506) do
+ActiveRecord::Schema.define(version: 20180627040339) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(version: 20180618130506) do
     t.datetime "updated_at", null: false
     t.string "url"
     t.integer "order", default: 0
+    t.jsonb "description"
     t.index ["type_id"], name: "index_partners_on_type_id"
   end
 
@@ -158,6 +159,7 @@ ActiveRecord::Schema.define(version: 20180618130506) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "order", default: 0
+    t.jsonb "description"
     t.index ["level_id"], name: "index_sponsors_on_level_id"
   end
 

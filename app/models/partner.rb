@@ -4,6 +4,7 @@ class Partner < ApplicationRecord
   belongs_to :type, class_name: 'PartnerType', inverse_of: nil
 
   translates :name
+  translates :description
 
   mount_uploader :logo, LogoUploader
 

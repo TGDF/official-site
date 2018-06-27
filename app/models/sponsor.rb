@@ -4,6 +4,7 @@ class Sponsor < ApplicationRecord
   belongs_to :level, class_name: 'SponsorLevel', inverse_of: nil
 
   translates :name
+  translates :description
 
   mount_uploader :logo, LogoUploader
 
