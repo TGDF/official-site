@@ -4,42 +4,5 @@
 
 section.brand-area.sponsors
   .container
-    - @sponsor_levels.each do |level|
-      .row
-        .col-md-12
-          .brand-tab-box
-            ul.nav.nav-tabs.tab-menu
-              li[class="active"] = link_to level.name, "#sponsor-level-#{level.id}", data: { toggle: 'tab' }
-            .tab-content
-              div.tab-pane[id="sponsor-level-#{level.id}" class="active"]
-                - level.sponsors.in_groups_of(4) do |group|
-                  .row
-                    - group.compact.each do |sponsor|
-                      .col-md-3.col-sm-6.col-xs-12
-                        .single-item
-                          .img-holder
-                            = link_to image_tag(sponsor.logo_url(:v1)), sponsor.url, target: '_blank'
-                          .text-holder
-                            = link_to sponsor.url, target: '_blank' do
-                              h3 = sponsor.name
-                            = simple_format sponsor.description
-
-    - @partner_types.each do |type|
-      .row
-        .col-md-12
-          .brand-tab-box
-            ul.nav.nav-tabs.tab-menu
-              li[class="active"] = link_to type.name, "#partner-type-#{type.id}", data: { toggle: 'tab' }
-            .tab-content
-              div.tab-pane[id="partner-type-#{type.id}" class="active"]
-                - type.partners.in_groups_of(4) do |group|
-                  .row
-                    - group.compact.each do |partner|
-                      .col-md-3.col-sm-6.col-xs-12
-                        .single-item
-                          .img-holder
-                            = link_to image_tag(partner.logo_url(:v1)), partner.url, target: '_blank'
-                          .text-holder
-                            = link_to partner.url, target: '_blank' do
-                              h3 = partner.name
-                            = simple_format partner.description
+    = render partial: 'group', collection: @sponsor_levels, locals: { item_name: :sponsors }
+    = render partial: 'group', collection: @partner_types, locals: { item_name: :partners }

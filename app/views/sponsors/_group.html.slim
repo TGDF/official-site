@@ -1,0 +1,8 @@
+.row
+  .col-md-12
+    .brand-tab-box
+      ul.nav.nav-tabs.tab-menu
+        li[class="active"] = link_to group.name, "##{group.model_name.singular}-#{group.id}", data: { toggle: 'tab' }
+      .tab-content
+        div.tab-pane[id="#{group.model_name.singular}-#{group.id}" class="active"]
+          = render partial: 'item', collection: group.send(item_name)
