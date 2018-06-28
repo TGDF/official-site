@@ -159,3 +159,22 @@ body {
 .single-speaker-area .bottom-content .schedule .schedule-single .inner-content .left .time {
   width: 255px;
 }
+
+.sponsor {
+  padding: 1em;
+  margin-bottom: 1.5em;
+  clear: both;
+  overflow: hidden;
+
+  border: 1px solid #efefef;
+
+  &-logo {
+    float: left;
+  }
+
+  &-description {
+    padding: 1em 2em;
+
+    overflow: hidden;
+  }
+}
