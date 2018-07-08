@@ -5,7 +5,7 @@ class Game < ApplicationRecord
   translates :description
   translates :team
 
-  mount_uploader :thumbnail, ThumbnailUploader
+  mount_uploader :thumbnail, GameThumbnailUploader
 
   validates :name, :description, :team, :thumbnail, presence: true
 end
