@@ -10,7 +10,7 @@ class Slider < ApplicationRecord
 
   enum page: {
     home: 0,
-    indie_space: 1
+    indie_spaces: 1
   }
 
   validates :image, :language, presence: true
