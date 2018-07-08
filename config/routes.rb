@@ -5,11 +5,13 @@ Rails.application.routes.draw do
   devise_for :admin_users, path: :admin
 
   scope '(:lang)', lang: /#{I18n.available_locales.join('|')}/ do
+    # TODO: Use get instead resources
     root to: 'pages#index'
     resources :news, only: %i[index show]
     resources :speakers, only: %i[index show]
     resource :agenda, only: %i[show]
     resources :sponsors, only: %i[index]
+    resources :indie_spaces, only: %i[index]
   end
 
   namespace :admin do
@@ -36,6 +38,8 @@ Rails.application.routes.draw do
     resources :rooms, except: :show
     resources :agenda_times, except: :show
     resources :agenda_days, except: :show
+
+    resources :games, expect: :show
 
     constraints ->(req) { Apartment::Tenant.current != 'public' } do
       resource :options, only: %w[edit update]

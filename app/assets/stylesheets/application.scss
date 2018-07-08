@@ -178,3 +178,13 @@ body {
     overflow: hidden;
   }
 }
+
+.single-blog-item {
+  ul {
+    padding-left: 0;
+  }
+
+  .virtual-link {
+    i { padding-right: 7px; }
+  }
+}

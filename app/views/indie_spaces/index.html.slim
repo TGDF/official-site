@@ -1,0 +1,38 @@
+- content_for :disable_breadcrumb, true
+.main-slider
+  #rev_slider_one_wrapper.rev_slider_wrapper.fullwidthbanner-container[data-source="gallery"]
+    #rev_slider_one.rev_slider.fullwidthabanner[data-version="5.4.1"]
+      ul
+        / TODO: User render collection or empty style
+        - if @sliders.empty?
+          li
+            = image_tag 'sliders/slide_1.jpg'
+        - @sliders.each do |slider|
+          li
+            = image_tag slider.image_url(:large)
+
+section#blog-area.blog-grid-area
+  .container
+    .row
+      .col-lg-12.col-md-12.col-sm-12.col-xs-12
+        .blog-post
+          - @games.in_groups_of(3) do |group|
+            .row
+              - group.compact.each do |game|
+                / LOOP
+                .col-md-4.col-sm-12
+                  .single-blog-item
+                    .img-holder
+                      = image_tag game.thumbnail_url(:thumb)
+                    .text-holder
+                      ul.meta-info
+                        li
+                          .virtual-link
+                            i class="fa fa-users" aria-hidden="true"
+                            | #{game.team}
+                        li
+                          a[href="#"]
+                            i class="fa fa-video-camera" aria-hidden="true"
+                            | #{t('.view_video')}
+                      h3.blog-title = game.name
+                      p = sanitize game.description

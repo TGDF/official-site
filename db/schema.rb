@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180627040339) do
+ActiveRecord::Schema.define(version: 20180708033024) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,16 @@ ActiveRecord::Schema.define(version: 20180627040339) do
     t.datetime "updated_at", null: false
     t.index ["agenda_id"], name: "index_agendas_speakers_on_agenda_id"
     t.index ["speaker_id"], name: "index_agendas_speakers_on_speaker_id"
+  end
+
+  create_table "games", force: :cascade do |t|
+    t.jsonb "name", null: false
+    t.jsonb "description", null: false
+    t.jsonb "team", null: false
+    t.string "video"
+    t.string "thumbnail"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "news", force: :cascade do |t|
@@ -132,6 +142,7 @@ ActiveRecord::Schema.define(version: 20180627040339) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "language", default: 0, null: false
+    t.integer "page", default: 0, null: false
   end
 
   create_table "speakers", force: :cascade do |t|
