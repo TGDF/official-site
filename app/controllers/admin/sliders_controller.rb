@@ -35,7 +35,7 @@ module Admin
     def permitted_params
       params
         .require(:slider)
-        .permit(:image, :language)
+        .permit(:image, :language, :page)
     end
 
     def find_slider

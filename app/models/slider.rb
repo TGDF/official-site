@@ -8,6 +8,11 @@ class Slider < ApplicationRecord
     en: 1
   }
 
+  enum page: {
+    home: 0,
+    indie_space: 1
+  }
+
   validates :image, :language, presence: true
 
   scope :localized, -> { where(language: I18n.locale) }

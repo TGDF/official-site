@@ -2,6 +2,7 @@ tr
   td = slider.id
   td = image_tag slider.image_url(:thumb)
   td = t("locale.name.#{slider.language}")
+  td = t("shared.nav.#{slider.page}")
   td
     .btn-group
       = link_to t('.edit'), edit_admin_slider_path(slider), class: 'btn btn-primary'
