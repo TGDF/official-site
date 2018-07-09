@@ -10,11 +10,11 @@ class GameThumbnailUploader < CarrierWave::Uploader::Base
   end
 
   version :thumb do
-    process resize_to_fill: [540, 360]
+    process resize_to_fill: [640, 360]
   end
 
   version :large do
-    process resize_to_fill: [1080, 720]
+    process resize_to_fill: [1920, 1080]
   end
 
   def extension_whitelist
