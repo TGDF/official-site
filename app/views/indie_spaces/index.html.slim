@@ -23,16 +23,14 @@ section#blog-area.blog-grid-area
                 .col-md-4.col-sm-12
                   .single-blog-item
                     .img-holder
-                      = image_tag game.thumbnail_url(:thumb)
+                      = link_to_if game.website.present?, image_tag(game.thumbnail_url(:thumb)), game.website, target: '_blank'
                     .text-holder
                       ul.meta-info
                         li
-                          .virtual-link
-                            i class="fa fa-users" aria-hidden="true"
-                            | #{game.team}
+                          = link_to_if game.website.present?, label_with_icon(game.team, 'users'), game.website, target: '_blank' do
+                            .virtual-link = label_with_icon(game.team, 'users')
                         li
-                          a[href="#"]
-                            i class="fa fa-video-camera" aria-hidden="true"
-                            | #{t('.view_video')}
+                          = link_to_if game.video.present?, label_with_icon(t('.view_video'), 'video-camera'), game.video, target: '_blank' do
+                            .virtual-link = label_with_icon(t('.view_video'), 'video-camera')
                       h3.blog-title = game.name
                       p = sanitize game.description

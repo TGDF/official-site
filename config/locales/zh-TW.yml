@@ -38,7 +38,7 @@ zh-TW:
       agenda: 議程
       sponsors: 合作夥伴
       buy_ticket: 購票
-      indie_spaces: 獨立遊戲展
+      indie_spaces: 獨立遊戲空間
   pages:
     index:
       about:
@@ -64,6 +64,9 @@ zh-TW:
   sponsors:
     index:
       title: 合作夥伴
+  indie_spaces:
+    index:
+      view_video: 觀看影片
   admin_users:
     sessions:
       new:
