@@ -64,6 +64,9 @@ zh-TW:
   sponsors:
     index:
       title: 合作夥伴
+  indie_spaces:
+    index:
+      view_video: 觀看影片
   admin_users:
     sessions:
       new:

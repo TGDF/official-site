@@ -31,7 +31,7 @@ section#blog-area.blog-grid-area
                             i class="fa fa-users" aria-hidden="true"
                             | #{game.team}
                         li
-                          a[href="#"]
+                          = link_to game.video, target: '_blank' do
                             i class="fa fa-video-camera" aria-hidden="true"
                             | #{t('.view_video')}
                       h3.blog-title = game.name
