@@ -36,8 +36,9 @@ en:
       news: News
       speakers: Speakers
       agenda: Agenda
-      sponsors: Sponsors
+      sponsors: Partners
       buy_ticket: Register
+      indie_spaces: "Indie Space"
   pages:
     index:
       about:
@@ -62,7 +63,10 @@ en:
       sessions_by: "Sessions by %{speaker}"
   sponsors:
     index:
-      title: Sponsors
+      title: Partners
+  indie_spaces:
+    index:
+      view_video: "View trailer"
   admin_users:
     sessions:
       new:
