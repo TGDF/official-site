@@ -188,3 +188,46 @@ body {
     i { padding-right: 7px; }
   }
 }
+
+.footer-bottom-area {
+  background: #202020;
+  color: white;
+  .footer-menu{
+    float: left;
+    color: inherit;
+  }
+  .contact {
+    font-size: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: between;
+
+    &-icon {
+      display: inline-block;
+      width: 2em;
+      height: 2em;
+      line-height: 2em;
+      margin-right: 1em;
+      text-align: center;
+      border-radius: 50%;
+      background: #424242;
+    }
+  }
+  .conf-code-of-conduct{
+    color: white;
+    font-size: 1rem;
+    .title{
+      color: white;
+      line-height: 2em;
+    }
+    .paragraph{
+      line-height: 1em;
+      font-size: 1.2em;
+      padding-top: .25em;
+      padding-bottom: .25em;
+    }
+  }
+  .copyright-text{
+    margin-top: 1.5em;
+  }
+}
