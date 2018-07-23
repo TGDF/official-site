@@ -187,4 +187,13 @@ body {
   .virtual-link {
     i { padding-right: 7px; }
   }
+
+  .img-holder img {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+
+  &:hover {
+    .img-holder img { opacity: .5; }
+  }
 }

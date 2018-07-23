@@ -3,11 +3,6 @@
     .col-md-6
       .img-holder
         = image_tag news.thumbnail_url(:thumb)
-        .overlay-style-one
-          .box
-            .content
-              = link_to news do
-                i.fa.fa-link
         .post-date
           h3
             | #{news.created_at.day}
