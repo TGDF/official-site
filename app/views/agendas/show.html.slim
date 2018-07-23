@@ -4,9 +4,19 @@
 
 section.single-speaker-area.schedule-list-area
   .container
+    .schedule-tabs
+      - @days.each do |day|
+        a[href='/agenda?day=#{day.id}']
+          div class=(day.id == @query_day ? 'tab active' : 'tab')
+            h3
+              = day.label.split.first
+              span.date
+                = ' ' + day.label.split.last
+            .date-long-format
+              = day.date.strftime("%e %B %Y")
+
     .row
       .col-md-12
         .bottom-content
-          - @days.each do |day|
-            ul.schedule.mar-btm60
-              = render partial: 'time', collection: day.times, locals: { day: day }
+          ul.schedule.mar-btm60
+            = render partial: 'time', collection: @day.times, locals: { day: @day }
