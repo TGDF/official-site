@@ -17,3 +17,9 @@
 //= require owl.carousel.min
 // == Theme End ==
 //= require turbolinks
+
+// agenda#show tab switch
+$(document).on('turbolinks:load', () => {
+  $('.schedule-tabs li:first-child a').tab('show')
+  $('.schedule-tabs a').click(e => $('.schedule-tabs li').removeClass('active'))
+})
