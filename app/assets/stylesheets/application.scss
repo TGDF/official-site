@@ -218,11 +218,16 @@ body {
       font-weight: 400;
     }
     &:first-child { border-left: 1px solid $schedule-tab-background; }
-
-    &:hover, &.active {
-      background: #f28a03;
-      color: white;
-      h3, .date, .date-long-format{ color: white; }
-    }
   }
+  .tab:hover, li.active .tab {
+    background: #f28a03;
+    color: white;
+    h3, .date, .date-long-format{ color: white; }
+  }
+}
+
+.single-speaker-area .bottom-content .schedule {
+  display: none;
+  overflow: hidden;
+  &.active{ display: block; }
 }
