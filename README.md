@@ -26,6 +26,9 @@ And make sure you are installed `foreman` to start server
 ```
 $ gem install foreman
 ```
+
+Notice that this project use [carrierwave](https://github.com/carrierwaveuploader/carrierwave#adding-versions) gem as file uploader, make sure you have installed its dependency imagemagick [mentioned here](https://github.com/carrierwaveuploader/carrierwave#adding-versions)
+
 ### Starting Server
 
 We use `Procile` to define which process have to start for development.
