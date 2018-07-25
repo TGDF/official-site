@@ -10,7 +10,7 @@ section.brand-area
         .brand-tab-box
           .tab-content
             .row
-              - @partners.each do | partner |
+              - @partners_and_sponsors.each do | partner |
                 .col-md-2.col-sm-4.col-xs-12
                   .card.sponsor.single-item
-                      = link_to image_tag(partner.logo_url(:v1), class: 'img-responive'), partner.url, target: '_blank'
+                    = link_to image_tag(partner.logo_url(:v1), class: 'img-responive'), partner.url, target: '_blank'
