@@ -5,6 +5,6 @@ class PagesController < ApplicationController
     @news = News.published.latest
                 .limit(Settings.news.latest.size)
     @sliders = Slider.localized.home
-    @partner_types = PartnerType.includes(:partners)
+    @partners = Partner.all
   end
 end
