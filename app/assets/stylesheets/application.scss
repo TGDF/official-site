@@ -188,3 +188,8 @@ body {
     i { padding-right: 7px; }
   }
 }
+
+.mainmenu-area.stricky-fixed {
+  -webkit-animation-name: none;
+        animation-name: none;
+}
