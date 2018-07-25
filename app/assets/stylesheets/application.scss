@@ -158,6 +158,14 @@ body {
 
 .single-speaker-area .bottom-content .schedule .schedule-single .inner-content .left .time {
   width: 255px;
+  @media screen and (max-width: 576px){
+    display: block;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 20px;
+    vertical-align: middle;
+  }
 }
 
 .sponsor {
@@ -187,6 +195,58 @@ body {
   .virtual-link {
     i { padding-right: 7px; }
   }
+
+  .img-holder img {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+
+  &:hover {
+    .img-holder img { opacity: .5; }
+  }
+}
+
+.schedule-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4rem;
+  $schedule-tab-background: #ededed;
+
+  .tab {
+    background: #f7f7f7;
+    border-top: 1px solid $schedule-tab-background;
+    border-right: 1px solid $schedule-tab-background;
+    border-bottom: 1px solid $schedule-tab-background;
+    cursor: pointer;
+    color: #202020;
+    margin: 0;
+    line-height: 20px;
+    text-align: center;
+    padding: 15px 40px;
+    font-family: 'Roboto', sans-serif;
+    transition: all .5s ease 0s;
+
+    .date {
+      color: #ea531c;
+      line-height: 3rem;
+    }
+    .date-long-format {
+      color: #8a8a8a;
+      font-weight: 400;
+    }
+    &:first-child { border-left: 1px solid $schedule-tab-background; }
+  }
+  .tab:hover, li.active .tab {
+    background: #f28a03;
+    color: white;
+    h3, .date, .date-long-format{ color: white; }
+  }
+}
+
+.single-speaker-area .bottom-content .schedule {
+  display: none;
+  overflow: hidden;
+  &.active{ display: block; }
 }
 
 .mainmenu-area.stricky-fixed {
