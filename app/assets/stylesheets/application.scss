@@ -248,3 +248,8 @@ body {
   overflow: hidden;
   &.active{ display: block; }
 }
+
+.mainmenu-area.stricky-fixed {
+  -webkit-animation-name: none;
+        animation-name: none;
+}
