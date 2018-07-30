@@ -253,3 +253,11 @@ body {
   -webkit-animation-name: none;
         animation-name: none;
 }
+
+.sponsor.single-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-shadow: 2px 2px 5px 0px #E0E0E0;
+}
