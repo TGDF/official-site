@@ -156,8 +156,18 @@ body {
   color: #ffffff;
 }
 
+.single-speaker-area .bottom-content .schedule .schedule-single .inner-content .custom-container {
+  display: flex;
+  @media screen and (max-width: 576px){
+    display: block;
+  }
+}
+
 .single-speaker-area .bottom-content .schedule .schedule-single .inner-content .left .time {
-  width: 255px;
+  width: auto;
+  white-space: nowrap;
+  align-self: center;
+  padding-right: 20px;
   @media screen and (max-width: 576px){
     display: block;
     width: 100%;
