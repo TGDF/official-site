@@ -27,10 +27,11 @@ section.single-speaker-area
               - @speaker.agendas.each do |agenda|
                 li.schedule-single
                   .inner-content
-                    .left.pull-left
+                    .left.pull-left.custom-container
                       .time
-                        span.fa.fa-clock-o[style="display: inline;"]
-                        h2 = agenda.time&.name || 'TBA'
+                        h2
+                          span.fa.fa-clock-o[style="vertical-align: -0.5rem"]
+                          = agenda.time&.name || 'TBA'
                       .title
                         h3 = agenda.subject
                         = sanitize agenda.description
