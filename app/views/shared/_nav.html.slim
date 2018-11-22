@@ -1,27 +1,21 @@
-section.mainmenu-area.stricky.stricky-fixed
+nav.navbar.navbar-expand-lg.bg-dark.sticky-top
   .container
-    .row
-      .col-lg-12.clearfix
-        .logo.pull-left
-          = link_to root_path
-            = image_tag current_site.logo_url
-        nav.main-menu.pull-left
-          .navbar-header
-            button.navbar-toggle[type="button" data-toggle="collapse" data-target=".navbar-collapse"]
-              span.icon-bar
-              span.icon-bar
-              span.icon-bar
-          .navbar-collapse.collapse.clearfix
-            - unless cfp_only?
-              ul.navigation.clearfix
-                = nav_item t('.home'), root_path
-                = nav_item t('.news'), news_index_path
-                = nav_item t('.speakers'), speakers_path
-                = nav_item t('.agenda'), agenda_path
-                = nav_item t('.sponsors'), sponsors_path
-                = nav_item t('.indie_spaces'), indie_spaces_path
-        .mainmenu-right-box.pull-right
-          = language_toggle_button
-          - if current_site.ticket_buy_link.present?
-            .buy-ticket-button
-              = link_to t('.buy_ticket'), current_site.ticket_buy_link, class: 'thm-btn'
+    / Brand
+    = link_to root_path, class: 'navbar-brand'
+      = image_tag current_site.logo_url
+    button.navbar-toggler type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+      span.navbar-toggler-bar.navbar-kebab
+      span.navbar-toggler-bar.navbar-kebab
+      span.navbar-toggler-bar.navbar-kebab
+    .collapse#navbarNav.navbar-collapse
+      - unless cfp_only?
+        ul.navbar-nav
+          = nav_item t('.home'), root_path
+          = nav_item t('.news'), news_index_path
+          = nav_item t('.speakers'), speakers_path
+          = nav_item t('.agenda'), agenda_path
+          = nav_item t('.sponsors'), sponsors_path
+          = nav_item t('.indie_spaces'), indie_spaces_path
+      ul.navbar-nav.ml-auto
+        = language_toggle_button
+        / TODO: Buy Ticket Button
