@@ -15,4 +15,23 @@ module ApplicationHelper
   def site_name
     current_site.name || t('site_name')
   end
+
+  def alternate_langs
+    capture do
+      concat alternate_lang
+      I18n.available_locales.each do |locale|
+        concat alternate_lang(locale)
+      end
+    end
+  end
+
+  def alternate_lang(lang = nil)
+    content_tag(
+      :link,
+      nil,
+      rel: 'alternate',
+      hreflang: lang || 'x-default',
+      href: url_for(lang: lang, only_path: false)
+    )
+  end
 end
