@@ -15,6 +15,7 @@ module Admin
     def create
       @agenda_day = AgendaDay.new(agenda_day_params)
       return redirect_to admin_agenda_days_path if @agenda_day.save
+
       render :new
     end
 
@@ -24,6 +25,7 @@ module Admin
       if @agenda_day.update(agenda_day_params)
         return redirect_to admin_agenda_days_path
       end
+
       render :edit
     end
 

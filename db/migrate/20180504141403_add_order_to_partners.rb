@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddOrderToPartners < ActiveRecord::Migration[5.1]
   def change
     add_column :partners, :order, :integer, default: 0

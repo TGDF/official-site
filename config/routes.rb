@@ -41,7 +41,7 @@ Rails.application.routes.draw do
 
     resources :games, expect: :show
 
-    constraints ->(req) { Apartment::Tenant.current != 'public' } do
+    constraints ->(_req) { Apartment::Tenant.current != 'public' } do
       resource :options, only: %w[edit update]
     end
 

@@ -18,6 +18,7 @@ module Admin
 
     def save_admin_resource_locale
       return if params[:resource_locale].blank?
+
       cookies[:resource_locale] = params[:resource_locale]
     end
   end

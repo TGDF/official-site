@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Verifies that versions and hashed value of the package contents in the project's package.json
 config.webpacker.check_yarn_integrity = true
@@ -16,7 +18,7 @@ config.webpacker.check_yarn_integrity = true
   config.consider_all_requests_local = true
 
   # Enable/disable caching. By default caching is disabled.
-  if Rails.root.join('tmp/caching-dev.txt').exist?
+  if Rails.root.join('tmp', 'caching-dev.txt').exist?
     config.action_controller.perform_caching = true
 
     config.cache_store = :memory_store

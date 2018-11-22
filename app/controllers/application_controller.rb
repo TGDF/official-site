@@ -23,6 +23,7 @@ class ApplicationController < ActionController::Base
   def layout_by_resource
     return 'admin_login' if devise_admin_user_controller?
     return 'admin' if admin_portal?
+
     'application'
   end
 

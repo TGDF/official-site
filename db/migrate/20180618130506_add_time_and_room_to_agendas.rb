@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddTimeAndRoomToAgendas < ActiveRecord::Migration[5.1]
   def change
     add_reference :agendas, :time, foreign_key: { to_table: :agenda_times }

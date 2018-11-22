@@ -8,9 +8,9 @@ class News < ApplicationRecord
   mount_uploader :thumbnail, ThumbnailUploader
 
   enum status: {
-    draft:     0,
+    draft: 0,
     published: 1,
-    deleted:   2
+    deleted: 2
   }
 
   validates :title, :content, :slug, :thumbnail, presence: true

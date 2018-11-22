@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 crumb :root do
   link t('shared.nav.home'), root_path
 end

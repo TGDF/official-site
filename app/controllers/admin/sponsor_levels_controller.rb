@@ -16,6 +16,7 @@ module Admin
       Mobility.with_locale(I18n.default_locale) do
         @level = SponsorLevel.new(sponsor_level_params)
         return redirect_to admin_sponsor_levels_path if @level.save
+
         render :new
       end
     end
@@ -27,6 +28,7 @@ module Admin
         if @level.update(sponsor_level_params)
           return redirect_to admin_sponsor_levels_path
         end
+
         render :edit
       end
     end

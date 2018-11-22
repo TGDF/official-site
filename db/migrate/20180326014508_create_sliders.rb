@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateSliders < ActiveRecord::Migration[5.1]
   def change
     create_table :sliders do |t|

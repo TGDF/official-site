@@ -5,6 +5,7 @@ Dir[Rails.root.join('app', 'uploaders', '*.rb')].each { |file| require file }
 RSpec.configure do |config|
   CarrierWave::Uploader::Base.descendants.each do |klass|
     next if klass.anonymous?
+
     klass.class_eval do
       def cache_dir
         Rails.root.join('spec', 'support', 'uploads', 'tmp')
