@@ -3,7 +3,7 @@ AllCops:
   DisplayCopNames: true
   Exclude:
     - bin/*
-    - vendor/ruby/**/*
+    - vendor/bundle/**/*
     - node_modules/**/*
     - db/schema.rb
     - .licenses/**/*
