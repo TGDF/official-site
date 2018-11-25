@@ -1,16 +1,5 @@
 - content_for :disable_breadcrumb, true
-.main-slider
-  #rev_slider_one_wrapper.rev_slider_wrapper.fullwidthbanner-container[data-source="gallery"]
-    #rev_slider_one.rev_slider.fullwidthabanner[data-version="5.4.1"]
-      ul
-        / TODO: User render collection or empty style
-        - if @sliders.empty?
-          li
-            = image_tag 'sliders/slide_1.jpg'
-        - @sliders.each do |slider|
-          li
-            = image_tag slider.image_url(:large)
-
+= render 'slider'
 section#blog-area.blog-grid-area
   .container
     .row
