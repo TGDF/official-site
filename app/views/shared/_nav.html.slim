@@ -1,15 +1,15 @@
-nav.navbar.navbar-expand-lg.bg-white.sticky-top
-  .container
+nav#main-menu.navbar.navbar-expand-lg.bg-white.sticky-top
+  .container-fluid
     / Brand
     = link_to root_path, class: 'navbar-brand'
       = image_tag current_site.logo_url
-    button.navbar-toggler type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+    button.navbar-toggler type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"
       span.navbar-toggler-bar.navbar-kebab
       span.navbar-toggler-bar.navbar-kebab
       span.navbar-toggler-bar.navbar-kebab
     .collapse#navbarNav.navbar-collapse
       - unless cfp_only?
-        ul.navbar-nav
+        ul.navbar-nav.is-uppercase
           = nav_item t('.home'), root_path
           = nav_item t('.news'), news_index_path
           = nav_item t('.speakers'), speakers_path

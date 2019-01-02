@@ -1,0 +1,9 @@
+// Navbar
+
+.nav-item {
+  &.active {
+    a {
+      color: var(--pink);
+    }
+  }
+}

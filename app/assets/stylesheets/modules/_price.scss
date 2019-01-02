@@ -1,0 +1,38 @@
+// Price Box
+
+.price-box {
+  border: 2px solid var(--white);
+
+  text-transform: uppercase;
+
+  &__title {
+    font-weight: 800;
+    font-size: 2em;
+  }
+
+  &__description, &__features {
+    font-weight: 600;
+  }
+
+  &__early-bird {
+    font-size: 0.875em;
+  }
+
+  &__features {
+    ul {
+      padding: 0;
+
+      list-style: none;
+    }
+  }
+
+  &__register {
+    padding: 0.4em 2em;
+    padding-top: 0.6em;
+
+    color: var(--pink);
+
+    font-weight: 800;
+    border-radius: 2em;
+  }
+}

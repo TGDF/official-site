@@ -1,0 +1,8 @@
+// Link
+a {
+  color: var(--dark);
+
+  &:hover {
+    color: var(--pink);
+  }
+}
