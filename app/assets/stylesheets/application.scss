@@ -1,16 +1,2 @@
 @import "variables";
-@import "blk-design-system";
-
-#breadcrumb {
-  .breadcrumb {
-    margin-bottom: 0;
-  }
-
-  a {
-    color: $gray-500;
-
-     &:visited {
-      color: $gray-500;
-    }
-  }
-}
+@import "bootstrap";
