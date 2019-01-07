@@ -1,13 +1,11 @@
-section.about-area.mb-5
+section#about.mb-5.mt-5
   .container
-    .sec-title
-      .underlay
-        h2 = t('.know', site_name: t('site_name')).html_safe
-      h1 = t('site_name')
-    .row
-      .col-md-6
-        .text-holder
+    .text-center.mt-5.mb-4
+      h1.heading = sanitize t('.heading')
+  .about
+    .about__figure
+      = image_tag current_site.figure_url
+    .container
+      .row
+        .col
           = sanitize current_site.description || t('site_introduce')
-      .col-md-6
-        .img-holder
-          = image_tag current_site.figure_url

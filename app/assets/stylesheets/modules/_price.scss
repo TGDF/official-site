@@ -6,12 +6,7 @@
   text-transform: uppercase;
 
   &__title {
-    font-weight: 800;
     font-size: 2em;
-  }
-
-  &__description, &__features {
-    font-weight: 600;
   }
 
   &__early-bird {
@@ -27,12 +22,10 @@
   }
 
   &__register {
-    padding: 0.4em 2em;
-    padding-top: 0.6em;
+    padding: 0.6em 2em 0.6em 2em;
 
     color: var(--pink);
 
-    font-weight: 800;
     border-radius: 2em;
   }
 }

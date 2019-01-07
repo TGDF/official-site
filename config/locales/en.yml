@@ -42,12 +42,12 @@ en:
   pages:
     index:
       about:
-        know: "About <span>%{site_name}</span>"
+        heading: "<span>About</span> Taipei Game Developers Forum"
       news:
-        latest_news: 最新<span>消息</span>
+        heading: "<span>What's</span> New"
         read_more: "Learn more"
       ticket:
-        get_tickets: "Passes & Prices"
+        heading: "<span>Passes</span> & Prices"
   news:
     index:
       title: News

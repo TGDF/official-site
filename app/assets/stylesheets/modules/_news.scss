@@ -1,0 +1,39 @@
+.news {
+  &__title {
+    font-size: 1.25em;
+  }
+
+  &__separator {
+    border: 0;
+    border-bottom: 1px solid $gray-300;
+  }
+
+  &__body {
+    h1 { font-size: 1.75em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    h4, h5, h6 { font-size: 1em; }
+  }
+
+  &__read-more {
+    color: var(--pink);
+    text-transform: uppercase;
+
+    font-weight: bolder;
+  }
+
+  &__picture {
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__date {
+    position: absolute;
+
+    top: 1em;
+    right: 1em;
+
+    background: var(--white);
+    color: var(--pink);
+  }
+}

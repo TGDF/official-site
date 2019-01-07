@@ -1,28 +1,23 @@
-section.latest-blog-area
+section#news
   .container
-    .sec-title.text-center
-      .underlay.text-center
-        h2 = t('.latest_news').html_safe
-      h1 = t('.latest_news').html_safe
-    .row
-      .col-md-12
-        .blog-carousel
-          - @news.each do |news|
-            .single-blog-item
-              .row
-                .col-md-6
-                  .img-holder
-                    = image_tag news.thumbnail_url(:thumb)
-                    .post-date
-                      h3
-                        | #{news.created_at.day}
-                        br
-                        | #{news.created_at.strftime('%b')}
-                .col-md-6
-                  .text-holder
-                    = link_to news do
-                      h3.blog-title = news.title
-                    .text
-                      = sanitize truncate(news.content, length: 150, escape: false)
-                      = link_to news, class: 'read-more' do
-                        = t('.read_more')
+    .sec-title.text-center.mb-4
+      h1.heading = sanitize t('.heading')
+    - @news.each do |news|
+      article.news
+        .row
+          .col-md-6
+            .news__picture
+              = image_tag news.thumbnail_url(:thumb)
+              .news__date.text-center.py-2.px-3
+                | #{news.created_at.day}
+                br
+                | #{news.created_at.strftime('%b')}
+          .col-md-6
+            .news__container.mx-2
+              = link_to news do
+                h1.news__title = news.title
+              hr.news__separator
+              .news__body
+                = sanitize truncate(news.content, length: 150, escape: false)
+                = link_to news, class: 'news__read-more' do
+                  = t('.read_more')

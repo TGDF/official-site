@@ -1,0 +1,17 @@
+.about {
+  &__figure {
+    position: relative;
+    padding-top: 60%;
+
+    overflow: hidden;
+
+    img {
+      position: absolute;
+
+      top: 0;
+      left: 0;
+
+      max-width: 100%;
+    }
+  }
+}
