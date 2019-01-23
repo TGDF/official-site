@@ -6,10 +6,16 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
 
+  helper_method :cfp_only?
+
   layout :layout_by_resource
 
   def default_url_options(options = {})
     { lang: current_locale }.merge(options)
+  end
+
+  def cfp_only?
+    current_site.cfp_only_mode == 'true'
   end
 
   private

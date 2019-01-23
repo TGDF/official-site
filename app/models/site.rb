@@ -13,6 +13,8 @@ class Site < ApplicationRecord
   validates :tenant_name, format: /\A[a-z0-9]+([_a-z0-9]+)*[a-z0-9]+\z/ix
 
   store_accessor :options, :google_analytics_id
+  # TODO: Provide independent CFP function
+  store_accessor :options, :cfp_form_url, :cfp_description, :cfp_only_mode
 
   scope :recent, -> { order(updated_at: :desc) }
   default_scope -> { order(created_at: :desc) }
