@@ -12,14 +12,16 @@ section.mainmenu-area.stricky.stricky-fixed
               span.icon-bar
               span.icon-bar
           .navbar-collapse.collapse.clearfix
-            ul.navigation.clearfix
-              = nav_item t('.home'), root_path
-              = nav_item t('.news'), news_index_path
-              = nav_item t('.speakers'), speakers_path
-              = nav_item t('.agenda'), agenda_path
-              = nav_item t('.sponsors'), sponsors_path
-              = nav_item t('.indie_spaces'), indie_spaces_path
+            - unless cfp_only?
+              ul.navigation.clearfix
+                = nav_item t('.home'), root_path
+                = nav_item t('.news'), news_index_path
+                = nav_item t('.speakers'), speakers_path
+                = nav_item t('.agenda'), agenda_path
+                = nav_item t('.sponsors'), sponsors_path
+                = nav_item t('.indie_spaces'), indie_spaces_path
         .mainmenu-right-box.pull-right
           = language_toggle_button
-          .buy-ticket-button
-            = link_to t('.buy_ticket'), "https://tgdf.kktix.cc/events/2018tgdf", class: 'thm-btn'
+          - if current_site.ticket_buy_link.present?
+            .buy-ticket-button
+              = link_to t('.buy_ticket'), current_site.ticket_buy_link, class: 'thm-btn'

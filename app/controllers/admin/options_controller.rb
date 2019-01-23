@@ -16,7 +16,9 @@ module Admin
     def permitted_params
       params
         .require(:site)
-        .permit(*Site::TICKET_OPTIONS, :google_analytics_id)
+        .permit(*Site::TICKET_OPTIONS, :google_analytics_id,
+                :cfp_form_url, :cfp_description, :cfp_only_mode,
+                :buy_ticket_url, :buy_ticket_opened)
     end
   end
 end
