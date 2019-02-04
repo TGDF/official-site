@@ -1,6 +1,6 @@
 .news {
   &__title {
-    font-size: 1.25em;
+    color: var(--pink);
   }
 
   &__separator {
@@ -23,6 +23,8 @@
   }
 
   &__picture {
+    img { max-width: 100%; }
+
     position: relative;
     overflow: hidden;
   }
@@ -46,5 +48,13 @@
 
       border-bottom: 0;
     }
+  }
+}
+
+.news-sidebar {
+  &__items {
+    padding-left: 0;
+
+    list-style: none;
   }
 }
