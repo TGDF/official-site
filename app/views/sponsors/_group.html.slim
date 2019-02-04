@@ -1,8 +1,7 @@
 .row
   .col-md-12
-    .brand-tab-box
-      ul.nav.nav-tabs.tab-menu
-        li[class="active"] = link_to group.name, "##{group.model_name.singular}-#{group.id}", data: { toggle: 'tab' }
-      .tab-content
-        div.tab-pane[id="#{group.model_name.singular}-#{group.id}" class="active"]
+    section.sponsor-group
+      h1.sponsor-group__name.bg-pink.text-white.p-2.px-3 = group.name
+      .sponsor-group__body
+        .row.d-flex
           = render partial: 'item', collection: group.send(item_name)

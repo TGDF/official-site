@@ -1,0 +1,17 @@
+.sponsor-group {
+  &__name {
+    font-size: 1.25rem;
+  }
+}
+
+.sponsor {
+  border-radius: 0;
+
+  &__name {
+    color: var(--pink);
+  }
+
+  &__description {
+    color: $gray-600;
+  }
+}
