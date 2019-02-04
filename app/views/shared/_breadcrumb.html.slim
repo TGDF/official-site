@@ -1,14 +1,11 @@
 - breadcrumbs.tap do |links|
   - if links.any?
     nav#breadcrumb
-      .container
-        .row
-          .col-md-12
-            / TODO: Refactor after renew theme
-            ol.breadcrumb.bg-transparent
-              - links.each_with_index do |link, index|
-                li[class="#{link.current? ? "breadcrumb-item active" : "breadcrumb-item"}"]
-                  - if link.current?
-                    = link.text
-                  - else
-                    = link_to link.text, link.url
+      / TODO: Refactor after renew theme
+      ol.breadcrumb.bg-light
+        - links.each_with_index do |link, index|
+          li[class="#{link.current? ? "breadcrumb-item active" : "breadcrumb-item"}"]
+            - if link.current?
+              = link.text
+            - else
+              = link_to link.text, link.url
