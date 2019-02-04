@@ -48,6 +48,8 @@ en:
         read_more: "Learn more"
       ticket:
         heading: "<span>Passes</span> & Prices"
+      partner:
+        heading: Partner
   news:
     index:
       title: News
