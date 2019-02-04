@@ -36,4 +36,15 @@
     background: var(--white);
     color: var(--pink);
   }
+
+  &.with-border {
+    @extend .news__separator;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+
+      border-bottom: 0;
+    }
+  }
 }
