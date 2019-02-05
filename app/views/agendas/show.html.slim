@@ -2,23 +2,15 @@
 - # TODO: Add banner config
 - breadcrumb :agenda
 
-section.agendas.single-speaker-area.schedule-list-area
-  .container
-    .schedule-tabs
-      - @days.each do |day|
-        li
-          a[href='#day-#{day.id}' data-toggle="tab" role="tab"]
-            .tab
-              h3
-                = day.label.split.first
-                span.date
-                  = ' ' + day.label.split.last
-              .date-long-format
-                = day.date.strftime("%e %B %Y")
-
-    .row
-      .col-md-12
-        .bottom-content
-          - @days.each do |day|
-            ul.schedule.mar-btm60.tab-content.fade[id="day-#{day.id}"]
-              = render partial: 'time', collection: day.times, locals: { day: day }
+section#agenda
+  - @days.each do |day|
+    .agenda.container.mt-5.mb-4.table-responsive
+        h2.agenda__label.text-center.mb-4 = day.name
+        table.table.table-striped.schedule
+          thead.thead-dark
+            tr
+              th = t('.time')
+              - @rooms.each do |room|
+                th.text-center = room.name
+          tbody
+            = render partial: 'time', collection: day.times, locals: { day: day }

@@ -1,13 +1,8 @@
-li.schedule-single
-  - if time_iteration.first?
-    .header
-      h3
-        span #{day.label} -
-        | &nbsp;#{day.date}
-  .inner-content
-    .left
-      .time
-        span.fa.fa-clock-o[style="display: inline;"]
-        h2 = time.label
-      .title
-        = render(partial: 'agenda', collection: time.agendas.sort{ |a1, a2| (a1.room&.order || 0) <=> (a2.room&.order || 0) }) || 'TBA'
+tr
+  th
+    span.fa.fa-clock-o.mr-2
+    = time.label
+  / TODO: Optimize for nested collection render
+  - @rooms.each do |room|
+    td.text-center
+      = render(partial: 'agenda', collection: time.agendas.select{ |agenda| agenda.room_id == room.id }) || 'TBA'
