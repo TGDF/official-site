@@ -3,6 +3,10 @@ tr
     span.fa.fa-clock-o.mr-2
     = time.label
   / TODO: Optimize for nested collection render
-  - @rooms.each do |room|
-    td.text-center
-      = render(partial: 'agenda', collection: time.agendas.select{ |agenda| agenda.room_id == room.id }) || 'TBA'
+  - if time.single?
+    td.text-center[colspan="#{@rooms.size}"]
+      = render(partial: 'agenda', collection: time.agendas) || 'TBA'
+  - else
+    - @rooms.each do |room|
+      td.text-center
+        = render(partial: 'agenda', collection: time.agendas.select{ |agenda| agenda.room_id == room.id }) || 'TBA'

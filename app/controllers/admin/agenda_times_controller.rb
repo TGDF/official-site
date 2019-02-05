@@ -41,7 +41,7 @@ module Admin
     end
 
     def agenda_time_params
-      params.require(:agenda_time).permit(:label, :order, :day_id)
+      params.require(:agenda_time).permit(:label, :order, :day_id, :single)
     end
   end
 end
