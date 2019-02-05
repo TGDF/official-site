@@ -10,7 +10,7 @@ article.news.mb-5.pb-5.with-border
     .col-md-6
       .news__container.mx-2
         = link_to news do
-          h1.news__title = news.title
+          h3.news__title = news.title
         hr.news__separator
         .news__body
           = sanitize truncate(news.content, length: 150, escape: false)

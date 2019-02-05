@@ -10,10 +10,9 @@ section#news
            .news__picture
              = image_tag @news.thumbnail_url(:medium)
              .news__date.text-center.py-2.px-3
-                h3
-                  | #{@news.created_at.day}
-                  br
-                  | #{@news.created_at.strftime('%b')}
+                | #{@news.created_at.day}
+                br
+                | #{@news.created_at.strftime('%b')}
            .news__container.mt-3
              h2.news__title = @news.title
              .news__body = sanitize @news.content
