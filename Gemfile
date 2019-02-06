@@ -45,6 +45,7 @@ gem 'devise'
 gem 'omniauth-facebook'
 
 # Front End
+gem 'bootstrap', '~> 4.1.3'
 gem 'jquery-rails'
 gem 'mobility'
 gem 'select2-rails'
@@ -85,7 +86,7 @@ group :development do
 
   gem 'brakeman', require: false
   gem 'overcommit', require: false
-  gem 'rubocop', '~> 0.49', require: false
+  gem 'rubocop', '~> 0.60.0', require: false
 
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'

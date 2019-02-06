@@ -5,12 +5,14 @@ module Admin
     def current_admin_path_under?(path)
       path = url_for(path)
       return false if path == admin_root_path && request.path != path
+
       uri = URI(path)
       current_admin_path_match?(uri) && current_admin_params_under?(uri)
     end
 
     def current_admin_path_match?(uri)
       return request.path.start_with?(uri.path) if params[:id].present?
+
       request.path == uri.path
     end
 

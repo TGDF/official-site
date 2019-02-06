@@ -1,0 +1,9 @@
+.speaker {
+  &__title {
+    color: var(--pink);
+  }
+
+  &__introduce {
+    color: $gray-700;
+  }
+}

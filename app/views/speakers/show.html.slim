@@ -2,36 +2,26 @@
 - # TODO: Add banner config
 - breadcrumb :speaker, @speaker
 
-section.single-speaker-area
-  .container
+section#speaker
+  .container.my-5.speaker
     .row
-      .col-md-12
-        .top-content
-          .row
-            .col-md-4
-              .img-holder = image_tag @speaker.avatar_url(:v1_large)
-            .col-md-8
-              .text-holder
-                .title
-                  h2 = @speaker.name
-                  span = @speaker.title
-                .text
-                  = sanitize @speaker.description
-    .row
-      .col-md-12
-        .bottom-content
-            .title-two
-              h2 = t('.sessions_by', speaker: @speaker.name)
-              span.border
-            ul.schedule.mar-btm60
-              - @speaker.agendas.each do |agenda|
-                li.schedule-single
-                  .inner-content
-                    .left.pull-left.custom-container
-                      .time
-                        h2
-                          span.fa.fa-clock-o[style="vertical-align: -0.5rem"]
-                          = agenda.time&.name || 'TBA'
-                      .title
-                        h3 = agenda.subject
-                        = sanitize agenda.description
+      .col-md-4
+        .speaker__picture = image_tag @speaker.avatar_url(:v1_large)
+      .col-md-8.pl-4
+        h3.speaker__name = @speaker.name
+        span.speaker__title = @speaker.title
+        .speaker__introduce.mt-4
+          = sanitize @speaker.description
+  .bg-pink.text-white.py-5
+    .container.sessions
+      h3.sessions__heading = t('.sessions_by', speaker: @speaker.name)
+      hr.border-light
+      .sessions__list
+        - @speaker.agendas.each do |agenda|
+          .session.mb-5
+            h5.session__subject = agenda.subject
+            .session__time
+              span.fa.fa-clock-o.mr-2
+              = agenda.time&.name || 'TBA'
+            .session_description
+              = sanitize agenda.description

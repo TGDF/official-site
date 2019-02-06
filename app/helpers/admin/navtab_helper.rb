@@ -20,6 +20,7 @@ module Admin
 
     def admin_navtab_active?(path)
       return false unless path.is_a?(Hash)
+
       request.query_string.include? URI.encode_www_form(path)
     end
   end

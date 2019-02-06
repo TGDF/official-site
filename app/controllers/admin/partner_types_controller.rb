@@ -16,6 +16,7 @@ module Admin
       Mobility.with_locale(I18n.default_locale) do
         @type = PartnerType.create(partner_type_params)
         return redirect_to admin_partner_types_path if @type.save
+
         render :new
       end
     end
@@ -27,6 +28,7 @@ module Admin
         if @type.update(partner_type_params)
           return redirect_to admin_partner_types_path
         end
+
         render :edit
       end
     end

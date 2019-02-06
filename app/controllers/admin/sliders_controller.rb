@@ -15,6 +15,7 @@ module Admin
     def create
       @slider = Slider.new(permitted_params)
       return redirect_to admin_sliders_path if @slider.save
+
       render :new
     end
 
@@ -22,6 +23,7 @@ module Admin
 
     def update
       return redirect_to admin_sliders_path if @slider.update(permitted_params)
+
       render :edit
     end
 

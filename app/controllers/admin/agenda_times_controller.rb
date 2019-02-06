@@ -15,6 +15,7 @@ module Admin
     def create
       @agenda_time = AgendaTime.new(agenda_time_params)
       return redirect_to admin_agenda_times_path if @agenda_time.save
+
       render :new
     end
 
@@ -24,6 +25,7 @@ module Admin
       if @agenda_time.update(agenda_time_params)
         return redirect_to admin_agenda_times_path
       end
+
       render :edit
     end
 
@@ -39,7 +41,7 @@ module Admin
     end
 
     def agenda_time_params
-      params.require(:agenda_time).permit(:label, :order, :day_id)
+      params.require(:agenda_time).permit(:label, :order, :day_id, :single)
     end
   end
 end

@@ -11,17 +11,7 @@
 // about supported directives.
 //
 //= require rails-ujs
-//= require jquery
-// == Theme Begin ==
-//= require bootstrap.min
-//= require owl.carousel.min
-// == Theme End ==
+//= require jquery3
+//= require popper
+//= require bootstrap
 //= require turbolinks
-
-// agenda#show tab switch
-$(document).on('turbolinks:load', function(){
-  $('.schedule-tabs li:first-child a').tab('show')
-  $('.schedule-tabs a').click(function(){
-    $('.schedule-tabs li').removeClass('active')
-  })
-})

@@ -16,6 +16,7 @@ module Admin
       Mobility.with_locale(I18n.default_locale) do
         @sponsor = Sponsor.new(sponsor_params)
         return redirect_to admin_sponsors_path if @sponsor.save
+
         render :new
       end
     end
@@ -27,6 +28,7 @@ module Admin
         if @sponsor.update(sponsor_params)
           return redirect_to admin_sponsors_path
         end
+
         render :edit
       end
     end

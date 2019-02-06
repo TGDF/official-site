@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddOrderToSponsors < ActiveRecord::Migration[5.1]
   def change
     add_column :sponsors, :order, :integer, default: 0

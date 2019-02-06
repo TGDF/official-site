@@ -20,6 +20,7 @@ module Admin
         @news = News.new(news_params)
         @news.author = current_admin_user
         return redirect_to admin_news_index_path if @news.save
+
         render :new
       end
     end
@@ -29,6 +30,7 @@ module Admin
     def update
       Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to admin_news_index_path if @news.update(news_params)
+
         render :edit
       end
     end

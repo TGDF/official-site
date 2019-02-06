@@ -15,7 +15,7 @@ class SiteFigureUploader < CarrierWave::Uploader::Base
       .asset_path('about/about-img.jpg')
   end
 
-  process resize_to_fill: [570, 360]
+  process resize_to_fill: [1920, 1080]
 
   def extension_whitelist
     %w[png jpg jpeg]

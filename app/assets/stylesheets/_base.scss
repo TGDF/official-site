@@ -1,0 +1,17 @@
+// Link
+a {
+  color: var(--dark);
+
+  &:hover {
+    color: var(--pink);
+  }
+}
+
+.breadcrumb-item {
+  text-transform: uppercase;
+}
+
+.badge-pink {
+  color: var(--white);
+  background-color: var(--pink);
+}

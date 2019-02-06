@@ -15,6 +15,7 @@ module Admin
     def create
       @room = Room.new(room_params)
       return redirect_to admin_rooms_path if @room.save
+
       render :new
     end
 
@@ -22,6 +23,7 @@ module Admin
 
     def update
       return redirect_to admin_rooms_path if @room.update(room_params)
+
       render :edit
     end
 

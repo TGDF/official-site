@@ -2,21 +2,17 @@
 - breadcrumb :speakers
 / TODO: Set page banner
 
-section.team-area-v2
+section#speakers
   .container
-    .sec-title.text-center
-      .underlay.text-center
-        h2 = t('.speakers')
-      h1 = t('.speakers')
-    - @speakers.in_groups_of(4) do |speakers|
-      .row
-        - speakers.compact.each do |speaker|
-          .col-lg-3.col-md-6.col-sm-6.col-xs-12
-            .single-team-member
-              .img-holder
-                = link_to speaker do
-                  = image_tag speaker.avatar_url(:v1)
-
-              .text-holder.text-center
-                h3 = link_to speaker.name, speaker
-                span = speaker.title
+    .text-center.mt-5.mb-4
+      h1.heading = sanitize t('.speakers')
+  .container
+    .row.flex-wrap.justify-content-between
+      - @speakers.each do |speaker|
+        .align-self-stretch.col-lg-3.col-md-6.col-sm-6.col-xs-12.d-flex.mb-3
+          .card
+            = link_to speaker do
+              = image_tag speaker.avatar_url(:v1), class: 'card-img-top'
+            .card-body.text-center
+              h4 = link_to speaker.name, speaker
+              span = speaker.title

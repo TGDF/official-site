@@ -27,6 +27,7 @@ class Site
 
       def ticket_early_bird_due_to
         return Time.zone.now if super.nil?
+
         Time.zone.parse(super)
       end
 

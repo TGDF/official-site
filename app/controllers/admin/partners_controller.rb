@@ -16,6 +16,7 @@ module Admin
       Mobility.with_locale(I18n.default_locale) do
         @partner = Partner.new(partner_params)
         return redirect_to admin_partners_path if @partner.save
+
         render :new
       end
     end
@@ -27,6 +28,7 @@ module Admin
         if @partner.update(partner_params)
           return redirect_to admin_partners_path
         end
+
         render :edit
       end
     end

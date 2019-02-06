@@ -2,40 +2,33 @@
 - banner @news.thumbnail_url(:large)
 - breadcrumb :news, @news
 
-section#blog-area.blog-single-area
+section#news
   .container
     .row
        .col-lg-8.col-md-12.col-sm-12.col-xs-12
-         .blog-post
-           .single-blog-item
-             .img-holder
-               = image_tag @news.thumbnail_url(:medium)
-               .post-date
-                  h3
-                    | #{@news.created_at.day}
-                    br
-                    | #{@news.created_at.strftime('%b')}
-             .text-holder
-               h3.blog-title = @news.title
-               .text = sanitize @news.content
+         article.news
+           .news__picture
+             = image_tag @news.thumbnail_url(:medium)
+             .news__date.text-center.py-2.px-3
+                | #{@news.created_at.day}
+                br
+                | #{@news.created_at.strftime('%b')}
+           .news__container.mt-3
+             h2.news__title = @news.title
+             .news__body = sanitize @news.content
        .col-lg-4.col-md-6.col-sm-7.col-xs-12
-         .sidebar-wrapper
-           .single-sidebar.wow.fadeInUp[data-wow-delay="0s" data-wow-duration="1s" data-wow-offset="0"]
-             .sec-title
-               h3 = t('.latest_news')
-             ul.popular-post
-              - @latest.each do |news|
-                li
-                  .img-holder
+         aside.news-sidebar
+          header.mb-4
+             h3.news-sidebar__title = t('.latest_news')
+          ul.news-sidebar__items
+            - @latest.each do |news|
+              li.news-sidebar__item.mb-2
+                .news.row
+                  .news__picture.col-3
                     = image_tag news.thumbnail_url(:small_square)
-                    .overlay-style-one
-                      .box
-                        .content
-                          = link_to news do
-                            i.fa.fa-link
-                  .title-holder
+                  .news__container.col-9
                     = link_to news do
-                      h5.post-title = news.title
-                    h6.post-date
-                      i.fa.fa-calendar
+                      h6.news__title = news.title
+                    .post-date
+                      i.fa.fa-calendar.mr-2
                       = l news.created_at, format: :short

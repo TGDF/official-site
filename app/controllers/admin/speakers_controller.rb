@@ -16,6 +16,7 @@ module Admin
       Mobility.with_locale(I18n.default_locale) do
         @speaker = Speaker.new(speaker_params)
         return redirect_to admin_speakers_path if @speaker.save
+
         render :new
       end
     end
@@ -27,6 +28,7 @@ module Admin
         if @speaker.update(speaker_params)
           return redirect_to admin_speakers_path
         end
+
         render :edit
       end
     end

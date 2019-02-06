@@ -1,9 +1,8 @@
-.row
-  .col-md-12
-    .sponsor
-      .sponsor-logo
-        = link_to image_tag(item.logo_url(:v1)), item.url, target: '_blank'
-      .sponsor-description
-        = link_to item.url, target: '_blank' do
-          h3 = item.name
-        = simple_format item.description
+.col-md-4.col-12
+  article.sponsor.card.p-3.my-3
+    .sponsor__logo.text-center
+      = link_to image_tag(item.logo_url(:v1)), item.url, target: '_blank'
+    .sponsor__container.my-3
+      = link_to item.url, target: '_blank', class: 'sponsor__name' do
+        h5 = item.name
+      .sponsor__description = simple_format item.description
