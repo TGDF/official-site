@@ -42,12 +42,14 @@ zh-TW:
   pages:
     index:
       about:
-        know: "了解<span>%{site_name}</span>"
+        heading: <span>了解</span>台北遊戲開發者論壇
       news:
-        latest_news: 最新<span>消息</span>
+        heading: <span>最新</span>消息
         read_more: 了解更多
       ticket:
-        get_tickets: 購票資訊
+        heading: <span>購票</span>與售價
+      partner:
+        heading: 合作夥伴
   news:
     index:
       title: 最新消息
