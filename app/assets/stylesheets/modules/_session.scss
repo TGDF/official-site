@@ -1,0 +1,11 @@
+.session {
+  &__badge {
+    @extend .mr-2;
+
+    font-weight: normal;
+
+    &:last-child {
+      @extend .mr-0;
+    }
+  }
+}

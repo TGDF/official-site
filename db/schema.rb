@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190205113434) do
+ActiveRecord::Schema.define(version: 20190206090000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,12 @@ ActiveRecord::Schema.define(version: 20190205113434) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "agenda_tags", force: :cascade do |t|
+    t.jsonb "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "agenda_times", force: :cascade do |t|
     t.string "label"
     t.integer "order", default: 0, null: false
@@ -71,6 +77,13 @@ ActiveRecord::Schema.define(version: 20190205113434) do
     t.datetime "updated_at", null: false
     t.index ["agenda_id"], name: "index_agendas_speakers_on_agenda_id"
     t.index ["speaker_id"], name: "index_agendas_speakers_on_speaker_id"
+  end
+
+  create_table "agendas_taggings", force: :cascade do |t|
+    t.bigint "agenda_id"
+    t.bigint "agenda_tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "games", force: :cascade do |t|

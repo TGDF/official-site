@@ -2,3 +2,6 @@ article.session
   h6 = link_to agenda.subject, agenda.speakers.first
   p
     = agenda_speaker_links(agenda.speakers)
+  p
+    - agenda.tags.each do |tag|
+      span.session__badge.badge.badge-pink.px-2.py-1 = tag.name
