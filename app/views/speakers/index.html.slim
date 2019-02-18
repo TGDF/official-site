@@ -7,7 +7,7 @@ section#speakers
     .text-center.mt-5.mb-4
       h1.heading = sanitize t('.speakers')
   .container
-    .row.flex-wrap.justify-content-between
+    .row.flex-wrap
       - @speakers.each do |speaker|
         .align-self-stretch.col-lg-3.col-md-6.col-sm-6.col-xs-12.d-flex.mb-3
           .card
