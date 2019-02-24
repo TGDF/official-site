@@ -1,0 +1,10 @@
+.btn-pink {
+  @extend .btn-primary;
+  background-color: var(--pink);
+  border-color: var(--pink);
+
+  &:hover {
+    background-color: var(--pink);
+    border-color: var(--pink);
+  }
+}

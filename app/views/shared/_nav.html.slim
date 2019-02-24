@@ -18,4 +18,5 @@ nav#main-menu.navbar.navbar-expand-lg.bg-white.sticky-top
           = nav_item t('.indie_spaces'), indie_spaces_path
       ul.navbar-nav.ml-auto
         = language_toggle_button
-        / TODO: Buy Ticket Button
+        - if current_site.ticket_buy_link.present?
+          = link_to t('.buy_ticket'), current_site.ticket_buy_link, target: '_blank', class: 'btn btn-pink'
