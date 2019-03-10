@@ -6,8 +6,8 @@ section#ticket-section.mb-5
     .container
       .row.flex-wrap.justify-content-between
         - Settings.ticket.types.each do |plan|
-            .col.align-self-stretch.text-center.d-flex
-              .price-box.p-4.d-flex.flex-column.flex-grow-1
+            .col-sm-12.col-md-4.align-self-stretch.text-center.d-flex
+              .price-box.p-4.my-2.d-flex.flex-column.flex-grow-1
                 .price-box__header.mb-4
                   h1.price-box__title.mb-4 = ticket_name_for(plan)
                   .price-box__package
