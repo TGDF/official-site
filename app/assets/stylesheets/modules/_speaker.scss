@@ -6,4 +6,8 @@
   &__introduce {
     color: $gray-700;
   }
+
+  &__picture {
+    img { max-width: 100%; }
+  }
 }
