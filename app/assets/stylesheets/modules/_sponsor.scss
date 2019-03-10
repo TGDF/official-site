@@ -14,4 +14,8 @@
   &__description {
     color: $gray-600;
   }
+
+  &__logo {
+    img { max-width: 100%; }
+  }
 }
