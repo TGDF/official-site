@@ -6,6 +6,7 @@
       = f.association :speakers, input_html: { class: 'select2' }
       = f.association :room
       = f.association :time
+      = f.input :order
       = f.association :tags, input_html: { class: 'select2' }
     = admin_box_footer do
       = f.submit class: 'btn btn-primary'
