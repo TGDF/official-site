@@ -13,5 +13,7 @@ class Agenda < ApplicationRecord
                     inverse_of: :agendas, optional: true
   belongs_to :room, optional: true
 
+  default_scope -> { order(order: :asc) }
+
   validates :subject, :description, presence: true
 end
