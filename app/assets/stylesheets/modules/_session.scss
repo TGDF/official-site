@@ -1,4 +1,89 @@
+.agenda {
+  &__label {
+    text-transform: uppercase;
+  }
+
+  &__date {
+    display: block;
+
+    color: $gray-600;
+    font-size: 0.75em;
+  }
+
+  &__header {
+    display: none;
+
+    @include media-breakpoint-up(md) {
+      display: table-header-group;
+    }
+  }
+
+  &__body {
+    display: block;
+
+    @include media-breakpoint-up(md) {
+      display: table-row-group;
+    }
+  }
+
+  &__row {
+    display: block;
+
+    @include media-breakpoint-up(md) {
+      display: table-row;
+    }
+  }
+
+  &__time, &__session {
+    display: block;
+
+    @include media-breakpoint-up(md) {
+      display: table-cell;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__time {
+    @include media-breakpoint-down(sm) {
+      color: $table-dark-color;
+      background-color: $table-dark-bg;
+
+      text-align: center;
+    }
+  }
+
+  td.agenda__session {
+    border-top: 0;
+  }
+
+  &__room {
+    margin: $table-cell-padding * -1;
+    margin-bottom: $table-cell-padding;
+    padding: $table-cell-padding / 2;
+
+    background: $white;
+    border: 2px solid $table-dark-bg;
+
+    @include media-breakpoint-up(md) {
+      display: none;
+    }
+  }
+}
+
 .session {
+  padding-top: $table-cell-padding;
+
+  border-top: $table-border-width solid $table-border-color;
+
+  &:first-child {
+    border-top: 0;
+  }
+
+  @include media-breakpoint-up(md) {
+    border-top: 0;
+  }
+
   &__badge {
     @extend .mr-2;
 

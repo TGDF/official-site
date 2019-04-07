@@ -1,12 +1,12 @@
-tr
-  th
-    span.fa.fa-clock-o.mr-2
-    = time.label
+tr.agenda__row
+  th.agenda__time[scope="row"] = time.label
   / TODO: Optimize for nested collection render
   - if time.single?
-    td.text-center[colspan="#{@rooms.size}"]
+    td.agenda__session.text-center[colspan="#{@rooms.size}"]
       = render(partial: 'agenda', collection: time.agendas) || 'TBA'
   - else
     - @rooms.each do |room|
-      td.text-center
-        = render(partial: 'agenda', collection: time.agendas.select{ |agenda| agenda.room_id == room.id }) || 'TBA'
+      td.agenda__session.text-center
+        .agenda__room = room.name
+        .agenda__sessions
+          = render(partial: 'agenda', collection: time.agendas.select{ |agenda| agenda.room_id == room.id }) || 'TBA'
