@@ -61,6 +61,7 @@ gem 'gretel'
 gem 'mini_magick'
 gem 'oj'
 gem 'rollbar'
+gem 'whenever', require: false
 
 # API
 gem 'grape'
