@@ -26,7 +26,7 @@ ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 append :linked_files, 'config/database.yml', 'config/secrets.yml', 'config/settings.yml'
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/uploads', 'node_modules'
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/uploads', 'node_modules', 'public/sitemaps'
 
 # Default value for default_env is {}
 set :default_env, path: '/usr/local/ruby-2.5.0/bin:$PATH'
