@@ -52,12 +52,16 @@ gem 'select2-rails'
 gem 'simple_form'
 gem 'slim-rails'
 
+# SEO
+gem 'sitemap_generator'
+
 # Utilities
 gem 'carrierwave', '~> 1.2'
 gem 'gretel'
 gem 'mini_magick'
 gem 'oj'
 gem 'rollbar'
+gem 'whenever', require: false
 
 # API
 gem 'grape'
