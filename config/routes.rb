@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     resources :agenda_tags, except: :show
 
     resources :games, expect: :show
+    resource :indie_space, only: %i[edit update]
 
     constraints ->(_req) { Apartment::Tenant.current != 'public' } do
       resource :options, only: %w[edit update]

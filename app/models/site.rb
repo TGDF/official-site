@@ -3,7 +3,7 @@
 class Site < ApplicationRecord
   include Site::HasTicketOptions
 
-  translates :name, :description
+  translates :name, :description, :indie_space_description
 
   mount_uploader :logo, SiteLogoUploader
   mount_uploader :figure, SiteFigureUploader
