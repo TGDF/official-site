@@ -50,4 +50,8 @@ Rails.application.routes.draw do
       resources :sites, except: :show
     end
   end
+
+  if Rails.env.production?
+    get '*path', to: proc { |env| ApplicationController.action('render_404').call(env) }
+  end
 end

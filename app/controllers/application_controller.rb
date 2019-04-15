@@ -18,6 +18,10 @@ class ApplicationController < ActionController::Base
     current_site.cfp_only_mode == 'true'
   end
 
+  def render_404
+    render file: 'public/404.html', status: :not_found, layout: false
+  end
+
   private
 
   def layout_by_resource
