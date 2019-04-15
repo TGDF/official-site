@@ -10,6 +10,9 @@
 - else
   section#indie-space
     .container.mt-5.mb-4
+      .col-12
+        = sanitize current_site.indie_space_description
+    .container.mt-5.mb-4
       .row.flex-warp
         - @games.each do |game|
           .align-self-stretch.d-flex.mb-3.col-md-4.col-sm-12
