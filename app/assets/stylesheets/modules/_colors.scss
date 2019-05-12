@@ -2,6 +2,10 @@
 
 .bg-pink {
   background: var(--pink);
+
+  a {
+    color: var(--white);
+  }
 }
 
 .text-pink {
