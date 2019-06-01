@@ -13,7 +13,24 @@ class Agenda < ApplicationRecord
                     inverse_of: :agendas, optional: true
   belongs_to :room, optional: true
 
-  default_scope -> { order(order: :asc) }
+  default_scope -> { order(order: :asc, id: :asc) }
+
+  enum language: {
+    ZH: 1,
+    EN: 2,
+    JP: 3
+  }
+
+  enum translated_language: {
+    ZH: 1,
+    EN: 2,
+    JP: 3
+  }, _prefix: :translated
+
+  enum translated_type: {
+    sentence: 1,
+    synchornize: 2
+  }
 
   validates :subject, :description, presence: true
 end
