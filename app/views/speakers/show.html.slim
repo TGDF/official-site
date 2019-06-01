@@ -23,5 +23,12 @@ section#speaker
             .session__time
               span.fa.fa-clock-o.mr-2
               = agenda.time&.name || 'TBA'
+            .session__language
+              span = t(".lang.#{agenda.language.downcase}")
+              - if agenda.translated_type.present?
+                span = t(".#{agenda.translated_type}", to: t(".lang.#{agenda.translated_language.downcase}"))
+              - else
+                - if agenda.translated_language.present?
+                  span to #{t(".lang.#{agenda.translated_language.downcase}")
             .session__description
               = sanitize agenda.description
