@@ -28,4 +28,8 @@
 
     border-radius: 2em;
   }
+
+  &__register.btn {
+    @extend .price-box__register;
+  }
 }
