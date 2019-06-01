@@ -64,6 +64,12 @@ en:
       speakers: Speakers
     show:
       sessions_by: "Sessions by %{speaker}"
+      synchornize: " 同步翻譯為 %{to}"
+      sentence: " 逐句翻譯為 %{to}"
+      lang:
+        zh: Chinese
+        en: English
+        ja: Japanese
   sponsors:
     index:
       title: Partners
