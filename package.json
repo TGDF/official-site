@@ -2,7 +2,7 @@
   "name": "tgdf",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^3.5.5",
+    "@rails/webpacker": "^4.0.6",
     "admin-lte": "^2.4.2",
     "bootstrap": "3.3.7",
     "coffeescript": "1.12.7",
@@ -12,6 +12,6 @@
     "vue-template-compiler": "^2.4.4"
   },
   "devDependencies": {
-    "webpack-dev-server": "2.11.2"
+    "webpack-dev-server": "^3.5.0"
   }
 }
