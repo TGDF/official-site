@@ -70,3 +70,7 @@ if (window.addEventListener) {
 } else if (window.attachEvent) {
     window.attachEvent("onmessage", handleIFrameMessage);
 }
+
+window.addEventListener('turbolinks:load', function() {
+  $('.carousel').carousel()
+});
