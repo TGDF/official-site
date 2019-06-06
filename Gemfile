@@ -45,7 +45,7 @@ gem 'devise'
 gem 'omniauth-facebook'
 
 # Front End
-gem 'bootstrap', '~> 4.1.3'
+gem 'bootstrap', '~> 4.3.0'
 gem 'jquery-rails'
 gem 'mobility'
 gem 'select2-rails'
