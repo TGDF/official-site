@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :agendas_tagging do
-    agenda_id ''
-    agenda_tag_id ''
+    agenda {}
+    agenda_tag {}
   end
 end
