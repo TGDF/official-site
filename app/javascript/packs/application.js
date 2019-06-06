@@ -71,6 +71,10 @@ if (window.addEventListener) {
     window.attachEvent("onmessage", handleIFrameMessage);
 }
 
+window.addEventListener('turbolinks:before-cache', function() {
+  $('.carousel').carousel('dispose')
+});
+
 window.addEventListener('turbolinks:load', function() {
   $('.carousel').carousel()
 });
