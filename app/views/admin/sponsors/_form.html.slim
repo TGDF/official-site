@@ -9,7 +9,7 @@
       = f.input :logo do
         = f.input_field :logo
         - if @sponsor.logo.present?
-          = image_tag @sponsor.logo
+          = image_tag @sponsor.logo.url
           = f.input :remove_logo, as: :boolean
     = admin_box_footer do
       = f.submit class: 'btn btn-primary'
