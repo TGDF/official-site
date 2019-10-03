@@ -8,7 +8,7 @@
       = f.input :avatar do
         = f.input_field :avatar
         -if @speaker.avatar.present?
-          = image_tag @speaker.avatar
+          = image_tag @speaker.avatar.url
           = f.input :remove_avatar, as: :boolean
     = admin_box_footer do
       = f.submit class: 'btn btn-primary'
