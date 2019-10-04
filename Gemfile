@@ -42,7 +42,7 @@ gem 'apartment'
 
 # User
 gem 'devise'
-gem 'omniauth-facebook'
+# gem 'omniauth-facebook'
 
 # Front End
 gem 'bootstrap', '~> 4.3.0'
