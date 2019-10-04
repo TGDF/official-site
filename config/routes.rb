@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   scope '/(:lang)', lang: /#{I18n.available_locales.join('|')}/ do
     # TODO: Use get instead resources
-    root to: 'pages#index'
+    root to: 'pages#index', format: false
     resources :news, only: %i[index show]
     resources :speakers, only: %i[index show]
     resource :agenda, only: %i[show]
@@ -54,6 +54,5 @@ Rails.application.routes.draw do
 
   if Rails.env.production?
     get '*path', to: proc { |env| ApplicationController.action('render_404').call(env) }
-    get '.*path', to: proc { |env| ApplicationController.action('render_404').call(env) }
   end
 end
