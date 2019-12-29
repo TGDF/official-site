@@ -44,7 +44,7 @@ module Admin
     def game_params
       params
         .require(:game)
-        .permit(:name, :description, :team, :video,
+        .permit(:name, :description, :team, :video, :order,
                 :thumbnail, :website, :remove_thumbnail)
     end
   end
