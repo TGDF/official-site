@@ -9,6 +9,8 @@
       = f.input :translated_type, collection: Agenda.translated_types.keys
       = f.association :room
       = f.association :time
+      = f.input :begin_at
+      = f.input :end_at
       = f.input :order
       = f.association :tags, input_html: { class: 'select2' }
     = admin_box_footer do

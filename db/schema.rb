@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_29_144016) do
+ActiveRecord::Schema.define(version: 2020_01_02_143315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,8 @@ ActiveRecord::Schema.define(version: 2019_12_29_144016) do
     t.integer "language"
     t.integer "translated_language"
     t.integer "translated_type"
+    t.string "begin_at"
+    t.string "end_at"
     t.index ["room_id"], name: "index_agendas_on_room_id"
     t.index ["time_id"], name: "index_agendas_on_time_id"
   end

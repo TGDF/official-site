@@ -47,6 +47,7 @@ module Admin
         .require(:agenda)
         .permit(:subject, :description, :room_id, :time_id,
                 :language, :translated_language, :translated_type,
+                :begin_at, :end_at,
                 :order, speaker_ids: [], tag_ids: [])
     end
   end
