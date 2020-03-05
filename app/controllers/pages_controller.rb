@@ -7,4 +7,6 @@ class PagesController < ApplicationController
     @sliders = Slider.localized.home
     @partners_and_sponsors = (Partner.all + Sponsor.all)
   end
+
+  def coc; end
 end

@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resource :agenda, only: %i[show]
     resources :sponsors, only: %i[index]
     resources :indie_spaces, only: %i[index]
+    get :code_of_conduct, to: 'pages#coc'
   end
 
   namespace :admin do
