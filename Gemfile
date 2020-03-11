@@ -60,6 +60,7 @@ gem 'carrierwave', '~> 1.3'
 gem 'gretel'
 gem 'mini_magick'
 gem 'oj'
+gem 'rack-attack'
 gem 'rollbar'
 gem 'whenever', require: false
 
