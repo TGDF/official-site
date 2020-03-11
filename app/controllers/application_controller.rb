@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   include TenantSite
   include Localizable
 
-  protect_from_forgery prepend: true, with: :exception
+  protect_from_forgery
 
   helper_method :cfp_only?
 
