@@ -53,6 +53,7 @@ gem 'simple_form'
 gem 'slim-rails'
 
 # SEO
+gem 'meta-tags'
 gem 'sitemap_generator'
 
 # Utilities

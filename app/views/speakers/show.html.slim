@@ -1,5 +1,6 @@
 - title @speaker.name
-- # TODO: Add banner config
+- description truncate(strip_tags(@speaker.description), length: 150)
+- set_meta_tags og: { image: { _: @speaker.avatar_url(:v1_large), width: 370, height: 370}, type: 'profile' }
 - breadcrumb :speaker, @speaker
 
 section#speaker
