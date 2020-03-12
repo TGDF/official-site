@@ -1,6 +1,8 @@
 default: &default
   site:
     default_domain: <%= ENV['SITE_DEFAULT_DOMAIN'] || 'tgdf.tw' %>
+  assets:
+    host: <%= ENV.fetch('ASSETS_HOST', 'https://tgdf.tw') %>
   news:
     latest:
       size: <%= (ENV['NEWS_LATEST_SIZE'] || 5).to_i %>

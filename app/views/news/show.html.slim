@@ -1,4 +1,6 @@
 - title @news.title
+- description truncate(strip_tags(@news.content), length: 150)
+- set_meta_tags og: { image: { _: @news.thumbnail_url(:medium), width: 770, height: 420}, type: 'article' }
 - banner @news.thumbnail_url(:large)
 - breadcrumb :news, @news
 
