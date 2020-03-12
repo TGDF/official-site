@@ -4,8 +4,7 @@ class ApplicationController < ActionController::Base
   include TenantSite
   include Localizable
 
-  # TODO: Improve CSRF configuration
-  protect_from_forgery except: :render_404
+  protect_from_forgery
 
   helper_method :cfp_only?
 
