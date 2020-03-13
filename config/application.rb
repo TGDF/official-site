@@ -36,5 +36,7 @@ module Tgdf
       g.javascripts    false
       g.helper         false
     end
+
+    config.middleware.insert 0, Rack::UTF8Sanitizer
   end
 end

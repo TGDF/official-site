@@ -242,6 +242,8 @@ GEM
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
+    rack-utf8_sanitizer (1.7.0)
+      rack (>= 1.0, < 3.0)
     rails (5.2.3)
       actioncable (= 5.2.3)
       actionmailer (= 5.2.3)
@@ -452,6 +454,7 @@ DEPENDENCIES
   pry-rails
   puma (~> 3.12)
   rack-attack
+  rack-utf8_sanitizer
   rails (~> 5.2.3)
   rails-i18n
   rollbar
