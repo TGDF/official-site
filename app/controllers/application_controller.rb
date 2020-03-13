@@ -10,6 +10,9 @@ class ApplicationController < ActionController::Base
 
   layout :layout_by_resource
 
+  # TODO: Create 404 page with common style
+  rescue_from ActiveRecord::RecordNotFound, with: :render_404
+
   def default_url_options(options = {})
     { lang: current_locale }.merge(options)
   end
