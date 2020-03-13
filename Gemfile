@@ -62,6 +62,7 @@ gem 'gretel'
 gem 'mini_magick'
 gem 'oj'
 gem 'rack-attack'
+gem 'rack-utf8_sanitizer'
 gem 'rollbar'
 gem 'whenever', require: false
 
