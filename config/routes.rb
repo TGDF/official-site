@@ -44,6 +44,8 @@ Rails.application.routes.draw do
     resources :games, expect: :show
     resource :indie_space, only: %i[edit update]
 
+    resources :images, only: %i[create]
+
     constraints ->(_req) { Apartment::Tenant.current != 'public' } do
       resource :options, only: %w[edit update]
     end
