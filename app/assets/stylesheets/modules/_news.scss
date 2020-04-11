@@ -13,6 +13,10 @@
     h2 { font-size: 1.5em; }
     h3 { font-size: 1.25em; }
     h4, h5, h6 { font-size: 1em; }
+
+    img {
+      max-width: 100%;
+    }
   }
 
   &__read-more {
