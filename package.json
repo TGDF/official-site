@@ -2,16 +2,17 @@
   "name": "tgdf",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^4.0.6",
+    "@ckeditor/ckeditor5-build-classic": "^18.0.0",
+    "@rails/webpacker": "5.0.1",
     "admin-lte": "^2.4.2",
     "bootstrap": "3.4.1",
     "coffeescript": "1.12.7",
     "jquery": "^3.4.0",
-    "vue": "^2.4.4",
-    "vue-loader": "^13.2.1",
-    "vue-template-compiler": "^2.4.4"
+    "vue": "^2.6.11",
+    "vue-loader": "^15.9.1",
+    "vue-template-compiler": "^2.6.11"
   },
   "devDependencies": {
-    "webpack-dev-server": "^3.5.0"
+    "webpack-dev-server": "^3.10.3"
   }
 }
