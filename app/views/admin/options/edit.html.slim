@@ -19,6 +19,7 @@
             = f.input :cfp_on_agenda_mode, collection: [['No', false], ['Yes', true]], as: :select, include_blank: false
             = f.input :cfp_form_url
             = f.input :cfp_description, as: :text, input_html: { data: { editor: true }, rows: 20 }
+            = f.input :indie_space_disabled, collection: [['No', false], ['Yes', true]], as: :select, include_blank: false
             = f.input :indie_space_apply_mode, collection: [['No', false], ['Yes', true]], as: :select, include_blank: false
             = f.input :indie_space_form_url
           = admin_box_footer do

@@ -20,7 +20,8 @@ module Admin
         .permit(*Site::TICKET_OPTIONS, :google_analytics_id,
                 :cfp_form_url, :cfp_description, :cfp_only_mode,
                 :buy_ticket_url, :buy_ticket_opened, :cfp_on_agenda_mode,
-                :indie_space_apply_mode, :indie_space_form_url)
+                :indie_space_disabled, :indie_space_apply_mode,
+                :indie_space_form_url)
     end
   end
 end

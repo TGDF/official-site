@@ -16,7 +16,8 @@ nav#main-menu.navbar.navbar-expand-lg.bg-white.navbar-light.sticky-top
           - else
             = nav_item t('.agenda'), agenda_path
           = nav_item t('.sponsors'), sponsors_path
-          = nav_item t('.indie_spaces'), indie_spaces_path
+          - unless current_site.indie_space_disabled == 'true'
+            = nav_item t('.indie_spaces'), indie_spaces_path
         = nav_item t('.code_of_conduct'), code_of_conduct_path
       ul.navbar-nav.ml-auto
         = language_toggle_button
