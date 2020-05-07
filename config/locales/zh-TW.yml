@@ -26,6 +26,17 @@ zh-TW:
         origin_price: "原價為 NTD $%{price}"
         early_bird_price: "早鳥票優惠至 %{date} 截止"
         others: ~
+  streaming:
+    track_1:
+      title: 議程軌一
+      description: 請由此前往 TGDF_Official Twitch 頻道，收看第一軌議程
+    track_2:
+      title: 議程軌二
+      description: 請由此前往 TGDF_Official2 Twitch 頻道，收看第二軌議程
+    track_3:
+      title: 活動軌
+      description: 活動內容規劃中
+    watch_now: 前往參與
   locale:
     name:
       zh-TW: 繁體中文
@@ -50,6 +61,8 @@ zh-TW:
         read_more: 了解更多
       ticket:
         heading: <span>購票</span>與售價
+      streaming:
+        heading: <span>線上</span>直播
       partner:
         heading: 合作夥伴
   news:

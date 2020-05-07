@@ -11,6 +11,9 @@
   = render 'pages/index/slider'
   = render 'pages/index/about'
   / TODO: Refactor - show ticket information only per-year sites
-  = render 'pages/index/ticket' unless current_site.new_record?
+  - if current_site.streaming_enabled?
+    = render 'pages/index/streaming'
+  - else
+    = render 'pages/index/ticket'
   = render 'pages/index/news' if @news.any?
   = render 'pages/index/partner' if @partners_and_sponsors.any?

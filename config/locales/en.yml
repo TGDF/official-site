@@ -26,6 +26,17 @@ en:
         origin_price: "Full price NTD $%{price}"
         early_bird_price: "Early Bird period ends on %{date}"
         others: ~
+  streaming:
+    track_1:
+      title: Track 1
+      description: This will direct you to TGDF_Official Twitch channel for Track 1 sessions.
+    track_2:
+      title: Track 2
+      description: This will direct you to TGDF_Official2 Twitch channel for Track 2 sessions.
+    track_3:
+      title: Events
+      description: Event details pending.
+    watch_now: Watch Now
   locale:
     name:
       zh-TW: 繁體中文
@@ -49,6 +60,8 @@ en:
         read_more: "Learn more"
       ticket:
         heading: "<span>Passes</span> & Prices"
+      streaming:
+        heading: "<span>Live</span> Streaming"
       partner:
         heading: Partner
   news:

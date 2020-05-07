@@ -1,0 +1,17 @@
+section#ticket-section.mb-5
+  .container
+    .sec-title.text-center.mb-4
+      h1.heading = sanitize t('.heading')
+  .bg-pink.text-white.py-5
+    .container
+      .row.flex-wrap.justify-content-between
+        - (1..3).each do |index|
+            .col-sm-12.col-md-4.align-self-stretch.text-center.d-flex
+              .price-box.p-4.my-2.d-flex.flex-column.flex-grow-1
+                .price-box__header.mb-4
+                  h1.price-box__title.mb-4 = t("streaming.track_#{index}.title")
+                .price-box__features.flex-grow-1.text-dark
+                  ul
+                    li =  t("streaming.track_#{index}.description")
+                .price-box__footer.mt-4
+                  = link_to t('streaming.watch_now'), current_site.send("streaming_track_#{index}_url"), class: 'btn btn-light price-box__register', target: '_blank'

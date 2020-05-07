@@ -2,11 +2,16 @@
 .content
   .row
     .col-md-12
-      = admin_box do
-        = simple_form_for current_site, url: admin_options_path do |f|
-          = admin_box_header t('.edit_options')
+      = simple_form_for current_site, url: admin_options_path do |f|
+        = admin_box do
+          = admin_box_header t('.general')
           = admin_box_body do
             = f.input :google_analytics_id
+          = admin_box_footer do
+            = f.submit class: 'btn btn-primary'
+        = admin_box do
+          = admin_box_header t('.ticket')
+          = admin_box_body do
             = f.input :ticket_early_personal_price, as: :integer
             = f.input :ticket_personal_price, as: :integer
             = f.input :ticket_early_group_price, as: :integer
@@ -15,10 +20,29 @@
             = f.input :ticket_student_price, as: :integer
             = f.input :ticket_early_bird_due_to, as: :date
             = f.input :ticket_buy_link
+          = admin_box_footer do
+            = f.submit class: 'btn btn-primary'
+        = admin_box do
+          = admin_box_header t('.streaming')
+          = admin_box_body do
+            = f.input :streaming_enabled, collection: [['No', false], ['Yes', true]], as: :select, include_blank: false
+            = f.input :streaming_track_1_url
+            = f.input :streaming_track_2_url
+            = f.input :streaming_track_3_url
+          = admin_box_footer do
+            = f.submit class: 'btn btn-primary'
+        = admin_box do
+          = admin_box_header t('.call_for_paper')
+          = admin_box_body do
             = f.input :cfp_only_mode, collection: [['No', false], ['Yes', true]], as: :select, include_blank: false
             = f.input :cfp_on_agenda_mode, collection: [['No', false], ['Yes', true]], as: :select, include_blank: false
             = f.input :cfp_form_url
             = f.input :cfp_description, as: :text, input_html: { data: { editor: true }, rows: 20 }
+          = admin_box_footer do
+            = f.submit class: 'btn btn-primary'
+        = admin_box do
+          = admin_box_header t('.indie_space')
+          = admin_box_body do
             = f.input :indie_space_disabled, collection: [['No', false], ['Yes', true]], as: :select, include_blank: false
             = f.input :indie_space_apply_mode, collection: [['No', false], ['Yes', true]], as: :select, include_blank: false
             = f.input :indie_space_form_url
