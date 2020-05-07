@@ -17,7 +17,8 @@ section#ticket-section.mb-5
                   ul
                     li = t("ticket.info.#{plan}.origin_price", price: ticket_price_for(plan, false))
                     = ticket_others_info_for(plan)
-                .price-box__early-bird
-                  = t("ticket.info.#{plan}.early_bird_price", price: ticket_price_for(plan, true), date: l(current_site.ticket_early_bird_due_to.to_date, format: :long))
+                - if current_site.ticket_early_bird_due_to.present?
+                  .price-box__early-bird
+                    = t("ticket.info.#{plan}.early_bird_price", price: ticket_price_for(plan, true), date: l(current_site.ticket_early_bird_due_to.to_date, format: :long))
                 .price-box__footer.mt-4
                   = link_to t('ticket.buy_now'), current_site.ticket_buy_link, class: 'btn btn-light price-box__register', target: '_blank'

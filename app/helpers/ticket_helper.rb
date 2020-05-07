@@ -24,6 +24,8 @@ module TicketHelper
   end
 
   def ticket_early_bird?
+    return false if current_site.ticket_early_bird_due_to.blank?
+
     current_site.ticket_early_bird_due_to > Time.zone.now
   end
 end
