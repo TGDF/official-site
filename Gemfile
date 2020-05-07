@@ -64,6 +64,7 @@ gem 'oj'
 gem 'rack-attack'
 gem 'rack-utf8_sanitizer'
 gem 'rollbar'
+gem 'store_attribute', '~> 0.5.0'
 gem 'whenever', require: false
 
 # API

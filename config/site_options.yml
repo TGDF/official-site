@@ -1,0 +1,55 @@
+default: &default
+  google:
+    - name: analytics_id
+      type: string
+  cfp:
+    - name: form_url
+      type: string
+    - name: description
+      type: text
+    - name: only_mode
+      type: boolean
+    - name: on_agenda_mode
+      type: boolean
+  indie_space:
+    - name: disabled
+      type: boolean
+    - name: form_url
+      type: string
+    - name: apply_mode
+      type: boolean
+  ticket:
+    - name: student_price
+      type: integer
+    - name: personal_price
+      type: integer
+    - name: group_price
+      type: integer
+    - name: early_student_price
+      type: integer
+    - name: early_personal_price
+      type: integer
+    - name: early_group_price
+      type: integer
+    - name: buy_link
+      type: string
+    - name: early_bird_due_to
+      type: datetime
+  streaming:
+    - name: enabled
+      type: boolean
+    - name: track_1_url
+      type: string
+    - name: track_2_url
+      type: string
+    - name: track_3_url
+      type: string
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

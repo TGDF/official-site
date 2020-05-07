@@ -19,7 +19,7 @@ RSpec.feature 'Admin::Options', level: :feature do
     it 'can edit ste options' do
       visit edit_admin_options_path
       fill_in 'site_ticket_personal_price', with: '1500'
-      click_button '更新Site'
+      click_button '更新Site', match: :first
       # TODO: Improve check to ensure correct field is shown
       visit root_path
       expect(page).to have_content('1500')
