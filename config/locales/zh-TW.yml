@@ -75,7 +75,8 @@ zh-TW:
       read_more: 了解更多
   speakers:
     index:
-      title: 講者
+      title: 講者一覽
+      description: 講師及對應議程之詳細介紹。
       speakers: 講者列表
     show:
       sessions_by: "%{speaker}的議程"
@@ -85,9 +86,14 @@ zh-TW:
         zh: 中文
         en: 英文
         ja: 日文
+  agendas:
+    show:
+      title: 議程表
+      description: 論壇議程分軌時間總表。
   sponsors:
     index:
       title: 合作夥伴
+      description: 合作夥伴、贊助單位詳細介紹。
   indie_spaces:
     index:
       view_video: 觀看影片

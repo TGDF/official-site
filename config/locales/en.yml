@@ -74,6 +74,7 @@ en:
   speakers:
     index:
       title: Speakers
+      description: Speakers line-up and detailed sessions info.
       speakers: Speakers
     show:
       sessions_by: "Sessions by %{speaker}"
@@ -83,9 +84,14 @@ en:
         zh: Mandarin/Chinese
         en: English
         ja: Japanese
+  agendas:
+    show:
+      title: Agenda
+      description: Multi-track session timetables.
   sponsors:
     index:
       title: Partners
+      description: Introduction to our partners and sponsors.
   indie_spaces:
     index:
       view_video: "View trailer"
