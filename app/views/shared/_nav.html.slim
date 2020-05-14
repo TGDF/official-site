@@ -21,5 +21,9 @@ nav#main-menu.navbar.navbar-expand-lg.bg-white.navbar-light.sticky-top
         = nav_item t('.code_of_conduct'), code_of_conduct_path
       ul.navbar-nav.ml-auto
         = language_toggle_button
-        - if display_buy_ticket_button?
-          = link_to t('.buy_ticket'), current_site.ticket_buy_link, target: '_blank', class: 'btn btn-pink'
+        - if current_site.streaming_enabled?
+          - if current_site.streaming_track_1_url.present?
+            = link_to t('.watch_now'), current_site.streaming_track_1_url, target: '_blank', class: 'btn btn-pink'
+        - else
+          - if current_site.ticket_buy_link.present?
+            = link_to t('.buy_ticket'), current_site.ticket_buy_link, target: '_blank', class: 'btn btn-pink'
