@@ -11,7 +11,7 @@ class IndieSpacesController < ApplicationController
   private
 
   def check_is_opened
-    return unless current_site.indie_space_disabled == 'true'
+    return unless current_site.indie_space_disabled?
 
     redirect_to root_path
   end
