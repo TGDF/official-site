@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   end
 
   def cfp_only?
-    current_site.cfp_only_mode == 'true'
+    current_site.cfp_only_mode?
   end
 
   def render_404

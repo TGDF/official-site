@@ -1,7 +1,7 @@
 - content_for :disable_breadcrumb, true
 = render 'slider'
 
-- if current_site.indie_space_apply_mode == 'true'
+- if current_site.indie_space_apply_mode?
   section.sec-pding
     .container
       .row
