@@ -81,6 +81,7 @@ en:
       sessions_by: "Sessions by %{speaker}"
       synchornize: " (simultaneously interpreted into %{to})"
       sentence: " (consecutively interpreted into %{to})"
+      subtitle: " (%{to} subtitle)"
       lang:
         zh: Mandarin/Chinese
         en: English
