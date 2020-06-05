@@ -13,6 +13,7 @@ const editors = [];
 
 const setupCKEditors = () => {
   document.querySelectorAll('[data-editor=true]').forEach($el => {
+    $el.required = false
     ClassicEditor
       .create($el, {
         ckfinder: {
