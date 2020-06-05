@@ -29,7 +29,8 @@ class Agenda < ApplicationRecord
 
   enum translated_type: {
     sentence: 1,
-    synchornize: 2
+    synchornize: 2,
+    subtitle: 3
   }
 
   validates :subject, :description, presence: true

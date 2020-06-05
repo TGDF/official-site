@@ -82,6 +82,7 @@ zh-TW:
       sessions_by: "%{speaker}的議程"
       synchornize: 同步翻譯為%{to}
       sentence: 逐句翻譯為%{to}
+      subtitle: 演講附帶%{to}字幕
       lang:
         zh: 中文
         en: 英文
