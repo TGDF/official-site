@@ -6,8 +6,8 @@
       = f.input :order
       = f.input :description, as: :text, input_html: { data: { editor: true }, rows: 20 }
       = f.input :avatar do
-        = f.input_field :avatar
-        -if @speaker.avatar.present?
+        = f.input_field :avatar, required: false
+        - if @speaker.avatar.present?
           = image_tag @speaker.avatar.url
           = f.input :remove_avatar, as: :boolean
     = admin_box_footer do
