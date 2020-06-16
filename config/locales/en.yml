@@ -34,9 +34,9 @@ en:
       title: Track 2
       description: This will direct you to TGDF_Official2 Twitch channel for Track 2 sessions.
     track_3:
-      title: Events
-      description: Event details pending.
-    watch_now: Watch Now
+      title: Pre-Register
+      description: (Updating)
+    watch_now: Go Now
   locale:
     name:
       zh-TW: 繁體中文
@@ -50,6 +50,7 @@ en:
       cfp: CFP
       sponsors: Partners
       buy_ticket: Register
+      watch_now: Watch Now
       indie_spaces: "Indie Space"
       code_of_conduct: CoC
   pages:
