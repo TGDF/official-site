@@ -29,6 +29,7 @@ section#speaker
                 = agenda.time&.name || 'TBA'
             - if agenda.language.present?
               .session__language
+                span = t('.language')
                 span = t(".lang.#{agenda.language.downcase}")
                 - if agenda.translated_type.present?
                   span = t(".#{agenda.translated_type}", to: t(".lang.#{agenda.translated_language.downcase}"))
