@@ -83,6 +83,7 @@ en:
       synchornize: " (simultaneously interpreted into %{to})"
       sentence: " (consecutively interpreted into %{to})"
       subtitle: " (accompanied with %{to} subtitles.)"
+      language: "Language: "
       lang:
         zh: Mandarin/Chinese
         en: English
