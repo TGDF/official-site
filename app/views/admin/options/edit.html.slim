@@ -48,3 +48,10 @@
             = f.input :indie_space_form_url
           = admin_box_footer do
             = f.submit class: 'btn btn-primary'
+        = admin_box do
+          = admin_box_header t('.survey')
+          = admin_box_body do
+            = f.input :survey_url
+            = f.input :survey_enabled_at, as: :date
+          = admin_box_footer do
+            = f.submit class: 'btn btn-primary'

@@ -44,6 +44,11 @@ default: &default
       type: string
     - name: track_3_url
       type: string
+  survey:
+    - name: url
+      type: string
+    - name: enabled_at
+      type: datetime
 
 development:
   <<: *default
