@@ -6,7 +6,7 @@ FactoryBot.define do
     description { Faker::Lorem.paragraph }
     avatar do
       Rack::Test::UploadedFile.new(
-        Rails.root.join('spec', 'support', 'avatars', 'Aotoki.jpg'),
+        Rails.root.join('spec/support/avatars/Aotoki.jpg'),
         'image/jpeg'
       )
     end

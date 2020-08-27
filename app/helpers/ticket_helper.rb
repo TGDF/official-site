@@ -18,7 +18,7 @@ module TicketHelper
 
     capture do
       others.each_with_index do |info, index|
-        concat content_tag(:li, info, class: (index % 2).zero? ? 'gray-bg' : '')
+        concat tag.li(info, class: (index % 2).zero? ? 'gray-bg' : '')
       end
     end
   end

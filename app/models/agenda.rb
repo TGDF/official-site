@@ -9,7 +9,7 @@ class Agenda < ApplicationRecord
   has_many :taggings, class_name: 'AgendasTagging', dependent: :delete_all
   has_many :tags, through: :taggings
 
-  belongs_to :time, class_name: 'AgendaTime', foreign_key: :time_id,
+  belongs_to :time, class_name: 'AgendaTime',
                     inverse_of: :agendas, optional: true
   belongs_to :room, optional: true
 
@@ -18,19 +18,19 @@ class Agenda < ApplicationRecord
   enum language: {
     ZH: 1,
     EN: 2,
-    JP: 3
+    JP: 3,
   }
 
   enum translated_language: {
     ZH: 1,
     EN: 2,
-    JP: 3
+    JP: 3,
   }, _prefix: :translated
 
   enum translated_type: {
     sentence: 1,
     synchornize: 2,
-    subtitle: 3
+    subtitle: 3,
   }
 
   validates :subject, :description, presence: true

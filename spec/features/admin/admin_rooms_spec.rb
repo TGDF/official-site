@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::Rooms', type: :feature do
+RSpec.feature('Admin::Rooms', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:room) { create(:room) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::Rooms', type: :feature do
 
     it 'can see all types' do
       visit admin_rooms_path
-      @types.each { |type| expect(page).to have_content(type.name) }
+      @types.each { |type| expect(page).to(have_content(type.name)) }
     end
   end
 
@@ -24,7 +24,7 @@ RSpec.feature 'Admin::Rooms', type: :feature do
       visit new_admin_room_path
       fill_in 'room_name', with: 'Example'
       click_button '新增Room'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.feature 'Admin::Rooms', type: :feature do
       visit edit_admin_room_path(@room)
       fill_in 'room_name', with: 'New room Name'
       click_button '更新Room'
-      expect(page).to have_content('New room Name')
+      expect(page).to(have_content('New room Name'))
     end
   end
 
@@ -49,7 +49,7 @@ RSpec.feature 'Admin::Rooms', type: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@room.name)
+      expect(page).not_to(have_content(@room.name))
     end
   end
 end

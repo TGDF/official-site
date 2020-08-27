@@ -14,24 +14,24 @@ module Admin
 
     def create
       @agenda_time = AgendaTime.new(agenda_time_params)
-      return redirect_to admin_agenda_times_path if @agenda_time.save
+      return redirect_to(admin_agenda_times_path) if @agenda_time.save
 
-      render :new
+      render(:new)
     end
 
     def edit; end
 
     def update
       if @agenda_time.update(agenda_time_params)
-        return redirect_to admin_agenda_times_path
+        return redirect_to(admin_agenda_times_path)
       end
 
-      render :edit
+      render(:edit)
     end
 
     def destroy
       @agenda_time.destroy
-      redirect_to admin_agenda_times_path
+      redirect_to(admin_agenda_times_path)
     end
 
     private

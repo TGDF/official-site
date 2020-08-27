@@ -2,7 +2,7 @@
 
 module ThemeHelper
   def fa_icon(name)
-    content_tag :i, '', class: "fa fa-#{name} mr-2"
+    tag.i('', class: "fa fa-#{name} mr-2")
   end
 
   def label_with_icon(name, icon)

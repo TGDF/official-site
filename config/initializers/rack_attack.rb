@@ -6,6 +6,6 @@ end
 
 ActiveSupport::Notifications.subscribe('rack.attack') do |_name, _start, _finish, _request_id, payload|
   Rails.logger.tagged('Rack::Attack') do
-    Rails.logger.warn "Throttled #{payload[:request].env['rack.attack.match_discriminator']}"
+    Rails.logger.warn("Throttled #{payload[:request].env['rack.attack.match_discriminator']}")
   end
 end

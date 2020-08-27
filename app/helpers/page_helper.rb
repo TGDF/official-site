@@ -2,7 +2,7 @@
 
 module PageHelper
   def banner(path)
-    content_for :page_banner, path
+    content_for(:page_banner, path)
   end
 
   def original_url
@@ -24,7 +24,7 @@ module PageHelper
       title: :full_title,
       site_name: :site,
       description: :description,
-      url: original_url
+      url: original_url,
     }
   end
 end

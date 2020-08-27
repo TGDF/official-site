@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::Games', level: :feature do
+RSpec.feature('Admin::Games', level: :feature) do
   let(:admin) { create(:admin_user) }
   let(:game) { create(:game) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::Games', level: :feature do
 
     it 'can see all game' do
       visit admin_games_path
-      @games.each { |game| expect(page).to have_content(game.name) }
+      @games.each { |game| expect(page).to(have_content(game.name)) }
     end
   end
 
@@ -27,10 +27,10 @@ RSpec.feature 'Admin::Games', level: :feature do
       fill_in 'game_team', with: 'Team'
       attach_file(
         'game_thumbnail',
-        Rails.root.join('spec', 'support', 'brands', 'logos', 'TGDF.png')
+        Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       click_button '新增Game'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -39,7 +39,7 @@ RSpec.feature 'Admin::Games', level: :feature do
       visit edit_admin_game_path(game)
       fill_in 'game_name', with: 'New Game Name'
       click_button '更新Game'
-      expect(page).to have_content('New Game Name')
+      expect(page).to(have_content('New Game Name'))
     end
   end
 
@@ -53,7 +53,7 @@ RSpec.feature 'Admin::Games', level: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@game.name)
+      expect(page).not_to(have_content(@game.name))
     end
   end
 end

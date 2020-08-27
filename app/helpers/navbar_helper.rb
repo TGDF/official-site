@@ -22,14 +22,14 @@ module NavbarHelper
   def nav_item(name, path, options = {})
     style = ['nav-item']
     style << 'active' if current_path_under?(path)
-    content_tag :li, class: style.join(' ') do
+    tag.li(class: style.join(' ')) do
       link_to name, path, options.reverse_merge!(class: 'nav-link')
     end
   end
 
   def language_toggle_button
     target_language = (current_locale || :'zh-TW') == :'zh-TW' ? :en : :'zh-TW'
-    content_tag :li, class: 'nav-item language-toggler' do
+    tag.li(class: 'nav-item language-toggler') do
       link_to t("locale.name.#{target_language}"),
               url_for(lang: target_language),
               class: 'nav-link'

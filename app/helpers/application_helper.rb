@@ -6,7 +6,7 @@ module ApplicationHelper
     return if current_page?('/')
     return if content_for(:disable_breadcrumb).present?
 
-    render 'shared/breadcrumb'
+    render('shared/breadcrumb')
   end
 
   def site_name
@@ -23,13 +23,9 @@ module ApplicationHelper
   end
 
   def alternate_lang(lang = nil)
-    content_tag(
-      :link,
-      nil,
-      rel: 'alternate',
+    tag.link(nil, rel: 'alternate',
       hreflang: lang || 'x-default',
-      href: url_for(lang: lang, only_path: false)
-    )
+      href: url_for(lang: lang, only_path: false))
   end
 
   def display_buy_ticket_button?

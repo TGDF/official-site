@@ -15,7 +15,7 @@ module Admin
     def create
       Mobility.with_locale(I18n.default_locale) do
         @agenda_tag = AgendaTag.new(agenda_tag_params)
-        return redirect_to admin_agenda_tags_path if @agenda_tag.save
+        return redirect_to(admin_agenda_tags_path) if @agenda_tag.save
 
         render :new
       end
@@ -26,7 +26,7 @@ module Admin
     def update
       Mobility.with_locale(admin_current_resource_locale) do
         if @agenda_tag.update(agenda_tag_params)
-          return redirect_to admin_agenda_tags_path
+          return redirect_to(admin_agenda_tags_path)
         end
 
         render :edit
@@ -35,7 +35,7 @@ module Admin
 
     def destroy
       @agenda_tag.destroy
-      redirect_to admin_agenda_tags_path
+      redirect_to(admin_agenda_tags_path)
     end
 
     private

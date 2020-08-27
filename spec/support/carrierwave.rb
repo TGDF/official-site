@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Dir[Rails.root.join('app', 'uploaders', '*.rb')].each { |file| require file }
+Dir[Rails.root.join('app/uploaders/*.rb')].each { |file| require file }
 
 RSpec.configure do |config|
   CarrierWave::Uploader::Base.descendants.each do |klass|
@@ -8,7 +8,7 @@ RSpec.configure do |config|
 
     klass.class_eval do
       def cache_dir
-        Rails.root.join('spec', 'support', 'uploads', 'tmp')
+        Rails.root.join('spec/support/uploads/tmp')
       end
 
       def store_dir
@@ -26,6 +26,6 @@ RSpec.configure do |config|
   end
 
   config.after(:all) do
-    FileUtils.rm_rf(Rails.root.join('spec', 'support', 'uploads'))
+    FileUtils.rm_rf(Rails.root.join('spec/support/uploads'))
   end
 end

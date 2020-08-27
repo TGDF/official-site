@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Pages', type: :feature do
+RSpec.feature('Pages', type: :feature) do
   describe '#index' do
     let!(:news) { create(:news, status: :published) }
 
@@ -10,7 +10,7 @@ RSpec.feature 'Pages', type: :feature do
 
     it 'shows news' do
       visit root_path
-      expect(page).to have_content(news.title)
+      expect(page).to(have_content(news.title))
     end
   end
 end

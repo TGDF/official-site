@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::AgendaDays', type: :feature do
+RSpec.feature('Admin::AgendaDays', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:agenda_day) { create(:agenda_day) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::AgendaDays', type: :feature do
 
     it 'can see all days' do
       visit admin_agenda_days_path
-      @days.each { |type| expect(page).to have_content(type.label) }
+      @days.each { |type| expect(page).to(have_content(type.label)) }
     end
   end
 
@@ -24,7 +24,7 @@ RSpec.feature 'Admin::AgendaDays', type: :feature do
       visit new_admin_agenda_day_path
       fill_in 'agenda_day_label', with: 'Example'
       click_button '新增Agenda day'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.feature 'Admin::AgendaDays', type: :feature do
       visit edit_admin_agenda_day_path(@agenda_day)
       fill_in 'agenda_day_label', with: 'New agenda_day Label'
       click_button '更新Agenda day'
-      expect(page).to have_content('New agenda_day Label')
+      expect(page).to(have_content('New agenda_day Label'))
     end
   end
 
@@ -49,7 +49,7 @@ RSpec.feature 'Admin::AgendaDays', type: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@agenda_day.label)
+      expect(page).not_to(have_content(@agenda_day.label))
     end
   end
 end

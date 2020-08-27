@@ -15,7 +15,7 @@ module Admin
     def create
       Mobility.with_locale(I18n.default_locale) do
         @partner = Partner.new(partner_params)
-        return redirect_to admin_partners_path if @partner.save
+        return redirect_to(admin_partners_path) if @partner.save
 
         render :new
       end
@@ -26,7 +26,7 @@ module Admin
     def update
       Mobility.with_locale(admin_current_resource_locale) do
         if @partner.update(partner_params)
-          return redirect_to admin_partners_path
+          return redirect_to(admin_partners_path)
         end
 
         render :edit
@@ -35,7 +35,7 @@ module Admin
 
     def destroy
       @partner.destroy
-      redirect_to admin_partners_path
+      redirect_to(admin_partners_path)
     end
 
     private

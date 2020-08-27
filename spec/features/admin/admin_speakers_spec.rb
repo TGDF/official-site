@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::Speakers', type: :feature do
+RSpec.feature('Admin::Speakers', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:speaker) { create(:speaker) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::Speakers', type: :feature do
 
     it 'can see all speaker' do
       visit admin_speakers_path
-      @speakers.each { |speaker| expect(page).to have_content(speaker.name) }
+      @speakers.each { |speaker| expect(page).to(have_content(speaker.name)) }
     end
   end
 
@@ -26,10 +26,10 @@ RSpec.feature 'Admin::Speakers', type: :feature do
       fill_in 'speaker_description', with: 'Example Content'
       attach_file(
         'speaker_avatar',
-        Rails.root.join('spec', 'support', 'avatars', 'Aotoki.jpg')
+        Rails.root.join('spec/support/avatars/Aotoki.jpg')
       )
       click_button '新增Speaker'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -38,7 +38,7 @@ RSpec.feature 'Admin::Speakers', type: :feature do
       visit edit_admin_speaker_path(speaker)
       fill_in 'speaker_name', with: 'New speaker Name'
       click_button '更新Speaker'
-      expect(page).to have_content('New speaker Name')
+      expect(page).to(have_content('New speaker Name'))
     end
   end
 
@@ -52,7 +52,7 @@ RSpec.feature 'Admin::Speakers', type: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@speaker.name)
+      expect(page).not_to(have_content(@speaker.name))
     end
   end
 end

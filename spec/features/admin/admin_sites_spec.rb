@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::Sites', type: :feature do
+RSpec.feature('Admin::Sites', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:site) { create(:site) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::Sites', type: :feature do
 
     it 'can see all sites' do
       visit admin_sites_path
-      @sites.each { |site| expect(page).to have_content(site.name) }
+      @sites.each { |site| expect(page).to(have_content(site.name)) }
     end
   end
 
@@ -26,7 +26,7 @@ RSpec.feature 'Admin::Sites', type: :feature do
       fill_in 'site_domain', with: 'example.com'
       fill_in 'site_tenant_name', with: 'example'
       click_button '新增Site'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.feature 'Admin::Sites', type: :feature do
       visit edit_admin_site_path(site)
       fill_in 'site_name', with: 'New Site Name'
       click_button '更新Site'
-      expect(page).to have_content('New Site Name')
+      expect(page).to(have_content('New Site Name'))
     end
   end
 
@@ -49,7 +49,7 @@ RSpec.feature 'Admin::Sites', type: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@site.name)
+      expect(page).not_to(have_content(@site.name))
     end
   end
 end

@@ -8,11 +8,11 @@ module Admin
     def create
       @image = Image.create(file: params[:upload])
 
-      render json: {
+      render(json: {
         filename: @image.file.filename,
         uploaded: @image.valid?,
-        url: @image.file_url
-      }
+        url: @image.file_url,
+      })
     end
   end
 end

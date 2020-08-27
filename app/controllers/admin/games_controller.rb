@@ -14,7 +14,7 @@ module Admin
 
     def create
       Mobility.with_locale(I18n.default_locale) do
-        return redirect_to admin_games_path if Game.create(game_params)
+        return redirect_to(admin_games_path) if Game.create(game_params)
 
         render :new
       end
@@ -24,7 +24,7 @@ module Admin
 
     def update
       Mobility.with_locale(admin_current_resource_locale) do
-        return redirect_to admin_games_path if @game.update(game_params)
+        return redirect_to(admin_games_path) if @game.update(game_params)
 
         render :edit
       end
@@ -32,7 +32,7 @@ module Admin
 
     def destroy
       @game.destroy
-      redirect_to admin_games_path
+      redirect_to(admin_games_path)
     end
 
     private
