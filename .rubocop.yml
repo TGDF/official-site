@@ -36,3 +36,6 @@ Style/BlockComments:
     - spec/**/*
 Style/Documentation:
   Enabled: false
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: false
