@@ -80,7 +80,7 @@ group :development, :test do
   gem 'faker'
   gem 'fuubar'
   gem 'rspec-rails'
-  gem 'shoulda', '~> 3.5.0'
+  gem 'shoulda', '~> 4.0.0'
   gem 'shoulda-matchers'
   gem 'simplecov', require: false
 
