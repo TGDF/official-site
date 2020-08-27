@@ -80,7 +80,7 @@ group :development, :test do
   gem 'faker'
   gem 'fuubar'
   gem 'rspec-rails'
-  gem 'shoulda', '~> 3.5.0'
+  gem 'shoulda', '~> 4.0.0'
   gem 'shoulda-matchers'
   gem 'simplecov', require: false
 
@@ -94,7 +94,10 @@ group :development do
 
   gem 'brakeman', require: false
   gem 'overcommit', require: false
-  gem 'rubocop', '~> 0.60.0', require: false
+  gem 'rubocop', '~> 0.89.1', require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-shopify', require: false
 
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'

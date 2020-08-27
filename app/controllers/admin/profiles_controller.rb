@@ -7,10 +7,10 @@ module Admin
     def update
       if current_admin_user.update(admin_user_params)
         bypass_sign_in(current_admin_user)
-        return redirect_to admin_root_path
+        return redirect_to(admin_root_path)
       end
 
-      render :edit
+      render(:edit)
     end
 
     private

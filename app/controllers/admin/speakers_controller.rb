@@ -15,7 +15,7 @@ module Admin
     def create
       Mobility.with_locale(I18n.default_locale) do
         @speaker = Speaker.new(speaker_params)
-        return redirect_to admin_speakers_path if @speaker.save
+        return redirect_to(admin_speakers_path) if @speaker.save
 
         render :new
       end
@@ -26,7 +26,7 @@ module Admin
     def update
       Mobility.with_locale(admin_current_resource_locale) do
         if @speaker.update(speaker_params)
-          return redirect_to admin_speakers_path
+          return redirect_to(admin_speakers_path)
         end
 
         render :edit
@@ -35,7 +35,7 @@ module Admin
 
     def destroy
       @speaker.destroy
-      redirect_to admin_speakers_path
+      redirect_to(admin_speakers_path)
     end
 
     private

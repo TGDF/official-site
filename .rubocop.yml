@@ -1,3 +1,10 @@
+inherit_gem:
+    rubocop-shopify: rubocop.yml
+
+require:
+  - rubocop-rails
+  - rubocop-performance
+
 AllCops:
   TargetRubyVersion: 2.5.1
   DisplayCopNames: true
@@ -28,4 +35,7 @@ Style/BlockComments:
     - config/**/*
     - spec/**/*
 Style/Documentation:
+  Enabled: false
+
+Style/MethodCallWithArgsParentheses:
   Enabled: false

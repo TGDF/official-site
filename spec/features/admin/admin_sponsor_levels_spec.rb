@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::SponsorLevels', type: :feature do
+RSpec.feature('Admin::SponsorLevels', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:sponsor_level) { create(:sponsor_level) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::SponsorLevels', type: :feature do
 
     it 'can see all types' do
       visit admin_sponsor_levels_path
-      @types.each { |type| expect(page).to have_content(type.name) }
+      @types.each { |type| expect(page).to(have_content(type.name)) }
     end
   end
 
@@ -24,7 +24,7 @@ RSpec.feature 'Admin::SponsorLevels', type: :feature do
       visit new_admin_sponsor_level_path
       fill_in 'sponsor_level_name', with: 'Example'
       click_button '新增Sponsor level'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.feature 'Admin::SponsorLevels', type: :feature do
       visit edit_admin_sponsor_level_path(@level)
       fill_in 'sponsor_level_name', with: 'New Level Name'
       click_button '更新Sponsor level'
-      expect(page).to have_content('New Level Name')
+      expect(page).to(have_content('New Level Name'))
     end
   end
 
@@ -49,7 +49,7 @@ RSpec.feature 'Admin::SponsorLevels', type: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@level.name)
+      expect(page).not_to(have_content(@level.name))
     end
   end
 end

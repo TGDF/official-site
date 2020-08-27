@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::Options', level: :feature do
+RSpec.feature('Admin::Options', level: :feature) do
   let(:admin) { create(:admin_user) }
   let(:site) { create(:site) }
 
@@ -22,7 +22,7 @@ RSpec.feature 'Admin::Options', level: :feature do
       click_button '更新Site', match: :first
       # TODO: Improve check to ensure correct field is shown
       visit root_path
-      expect(page).to have_content('1500')
+      expect(page).to(have_content('1500'))
     end
   end
 end

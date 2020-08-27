@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::Agendas', type: :feature do
+RSpec.feature('Admin::Agendas', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:agenda) { create(:agenda) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::Agendas', type: :feature do
 
     it 'can see all agenda' do
       visit admin_agendas_path
-      @agendas.each { |agenda| expect(page).to have_content(agenda.subject) }
+      @agendas.each { |agenda| expect(page).to(have_content(agenda.subject)) }
     end
   end
 
@@ -25,7 +25,7 @@ RSpec.feature 'Admin::Agendas', type: :feature do
       fill_in 'agenda_subject', with: 'Example'
       fill_in 'agenda_description', with: 'Example Content'
       click_button '新增Agenda'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -34,7 +34,7 @@ RSpec.feature 'Admin::Agendas', type: :feature do
       visit edit_admin_agenda_path(agenda)
       fill_in 'agenda_subject', with: 'New agenda Name'
       click_button '更新Agenda'
-      expect(page).to have_content('New agenda Name')
+      expect(page).to(have_content('New agenda Name'))
     end
   end
 
@@ -48,7 +48,7 @@ RSpec.feature 'Admin::Agendas', type: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@agenda.subject)
+      expect(page).not_to(have_content(@agenda.subject))
     end
   end
 end

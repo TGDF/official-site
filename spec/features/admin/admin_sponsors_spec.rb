@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::Sponsors', level: :feature do
+RSpec.feature('Admin::Sponsors', level: :feature) do
   let(:admin) { create(:admin_user) }
   let(:sponsor) { create(:sponsor) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::Sponsors', level: :feature do
 
     it 'can see all sponsor' do
       visit admin_sponsors_path
-      @sponsors.each { |sponsor| expect(page).to have_content(sponsor.name) }
+      @sponsors.each { |sponsor| expect(page).to(have_content(sponsor.name)) }
     end
   end
 
@@ -27,11 +27,11 @@ RSpec.feature 'Admin::Sponsors', level: :feature do
       fill_in 'sponsor_name', with: 'Example'
       attach_file(
         'sponsor_logo',
-        Rails.root.join('spec', 'support', 'brands', 'logos', 'TGDF.png')
+        Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       select level.name, from: 'sponsor_level_id'
       click_button '新增Sponsor'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -40,7 +40,7 @@ RSpec.feature 'Admin::Sponsors', level: :feature do
       visit edit_admin_sponsor_path(sponsor)
       fill_in 'sponsor_name', with: 'New sponsor Name'
       click_button '更新Sponsor'
-      expect(page).to have_content('New sponsor Name')
+      expect(page).to(have_content('New sponsor Name'))
     end
   end
 
@@ -54,7 +54,7 @@ RSpec.feature 'Admin::Sponsors', level: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@sponsor.name)
+      expect(page).not_to(have_content(@sponsor.name))
     end
   end
 end

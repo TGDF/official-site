@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::PartnerTypes', type: :feature do
+RSpec.feature('Admin::PartnerTypes', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:partner_type) { create(:partner_type) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::PartnerTypes', type: :feature do
 
     it 'can see all types' do
       visit admin_partner_types_path
-      @types.each { |type| expect(page).to have_content(type.name) }
+      @types.each { |type| expect(page).to(have_content(type.name)) }
     end
   end
 
@@ -24,7 +24,7 @@ RSpec.feature 'Admin::PartnerTypes', type: :feature do
       visit new_admin_partner_type_path
       fill_in 'partner_type_name', with: 'Example'
       click_button '新增Partner type'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.feature 'Admin::PartnerTypes', type: :feature do
       visit edit_admin_partner_type_path(@type)
       fill_in 'partner_type_name', with: 'New Type Name'
       click_button '更新Partner type'
-      expect(page).to have_content('New Type Name')
+      expect(page).to(have_content('New Type Name'))
     end
   end
 
@@ -49,7 +49,7 @@ RSpec.feature 'Admin::PartnerTypes', type: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@type.name)
+      expect(page).not_to(have_content(@type.name))
     end
   end
 end

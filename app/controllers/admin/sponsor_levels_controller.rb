@@ -15,7 +15,7 @@ module Admin
     def create
       Mobility.with_locale(I18n.default_locale) do
         @level = SponsorLevel.new(sponsor_level_params)
-        return redirect_to admin_sponsor_levels_path if @level.save
+        return redirect_to(admin_sponsor_levels_path) if @level.save
 
         render :new
       end
@@ -26,7 +26,7 @@ module Admin
     def update
       Mobility.with_locale(admin_current_resource_locale) do
         if @level.update(sponsor_level_params)
-          return redirect_to admin_sponsor_levels_path
+          return redirect_to(admin_sponsor_levels_path)
         end
 
         render :edit
@@ -35,7 +35,7 @@ module Admin
 
     def destroy
       @level.destroy
-      redirect_to admin_sponsor_levels_path
+      redirect_to(admin_sponsor_levels_path)
     end
 
     private

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::Sliders', level: :feature do
+RSpec.feature('Admin::Sliders', level: :feature) do
   let(:admin) { create(:admin_user) }
   let(:slider) { create(:slider) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::Sliders', level: :feature do
 
     it 'can see all slider' do
       visit admin_sliders_path
-      @sliders.each { |slider| expect(page).to have_content(slider.id) }
+      @sliders.each { |slider| expect(page).to(have_content(slider.id)) }
     end
   end
 
@@ -24,10 +24,10 @@ RSpec.feature 'Admin::Sliders', level: :feature do
       visit new_admin_slider_path
       attach_file(
         'slider_image',
-        Rails.root.join('spec', 'support', 'brands', 'logos', 'TGDF.png')
+        Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       click_button '新增Slider'
-      expect(page).to have_css("img[src*='TGDF.png']")
+      expect(page).to(have_css("img[src*='TGDF.png']"))
     end
   end
 
@@ -36,10 +36,10 @@ RSpec.feature 'Admin::Sliders', level: :feature do
       visit edit_admin_slider_path(slider)
       attach_file(
         'slider_image',
-        Rails.root.join('spec', 'support', 'sliders', 'slide_1.jpg')
+        Rails.root.join('spec/support/sliders/slide_1.jpg')
       )
       click_button '更新Slider'
-      expect(page).to have_css("img[src*='slide_1.jpg']")
+      expect(page).to(have_css("img[src*='slide_1.jpg']"))
     end
   end
 
@@ -53,7 +53,7 @@ RSpec.feature 'Admin::Sliders', level: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@slider.id)
+      expect(page).not_to(have_content(@slider.id))
     end
   end
 end

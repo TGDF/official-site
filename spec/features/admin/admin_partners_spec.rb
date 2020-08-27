@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature 'Admin::Partners', type: :feature do
+RSpec.feature('Admin::Partners', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:partner) { create(:partner) }
 
@@ -15,7 +15,7 @@ RSpec.feature 'Admin::Partners', type: :feature do
 
     it 'can see all partner' do
       visit admin_partners_path
-      @partners.each { |partner| expect(page).to have_content(partner.name) }
+      @partners.each { |partner| expect(page).to(have_content(partner.name)) }
     end
   end
 
@@ -27,11 +27,11 @@ RSpec.feature 'Admin::Partners', type: :feature do
       fill_in 'partner_name', with: 'Example'
       attach_file(
         'partner_logo',
-        Rails.root.join('spec', 'support', 'brands', 'logos', 'TGDF.png')
+        Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       select type.name, from: 'partner_type_id'
       click_button '新增Partner'
-      expect(page).to have_content('Example')
+      expect(page).to(have_content('Example'))
     end
   end
 
@@ -40,7 +40,7 @@ RSpec.feature 'Admin::Partners', type: :feature do
       visit edit_admin_partner_path(partner)
       fill_in 'partner_name', with: 'New Partner Name'
       click_button '更新Partner'
-      expect(page).to have_content('New Partner Name')
+      expect(page).to(have_content('New Partner Name'))
     end
   end
 
@@ -54,7 +54,7 @@ RSpec.feature 'Admin::Partners', type: :feature do
         click_on 'Destroy'
       end
 
-      expect(page).not_to have_content(@partner.name)
+      expect(page).not_to(have_content(@partner.name))
     end
   end
 end

@@ -21,7 +21,7 @@ Bundler.require(*Rails.groups)
 module Tgdf
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.1
+    config.load_defaults(5.1)
 
     config.i18n.default_locale = :'zh-TW'
     config.i18n.available_locales = %i[
@@ -31,12 +31,12 @@ module Tgdf
 
     # Don't generate system test files.
     config.generators do |g|
-      g.test_framework :rspec
-      g.stylesheets    false
-      g.javascripts    false
-      g.helper         false
+      g.test_framework(:rspec)
+      g.stylesheets(false)
+      g.javascripts(false)
+      g.helper(false)
     end
 
-    config.middleware.insert 0, Rack::UTF8Sanitizer
+    config.middleware.insert(0, Rack::UTF8Sanitizer)
   end
 end

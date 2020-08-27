@@ -21,7 +21,7 @@ module Admin
     end
 
     def admin_sidebar_header(name)
-      content_tag :li, name, class: 'header'
+      tag.li(name, class: 'header')
     end
 
     def admin_sidebar_treeview(name, icon:, &_block)
@@ -31,16 +31,16 @@ module Admin
       if items.to_str.match?(/class="[^"]*active[^"]*"/)
         options[:class] += ' active menu-open'
       end
-      content_tag :li, options do
+      tag.li(options) do
         concat admin_sidebar_link(name, '#', icon: icon)
-        concat content_tag(:ul, items, class: 'treeview-menu')
+        concat tag.ul(items, class: 'treeview-menu')
       end
     end
 
     def admin_sidebar_item(name, path, icon:)
       options = {}
       options[:class] = 'active' if current_admin_path_under?(path)
-      content_tag(:li, options) { admin_sidebar_link(name, path, icon: icon) }
+      tag.li(options) { admin_sidebar_link(name, path, icon: icon) }
     end
 
     def admin_sidebar_link(name, path, icon:)

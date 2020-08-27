@@ -15,7 +15,7 @@ module Admin
     def create
       Mobility.with_locale(I18n.default_locale) do
         @site = Site.new(site_params)
-        return redirect_to admin_sites_path if @site.save
+        return redirect_to(admin_sites_path) if @site.save
 
         render :new
       end
@@ -25,7 +25,7 @@ module Admin
 
     def update
       Mobility.with_locale(admin_current_resource_locale) do
-        return redirect_to admin_sites_path if @site.update(site_params)
+        return redirect_to(admin_sites_path) if @site.update(site_params)
 
         render :edit
       end
@@ -34,7 +34,7 @@ module Admin
     def destroy
       # TODO: Add error message if destroy failed
       @site.destroy
-      redirect_to admin_sites_path
+      redirect_to(admin_sites_path)
     end
 
     protected

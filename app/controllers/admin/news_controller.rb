@@ -19,7 +19,7 @@ module Admin
       Mobility.with_locale(I18n.default_locale) do
         @news = News.new(news_params)
         @news.author = current_admin_user
-        return redirect_to admin_news_index_path if @news.save
+        return redirect_to(admin_news_index_path) if @news.save
 
         render :new
       end
@@ -29,7 +29,7 @@ module Admin
 
     def update
       Mobility.with_locale(admin_current_resource_locale) do
-        return redirect_to admin_news_index_path if @news.update(news_params)
+        return redirect_to(admin_news_index_path) if @news.update(news_params)
 
         render :edit
       end
@@ -38,7 +38,7 @@ module Admin
     def destroy
       # TODO: Add policy manager to limit admin or author can delete
       @news.update(status: :deleted)
-      redirect_to admin_news_index_path
+      redirect_to(admin_news_index_path)
     end
 
     def preview; end

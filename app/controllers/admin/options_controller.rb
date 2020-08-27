@@ -6,10 +6,10 @@ module Admin
 
     def update
       if current_site.update(permitted_params)
-        return redirect_to edit_admin_options_path
+        return redirect_to(edit_admin_options_path)
       end
 
-      render :edit
+      render(:edit)
     end
 
     private

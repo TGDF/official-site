@@ -14,22 +14,22 @@ module Admin
 
     def create
       @room = Room.new(room_params)
-      return redirect_to admin_rooms_path if @room.save
+      return redirect_to(admin_rooms_path) if @room.save
 
-      render :new
+      render(:new)
     end
 
     def edit; end
 
     def update
-      return redirect_to admin_rooms_path if @room.update(room_params)
+      return redirect_to(admin_rooms_path) if @room.update(room_params)
 
-      render :edit
+      render(:edit)
     end
 
     def destroy
       @room.destroy
-      redirect_to admin_rooms_path
+      redirect_to(admin_rooms_path)
     end
 
     private

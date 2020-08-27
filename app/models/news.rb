@@ -10,7 +10,7 @@ class News < ApplicationRecord
   enum status: {
     draft: 0,
     published: 1,
-    deleted: 2
+    deleted: 2,
   }
 
   validates :title, :content, :slug, :thumbnail, presence: true
