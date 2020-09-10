@@ -3,13 +3,12 @@ html
     title TGDF
     = csrf_meta_tags
 
-    = stylesheet_link_tag    'admin', media: 'all', 'data-turbolinks-track': 'reload'
     = stylesheet_link_tag    'https://use.fontawesome.com/b2e3e84e95.css', media: 'all'
 
-    = javascript_include_tag 'admin', 'data-turbolinks-track': 'reload'
+    = stylesheet_pack_tag    'admin', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_pack_tag    'admin', 'data-turbolinks-track': 'reload'
 
-  body.hold-transition.skin-black.sidebar-mini
+  body.c-app
     .wrapper
       = render 'admin/shared/header'
       = render 'admin/shared/sidebar'
