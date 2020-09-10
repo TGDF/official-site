@@ -1,6 +1,3 @@
-inherit_gem:
-    rubocop-shopify: rubocop.yml
-
 require:
   - rubocop-rails
   - rubocop-performance
@@ -16,14 +13,7 @@ AllCops:
     - .licenses/**/*
 Rails:
   Enabled: true
-Metrics:
-  Exclude:
-    - db/migrate/*
-    - Rakefile
-    - Gemfile
-    - config/**/*
-    - spec/**/*
-    - lib/tasks/**/*
+
 Layout:
   Exclude:
     - config/environments/*
@@ -39,3 +29,13 @@ Style/Documentation:
 
 Style/MethodCallWithArgsParentheses:
   Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - config/routes.rb
+    - config/initializers/**/*
+    - spec/**/*
+
+Metrics/MethodLength:
+  Exclude:
+    - db/migrate/*

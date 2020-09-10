@@ -22,9 +22,7 @@ module Admin
     def edit; end
 
     def update
-      if @agenda_time.update(agenda_time_params)
-        return redirect_to(admin_agenda_times_path)
-      end
+      return redirect_to(admin_agenda_times_path) if @agenda_time.update(agenda_time_params)
 
       render(:edit)
     end

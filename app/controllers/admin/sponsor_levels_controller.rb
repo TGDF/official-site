@@ -25,9 +25,7 @@ module Admin
 
     def update
       Mobility.with_locale(admin_current_resource_locale) do
-        if @level.update(sponsor_level_params)
-          return redirect_to(admin_sponsor_levels_path)
-        end
+        return redirect_to(admin_sponsor_levels_path) if @level.update(sponsor_level_params)
 
         render :edit
       end

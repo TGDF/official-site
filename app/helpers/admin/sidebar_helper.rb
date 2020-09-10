@@ -28,9 +28,7 @@ module Admin
       options = { class: 'treeview' }
 
       items = capture { yield if block_given? }
-      if items.to_str.match?(/class="[^"]*active[^"]*"/)
-        options[:class] += ' active menu-open'
-      end
+      options[:class] += ' active menu-open' if items.to_str.match?(/class="[^"]*active[^"]*"/)
       tag.li(options) do
         concat admin_sidebar_link(name, '#', icon: icon)
         concat tag.ul(items, class: 'treeview-menu')
