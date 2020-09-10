@@ -21,28 +21,30 @@ module Admin
     end
 
     def admin_sidebar_header(name)
-      tag.li(name, class: 'header')
+      tag.li(name, class: 'c-sidebar-nav-title')
     end
 
     def admin_sidebar_treeview(name, icon:, &_block)
-      options = { class: 'treeview' }
+      options = { class: 'c-sidebar-nav-dropdown' }
 
       items = capture { yield if block_given? }
-      options[:class] += ' active menu-open' if items.to_str.match?(/class="[^"]*active[^"]*"/)
+      options[:class] += ' c-show' if items.to_str.match?(/class="[^"]*c-active[^"]*"/)
       tag.li(options) do
-        concat admin_sidebar_link(name, '#', icon: icon)
-        concat tag.ul(items, class: 'treeview-menu')
+        concat admin_sidebar_link(name, '#', icon: icon, style: 'c-sidebar-nav-dropdown-toggle')
+        concat tag.ul(items, class: 'c-sidebar-nav-dropdown-items')
       end
     end
 
     def admin_sidebar_item(name, path, icon:)
-      options = {}
-      options[:class] = 'active' if current_admin_path_under?(path)
-      tag.li(options) { admin_sidebar_link(name, path, icon: icon) }
+      style = 'c-sidebar-nav-link'
+      style += ' c-active' if current_admin_path_under?(path)
+      tag.li class: 'c-sidebar-nav-item' do
+        admin_sidebar_link(name, path, icon: icon, style: style)
+      end
     end
 
-    def admin_sidebar_link(name, path, icon:)
-      link_to path do
+    def admin_sidebar_link(name, path, icon:, style: 'c-sidebar-nav-link')
+      link_to path, class: style do
         concat fa_icon(icon)
         concat ' '
         concat name
