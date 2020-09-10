@@ -5,6 +5,7 @@
 // Core UI
 require.context('@coreui/icons/sprites', true, /\.svg$/)
 import '@coreui/coreui/scss/coreui';
+import { Sidebar } from '@coreui/coreui';
 
 // CKEditor
 import '@ckeditor/ckeditor5-build-classic/build/ckeditor'

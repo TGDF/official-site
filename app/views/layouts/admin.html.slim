@@ -9,8 +9,7 @@ html
     = javascript_pack_tag    'admin', 'data-turbolinks-track': 'reload'
 
   body.c-app
-    .wrapper
-      = render 'admin/shared/header'
       = render 'admin/shared/sidebar'
-      .content-wrapper
+      .c-wrapper
+        = render 'admin/shared/header'
         = yield

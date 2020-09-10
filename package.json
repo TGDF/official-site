@@ -5,9 +5,11 @@
     "@ckeditor/ckeditor5-build-classic": "^18.0.0",
     "@coreui/coreui": "^3.3.0",
     "@coreui/icons": "^1.0.1",
+    "@popperjs/core": "^2.4.4",
     "@rails/webpacker": "5.2.1",
     "bootstrap": "3.4.1",
     "jquery": "^3.4.0",
+    "perfect-scrollbar": "^1.5.0",
     "vue": "^2.6.11",
     "vue-loader": "^15.9.1",
     "vue-template-compiler": "^2.6.11"
