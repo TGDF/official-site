@@ -2,6 +2,11 @@
  * Admin Portal
  */
 
+// Core UI
+require.context('@coreui/icons/sprites', true, /\.svg$/)
+import '@coreui/coreui/scss/coreui';
+
+// CKEditor
 import '@ckeditor/ckeditor5-build-classic/build/ckeditor'
 
 const initAdminLTE = () => {
