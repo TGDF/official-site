@@ -25,9 +25,7 @@ module Admin
 
     def update
       Mobility.with_locale(admin_current_resource_locale) do
-        if @type.update(partner_type_params)
-          return redirect_to(admin_partner_types_path)
-        end
+        return redirect_to(admin_partner_types_path) if @type.update(partner_type_params)
 
         render :edit
       end

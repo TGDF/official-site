@@ -24,7 +24,7 @@ module PageHelper
       title: :full_title,
       site_name: :site,
       description: :description,
-      url: original_url,
+      url: original_url
     }
   end
 end

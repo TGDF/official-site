@@ -25,9 +25,7 @@ module Admin
 
     def update
       Mobility.with_locale(admin_current_resource_locale) do
-        if @agenda_tag.update(agenda_tag_params)
-          return redirect_to(admin_agenda_tags_path)
-        end
+        return redirect_to(admin_agenda_tags_path) if @agenda_tag.update(agenda_tag_params)
 
         render :edit
       end

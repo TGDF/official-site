@@ -25,9 +25,7 @@ module Admin
 
     def update
       Mobility.with_locale(admin_current_resource_locale) do
-        if @speaker.update(speaker_params)
-          return redirect_to(admin_speakers_path)
-        end
+        return redirect_to(admin_speakers_path) if @speaker.update(speaker_params)
 
         render :edit
       end

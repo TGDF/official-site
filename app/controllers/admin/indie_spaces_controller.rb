@@ -6,9 +6,7 @@ module Admin
 
     def update
       Mobility.with_locale(admin_current_resource_locale) do
-        if current_site.update(permitted_params)
-          return redirect_to(edit_admin_indie_space_path)
-        end
+        return redirect_to(edit_admin_indie_space_path) if current_site.update(permitted_params)
 
         render :edit
       end

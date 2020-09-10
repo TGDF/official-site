@@ -5,12 +5,12 @@ class Slider < ApplicationRecord
 
   enum language: {
     'zh-TW': 0,
-    en: 1,
+    en: 1
   }
 
   enum page: {
     home: 0,
-    indie_spaces: 1,
+    indie_spaces: 1
   }
 
   validates :image, :language, presence: true

@@ -24,8 +24,8 @@ module ApplicationHelper
 
   def alternate_lang(lang = nil)
     tag.link(nil, rel: 'alternate',
-      hreflang: lang || 'x-default',
-      href: url_for(lang: lang, only_path: false))
+                  hreflang: lang || 'x-default',
+                  href: url_for(lang: lang, only_path: false))
   end
 
   def display_buy_ticket_button?

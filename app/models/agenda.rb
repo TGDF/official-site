@@ -18,19 +18,19 @@ class Agenda < ApplicationRecord
   enum language: {
     ZH: 1,
     EN: 2,
-    JP: 3,
+    JP: 3
   }
 
   enum translated_language: {
     ZH: 1,
     EN: 2,
-    JP: 3,
+    JP: 3
   }, _prefix: :translated
 
   enum translated_type: {
     sentence: 1,
     synchornize: 2,
-    subtitle: 3,
+    subtitle: 3
   }
 
   validates :subject, :description, presence: true

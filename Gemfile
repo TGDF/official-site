@@ -86,18 +86,18 @@ group :development, :test do
 
   gem 'capybara', require: false
   gem 'capybara-selenium', require: false
+
+  gem 'brakeman', require: false
+  gem 'rubocop', '~> 0.90.0', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
 end
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
 
-  gem 'brakeman', require: false
   gem 'overcommit', require: false
-  gem 'rubocop', '~> 0.89.1', require: false
-  gem 'rubocop-rails', require: false
-  gem 'rubocop-performance', require: false
-  gem 'rubocop-shopify', require: false
 
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'

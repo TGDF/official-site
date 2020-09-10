@@ -5,9 +5,7 @@ module Admin
     def edit; end
 
     def update
-      if current_site.update(permitted_params)
-        return redirect_to(edit_admin_options_path)
-      end
+      return redirect_to(edit_admin_options_path) if current_site.update(permitted_params)
 
       render(:edit)
     end
