@@ -104,4 +104,5 @@ zh-TW:
   admin_users:
     sessions:
       new:
-        hint: "Sign in to start your session"
+        hint: 輸入信箱及密碼進入管理後台
+        login: 登入

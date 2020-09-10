@@ -3,6 +3,8 @@
   "private": true,
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^18.0.0",
+    "@coreui/coreui": "^3.3.0",
+    "@coreui/icons": "^1.0.1",
     "@rails/webpacker": "5.2.1",
     "admin-lte": "^2.4.2",
     "bootstrap": "3.4.1",
