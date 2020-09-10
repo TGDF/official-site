@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^18.0.0",
-    "@rails/webpacker": "5.0.1",
+    "@rails/webpacker": "5.2.1",
     "admin-lte": "^2.4.2",
     "bootstrap": "3.4.1",
     "coffeescript": "1.12.7",
@@ -13,6 +13,6 @@
     "vue-template-compiler": "^2.6.11"
   },
   "devDependencies": {
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.0"
   }
 }
