@@ -3,13 +3,14 @@
 module Admin
   module PageHelper
     def admin_page_header(title, description = nil)
-      tag.section(class: 'content-header') do
-        tag.h1 do
-          concat title
-          concat(tag.small(description)) if description.present?
-        end
-        # TODO: Add breadcrumb
-      end
+      # TODO: Replace to CoreUI style
+      # tag.section(class: 'content-header') do
+      #   tag.h1 do
+      #     concat title
+      #     concat(tag.small(description)) if description.present?
+      #   end
+      #   # TODO: Add breadcrumb
+      # end
     end
 
     def admin_box(&block)

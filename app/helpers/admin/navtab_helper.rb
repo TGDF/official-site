@@ -3,7 +3,7 @@
 module Admin
   module NavtabHelper
     def admin_navtab_box(&block)
-      tag.div(class: 'nav-tabs-custom', &block)
+      tag.div(class: 'card', &block)
     end
 
     def admin_navtab_nav(&block)
@@ -11,10 +11,11 @@ module Admin
     end
 
     def admin_navtab_nav_item(name, path, options = {})
-      data = { toggle: 'tab' } unless options[:disable_toggle]
-      classes = ['active'] if admin_navtab_active?(path) || options[:active]
-      tag.li(class: (classes || []).join(' ')) do
-        link_to name, path, data || {}
+      data ||= {}
+      data[:class] = ['nav-link']
+      data[:class].push('active') if admin_navtab_active?(path) || options[:active]
+      tag.li(class: 'nav-item') do
+        link_to name, path, data
       end
     end
 
