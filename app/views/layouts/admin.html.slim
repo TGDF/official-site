@@ -1,11 +1,12 @@
 html
   head
-    title TGDF
-    = csrf_meta_tags
+    meta http-equiv="X-UA-Compatible" content="IE=edge"
+    meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    = display_meta_tags site: t('site_name')
 
     = stylesheet_link_tag    'https://use.fontawesome.com/b2e3e84e95.css', media: 'all'
 
-    = stylesheet_pack_tag    'admin', media: 'all', 'data-turbolinks-track': 'reload'
+    = stylesheet_pack_tag    'admin', 'data-turbolinks-track': 'reload'
     = javascript_pack_tag    'admin', 'data-turbolinks-track': 'reload'
 
   body.c-app
@@ -13,5 +14,5 @@ html
       .c-wrapper
         = render 'admin/shared/header'
         .c-body
-          .c-main
+          main.c-main
             = yield
