@@ -1,24 +1,24 @@
-header.main-header
-  / TODO: Replace TGDF Logo
-  = link_to admin_root_path, class: 'logo' do
-    span.logo-mini
-      b A
-      | LT
-    span.logo-lg
-      b Admin
-      | LTE
-  nav.navbar.navbar-static-top
-    .navbar-custom-menu
-      ul.nav.navbar-nav
-        li.dropdown.notifications-menu
-          = link_to '#', class: 'dropdown-toggle', data: { toggle: 'dropdown' } do
-            = fa_icon 'sitemap'
-            | &nbsp;
-            span.hidden-xs = current_site.name
-          ul.dropdown-menu
-            li.header =  t('.all_sites')
-            / TODO: Create helper to build it
-            = admin_navbar_site_item(t('site_name'), Settings.site.default_domain, icon: 'star')
-            - @navbar_sites.each do |site|
-              = admin_navbar_site_item(site.name, site.domain)
-            li.footer = link_to t('.view_all'), root_path
+header.c-header.c-header-light.c-header-fixed
+  / TODO: Toggle Button
+  nav.mfs-auto.mr-3
+    ul.c-header-nav.dropdown
+      li.c-header-nav-item.dropdown.px-3
+        = link_to '#', class: 'c-header-nav-link', data: { toggle: 'dropdown' } do
+          = svg_icon('media/sprites/free.svg', 'cil-sitemap', class: 'c-icon c-icon-lg mfe-2')
+          | &nbsp;
+          span.hidden-xs = current_site.name
+        .dropdown-menu.dropdown-menu-right.pt-0
+          .dropdown-header.bg-light.py-2
+            strong = t('.all_sites')
+          = link_to Settings.site.default_domain, class: 'dropdown-item' do
+            = svg_icon('media/sprites/free.svg', 'cil-star', class: 'c-icon mfe-2')
+            = t('site_name')
+          - @navbar_sites.each do |site|
+            = link_to site.domain, class: 'dropdown-item' do
+              = svg_icon('media/sprites/free.svg', 'cil-square', class: 'c-icon mfe-2')
+              = site.name
+          .dropdown-divider
+          = link_to root_path, class: 'dropdown-item' do
+            = svg_icon('media/sprites/free.svg', 'cil-list', class: 'c-icon mfe-2')
+            = t('.view_all')
+
