@@ -1,16 +1,18 @@
 = admin_page_header t('.sliders'), t('.manager_sliders')
-.content
-  .row
-    .col-md-12
-      = admin_box do
-        = admin_box_body class: 'no-padding' do
-          table.table.table-striped
-            thead
-              tr
-                th.table__id-column #
-                th = t('.image')
-                th = t('.language')
-                th = t('.page')
-                th.col-md-3 = t('.actions')
-            tbody
-              = render @sliders
+.container-fluid
+  .fade-in
+    .row
+      .col-md-12
+        = admin_box do
+          = admin_box_header title t('.sliders')
+          = admin_box_body
+            table.table.table-striped
+              thead
+                tr
+                  th.table__id-column #
+                  th = t('.image')
+                  th = t('.language')
+                  th = t('.page')
+                  th = t('.actions')
+              tbody
+                = render @sliders
