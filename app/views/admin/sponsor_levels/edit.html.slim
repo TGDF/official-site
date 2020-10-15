@@ -1,7 +1,9 @@
 = admin_page_header t('.edit'), t('.edit_sponsor_level')
-.content
+.container-fluid
   .row
     .col-md-12
-      = admin_navtab_box do
-        = admin_locale_navtab
-        = render 'form'
+      = admin_box do
+        = admin_box_header title t('.edit_sponsor_level')
+        = admin_box_body
+          = admin_locale_navtab
+          = render 'form'
