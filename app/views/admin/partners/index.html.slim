@@ -1,16 +1,17 @@
 = admin_page_header t('.partners'), t('.manager_partners')
-.content
-  .row
-    .col-md-12
-      = admin_box do
-        = admin_box_body class: 'no-padding' do
-          table.table.table-striped
-            thead
-              tr
-                th.table__id-column #
-                th = t('.name')
-                th = t('.type')
-                th = t('.order')
-                th.col-md-3 = t('.actions')
-            tbody
-              = render @partners
+.container-fluid
+  .fade-in
+    .row
+      .col-md-12
+        = admin_box do
+          = admin_box_body class: 'no-padding' do
+            table.table.table-striped
+              thead
+                tr
+                  th.table__id-column #
+                  th = t('.name')
+                  th = t('.type')
+                  th = t('.order')
+                  th.col-md-3 = t('.actions')
+              tbody
+                = render @partners
