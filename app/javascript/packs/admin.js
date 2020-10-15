@@ -2,6 +2,9 @@
  * Admin Portal
  */
 
+require("@rails/ujs").start()
+require("turbolinks").start()
+
 // Core UI
 require.context('@coreui/icons/sprites', true, /\.svg$/)
 import '@coreui/coreui/scss/coreui';
@@ -9,11 +12,6 @@ import { Sidebar } from '@coreui/coreui';
 
 // CKEditor
 import '@ckeditor/ckeditor5-build-classic/build/ckeditor'
-
-const initAdminLTE = () => {
-  $('body').layout().data('lte.layout').activate();
-  $('[data-widget="tree"]').tree();
-}
 
 const editors = [];
 
@@ -36,10 +34,15 @@ const destroyCKEditors = () => {
 }
 
 document.addEventListener('turbolinks:load', () => {
-  initAdminLTE();
   setupCKEditors();
+  Array.from(document.querySelectorAll('.c-sidebar')).forEach(element => {
+    Sidebar._sidebarInterface(element)
+  })
 });
 
 document.addEventListener('turbolinks:before-cache', () => {
-  destroyCKEditors();
+  // destroyCKEditors();
+  Array.from(document.querySelectorAll('.c-sidebar')).forEach(element => {
+    Sidebar._sidebarInterface(element)
+  })
 });
