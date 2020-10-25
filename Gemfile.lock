@@ -57,6 +57,9 @@ GEM
       execjs
     bcrypt (3.1.16)
     bcrypt (3.1.16-java)
+    bcrypt_pbkdf (1.0.1)
+    bcrypt_pbkdf (1.0.1-x64-mingw32)
+    bcrypt_pbkdf (1.0.1-x86-mingw32)
     bindex (0.8.1)
     bootstrap (4.3.1)
       autoprefixer-rails (>= 9.1.0)
@@ -139,6 +142,8 @@ GEM
       dry-equalizer (~> 0.3)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 1.0, >= 1.0.2)
+    ed25519 (1.2.4)
+    ed25519 (1.2.4-java)
     erubi (1.9.0)
     execjs (2.7.0)
     factory_bot (6.1.0)
@@ -439,6 +444,7 @@ PLATFORMS
 
 DEPENDENCIES
   apartment
+  bcrypt_pbkdf
   bootstrap (~> 4.3.0)
   brakeman
   byebug
@@ -452,6 +458,7 @@ DEPENDENCIES
   coveralls (~> 0.8.2)
   devise
   dotenv-rails
+  ed25519
   factory_bot_rails
   faker
   fuubar
