@@ -10,7 +10,7 @@
         .col-md-12
           iframe#JotFormIFrame src="#{current_site.cfp_form_url}" allowtransparency="true" frameborder="0" style="width: 1px; min-width: 100%; height:539px; border:none;" scrolling="no"
 - else
-  - column_width = 75 / @rooms.size
+  - column_width = @rooms.size.zero? ? 75 : 75 / @rooms.size
   section#agenda
     - @days.each do |day|
       .agenda.container.mt-5.mb-4
