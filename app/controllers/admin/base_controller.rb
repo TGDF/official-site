@@ -14,6 +14,12 @@ module Admin
        I18n.default_locale).to_s
     end
 
+    def ensure_site_created!
+      return if current_site.domain == request.host
+
+      redirect_to admin_root_url(host: Settings.site.default_domain)
+    end
+
     private
 
     def save_admin_resource_locale
