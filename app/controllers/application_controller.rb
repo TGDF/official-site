@@ -4,6 +4,8 @@ class ApplicationController < ActionController::Base
   include TenantSite
   include Localizable
 
+  before_action :ensure_site_created!
+
   protect_from_forgery
 
   helper_method :cfp_only?
@@ -23,6 +25,12 @@ class ApplicationController < ActionController::Base
 
   def render_404
     render(file: 'public/404.html', status: :not_found, layout: false)
+  end
+
+  def ensure_site_created!
+    return if current_site.domain == request.host
+
+    redirect_to root_url(host: Settings.site.default_domain)
   end
 
   private
