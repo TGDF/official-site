@@ -4,9 +4,9 @@ namespace :admin do
   desc 'Create a new admin user'
   task create: :environment do
     print 'Email: '
-    email = STDIN.gets.chomp
+    email = $stdin.gets.chomp
     print 'Password: '
-    password = STDIN.getpass
+    password = $stdin.getpass
 
     begin
       AdminUser.create!(email: email, password: password)
