@@ -2,25 +2,23 @@
 
 require 'rails_helper'
 
-RSpec.feature('Admin::News', type: :feature) do
+RSpec.describe('Admin::News', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:news) { create(:news) }
 
   before { sign_in admin }
 
   describe '#index' do
-    before do
-      @news = create_list(:news, 5)
-    end
+    let!(:news) { create_list(:news, 5) }
 
     it 'can see all news' do
       visit admin_news_index_path
-      @news.each { |news| expect(page).to(have_content(news.title)) }
+      news.each { |news| expect(page).to(have_content(news.title)) }
     end
   end
 
   describe '#new' do
-    it 'can add new news' do
+    before do
       visit new_admin_news_path
       fill_in 'news_title', with: 'Example'
       fill_in 'news_slug', with: 'example'
@@ -30,8 +28,9 @@ RSpec.feature('Admin::News', type: :feature) do
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       click_button '新增News'
-      expect(page).to(have_content('Example'))
     end
+
+    it { expect(page).to(have_content('Example')) }
   end
 
   describe '#edit' do
@@ -44,16 +43,16 @@ RSpec.feature('Admin::News', type: :feature) do
   end
 
   describe '#destroy' do
-    before { @news = create(:news) }
+    let!(:news) { create(:news) }
 
     it 'can destroy news type' do
       visit admin_news_index_path
 
-      within first('td', text: @news.title).first(:xpath, './/..') do
+      within first('td', text: news.title).first(:xpath, './/..') do
         click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(@news.title))
+      expect(page).not_to(have_content(news.title))
     end
   end
 
