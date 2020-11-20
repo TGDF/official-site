@@ -2,20 +2,18 @@
 
 require 'rails_helper'
 
-RSpec.feature('Admin::Agendas', type: :feature) do
+RSpec.describe('Admin::Agendas', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:agenda) { create(:agenda) }
 
   before { sign_in admin }
 
   describe '#index' do
-    before do
-      @agendas = create_list(:agenda, 5)
-    end
+    let!(:agendas) { create_list(:agenda, 5) }
 
     it 'can see all agenda' do
       visit admin_agendas_path
-      @agendas.each { |agenda| expect(page).to(have_content(agenda.subject)) }
+      agendas.each { |agenda| expect(page).to(have_content(agenda.subject)) }
     end
   end
 
@@ -39,16 +37,16 @@ RSpec.feature('Admin::Agendas', type: :feature) do
   end
 
   describe '#destroy' do
-    before { @agenda = create(:agenda) }
+    let!(:agenda) { create(:agenda) }
 
     it 'can destroy agenda' do
       visit admin_agendas_path
 
-      within first('td', text: @agenda.subject).first(:xpath, './/..') do
+      within first('td', text: agenda.subject).first(:xpath, './/..') do
         click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(@agenda.subject))
+      expect(page).not_to(have_content(agenda.subject))
     end
   end
 end

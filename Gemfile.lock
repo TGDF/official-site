@@ -334,6 +334,9 @@ GEM
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 0.87.0)
+    rubocop-rspec (2.0.0)
+      rubocop (~> 1.0)
+      rubocop-ast (>= 1.1.0)
     ruby-progressbar (1.10.1)
     ruby2_keywords (0.0.2)
     ruby_dep (1.5.0)
@@ -486,6 +489,7 @@ DEPENDENCIES
   rubocop (~> 1.0)
   rubocop-performance
   rubocop-rails
+  rubocop-rspec
   sassc-rails
   select2-rails
   settingslogic

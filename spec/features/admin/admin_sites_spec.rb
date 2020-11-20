@@ -2,34 +2,34 @@
 
 require 'rails_helper'
 
-RSpec.feature('Admin::Sites', type: :feature) do
+RSpec.describe('Admin::Sites', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:site) { create(:site) }
 
-  before(:each) { Apartment::Tenant.reset }
-
-  before { sign_in admin }
+  before do
+    Apartment::Tenant.reset
+    sign_in admin
+  end
 
   describe '#index' do
-    before do
-      @sites = create_list(:site, 5)
-    end
+    let!(:sites) { create_list(:site, 5) }
 
     xit 'can see all sites' do
       visit admin_sites_path
-      @sites.each { |site| expect(page).to(have_content(site.name)) }
+      sites.each { |site| expect(page).to(have_content(site.name)) }
     end
   end
 
   describe '#new' do
-    xit 'can add new site' do
+    before do
       visit new_admin_site_path
       fill_in 'site_name', with: 'Example'
       fill_in 'site_domain', with: 'example.com'
       fill_in 'site_tenant_name', with: 'example'
       click_button '新增Site'
-      expect(page).to(have_content('Example'))
     end
+
+    xit { expect(page).to(have_content('Example')) }
   end
 
   describe '#edit' do
@@ -42,16 +42,16 @@ RSpec.feature('Admin::Sites', type: :feature) do
   end
 
   describe '#destroy' do
-    before { @site = create(:site) }
+    let!(:site) { create(:site) }
 
     xit 'can destroy site type' do
       visit admin_sites_path
 
-      within first('td', text: @site.name).first(:xpath, './/..') do
+      within first('td', text: site.name).first(:xpath, './/..') do
         click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(@site.name))
+      expect(page).not_to(have_content(site.name))
     end
   end
 end

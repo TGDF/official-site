@@ -12,12 +12,12 @@ RSpec.configure do |config|
     Site.create!(name: 'Main Site', domain: 'www.example.com', tenant_name: 'main')
   end
 
-  config.before(:each) do
+  config.before do
     # Switch into the default tenant
     Apartment::Tenant.switch! 'main'
   end
 
-  config.after(:each) do
+  config.after do
     # Reset tentant back to `public`
     Apartment::Tenant.reset
   end

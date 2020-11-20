@@ -2,20 +2,18 @@
 
 require 'rails_helper'
 
-RSpec.feature('Admin::AgendaDays', type: :feature) do
+RSpec.describe('Admin::AgendaDays', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:agenda_day) { create(:agenda_day) }
 
   before { sign_in admin }
 
   describe '#index' do
-    before do
-      @days = create_list(:agenda_day, 5)
-    end
+    let!(:days) { create_list(:agenda_day, 5) }
 
     it 'can see all days' do
       visit admin_agenda_days_path
-      @days.each { |type| expect(page).to(have_content(type.label)) }
+      days.each { |type| expect(page).to(have_content(type.label)) }
     end
   end
 
@@ -29,10 +27,10 @@ RSpec.feature('Admin::AgendaDays', type: :feature) do
   end
 
   describe '#edit' do
-    before { @agenda_day = create(:agenda_day) }
+    let!(:agenda_day) { create(:agenda_day) }
 
     it 'can edit agenda_day' do
-      visit edit_admin_agenda_day_path(@agenda_day)
+      visit edit_admin_agenda_day_path(agenda_day)
       fill_in 'agenda_day_label', with: 'New agenda_day Label'
       click_button '更新Agenda day'
       expect(page).to(have_content('New agenda_day Label'))
@@ -40,16 +38,16 @@ RSpec.feature('Admin::AgendaDays', type: :feature) do
   end
 
   describe '#destroy' do
-    before { @agenda_day = create(:agenda_day) }
+    let!(:agenda_day) { create(:agenda_day) }
 
     it 'can destroy agenda_day' do
       visit admin_agenda_days_path
 
-      within first('td', text: @agenda_day.label).first(:xpath, './/..') do
+      within first('td', text: agenda_day.label).first(:xpath, './/..') do
         click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(@agenda_day.label))
+      expect(page).not_to(have_content(agenda_day.label))
     end
   end
 end

@@ -2,25 +2,23 @@
 
 require 'rails_helper'
 
-RSpec.feature('Admin::Speakers', type: :feature) do
+RSpec.describe('Admin::Speakers', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:speaker) { create(:speaker) }
 
   before { sign_in admin }
 
   describe '#index' do
-    before do
-      @speakers = create_list(:speaker, 5)
-    end
+    let!(:speakers) { create_list(:speaker, 5) }
 
     it 'can see all speaker' do
       visit admin_speakers_path
-      @speakers.each { |speaker| expect(page).to(have_content(speaker.name)) }
+      speakers.each { |speaker| expect(page).to(have_content(speaker.name)) }
     end
   end
 
   describe '#new' do
-    it 'can add new speaker' do
+    before do
       visit new_admin_speaker_path
       fill_in 'speaker_name', with: 'Example'
       fill_in 'speaker_description', with: 'Example Content'
@@ -29,8 +27,9 @@ RSpec.feature('Admin::Speakers', type: :feature) do
         Rails.root.join('spec/support/avatars/Aotoki.jpg')
       )
       click_button '新增Speaker'
-      expect(page).to(have_content('Example'))
     end
+
+    it { expect(page).to(have_content('Example')) }
   end
 
   describe '#edit' do
@@ -43,16 +42,16 @@ RSpec.feature('Admin::Speakers', type: :feature) do
   end
 
   describe '#destroy' do
-    before { @speaker = create(:speaker) }
+    let!(:speaker) { create(:speaker) }
 
     it 'can destroy speaker' do
       visit admin_speakers_path
 
-      within first('td', text: @speaker.name).first(:xpath, './/..') do
+      within first('td', text: speaker.name).first(:xpath, './/..') do
         click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(@speaker.name))
+      expect(page).not_to(have_content(speaker.name))
     end
   end
 end

@@ -2,20 +2,18 @@
 
 require 'rails_helper'
 
-RSpec.feature('Admin::SponsorLevels', type: :feature) do
+RSpec.describe('Admin::SponsorLevels', type: :feature) do
   let(:admin) { create(:admin_user) }
   let(:sponsor_level) { create(:sponsor_level) }
 
   before { sign_in admin }
 
   describe '#index' do
-    before do
-      @types = create_list(:sponsor_level, 5)
-    end
+    let!(:types) { create_list(:sponsor_level, 5) }
 
     it 'can see all types' do
       visit admin_sponsor_levels_path
-      @types.each { |type| expect(page).to(have_content(type.name)) }
+      types.each { |type| expect(page).to(have_content(type.name)) }
     end
   end
 
@@ -29,10 +27,10 @@ RSpec.feature('Admin::SponsorLevels', type: :feature) do
   end
 
   describe '#edit' do
-    before { @level = create(:sponsor_level) }
+    let!(:level) { create(:sponsor_level) }
 
     it 'can edit sponsor level' do
-      visit edit_admin_sponsor_level_path(@level)
+      visit edit_admin_sponsor_level_path(level)
       fill_in 'sponsor_level_name', with: 'New Level Name'
       click_button '更新Sponsor level'
       expect(page).to(have_content('New Level Name'))
@@ -40,16 +38,16 @@ RSpec.feature('Admin::SponsorLevels', type: :feature) do
   end
 
   describe '#destroy' do
-    before { @level = create(:sponsor_level) }
+    let!(:level) { create(:sponsor_level) }
 
     it 'can destroy sponsor level' do
       visit admin_sponsor_levels_path
 
-      within first('td', text: @level.name).first(:xpath, './/..') do
+      within first('td', text: level.name).first(:xpath, './/..') do
         click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(@level.name))
+      expect(page).not_to(have_content(level.name))
     end
   end
 end

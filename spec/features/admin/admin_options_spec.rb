@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.feature('Admin::Options', level: :feature) do
+RSpec.describe('Admin::Options', level: :feature) do
   let(:admin) { create(:admin_user) }
   let(:site) { create(:site) }
 
