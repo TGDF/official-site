@@ -19,7 +19,7 @@ class SiteOption
   end
 
   def attribute_names
-    @attribute_names ||= @options.map { |option| option[:name] }
+    @attribute_names ||= @options.pluck(:name)
   end
 
   def config

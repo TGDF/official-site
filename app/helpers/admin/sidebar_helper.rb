@@ -24,7 +24,7 @@ module Admin
       tag.li(name, class: 'c-sidebar-nav-title')
     end
 
-    def admin_sidebar_treeview(name, icon:, &_block)
+    def admin_sidebar_treeview(name, icon:)
       options = { class: 'c-sidebar-nav-dropdown' }
 
       items = capture { yield if block_given? }
