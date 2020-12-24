@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :agendas_speaker do
-    agenda {}
-    speaker {}
+    association :agenda
+    association :speaker
   end
 end
