@@ -90,7 +90,7 @@ group :development, :test do
   gem 'ed25519'
 
   gem 'brakeman', require: false
-  gem 'rubocop', '~> 1.0', require: false
+  gem 'rubocop', '~> 1.8.1', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
