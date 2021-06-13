@@ -55,5 +55,5 @@ Rails.application.routes.draw do
     end
   end
 
-  get('*path', to: proc { |env| ApplicationController.action('render_404').call(env) }) if Rails.env.production?
+  get('*path', to: proc { |env| ApplicationController.action('not_found').call(env) }) if Rails.env.production?
 end
