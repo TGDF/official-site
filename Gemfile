@@ -47,7 +47,7 @@ gem 'devise'
 # Front End
 gem 'bootstrap', '~> 4.3.0'
 gem 'jquery-rails'
-gem 'mobility'
+gem 'mobility', '~> 0.8'
 gem 'select2-rails'
 gem 'simple_form'
 gem 'slim-rails'
