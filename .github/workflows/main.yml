@@ -7,45 +7,38 @@ on:
       - main
   pull_request:
 
+env:
+  RUBY_VERSION: '2.6.6'
+  RAILS_ENV: test
+  DATABASE_URL: "postgres://tgdf:tgdf@localhost/tgdf"
+
 jobs:
   rubocop:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby:
-          - 2.6.6
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
+        ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
     - name: Run Rubocop
       run: bundle exec rubocop
 
   brakeman:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby:
-          - 2.6.6
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
+        ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
     - name: Run Brakeman
       run: bundle exec brakeman
 
   rspec:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby:
-          - 2.6.6
     services:
         postgres:
           image: postgres
@@ -64,7 +57,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
+        ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
     - name: Set up Node
       uses: actions/setup-node@v2
@@ -74,14 +67,9 @@ jobs:
     - run: yarn install
     - name: Run Migration
       run: bundle exec rake db:migrate
-      env:
-        RAILS_ENV: test
-        DATABASE_URL: "postgres://tgdf:tgdf@localhost/tgdf"
     - name: Run RSpec
       uses: paambaati/codeclimate-action@v3.0.0
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        RAILS_ENV: test
-        DATABASE_URL: "postgres://tgdf:tgdf@localhost/tgdf"
       with:
         coverageCommand: bundle exec rspec
