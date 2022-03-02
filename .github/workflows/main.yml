@@ -5,18 +5,47 @@ on:
     branches:
       - master
       - main
-
   pull_request:
 
 jobs:
-  build:
+  rubocop:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         ruby:
           - 2.6.6
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+    - name: Run Rubocop
+      run: bundle exec rubocop
 
+  brakeman:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby:
+          - 2.6.6
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+    - name: Run Brakeman
+      run: bundle exec brakeman
+
+  rspec:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby:
+          - 2.6.6
     services:
         postgres:
           image: postgres
@@ -30,7 +59,6 @@ jobs:
             --health-retries 5
           ports:
             - 5432:5432
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
@@ -38,10 +66,12 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-    - name: Run Rubocop
-      run: bundle exec rubocop
-    - name: Run Brakeman
-      run: bundle exec brakeman
+    - name: Set up Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        cache: 'yarn'
+    - run: yarn install
     - name: Run Migration
       run: bundle exec rake db:migrate
       env:
