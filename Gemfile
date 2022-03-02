@@ -46,6 +46,7 @@ gem 'devise'
 
 # Front End
 gem 'bootstrap', '~> 4.3.0'
+gem 'friendly_id', '~> 5.4.0'
 gem 'jquery-rails'
 gem 'mobility', '~> 0.8'
 gem 'select2-rails'
