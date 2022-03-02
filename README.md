@@ -6,7 +6,7 @@ This is a Rails application for [Taipei Game Developer Forum](https://tgdf.tw) t
 
 ## Requirements
 
-* Ruby 2.4.2+
+* Ruby 2.7.5+
 * PostgreSQL 9.6+
 * Node.js 8.0+
   * Yarn 1.2.1+
