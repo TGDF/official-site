@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class News < ApplicationRecord
+  extend FriendlyId
+
   belongs_to :author, polymorphic: true
 
   translates :title, :content
+  friendly_id :title, use: :slugged
 
   mount_uploader :thumbnail, ThumbnailUploader
 
