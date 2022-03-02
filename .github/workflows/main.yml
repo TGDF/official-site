@@ -78,7 +78,10 @@ jobs:
         RAILS_ENV: test
         DATABASE_URL: "postgres://tgdf:tgdf@localhost/tgdf"
     - name: Run RSpec
-      run: bundle exec rspec
+      uses: paambaati/codeclimate-action@v2.2.4
       env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         RAILS_ENV: test
         DATABASE_URL: "postgres://tgdf:tgdf@localhost/tgdf"
+      with:
+        coverageCommand: bundle exec rspec
