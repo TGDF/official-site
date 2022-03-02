@@ -8,7 +8,7 @@ on:
   pull_request:
 
 env:
-  RUBY_VERSION: '2.6.6'
+  RUBY_VERSION: '2.7.5'
   RAILS_ENV: test
   DATABASE_URL: "postgres://tgdf:tgdf@localhost/tgdf"
 
