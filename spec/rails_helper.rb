@@ -6,6 +6,7 @@ ENV['RAILS_ENV'] ||= 'test'
 
 require 'simplecov'
 
+SimpleCov.refuse_coverage_drop
 SimpleCov.start('rails')
 
 require File.expand_path('../config/environment', __dir__)
