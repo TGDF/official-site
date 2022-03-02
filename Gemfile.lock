@@ -149,6 +149,8 @@ GEM
     ffi (1.15.5-java)
     ffi (1.15.5-x64-mingw32)
     ffi (1.15.5-x86-mingw32)
+    friendly_id (5.4.2)
+      activerecord (>= 4.0.0)
     fuubar (2.5.1)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
@@ -463,6 +465,7 @@ DEPENDENCIES
   ed25519
   factory_bot_rails
   faker
+  friendly_id (~> 5.4.0)
   fuubar
   grape
   gretel

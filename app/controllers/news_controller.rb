@@ -8,6 +8,6 @@ class NewsController < ApplicationController
   def show
     @latest = News.published.latest
                   .limit(Settings.news.latest.size)
-    @news = News.find(params[:id])
+    @news = News.friendly.find(params[:id])
   end
 end
