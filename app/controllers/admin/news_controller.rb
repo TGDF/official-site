@@ -46,7 +46,7 @@ module Admin
     private
 
     def find_news
-      @news = News.find(params[:id])
+      @news = News.friendly.find(params[:id])
     end
 
     def news_params
