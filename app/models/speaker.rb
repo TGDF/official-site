@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 class Speaker < ApplicationRecord
+  extend FriendlyId
+
   translates :name, :title, :description
+  friendly_id :name, use: :slugged
 
   mount_uploader :avatar, AvatarUploader
 
@@ -10,5 +13,5 @@ class Speaker < ApplicationRecord
 
   default_scope -> { order(order: :asc) }
 
-  validates :name, :description, :avatar, presence: true
+  validates :name, :slug, :description, :avatar, presence: true
 end

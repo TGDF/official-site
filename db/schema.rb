@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_11_064946) do
+ActiveRecord::Schema.define(version: 2022_03_08_114416) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -186,6 +186,8 @@ ActiveRecord::Schema.define(version: 2020_04_11_064946) do
     t.datetime "updated_at", null: false
     t.jsonb "title"
     t.integer "order", default: 0
+    t.string "slug"
+    t.index ["slug"], name: "index_speakers_on_slug", unique: true
   end
 
   create_table "sponsor_levels", force: :cascade do |t|

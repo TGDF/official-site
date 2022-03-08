@@ -39,13 +39,13 @@ module Admin
     private
 
     def find_speaker
-      @speaker = Speaker.find(params[:id])
+      @speaker = Speaker.friendly.find(params[:id])
     end
 
     def speaker_params
       params
         .require(:speaker)
-        .permit(:name, :title, :description, :avatar, :remove_avatar, :order)
+        .permit(:name, :slug, :title, :description, :avatar, :remove_avatar, :order)
     end
   end
 end
