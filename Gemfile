@@ -27,7 +27,7 @@ gem 'webpacker'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.5'
+# gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
@@ -60,8 +60,10 @@ gem 'sitemap_generator'
 # Utilities
 gem 'carrierwave', '~> 1.3'
 gem 'gretel'
+gem 'liveness'
 gem 'mini_magick'
 gem 'oj'
+gem 'openbox'
 gem 'rack-attack'
 gem 'rack-utf8_sanitizer'
 gem 'rollbar'
@@ -111,6 +113,8 @@ group :development do
   gem 'capistrano-passenger'
   gem 'capistrano-rails'
   gem 'capistrano-upload-config'
+
+  gem 'boxing'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
