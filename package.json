@@ -3,9 +3,9 @@
   "private": true,
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^18.0.0",
-    "@coreui/coreui": "^3.3.0",
-    "@coreui/icons": "^1.0.1",
-    "@popperjs/core": "^2.4.4",
+    "@coreui/coreui": "^3.4.0",
+    "@coreui/icons": "^2.1.0",
+    "@popperjs/core": "^2.5.4",
     "@rails/ujs": "^6.0.3-4",
     "@rails/webpacker": "5.4.3",
     "bootstrap": "3.4.1",
