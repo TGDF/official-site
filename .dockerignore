@@ -1,0 +1,42 @@
+# Repo
+.git/
+
+# Docker
+Dockerfile
+docker-compose*.yml
+
+# CI/CD
+.github/
+.cache/
+.circleci/
+coverage/
+spec/
+test/
+features/
+.gitlab-ci.yml
+.travis.yml
+
+# Lint/Test
+rspec.xml
+.overcommit.yml
+.rubocop*.yml
+
+# Ruby
+.bundle/
+.env
+.env*
+
+# Rails
+log/*
+tmp/*
+/config/master.key
+
+# Frontend
+node_modules/
+
+# Licensed
+.licensed.yml
+.licenses
+
+# Boxing
+config/boxing.rb

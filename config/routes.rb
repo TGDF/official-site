@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   # Devise
   devise_for :admin_users, path: :admin
 
+  # Health Check
+  mount Liveness::Status => '/status'
+
   scope '/(:lang)', lang: /#{I18n.available_locales.join('|')}/ do
     # TODO: Use get instead resources
     root to: 'pages#index', format: false

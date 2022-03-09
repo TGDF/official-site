@@ -1,0 +1,27 @@
+version: '3.4'
+
+volumes:
+  database:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:13.1
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=tgdf
+      - POSTGRES_USER=tgdf
+      - POSTGRES_PASSWORD=tgdf
+  application:
+    build:
+      context: .
+    environment:
+      - RAILS_MASTER_KEY
+      - SECRET_KEY_BASE
+      - AUTO_MIGRATION=yes
+      - DATABASE_URL=postgres://tgdf:tgdf@postgres/tgdf
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
