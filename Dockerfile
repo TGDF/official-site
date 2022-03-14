@@ -31,7 +31,7 @@ ARG SERVER_ROOT
 FROM ruby:${RUBY_VERSION}-alpine
 ARG APP_ROOT
 
-RUN apk add --no-cache curl tzdata shared-mime-info postgresql-libs
+RUN apk add --no-cache curl tzdata shared-mime-info postgresql-libs imagemagick
 
 COPY --from=gem /usr/local/bundle/config /usr/local/bundle/config
 COPY --from=gem /usr/local/bundle /usr/local/bundle
