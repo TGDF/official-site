@@ -59,6 +59,7 @@ gem 'sitemap_generator'
 
 # Utilities
 gem 'carrierwave', '~> 1.3'
+gem 'fog-aws'
 gem 'gretel'
 gem 'liveness'
 gem 'mini_magick'
