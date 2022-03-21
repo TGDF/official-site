@@ -15,6 +15,7 @@ default: &default
     enabled: <%= ENV.fetch('SETTINGS__S3__ENABLED', false) %>
     access_key_id: <%= ENV['SETTINGS__S3__ACCESS_KEY_ID'] %>
     secret_access_key: <%= ENV['SETTINGS__S3__SECRET_ACCESS_KEY'] %>
+    region: <%= ENV.fetch('SETTINGS__S3__REGION', 'ap-northeast-1') %>
     bucket: <%= ENV['SETTINGS__S3__BUCKET'] %>
 
 development:
