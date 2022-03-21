@@ -58,7 +58,7 @@ gem 'meta-tags'
 gem 'sitemap_generator'
 
 # Utilities
-gem 'carrierwave', '~> 1.3'
+gem 'carrierwave'
 gem 'fog-aws'
 gem 'gretel'
 gem 'liveness'

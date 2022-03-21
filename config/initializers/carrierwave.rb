@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 CarrierWave.configure do |config|
-  if Settings.s3.enabled == 'yes'
+  if Settings.s3.enabled
     config.storage = :fog
     config.fog_credentials = {
       provider: 'AWS',
