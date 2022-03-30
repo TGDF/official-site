@@ -93,7 +93,6 @@ group :development, :test do
   gem 'bcrypt_pbkdf'
   gem 'capybara', require: false
   gem 'capybara-selenium', require: false
-  gem 'ed25519'
 
   gem 'brakeman', require: false
   gem 'rubocop', '~> 1.8.1', require: false
@@ -112,11 +111,6 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
 
   gem 'pry-rails'
-
-  gem 'capistrano', '~> 3.10.0'
-  gem 'capistrano-passenger'
-  gem 'capistrano-rails'
-  gem 'capistrano-upload-config'
 
   gem 'boxing'
 end
