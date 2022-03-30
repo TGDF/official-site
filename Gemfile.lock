@@ -305,7 +305,6 @@ GEM
       actionpack (>= 5.0)
       railties (>= 5.0)
     rexml (3.2.5)
-    rollbar (3.3.0)
     rspec-core (3.11.0)
       rspec-support (~> 3.11.0)
     rspec-expectations (3.11.0)
@@ -364,6 +363,14 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2)
     semantic_range (3.0.0)
+    sentry-rails (5.2.1)
+      railties (>= 5.0)
+      sentry-ruby-core (~> 5.2.1)
+    sentry-ruby (5.2.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      sentry-ruby-core (= 5.2.1)
+    sentry-ruby-core (5.2.1)
+      concurrent-ruby
     settingslogic (2.0.9)
     shoulda (4.0.0)
       shoulda-context (~> 2.0)
@@ -482,7 +489,6 @@ DEPENDENCIES
   rack-utf8_sanitizer
   rails (~> 5.2.6)
   rails-i18n
-  rollbar
   rspec-rails
   rubocop (~> 1.8.1)
   rubocop-performance
@@ -490,6 +496,8 @@ DEPENDENCIES
   rubocop-rspec
   sassc-rails
   select2-rails
+  sentry-rails
+  sentry-ruby
   settingslogic
   shoulda (~> 4.0.0)
   shoulda-matchers
