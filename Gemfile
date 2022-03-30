@@ -57,6 +57,10 @@ gem 'slim-rails'
 gem 'meta-tags'
 gem 'sitemap_generator'
 
+# Monitor
+gem 'sentry-rails'
+gem 'sentry-ruby'
+
 # Utilities
 gem 'carrierwave'
 gem 'fog-aws'
@@ -67,7 +71,6 @@ gem 'oj'
 gem 'openbox'
 gem 'rack-attack'
 gem 'rack-utf8_sanitizer'
-gem 'rollbar'
 gem 'store_attribute', '~> 0.5.0'
 gem 'whenever', require: false
 
