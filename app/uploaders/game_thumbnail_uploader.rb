@@ -17,7 +17,7 @@ class GameThumbnailUploader < CarrierWave::Uploader::Base
     process resize_to_fill: [1920, 1080]
   end
 
-  def extension_whitelist
+  def extension_allowlist
     %w[jpg jpeg gif png]
   end
 end
