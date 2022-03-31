@@ -69,6 +69,6 @@ jobs:
     - name: Run RSpec
       uses: paambaati/codeclimate-action@v3.0.0
       env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        CC_TEST_REPORTER_ID: 095aa40147ca31736e28d41cdec3fc606112be588fa23bbfd155cbdf7f5aafa7
       with:
         coverageCommand: bundle exec rspec
