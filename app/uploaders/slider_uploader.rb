@@ -17,7 +17,7 @@ class SliderUploader < CarrierWave::Uploader::Base
     process resize_to_fill: [384, 170]
   end
 
-  def extension_whitelist
+  def extension_allowlist
     %w[jpg jpeg png]
   end
 end
