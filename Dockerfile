@@ -15,15 +15,12 @@ RUN gem install bundler:2.3.7 \
     && bundle config --local deployment 'true' \
     && bundle config --local frozen 'true' \
     && bundle config --local no-cache 'true' \
-    && bundle config --local system 'true' \
     && bundle config --local without 'development test' \
     && bundle install -j "$(getconf _NPROCESSORS_ONLN)" \
-    && find /${APP_ROOT}/vendor/bundle -type f -name '*.c' -delete \
-    && find /${APP_ROOT}/vendor/bundle -type f -name '*.o' -delete \
-    && find /usr/local/bundle -type f -name '*.c' -delete \
-    && find /usr/local/bundle -type f -name '*.o' -delete \
-    && rm -rf /usr/local/bundle/cache/*.gem
-
+    && find ${APP_ROOT}/vendor/bundle -type f -name '*.c' -delete \
+    && find ${APP_ROOT}/vendor/bundle -type f -name '*.h' -delete \
+    && find ${APP_ROOT}/vendor/bundle -type f -name '*.o' -delete \
+    && find ${APP_ROOT}/vendor/bundle -type f -name '*.gem' -delete
 
 FROM node:${NODE_VERSION}-alpine as node
 ARG SERVER_ROOT
@@ -35,7 +32,7 @@ RUN apk add --no-cache curl tzdata shared-mime-info postgresql-libs imagemagick
 
 COPY --from=gem /usr/local/bundle/config /usr/local/bundle/config
 COPY --from=gem /usr/local/bundle /usr/local/bundle
-COPY --from=gem /${APP_ROOT}/vendor/bundle /${APP_ROOT}/vendor/bundle
+COPY --from=gem ${APP_ROOT}/vendor/bundle ${APP_ROOT}/vendor/bundle
 
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
 
