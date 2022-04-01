@@ -5,16 +5,16 @@ module Admin
     before_action :find_game, only: %i[edit update destroy]
 
     def index
-      @games = Game.all
+      @games = IndieSpace::Game.all
     end
 
     def new
-      @game = Game.new
+      @game = IndieSpace::Game.new
     end
 
     def create
       Mobility.with_locale(I18n.default_locale) do
-        return redirect_to(admin_games_path) if Game.create(game_params)
+        return redirect_to(admin_games_path) if IndieSpace::Game.create(game_params)
 
         render :new
       end
@@ -38,12 +38,12 @@ module Admin
     private
 
     def find_game
-      @game = Game.find(params[:id])
+      @game = IndieSpace::Game.find(params[:id])
     end
 
     def game_params
       params
-        .require(:game)
+        .require(:indie_space_game)
         .permit(:name, :description, :team, :video, :order,
                 :thumbnail, :website, :remove_thumbnail)
     end

@@ -4,12 +4,12 @@ require 'rails_helper'
 
 RSpec.describe('Admin::Games', level: :feature) do
   let(:admin) { create(:admin_user) }
-  let(:game) { create(:game) }
+  let(:game) { create(:game, type: 'IndieSpace::Game') }
 
   before { sign_in admin }
 
   describe '#index' do
-    let!(:games) { create_list(:game, 5) }
+    let!(:games) { create_list(:game, 5, type: 'IndieSpace::Game') }
 
     it 'can see all game' do
       visit admin_games_path
@@ -20,11 +20,11 @@ RSpec.describe('Admin::Games', level: :feature) do
   describe '#new' do
     before do
       visit new_admin_game_path
-      fill_in 'game_name', with: 'Example'
-      fill_in 'game_description', with: 'Example Description'
-      fill_in 'game_team', with: 'Team'
+      fill_in 'indie_space_game_name', with: 'Example'
+      fill_in 'indie_space_game_description', with: 'Example Description'
+      fill_in 'indie_space_game_team', with: 'Team'
       attach_file(
-        'game_thumbnail',
+        'indie_space_game_thumbnail',
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       click_button '新增Game'
@@ -34,16 +34,20 @@ RSpec.describe('Admin::Games', level: :feature) do
   end
 
   describe '#edit' do
-    it 'can edit game' do
+    it 'can edit game' do # rubocop:disable RSpec/ExampleLength
       visit edit_admin_game_path(game)
-      fill_in 'game_name', with: 'New Game Name'
+      fill_in 'indie_space_game_name', with: 'New Game Name'
+      attach_file(
+        'indie_space_game_thumbnail',
+        Rails.root.join('spec/support/brands/logos/TGDF.png')
+      )
       click_button '更新Game'
       expect(page).to(have_content('New Game Name'))
     end
   end
 
   describe '#destroy' do
-    let!(:game) { create(:game) }
+    let!(:game) { create(:game, type: 'IndieSpace::Game') }
 
     it 'can destroy game' do
       visit admin_games_path
