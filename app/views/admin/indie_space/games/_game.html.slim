@@ -1,8 +1,8 @@
 tr
   td = game.id
-  td = link_to game.name, edit_admin_game_path(game)
+  td = link_to game.name, edit_admin_indie_space_game_path(game)
   td = game.team
   td = game.order
   td
     .btn-group
-      = link_to t('.destroy'), admin_game_path(game), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }
+      = link_to t('.destroy'), admin_indie_space_game_path(game), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

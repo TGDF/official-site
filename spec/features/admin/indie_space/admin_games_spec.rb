@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Admin::Games', level: :feature) do
+RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
   let(:admin) { create(:admin_user) }
   let(:game) { create(:game, type: 'IndieSpace::Game') }
 
@@ -12,14 +12,14 @@ RSpec.describe('Admin::Games', level: :feature) do
     let!(:games) { create_list(:game, 5, type: 'IndieSpace::Game') }
 
     it 'can see all game' do
-      visit admin_games_path
+      visit admin_indie_space_games_path
       games.each { |game| expect(page).to(have_content(game.name)) }
     end
   end
 
   describe '#new' do
     before do
-      visit new_admin_game_path
+      visit new_admin_indie_space_game_path
       fill_in 'indie_space_game_name', with: 'Example'
       fill_in 'indie_space_game_description', with: 'Example Description'
       fill_in 'indie_space_game_team', with: 'Team'
@@ -35,7 +35,7 @@ RSpec.describe('Admin::Games', level: :feature) do
 
   describe '#edit' do
     it 'can edit game' do # rubocop:disable RSpec/ExampleLength
-      visit edit_admin_game_path(game)
+      visit edit_admin_indie_space_game_path(game)
       fill_in 'indie_space_game_name', with: 'New Game Name'
       attach_file(
         'indie_space_game_thumbnail',
@@ -50,7 +50,7 @@ RSpec.describe('Admin::Games', level: :feature) do
     let!(:game) { create(:game, type: 'IndieSpace::Game') }
 
     it 'can destroy game' do
-      visit admin_games_path
+      visit admin_indie_space_games_path
 
       within first('td', text: game.name).first(:xpath, './/..') do
         click_on 'Destroy'
