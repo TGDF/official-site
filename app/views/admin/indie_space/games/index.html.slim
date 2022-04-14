@@ -14,5 +14,5 @@
                   th = t('.order')
                   th.col-md-3 = t('.actions')
               tbody
-                = render @games
+                = render partial: 'game', collection: @games
 

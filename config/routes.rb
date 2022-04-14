@@ -44,10 +44,9 @@ Rails.application.routes.draw do
     resources :agenda_days, except: :show
     resources :agenda_tags, except: :show
 
-    resources :games, expect: :show
-    resource :indie_space, only: %i[edit update] do
-      # TODO: Move Admin::Game to Admin::IndieSpace::Game
-      resources :games, expect: :show, to: 'admin/games'
+    resource :indie_space, only: %i[edit update]
+    namespace :indie_space do
+      resources :games, expect: :show
     end
 
     resources :images, only: %i[create]
