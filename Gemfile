@@ -38,7 +38,7 @@ gem 'rails-i18n'
 gem 'settingslogic'
 
 # Multi-Tenancy
-gem 'apartment'
+gem 'ros-apartment', require: 'apartment'
 
 # User
 gem 'devise'
