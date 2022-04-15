@@ -4,7 +4,7 @@ require:
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.5.1
+  TargetRubyVersion: 2.7
   DisplayCopNames: true
   NewCops: enable
   Exclude:
@@ -36,6 +36,7 @@ Metrics/BlockLength:
   Exclude:
     - config/routes.rb
     - config/initializers/**/*
+    - lib/tasks/**/*
     - spec/**/*
 
 Metrics/MethodLength:
