@@ -30,8 +30,8 @@ class SiteOption
 
   def format_option(group, option)
     option.symbolize_keys.merge(
-      name: :"#{group}_#{option['name']}",
-      type: option['type'].to_sym
+      name: :"#{group}_#{option[:name]}",
+      type: option[:type].to_sym
     )
   end
 end
