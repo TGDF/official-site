@@ -5,6 +5,9 @@ class AddTenantNameToSites < ActiveRecord::Migration[5.1]
     add_column(:sites, :tenant_name, :string)
     add_index(:sites, :tenant_name)
 
+    Site.connection.schema_cache.clear!
+    Site.reset_column_information
+
     reversible do |direction|
       direction.up { apply_tenant_name if main_site? }
       direction.down { alert_with_rollback if main_site? }
