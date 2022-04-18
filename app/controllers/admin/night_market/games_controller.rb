@@ -3,6 +3,8 @@
 module Admin
   module NightMarket
     class GamesController < Admin::BaseController
+      include Admin::HasGame
+
       def index
         @games = ::NightMarket::Game.all
       end
@@ -21,11 +23,8 @@ module Admin
 
       private
 
-      def game_params
-        params
-          .require(:night_market_game)
-          .permit(:name, :description, :team, :video, :order,
-                  :thumbnail, :website, :remove_thumbnail)
+      def resource_name
+        :night_market_game
       end
     end
   end
