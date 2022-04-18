@@ -49,6 +49,10 @@ Rails.application.routes.draw do
       resources :games, expect: :show
     end
 
+    namespace :night_market do
+      resources :games, expect: :show
+    end
+
     resources :images, only: %i[create]
 
     constraints ->(_req) { Apartment::Tenant.current != 'public' } do
