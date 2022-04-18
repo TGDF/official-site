@@ -1,0 +1,27 @@
+<%= admin_page_header t('.night_market'), t('.list_games') %>
+<div class="container-fluid">
+  <div class="fade-in">
+    <div class="row">
+      <div class="col-md-12">
+        <%= admin_box do %>
+          <%= admin_box_body class: 'no-padding' do %>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th class="table__id-column">#</th>
+                  <th><%= t('.name') %></th>
+                  <th><%= t('.team') %></th>
+                  <th><%= t('.order') %></th>
+                  <th class="col-md-3"><%= t('.actions') %></th>
+                </tr>
+              <thead>
+              <tbody>
+                <%= render partial: 'game', collection: @games %>
+              </tbody>
+            </table>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

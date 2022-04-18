@@ -3,7 +3,6 @@ Feature: Manage Night Market Games
   Background:
     Given an user logged as admin
 
-  @wip
   Scenario: Admin User can see a list of Night Market Games
     Given there are some night market games
       | name     | description | team       | thumbnail |
