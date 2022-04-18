@@ -6,6 +6,10 @@ module Admin
       def index
         @games = ::NightMarket::Game.all
       end
+
+      def new
+        @game = ::NightMarket::Game.new
+      end
     end
   end
 end
