@@ -3,6 +3,8 @@
 module Admin
   module IndieSpace
     class GamesController < Admin::BaseController
+      include Admin::HasGame
+
       before_action :find_game, only: %i[edit update destroy]
 
       def index
@@ -42,11 +44,8 @@ module Admin
         @game = ::IndieSpace::Game.find(params[:id])
       end
 
-      def game_params
-        params
-          .require(:indie_space_game)
-          .permit(:name, :description, :team, :video, :order,
-                  :thumbnail, :website, :remove_thumbnail)
+      def resource_name
+        :indie_space_game
       end
     end
   end

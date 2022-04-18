@@ -13,3 +13,15 @@ Feature: Manage Night Market Games
       | name     |
       | 遠古神話 |
       | 九日     |
+
+  Scenario: Admin User can add new Night Market Game
+    When I visit "/admin/night_market/games/new"
+    And I fill the Night Market Game form
+      | name        | 遠古神話                |
+      | description | 2015 年銘傳大學學生作品 |
+      | team        | 玄武工作室              |
+      | thumbnail   | TGDF.png                |
+    And I click "新增Game" button
+    Then I should see night market games are listed
+      | name     |
+      | 遠古神話 |
