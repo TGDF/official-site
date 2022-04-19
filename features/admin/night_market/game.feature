@@ -9,8 +9,8 @@ Feature: Manage Night Market Games
       | 遠古神話 | 範例遊戲    | 玄武工作室 | TGDF.png  |
       | 九日     | 範例遊戲    | 赤燭       | TGDF.png  |
     When I visit "/admin/night_market/games"
-    Then I should see night market games are listed
-      | name     |
+    Then I can see in the table
+      | text     |
       | 遠古神話 |
       | 九日     |
 
@@ -23,8 +23,8 @@ Feature: Manage Night Market Games
       | team        | 玄武工作室              |
       | thumbnail   | TGDF.png                |
     And I click "新增Game" button
-    Then I should see night market games are listed
-      | name     |
+    Then I can see in the table
+      | text     |
       | 遠古神話 |
 
   Scenario: Admin User can edit Night Market Game
@@ -37,6 +37,16 @@ Feature: Manage Night Market Games
       | field | value  |
       | name  | 新紀元 |
     And I click "更新Game" button
-    Then I should see night market games are listed
-      | name   |
+    Then I can see in the table
+      | text   |
       | 新紀元 |
+
+  Scenario: Admin User can delete Night Market Game
+    Given there are some night market games
+      | name     | description | team       | thumbnail |
+      | 遠古神話 | 範例遊戲    | 玄武工作室 | TGDF.png  |
+    When I visit "/admin/night_market/games"
+    And I click "Destroy" on row "遠古神話"
+    Then I should not see in the table
+      | text     |
+      | 遠古神話 |
