@@ -40,12 +40,8 @@ module Admin
 
       private
 
-      def find_game
-        @game = ::IndieSpace::Game.find(params[:id])
-      end
-
-      def resource_name
-        :indie_space_game
+      def resouce
+        ::IndieSpace::Game
       end
     end
   end

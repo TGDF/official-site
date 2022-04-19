@@ -26,3 +26,17 @@ Feature: Manage Night Market Games
     Then I should see night market games are listed
       | name     |
       | 遠古神話 |
+
+  Scenario: Admin User can edit Night Market Game
+    Given there are some night market games
+      | name     | description | team       | thumbnail |
+      | 遠古神話 | 範例遊戲    | 玄武工作室 | TGDF.png  |
+    When I visit "/admin/night_market/games"
+    And I click link "遠古神話"
+    And I fill the Night Market Game form
+      | field | value  |
+      | name  | 新紀元 |
+    And I click "更新Game" button
+    Then I should see night market games are listed
+      | name   |
+      | 新紀元 |

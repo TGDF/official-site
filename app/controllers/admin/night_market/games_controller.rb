@@ -21,10 +21,18 @@ module Admin
         end
       end
 
+      def update
+        Mobility.with_locale(admin_current_resource_locale) do
+          return redirect_to(admin_night_market_games_path) if @game.update(game_params)
+
+          render :edit
+        end
+      end
+
       private
 
-      def resource_name
-        :night_market_game
+      def resource
+        ::NightMarket::Game
       end
     end
   end

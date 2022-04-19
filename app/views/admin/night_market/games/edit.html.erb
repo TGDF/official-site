@@ -1,0 +1,14 @@
+<%= admin_page_header t('.edit'), t('.edit_game') %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <%= admin_box do %>
+        <%= admin_box_header t('.edit_game') %>
+        <%= admin_box_body do %>
+          <%= admin_locale_navtab %>
+          <%= render 'form' %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
