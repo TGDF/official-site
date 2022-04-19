@@ -117,6 +117,7 @@ end
 
 group :test do
   gem 'cucumber-rails', require: false
+  gem 'database_rewinder'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

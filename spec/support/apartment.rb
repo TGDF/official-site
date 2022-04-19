@@ -8,6 +8,8 @@ RSpec.configure do |config|
     rescue # rubocop:disable Style/RescueStandardError
       nil
     end
+
+    DatabaseRewinder.clean_all
     # Create the default tenant for our tests
     Site.create!(name: 'Main Site', domain: 'www.example.com', tenant_name: 'main')
   end
@@ -18,6 +20,7 @@ RSpec.configure do |config|
   end
 
   config.after do
+    DatabaseRewinder.clean
     # Reset tentant back to `public`
     Apartment::Tenant.reset
   end
