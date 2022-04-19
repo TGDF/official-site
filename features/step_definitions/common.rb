@@ -29,3 +29,9 @@ Then('I should not see in the table') do |table|
     expect(page).not_to have_xpath("//tr[td='#{row[:text]}']")
   end
 end
+
+When('I click admin sidebar {string} in {string}') do |menu_item, menu_group|
+  within :xpath, "//aside[contains(@class, 'c-sidebar')]/ul/li[contains(., '#{menu_group}')]" do
+    click_on menu_item
+  end
+end

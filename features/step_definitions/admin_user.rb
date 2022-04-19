@@ -5,5 +5,5 @@ Given('an user logged as admin') do
   visit '/admin/sign_in'
   fill_in 'admin_user_email', with: user.email
   fill_in 'admin_user_password', with: 'Passw0rd$'
-  click_on '登入'
+  click_button '登入'
 end
