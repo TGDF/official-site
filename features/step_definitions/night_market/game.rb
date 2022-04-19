@@ -7,12 +7,6 @@ Given('there are some night market games') do |table|
   end
 end
 
-Then('I should see night market games are listed') do |table|
-  table.hashes.each do |game|
-    expect(page).to have_text(game[:name])
-  end
-end
-
 When('I fill the Night Market Game form') do |table|
   table.rows.each do |key, value|
     if key == 'thumbnail'
@@ -23,5 +17,17 @@ When('I fill the Night Market Game form') do |table|
       next
     end
     fill_in "night_market_game_#{key}", with: value
+  end
+end
+
+Then('I should see night market games are listed') do |table|
+  table.hashes.each do |game|
+    expect(page).to have_xpath("//tr[td='#{game[:name]}']")
+  end
+end
+
+Then('I should not see night market games are listed') do |table|
+  table.hashes.each do |game|
+    expect(page).not_to have_xpath("//tr[td='#{game[:name]}']")
   end
 end
