@@ -7,9 +7,13 @@ BeforeAll do
     nil
   end
 
+  DatabaseRewinder.clean_all
   Site.create!(name: 'Main Site', domain: 'www.example.com', tenant_name: 'main')
 end
 
 Around do |_scenario, block|
-  Apartment::Tenant.switch('main', &block)
+  Apartment::Tenant.switch('main') do
+    block&.call
+    DatabaseRewinder.clean
+  end
 end
