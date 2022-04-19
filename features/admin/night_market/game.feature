@@ -17,6 +17,7 @@ Feature: Manage Night Market Games
   Scenario: Admin User can add new Night Market Game
     When I visit "/admin/night_market/games/new"
     And I fill the Night Market Game form
+      | field       | value                   |
       | name        | 遠古神話                |
       | description | 2015 年銘傳大學學生作品 |
       | team        | 玄武工作室              |

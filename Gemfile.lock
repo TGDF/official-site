@@ -141,6 +141,7 @@ GEM
     cucumber-wire (6.2.1)
       cucumber-core (~> 10.1, >= 10.1.0)
       cucumber-cucumber-expressions (~> 14.0, >= 14.0.0)
+    database_rewinder (0.9.8)
     devise (4.8.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -497,6 +498,7 @@ DEPENDENCIES
   capybara-selenium
   carrierwave
   cucumber-rails
+  database_rewinder
   devise
   dotenv-rails
   factory_bot_rails
