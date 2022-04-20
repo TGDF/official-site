@@ -10,7 +10,7 @@ env:
   RAILS_ENV: production
   SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: tgdf/official-site
 
 jobs:
   assets:
