@@ -50,6 +50,12 @@
             = admin_box_footer do
               = f.submit class: 'btn btn-primary'
           = admin_box do
+            = admin_box_header t('.night_market')
+            = admin_box_body do
+              = f.input :night_market_enabled, collection: [['No', false], ['Yes', true]], as: :select, include_blank: false
+            = admin_box_footer do
+              = f.submit class: 'btn btn-primary'
+          = admin_box do
             = admin_box_header t('.survey')
             = admin_box_body do
               = f.input :survey_url
