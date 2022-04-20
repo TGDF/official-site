@@ -1,11 +1,12 @@
 default: &default
   site:
-    default_domain: <%= ENV['SITE_DEFAULT_DOMAIN'] || 'tgdf.tw' %>
+    default_domain: <%= ENV.fetch('SITE_DEFAULT_DOMAIN', 'tgdf.tw') %>
+    session_key: <%= ENV.fetch('SETTINGS__SITE__SESSION_KEY', '_tgdf_session') %>
   assets:
     host: <%= ENV.fetch('ASSETS_HOST', 'https://tgdf.tw') %>
   news:
     latest:
-      size: <%= (ENV['NEWS_LATEST_SIZE'] || 5).to_i %>
+      size: <%= ENV.fetch('NEWS_LATEST_SIZE', 5).to_i %>
   ticket:
     types:
       - personal
