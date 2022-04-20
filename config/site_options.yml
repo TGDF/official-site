@@ -18,6 +18,9 @@ default: &default
       type: string
     - name: apply_mode
       type: boolean
+  night_market:
+    - name: enabled
+      type: boolean
   ticket:
     - name: student_price
       type: integer
