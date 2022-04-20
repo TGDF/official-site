@@ -18,6 +18,8 @@ nav#main-menu.navbar.navbar-expand-lg.bg-white.navbar-light.sticky-top
           = nav_item t('.sponsors'), sponsors_path
           - unless current_site.indie_space_disabled?
             = nav_item t('.indie_spaces'), indie_spaces_path
+          - if current_site.night_market_enabled?
+            = nav_item t('.night_market'), night_market_index_path
         = nav_item t('.code_of_conduct'), code_of_conduct_path
       ul.navbar-nav.ml-auto
         = language_toggle_button
