@@ -52,6 +52,7 @@ gem 'mobility', '~> 0.8'
 gem 'select2-rails'
 gem 'simple_form'
 gem 'slim-rails'
+gem 'view_component'
 
 # SEO
 gem 'meta-tags'
