@@ -14,19 +14,4 @@
         = sanitize current_site.indie_space_description
     .container.mt-5.mb-4
       .row.flex-warp
-        - @games.each do |game|
-          .align-self-stretch.d-flex.mb-3.col-md-4.col-sm-12
-            article.card.indie-game
-              .indie-game__picture
-                = link_to_if game.website.present?, image_tag(game.thumbnail_url(:thumb), class: 'card-img-top'), game.website, target: '_blank'
-              .card-body.indie-game__body
-                header.indie-game__header
-                  .d-flex.indie-game__metadata.mb-3
-                    .indie-game__team.mr-4
-                      = link_to_if game.website.present?, label_with_icon(game.team, 'users'), game.website, target: '_blank' do
-                        .virtual-link = label_with_icon(game.team, 'users')
-                    .indie-game__video
-                      = link_to_if game.video.present?, label_with_icon(t('.view_video'), 'video-camera'), game.video, target: '_blank' do
-                        .virtual-link = label_with_icon(t('.view_video'), 'video-camera')
-                  h3.indie-game__name.text-pink = game.name
-                .indie-game__description = sanitize game.description
+        = render GameComponent.with_collection(@games)

@@ -1,0 +1,25 @@
+<div class="align-self-stretch d-flex mb-3 col-md-4 col-sm-12">
+  <div class="article card indie-game">
+    <div class="indie-game__picture">
+      <%= link_to_if @game.website.present?, image_tag(@game.thumbnail_url(:thumb), class: 'card-img-top'), @game.website, target: '_blank' %>
+    </div>
+    <div class="card-body indie-game__body">
+      <header class="indie-game__header">
+        <div class="d-flex indie-game__metadata mb-3">
+          <div class="indie-game__team mr-4">
+            <%= link_to_if @game.website.present?, helpers.label_with_icon(@game.team, 'users'), @game.website, target: '_blank' do %>
+              <div class="virtual-link"><%= helpers.label_with_icon(@game.team, 'users') %></div>
+            <% end %>
+          </div>
+          <div class="indie-game__video">
+            <%= link_to_if @game.video.present?, helpers.label_with_icon(t('.view_video'), 'video-camera'), @game.video, target: '_blank' do %>
+              <div class="virtual-link"><%= helpers.label_with_icon(t('.view_video'), 'video-camera') %></div>
+            <% end %>
+          </div>
+        </div>
+        <h3 class="indie-game__name text-pink"><%= @game.name %></h3>
+      </header>
+      <div class="indie-game__description"><%= sanitize @game.description %></div>
+    </div>
+  </div>
+</div>
