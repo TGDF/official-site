@@ -1,0 +1,21 @@
+<div class="align-self-stretch d-flex mb-3 col-md-4 col-sm-12">
+  <div class="article card indie-game">
+    <div class="indie-game__picture">
+      <%= thumbnail_image %>
+    </div>
+    <div class="card-body indie-game__body">
+      <header class="indie-game__header">
+        <div class="d-flex indie-game__metadata mb-3">
+          <div class="indie-game__team mr-4">
+            <%= link_with_icon(website, @game.team, 'users') %>
+          </div>
+          <div class="indie-game__video">
+            <% link_with_icon(video, t('.view_video'), 'video-camera') %>
+          </div>
+        </div>
+        <h3 class="indie-game__name text-pink"><%= name %></h3>
+      </header>
+      <div class="indie-game__description"><%= sanitize description %></div>
+    </div>
+  </div>
+</div>
