@@ -3,13 +3,17 @@
 require 'rails_helper'
 
 RSpec.describe GameComponent, type: :component do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject(:component) { described_class.new(game: game) }
 
-  # it "renders something useful" do
-  #   expect(
-  #     render_inline(described_class.new(attr: "value")) { "Hello, components!" }.css("p").to_html
-  #   ).to include(
-  #     "Hello, components!"
-  #   )
-  # end
+  let(:game) { create(:game, name: '遠古神話', description: '範例遊戲', team: '玄武工作室') }
+
+  describe '#render' do
+    subject { rendered_component }
+
+    before { render_inline(component) }
+
+    it { is_expected.to have_css('.indie-game__name', text: '遠古神話') }
+    it { is_expected.to have_css('.indie-game__description', text: '範例遊戲') }
+    it { is_expected.to have_css('.indie-game__team', text: '玄武工作室') }
+  end
 end
