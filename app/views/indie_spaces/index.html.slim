@@ -1,5 +1,5 @@
 - content_for :disable_breadcrumb, true
-= render 'slider'
+= render SliderComponent.new(id: 'slider', sliders: @sliders)
 
 - if current_site.indie_space_apply_mode?
   section.sec-pding
