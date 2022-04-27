@@ -1,10 +1,10 @@
-<section id="slider" class="carousel slide" data-ride="carousel" data-interval="5000">
+<section id="<%= @id %>" class="carousel slide" data-ride="carousel" data-interval="5000">
   <div class="carousel-inner">
     <%- if @sliders.empty? %>
       <div class="carousel-item active">
         <%= image_tag 'sliders/slide_1.jpg', class: 'd-block w-100' %>
       </div>
     <% end %>
-    <%= render @sliders %>
+    <%= render SliderItemComponent.with_collection(@sliders) %>
   </div>
 </section>
