@@ -2,9 +2,9 @@ Feature: Night Market
 
   Background:
     Given there are some night market games
-      | name     | description | team       | thumbnail |
-      | 遠古神話 | 範例遊戲    | 玄武工作室 | TGDF.png  |
-      | 九日     | 範例遊戲    | 赤燭       | TGDF.png  |
+      | name     | description | team       | website             | video                                       | thumbnail |
+      | 遠古神話 | 範例遊戲    | 玄武工作室 | https://basaltic.tw | https://www.youtube.com/watch?v=QBYZAZlH9cw | TGDF.png  |
+      | 九日     | 範例遊戲    | 赤燭       |                     |                                             | TGDF.png  |
 
   @night_market_enabled
   Scenario: User can see the games listed on page
@@ -15,3 +15,19 @@ Feature: Night Market
       | 遠古神話 |
       | 九日     |
 
+  @night_market_enabled
+  Scenario: User can find a team button
+    When  I visit "/"
+    And I click "Night Market" in menu
+    Then I can see the game developer in the page
+      | name       | link                |
+      | 玄武工作室 | https://basaltic.tw |
+      | 赤燭       |                     |
+
+  @night_market_enabled
+  Scenario: User can find a video button
+    When  I visit "/"
+    And I click "Night Market" in menu
+    Then I can see the game video in the page
+      | name     | video                                       |
+      | 遠古神話 | https://www.youtube.com/watch?v=QBYZAZlH9cw |
