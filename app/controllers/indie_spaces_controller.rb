@@ -5,7 +5,7 @@ class IndieSpacesController < ApplicationController
 
   def index
     @sliders = Slider.localized.indie_spaces
-    @games = Game.all
+    @games = IndieSpace::Game.all
   end
 
   private
