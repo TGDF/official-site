@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class GameComponent < ViewComponent::Base
+  include ViewComponent::Translatable
+
   delegate :name, :description, :website, :video, to: :@game
 
   def initialize(game:)
