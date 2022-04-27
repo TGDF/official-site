@@ -31,3 +31,12 @@ Feature: Night Market
     Then I can see the game video in the page
       | name     | video                                       |
       | 遠古神話 | https://www.youtube.com/watch?v=QBYZAZlH9cw |
+
+  @night_market_enabled
+  Scenario: User can find a slide in page
+    Given there are some slide in "night_market"
+      | image    | language |
+      | TGDF.png | zh-TW    |
+    When  I visit "/"
+    And I click "Night Market" in menu
+    Then I can see the 1 slide in page
