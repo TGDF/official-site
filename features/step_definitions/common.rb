@@ -18,15 +18,15 @@ When('I click link {string}') do |link_name|
   click_on link_name
 end
 
-Then('I can see in the table') do |table|
+Then('I can see these items in table') do |table|
   table.hashes.each do |row|
-    expect(page).to have_xpath("//tr[td='#{row[:text]}']")
+    expect(page).to have_selector('tr td', text: row[:text])
   end
 end
 
 Then('I should not see in the table') do |table|
   table.hashes.each do |row|
-    expect(page).not_to have_xpath("//tr[td='#{row[:text]}']")
+    expect(page).not_to have_selector('tr td', text: row[:text])
   end
 end
 

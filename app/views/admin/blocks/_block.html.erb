@@ -1,0 +1,11 @@
+<tr>
+  <td><%= block.id %></td>
+  <td><%= strip_tags(block.content).truncate_words(10) %></td>
+  <td><%= t("locale.name.#{block.language}") %></td>
+  <td><%= t("shared.nav.#{block.page}") %></td>
+  <td>
+    <div class="btn-group">
+      <%= link_to t('.edit'), edit_admin_block_path(block), class: 'btn btn-primary' %>
+      <%= link_to t('.destroy'), admin_block_path(block), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') } %>
+    </div>
+</tr>
