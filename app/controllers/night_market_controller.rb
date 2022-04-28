@@ -2,6 +2,7 @@
 
 class NightMarketController < ApplicationController
   def index
+    @blocks = Block.localized.night_market
     @sliders = Slider.localized.night_market
     @games = NightMarket::Game.all
   end

@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
-Given('there are some block in {string}') do |_page, _table|
-  # pending
+Given('there are some block in {string}') do |page_name, table|
+  table.hashes.each do |block|
+    block[:page] = page_name
+    Block.create!(**block)
+  end
 end
 
 Then('I can see the text block with {string}') do |string|
