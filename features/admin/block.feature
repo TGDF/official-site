@@ -31,7 +31,7 @@ Background:
       | text        |
       | Hello World |
 
-  Scenario: Admin User can edit Night Market Game
+  Scenario: Admin User can edit block
     Given there are some block in "night_market"
       | content   | language | component_type |
       | Section 1 | zh-TW    | text           |
@@ -45,3 +45,14 @@ Background:
     Then I can see these items in table
       | text                  |
       | Night Market is Ready |
+
+  Scenario: Admin User can delete block
+    Given there are some block in "night_market"
+      | content   | language | component_type |
+      | Section 1 | zh-TW    | text           |
+    When I visit "/admin"
+    And I click admin sidebar "List" in "Blocks"
+    And I click "Destroy" on row "Section 1"
+    Then I should not see in the table
+      | text      |
+      | Section 1 |

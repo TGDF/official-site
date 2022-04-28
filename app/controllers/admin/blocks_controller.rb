@@ -25,6 +25,11 @@ module Admin
       render(:edit)
     end
 
+    def destroy
+      @block.destroy
+      redirect_to(admin_blocks_path)
+    end
+
     private
 
     def permitted_params
