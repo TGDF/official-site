@@ -12,5 +12,9 @@ class Block < ApplicationRecord
     night_market: 'night_market'
   }
 
+  enum component_type: {
+    text: 'text'
+  }
+
   scope :ordered, -> { order(order: :asc) }
 end

@@ -18,11 +18,13 @@ Feature: Manage Night Market Games
   Scenario: Admin User can add new Night Market Game
     When I visit "/admin"
     And I click admin sidebar "New" in "Night Market"
-    And I fill the Night Market Game form
+    And I fill the "night_market_game" form
       | field       | value                   |
       | name        | 遠古神話                |
       | description | 2015 年銘傳大學學生作品 |
       | team        | 玄武工作室              |
+    And I attach files in the "night_market_game" form
+      | field       | value                   |
       | thumbnail   | TGDF.png                |
     And I click "新增Game" button
     Then I can see these items in table
@@ -36,7 +38,7 @@ Feature: Manage Night Market Games
     When I visit "/admin"
     And I click admin sidebar "List" in "Night Market"
     And I click link "遠古神話"
-    And I fill the Night Market Game form
+    And I fill the "night_market_game" form
       | field | value  |
       | name  | 新紀元 |
     And I click "更新Game" button
