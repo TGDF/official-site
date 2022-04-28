@@ -31,6 +31,7 @@ Rails.application.routes.draw do
     resource :profile, only: %i[edit update]
 
     resources :sliders, except: :show
+    resources :blocks, except: :show
 
     resources :partner_types, except: :show
     resources :partners, except: :show

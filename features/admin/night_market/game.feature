@@ -10,7 +10,7 @@ Feature: Manage Night Market Games
       | 九日     | 範例遊戲    | 赤燭       | TGDF.png  |
     When I visit "/admin/news"
     And I click admin sidebar "List" in "Night Market"
-    Then I can see in the table
+    Then I can see these items in table
       | text     |
       | 遠古神話 |
       | 九日     |
@@ -25,7 +25,7 @@ Feature: Manage Night Market Games
       | team        | 玄武工作室              |
       | thumbnail   | TGDF.png                |
     And I click "新增Game" button
-    Then I can see in the table
+    Then I can see these items in table
       | text     |
       | 遠古神話 |
 
@@ -40,7 +40,7 @@ Feature: Manage Night Market Games
       | field | value  |
       | name  | 新紀元 |
     And I click "更新Game" button
-    Then I can see in the table
+    Then I can see these items in table
       | text   |
       | 新紀元 |
 
