@@ -18,7 +18,7 @@ Background:
   Scenario: Admin User can add new block
     When I visit "/admin"
     And I click admin sidebar "New" in "Blocks"
-    And I fill the Block form
+    And I fill the "block" form
       | field    | value        |
       | content  | Hello World  |
     And I select options in the "block" form

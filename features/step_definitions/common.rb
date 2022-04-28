@@ -41,9 +41,3 @@ When('I click admin sidebar {string} in {string}') do |menu_item, menu_group|
     click_on menu_item
   end
 end
-
-When('I select options in the {string} form') do |form, table|
-  table.rows.each do |key, option|
-    select option, from: "#{form}_#{key}"
-  end
-end

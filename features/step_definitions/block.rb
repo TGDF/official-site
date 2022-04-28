@@ -10,9 +10,3 @@ end
 Then('I can see the text block with {string}') do |string|
   expect(page).to have_selector('.text-block', text: string)
 end
-
-When('I fill the Block form') do |table|
-  table.rows.each do |key, value|
-    fill_in "block_#{key}", with: value
-  end
-end
