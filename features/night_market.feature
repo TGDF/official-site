@@ -40,3 +40,12 @@ Feature: Night Market
     When  I visit "/"
     And I click "Night Market" in menu
     Then I can see the 1 slide in page
+
+  @night_market_enabled
+  Scenario: User can find a description in page
+    Given there are some block in "night_market"
+      | content     | language | component_type |
+      | Hello World | zh-TW    | text           |
+    When  I visit "/"
+    And I click "Night Market" in menu
+    Then I can see the text block with "Hello World"
