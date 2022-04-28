@@ -11,4 +11,6 @@ class Block < ApplicationRecord
   enum page: {
     night_market: 'night_market'
   }
+
+  scope :ordered, -> { order(order: :asc) }
 end
