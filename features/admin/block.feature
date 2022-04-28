@@ -19,8 +19,8 @@ Background:
     When I visit "/admin"
     And I click admin sidebar "New" in "Blocks"
     And I fill the "block" form
-      | field    | value        |
-      | content  | Hello World  |
+      | field   | value       |
+      | content | Hello World |
     And I select options in the "block" form
       | field    | value        |
       | language | 繁體中文     |
@@ -30,3 +30,18 @@ Background:
     Then I can see these items in table
       | text        |
       | Hello World |
+
+  Scenario: Admin User can edit Night Market Game
+    Given there are some block in "night_market"
+      | content   | language | component_type |
+      | Section 1 | zh-TW    | text           |
+    When I visit "/admin"
+    And I click admin sidebar "List" in "Blocks"
+    And I click link "Edit"
+    And I fill the "block" form
+      | field   | value                 |
+      | content | Night Market is Ready |
+    And I click "更新Block" button
+    Then I can see these items in table
+      | text                  |
+      | Night Market is Ready |
