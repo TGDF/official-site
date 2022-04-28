@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Slider < ApplicationRecord
+  include HasTranslation
+
   mount_uploader :image, SliderUploader
 
   enum language: {
@@ -15,6 +17,4 @@ class Slider < ApplicationRecord
   }
 
   validates :image, :language, presence: true
-
-  scope :localized, -> { where(language: I18n.locale) }
 end
