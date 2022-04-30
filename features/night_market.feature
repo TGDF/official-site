@@ -49,3 +49,8 @@ Feature: Night Market
     When  I visit "/"
     And I click "Night Market" in menu
     Then I can see the text block with "Hello World"
+    
+  @night_market_enabled
+  Scenario: The button text on navbar for night market fest should display correctly for en and zh-TW
+    When users visit "/" root they should see the "Nightmarket Festival"
+    button name correctly displayed for both en and zh-TW locale
