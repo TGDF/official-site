@@ -4,6 +4,7 @@
     <%= f.input :language, collection: Block.languages.map { |lang, _| [t("locale.name.#{lang}"), lang] }.to_h, default: 'zh-TW' %>
     <%= f.input :page, collection: Block.pages.map { |page, _| [t("shared.nav.#{page}"), page] }.to_h, default: 'night_market' %>
     <%= f.input :component_type, collection: Block.component_types.map { |type, _| [type, type] }.to_h, default: 'text' %>
+    <%= f.input :order %>
   <% end %>
   <%= admin_box_footer do %>
     <%= f.submit class: 'btn btn-primary' %>
