@@ -53,5 +53,8 @@ Feature: Night Market
   @night_market_enabled
   Scenario: The button text in menu should have en translation
     When  I visit "/en" 
+    Given there are some block in "night_market"
+      | content     | language | component_type |
+      | Hello World | en       | text           |
     And I click "Nightmarket Festival" in menu
     Then I can see the text block with "Hello World"
