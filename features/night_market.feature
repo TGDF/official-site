@@ -9,7 +9,7 @@ Feature: Night Market
   @night_market_enabled
   Scenario: User can see the games listed on page
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
     Then I can see the game in the page
       | text     |
       | 遠古神話 |
@@ -18,7 +18,7 @@ Feature: Night Market
   @night_market_enabled
   Scenario: User can find a team button
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
     Then I can see the game developer in the page
       | name       | link                |
       | 玄武工作室 | https://basaltic.tw |
@@ -27,7 +27,7 @@ Feature: Night Market
   @night_market_enabled
   Scenario: User can find a video button
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
     Then I can see the game video in the page
       | name     | video                                       |
       | 遠古神話 | https://www.youtube.com/watch?v=QBYZAZlH9cw |
@@ -38,7 +38,7 @@ Feature: Night Market
       | image    | language |
       | TGDF.png | zh-TW    |
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
     Then I can see the 1 slide in page
 
   @night_market_enabled
@@ -47,5 +47,14 @@ Feature: Night Market
       | content     | language | component_type |
       | Hello World | zh-TW    | text           |
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
+    Then I can see the text block with "Hello World"
+    
+  @night_market_enabled
+  Scenario: The button text in menu should have en translation
+    When  I visit "/en" 
+    Given there are some block in "night_market"
+      | content     | language | component_type |
+      | Hello World | en       | text           |
+    And I click "Nightmarket Festival" in menu
     Then I can see the text block with "Hello World"
