@@ -50,8 +50,8 @@ Feature: Night Market
     And I click "遊戲夜市" in menu
     Then I can see the text block with "Hello World"
     
-  @pending
+  @night_market_enabled
   Scenario: The button text in menu should have en translation
-    When  I visit "/" 
-    And I click "English" in menu
-    Then I can see "Nightmarket Festival" in menu
+    When  I visit "/en" 
+    And I click "Nightmarket Festival" in menu
+    Then I can see the text block with "Hello World"
