@@ -27,7 +27,7 @@ Feature: Night Market
   @night_market_enabled
   Scenario: User can find a video button
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
     Then I can see the game video in the page
       | name     | video                                       |
       | 遠古神話 | https://www.youtube.com/watch?v=QBYZAZlH9cw |

@@ -24,7 +24,7 @@ Background:
     And I select options in the "block" form
       | field    | value        |
       | language | 繁體中文     |
-      | page     | Night Market |
+      | page     | 遊戲夜市     |
       | component_type     | text         |
     And I click "新增Block" button
     Then I can see these items in table
