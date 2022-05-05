@@ -9,7 +9,7 @@ Feature: Night Market
   @night_market_enabled
   Scenario: User can see the games listed on page
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
     Then I can see the game in the page
       | text     |
       | 遠古神話 |
@@ -18,7 +18,7 @@ Feature: Night Market
   @night_market_enabled
   Scenario: User can find a team button
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
     Then I can see the game developer in the page
       | name       | link                |
       | 玄武工作室 | https://basaltic.tw |
@@ -38,7 +38,7 @@ Feature: Night Market
       | image    | language |
       | TGDF.png | zh-TW    |
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
     Then I can see the 1 slide in page
 
   @night_market_enabled
@@ -47,10 +47,11 @@ Feature: Night Market
       | content     | language | component_type |
       | Hello World | zh-TW    | text           |
     When  I visit "/"
-    And I click "Night Market" in menu
+    And I click "遊戲夜市" in menu
     Then I can see the text block with "Hello World"
     
-  @night_market_enabled
-  Scenario: The button text on navbar for night market fest should display correctly for en and zh-TW
-    When users visit "/" root they should see the "Nightmarket Festival"
-    button name correctly displayed for both en and zh-TW locale
+  @pending
+  Scenario: The button text in menu should have en translation
+    When  I visit "/" 
+    And I click "English" in menu
+    Then I can see "Nightmarket Festival" in menu
