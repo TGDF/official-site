@@ -35,7 +35,7 @@ module Admin
     def permitted_params
       params
         .require(:block)
-        .permit(:content, :language, :page, :component_type)
+        .permit(:content, :language, :page, :order, :component_type)
     end
 
     def find_block

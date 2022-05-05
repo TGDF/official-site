@@ -21,11 +21,12 @@ Background:
     And I fill the "block" form
       | field   | value       |
       | content | Hello World |
+      | order   | 1           |
     And I select options in the "block" form
-      | field    | value        |
-      | language | 繁體中文     |
-      | page     | 遊戲夜市     |
-      | component_type     | text         |
+      | field          | value        |
+      | language       | 繁體中文     |
+      | page           | Night Market |
+      | component_type | text         |
     And I click "新增Block" button
     Then I can see these items in table
       | text        |
