@@ -2,7 +2,11 @@
 <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
 <% @blocks.each do |block| %>
 <section class="block text-block">
-  <%= sanitize block.content %>
+  <div class="container mt-5 mb-4">
+    <div class="col-12">
+      <%= sanitize block.content %>
+    </div>
+  </div>
 </section>
 <% end %>
 <section id="night-market">
