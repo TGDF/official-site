@@ -51,3 +51,8 @@ aside.c-sidebar.c-sidebar-dark.c-sidebar-fixed.c-sidebar-lg-show
         = admin_sidebar_item t('.list'), admin_night_market_games_path, icon: 'list'
         = admin_sidebar_item t('.new'), new_admin_night_market_game_path, icon: 'plus'
       = admin_sidebar_item t('.options'), edit_admin_options_path, icon: 'gear'
+      li.c-sidebar-nav-item.mt-auto
+        span.c-sidebar-nav-link
+          strong Version:
+          | &nbsp; #{ENV['REVISION'] || 'dev'}
+
