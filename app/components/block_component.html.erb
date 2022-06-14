@@ -4,9 +4,10 @@
       <% if twitch_live? %>
         <iframe
           id="twitch-embed"
-          src="https://player.twitch.tv/?<%= strip_tags @block.content %>&parent=<%= request.host %>"
-          height="100%"
-          width="480"
+          class="border-0"
+          src="https://player.twitch.tv/?channel=<%= strip_tags @block.content %>&parent=<%= request.host %>"
+          height="480"
+          width="100%"
           allowfullscreen>
         </iframe>
       <% else %>
