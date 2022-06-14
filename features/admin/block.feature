@@ -8,7 +8,7 @@ Background:
       | content   | language | component_type |
       | Section 1 | zh-TW    | text           |
       | Section 2 | zh-TW    | text           |
-    When I visit "/admin/news"
+    When I visit "/admin"
     And I click admin sidebar "List" in "Blocks"
     Then I can see these items in table
       | text      |
@@ -57,3 +57,18 @@ Background:
     Then I should not see in the table
       | text      |
       | Section 1 |
+
+  Scenario: Admin User can add Twitch Live block
+    When I visit "/admin"
+    And I click admin sidebar "New" in "Blocks"
+    And I fill the "block" form
+      | field   | value       |
+      | content | Hello World |
+      | order   | 1           |
+    And I select options in the "block" form
+      | field          | value       |
+      | component_type | twitch_live |
+    And I click "新增Block" button
+    Then I can see these items in table
+      | text        |
+      | Hello World |

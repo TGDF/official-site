@@ -1,0 +1,22 @@
+<section class="block <%= component_type %>-block">
+  <div class="container mt-5 mb-4">
+    <div class="col-12">
+      <% if twitch_live? %>
+        <div id="twitch-embed" class="mx-auto"></div>
+        <!-- Load the Twitch embed JavaScript file -->
+        <script src="https://embed.twitch.tv/embed/v1.js"></script>
+
+        <!-- Create a Twitch.Embed object that will render within the "twitch-embed" element -->
+        <script type="text/javascript">
+          new Twitch.Embed("twitch-embed", {
+            width: 854,
+            height: 480,
+            channel: "<%= @block.content.strip %>",
+          });
+        </script>
+      <% else %>
+        <%= sanitize @block.content %>
+      <% end %>
+    </div>
+  </div>
+</section>

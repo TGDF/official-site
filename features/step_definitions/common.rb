@@ -4,6 +4,10 @@ When('I visit {string}') do |path|
   visit path
 end
 
+When('I click {string}') do |name|
+  click_on name
+end
+
 When('I click {string} button') do |button_name|
   click_button button_name
 end

@@ -13,7 +13,8 @@ class Block < ApplicationRecord
   }
 
   enum component_type: {
-    text: 'text'
+    text: 'text',
+    twitch_live: 'twitch_live'
   }
 
   scope :ordered, -> { order(order: :asc) }

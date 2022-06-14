@@ -10,3 +10,7 @@ end
 Then('I can see the text block with {string}') do |string|
   expect(page).to have_selector('.text-block', text: string)
 end
+
+Then('I can see twitch embed placeholder') do
+  expect(page).to have_selector('#twitch-embed')
+end

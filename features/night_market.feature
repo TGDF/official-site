@@ -49,10 +49,19 @@ Feature: Night Market
     When  I visit "/"
     And I click "遊戲夜市" in menu
     Then I can see the text block with "Hello World"
-    
+
+  @night_market_enabled
+  Scenario: User can see a twitch embed
+    Given there are some block in "night_market"
+      | content       | language | component_type |
+      | tgdf_official | zh-TW    | twitch_live    |
+    When  I visit "/"
+    And I click "遊戲夜市" in menu
+    Then I can see twitch embed placeholder
+
   @night_market_enabled
   Scenario: The button text in menu should have en translation
-    When  I visit "/en" 
+    When  I visit "/en"
     Given there are some block in "night_market"
       | content     | language | component_type |
       | Hello World | en       | text           |
