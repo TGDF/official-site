@@ -8,7 +8,7 @@ RSpec.describe BlockComponent, type: :component do
   let(:component) { described_class.new(block: block) }
   let(:block) { build(:text_block, content: 'Hello World') }
 
-  let!(:rendered) { render_inline(component) }
+  before { render_inline(component) }
 
   it { is_expected.to have_selector('.text-block') }
   it { is_expected.to have_text('Hello World') }
