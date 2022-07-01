@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <%= alternate_langs %>
+    <%= csrf_meta_tags %>
+    <%= seo_tags %>
+    <%= stylesheet_link_tag    'https://use.fontawesome.com/b2e3e84e95.css', media: 'all' %>
+    <%= stylesheet_link_tag    'https://fonts.googleapis.com/css?family=Noto+Sans+TC:400,900&amp;subset=chinese-traditional' %>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag    'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+  <body>
+    <div class="boxed_wrapper">
+      <%= render 'shared/nav' %>
+      <%= render_breadcrumb %>
+      <%= yield %>
+      <%= render 'shared/footer' %>
+      <%= render 'shared/google_analytics' if current_site.google_analytics_id.present? %>
+    </div>
+  </body>
+</html>

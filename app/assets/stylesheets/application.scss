@@ -1,21 +1,21 @@
-@import "variables";
-@import "bootstrap";
+@import 'variables';
+@import 'bootstrap/scss/bootstrap';
 
 // Base
-@import "base";
+@import 'base';
 
 // Module
-@import "modules/text";
-@import "modules/colors";
-@import "modules/price";
-@import "modules/section";
-@import "modules/news";
-@import "modules/partner";
-@import "modules/sponsor";
-@import "modules/speaker";
-@import "modules/session";
-@import "modules/button";
+@import 'modules/text';
+@import 'modules/colors';
+@import 'modules/price';
+@import 'modules/section';
+@import 'modules/news';
+@import 'modules/partner';
+@import 'modules/sponsor';
+@import 'modules/speaker';
+@import 'modules/session';
+@import 'modules/button';
 
 // Layout
-@import "layout/navbar";
-@import "layout/about";
+@import 'layout/navbar';
+@import 'layout/about';

@@ -16,7 +16,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 # Use Puma as the app server
 gem 'puma', '~> 5.6'
 # Use SCSS for stylesheets
-gem 'sassc-rails'
+# gem 'sassc-rails'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
@@ -46,6 +46,7 @@ gem 'devise'
 
 # Front End
 gem 'bootstrap', '~> 4.3.0'
+gem 'cssbundling-rails'
 gem 'friendly_id', '~> 5.4.0'
 gem 'jquery-rails'
 gem 'mobility', '~> 1.0'
