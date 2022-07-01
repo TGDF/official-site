@@ -15,6 +15,7 @@
     h4, h5, h6 { font-size: 1em; }
 
     img {
+      min-width: 100%;
       max-width: 100%;
     }
   }
@@ -27,7 +28,10 @@
   }
 
   &__picture {
-    img { max-width: 100%; }
+    img {
+      min-width: 100%;
+      max-width: 100%;
+    }
 
     position: relative;
     overflow: hidden;

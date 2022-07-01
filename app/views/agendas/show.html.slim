@@ -18,10 +18,10 @@
             | #{day.label}
             span.agenda__date = day.date
           table.table.table-striped
-            thead.agenda__header.thead-dark
+            thead.agenda__header.table-dark
               tr
-                th[scope="col" width="15%"]
+                th.p-3[scope="col" width="15%"]
                 - @rooms.each do |room|
-                  th.text-center[scope="col" width="#{column_width}%"] = room.name
+                  th.p-3.text-center[scope="col" width="#{column_width}%"] = room.name
             tbody.agenda__body
               = render partial: 'time', collection: day.times, locals: { day: day }

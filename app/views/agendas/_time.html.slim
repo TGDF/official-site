@@ -1,12 +1,12 @@
 tr.agenda__row
-  th.agenda__time[scope="row"] = time.label
+  th.p-3.agenda__time[scope="row"] = time.label
   / TODO: Optimize for nested collection render
   - if time.single?
-    td.agenda__session.text-center[colspan="#{@rooms.size}"]
+    td.p-3.agenda__session.text-center[colspan="#{@rooms.size}"]
       = render(partial: 'agenda', collection: time.agendas) || 'TBA'
   - else
     - @rooms.each do |room|
-      td.agenda__session.text-center
+      td.p-3.agenda__session.text-center
         .agenda__room = room.name
         .agenda__sessions
           = render(partial: 'agenda', collection: time.agendas.select{ |agenda| agenda.room_id == room.id }) || 'TBA'

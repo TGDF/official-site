@@ -22,7 +22,7 @@ section#speaker
           .session.mb-5
             h5.session__subject = agenda.subject
             .session__time
-              span.fa.fa-clock-o.mr-2
+              span.fa.fa-clock-o.me-2
               - if agenda.begin_at.present? && agenda.time.present?
                 = "#{agenda.time.day.label} - #{agenda.begin_at} - #{agenda.end_at}"
               - else

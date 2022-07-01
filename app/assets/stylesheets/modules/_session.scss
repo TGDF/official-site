@@ -93,12 +93,12 @@
   }
 
   &__badge {
-    @extend .mx-2;
+    @extend .me-2;
 
     font-weight: normal;
 
     &:last-child {
-      @extend .mx-0;
+      @extend .me-0;
     }
   }
 }
