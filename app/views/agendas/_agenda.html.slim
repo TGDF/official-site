@@ -6,7 +6,7 @@ article.session
     / TODO: Improve translation display
     - if agenda.language.present?
       - if agenda.translated_language.present?
-        span.session__badge.badge.badge-primary
+        span.session__badge.badge.bg-primary
           | #{agenda.language} → #{agenda.translated_language}
       - else
         span.session__badge.badge.badge-primary = agenda.language
