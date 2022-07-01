@@ -54,8 +54,8 @@
 
   &__time {
     @include media-breakpoint-down(sm) {
-      color: $table-dark-color;
-      background-color: $table-dark-bg;
+      color: $white;
+      background-color: $gray-800;
 
       text-align: center;
     }
@@ -66,12 +66,12 @@
   }
 
   &__room {
-    margin: $table-cell-padding * -1;
-    margin-bottom: $table-cell-padding;
-    padding: $table-cell-padding / 2;
+    margin: $table-cell-padding-x * -1;
+    margin-bottom: $table-cell-padding-y;
+    padding: $table-cell-padding-x / 2;
 
     background: $white;
-    border: 2px solid $table-dark-bg;
+    border: 2px solid $gray-800;
 
     @include media-breakpoint-up(md) {
       display: none;
@@ -80,7 +80,7 @@
 }
 
 .session {
-  padding-top: $table-cell-padding;
+  padding-top: $table-cell-padding-y;
 
   border-top: $table-border-width solid $table-border-color;
 
@@ -93,12 +93,12 @@
   }
 
   &__badge {
-    @extend .mr-2;
+    @extend .mx-2;
 
     font-weight: normal;
 
     &:last-child {
-      @extend .mr-0;
+      @extend .mx-0;
     }
   }
 }

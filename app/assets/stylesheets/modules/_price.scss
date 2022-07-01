@@ -1,7 +1,7 @@
 // Price Box
 
 .price-box {
-  border: 2px solid var(--white);
+  border: 2px solid var(--bs-white);
 
   text-transform: uppercase;
 
@@ -24,7 +24,7 @@
   &__register {
     padding: 0.6em 2em 0.6em 2em;
 
-    color: var(--pink);
+    color: var(--bs-pink);
 
     border-radius: 2em;
   }

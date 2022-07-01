@@ -1,9 +1,10 @@
 // Link
 a {
-  color: var(--pink);
+  color: var(--bs-pink);
+  text-decoration: none;
 
   &:hover {
-    color: var(--pink);
+    color: var(--bs-pink);
   }
 }
 
@@ -12,6 +13,6 @@ a {
 }
 
 .badge-pink {
-  color: var(--white);
-  background-color: var(--pink);
+  color: var(--bs-white);
+  background-color: var(--bs-pink);
 }

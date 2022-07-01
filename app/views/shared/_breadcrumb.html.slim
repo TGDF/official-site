@@ -2,7 +2,7 @@
   - if links.any?
     nav#breadcrumb
       / TODO: Refactor after renew theme
-      ol.breadcrumb.bg-light
+      ol.p-3.breadcrumb.bg-light
         - links.each_with_index do |link, index|
           li[class="#{link.current? ? "breadcrumb-item active" : "breadcrumb-item"}"]
             - if link.current?

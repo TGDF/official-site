@@ -1,6 +1,6 @@
 .news {
   &__title {
-    color: var(--pink);
+    color: var(--bs-pink);
   }
 
   &__separator {
@@ -20,7 +20,7 @@
   }
 
   &__read-more {
-    color: var(--pink);
+    color: var(--bs-pink);
     text-transform: uppercase;
 
     font-weight: bolder;
@@ -39,8 +39,8 @@
     top: 1em;
     right: 1em;
 
-    background: var(--white);
-    color: var(--pink);
+    background: var(--bs-white);
+    color: var(--bs-pink);
   }
 
   &.with-border {
