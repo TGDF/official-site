@@ -6,10 +6,10 @@ article.session
     / TODO: Improve translation display
     - if agenda.language.present?
       - if agenda.translated_language.present?
-        span.session__badge.badge.text-bg-primary
+        span.session__badge.badge.bg-primary
           | #{agenda.language} → #{agenda.translated_language}
       - else
-        span.session__badge.badge.text-bg-primary = agenda.language
+        span.session__badge.badge.bg-primary = agenda.language
   p
     - agenda.tags.each do |tag|
       span.session__badge.badge.badge-pink.px-2.py-1 = tag.name
