@@ -7,23 +7,16 @@
   <div class="flex flex-row grow">
     <ul class="flex flex-row grow items-center">
       <% unless cfp_only? %>
-        <%= nav_item t('.home'), root_path %>
-        <%= nav_item t('.news'), news_index_path %>
-        <%= nav_item t('.speakers'), speakers_path %>
-        <% if current_site.cfp_on_agenda_mode? %>
-          <%= nav_item t('.cfp'), agenda_path %>
-        <% else %>
-          <%= nav_item t('.agenda'), agenda_path %>
-        <% end %>
-        <%= nav_item t('.sponsors'), sponsors_path %>
-        <% unless current_site.indie_space_disabled? %>
-          <%= nav_item t('.indie_spaces'), indie_spaces_path %>
-        <% end %>
-        <% if current_site.night_market_enabled? %>
-          <%= nav_item t('.night_market'), night_market_index_path %>
-        <% end %>
+        <%= render NavItemComponent.new(name: t('.home'), path: root_path) %>
+        <%= render NavItemComponent.new(name: t('.news'), path: news_index_path) %>
+        <%= render NavItemComponent.new(name: t('.speakers'), path: speakers_path) %>
+        <%= render NavItemComponent.new(name: t('.cfp'), path: agenda_path) if current_site.cfp_on_agenda_mode? %>
+        <%= render NavItemComponent.new(name: t('.agenda'), path: agenda_path) unless current_site.cfp_on_agenda_mode? %>
+        <%= render NavItemComponent.new(name: t('.sponsors'), path: sponsors_path) %>
+        <%= render NavItemComponent.new(name: t('.indie_spaces'), path: indie_spaces_path) unless current_site.indie_space_disabled? %>
+        <%= render NavItemComponent.new(name: t('.night_market'), path: night_market_index_path) if current_site.night_market_enabled? %>
       <% end %>
-      <%= nav_item t('.code_of_conduct'), code_of_conduct_path %>
+      <%= render NavItemComponent.new(name: t('.code_of_conduct'), path: code_of_conduct_path) %>
     </ul>
     <ul class="flex flex-row items-center">
       <%= language_toggle_button %>

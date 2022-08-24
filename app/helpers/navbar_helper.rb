@@ -19,14 +19,6 @@ module NavbarHelper
     (URI.decode_www_form(uri.query || '') - request.params.to_a).empty?
   end
 
-  def nav_item(name, path, options = {})
-    style = ['text-gray-500 hover:text-red-500']
-    style << 'text-red-500' if current_path_under?(path)
-    tag.li(class: style.join(' ')) do
-      link_to name, path, options.reverse_merge!(class: 'p-2')
-    end
-  end
-
   def language_toggle_button
     target_language = (current_locale || :'zh-TW') == :'zh-TW' ? :en : :'zh-TW'
     tag.li(class: 'text-gray-500 hover:text-red-500') do
