@@ -1,8 +1,17 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   content: [
-    './app/views/**/*.html.erb',
     './app/helpers/**/*.rb',
-    './app/assets/stylesheets/**/*.css',
-    './app/javascript/**/*.js'
-  ]
+    './app/javascript/**/*.js',
+    './app/views/**/*.{erb,haml,html,slim}',
+    './app/components/**/*.{erb,haml,html,slim,rb}'
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        'sans': ['Noto Sans TC', ...defaultTheme.fontFamily.sans],
+      },
+    }
+  }
 }
