@@ -45,10 +45,8 @@ gem 'devise'
 # gem 'omniauth-facebook'
 
 # Front End
-gem 'bootstrap', '~> 4.3.0'
 gem 'cssbundling-rails'
 gem 'friendly_id', '~> 5.4.0'
-gem 'jquery-rails'
 gem 'mobility', '~> 1.0'
 gem 'select2-rails'
 gem 'simple_form'
