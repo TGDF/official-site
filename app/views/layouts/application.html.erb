@@ -13,12 +13,14 @@
     <%= javascript_pack_tag    'application', 'data-turbolinks-track': 'reload' %>
   </head>
   <body>
-    <div class="boxed_wrapper">
+    <header>
       <%= render 'shared/nav' %>
+    </header>
+    <main>
       <%= render_breadcrumb %>
       <%= yield %>
-      <%= render 'shared/footer' %>
-      <%= render 'shared/google_analytics' if current_site.google_analytics_id.present? %>
-    </div>
+    </main>
+    <%= render 'shared/footer' %>
+    <%= render 'shared/google_analytics' if current_site.google_analytics_id.present? %>
   </body>
 </html>
