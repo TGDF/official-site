@@ -1,0 +1,55 @@
+<nav id="main-menu" class="h-20 flex flex-row px-3 py-1">
+  <div class="mr-4">
+    <%= link_to root_path do %>
+      <%= image_tag current_site.logo_url, class: 'min-h-full' %>
+    <% end %>
+  </div>
+  <div class="flex flex-row grow">
+    <ul class="flex flex-row grow items-center">
+      <% unless cfp_only? %>
+        <%= nav_item t('.home'), root_path %>
+        <%= nav_item t('.news'), news_index_path %>
+        <%= nav_item t('.speakers'), speakers_path %>
+        <% if current_site.cfp_on_agenda_mode? %>
+          <%= nav_item t('.cfp'), agenda_path %>
+        <% else %>
+          <%= nav_item t('.agenda'), agenda_path %>
+        <% end %>
+        <%= nav_item t('.sponsors'), sponsors_path %>
+        <% unless current_site.indie_space_disabled? %>
+          <%= nav_item t('.indie_spaces'), indie_spaces_path %>
+        <% end %>
+        <% if current_site.night_market_enabled? %>
+          <%= nav_item t('.night_market'), night_market_index_path %>
+        <% end %>
+      <% end %>
+      <%= nav_item t('.code_of_conduct'), code_of_conduct_path %>
+    </ul>
+    <ul class="flex flex-row items-center">
+      <%= language_toggle_button %>
+      <% if current_site.streaming_enabled? %>
+        <% if current_site.streaming_track_1_url.present? %>
+          <li>
+            <%= link_to t('.watch_now'), current_site.streaming_track_1_url, target: '_blank', class: 'btn btn-pink' %>
+          </li>
+        <% end %>
+        <% if current_site.streaming_track_3_url.present? %>
+          <li>
+            <%= link_to t('.pre_register'), current_site.streaming_track_3_url, target: '_blank', class: 'btn btn-pink' %>
+          </li>
+        <% end %>
+      <% else %>
+        <% if current_site.ticket_buy_link.present? %>
+          <li>
+            <%= link_to t('.buy_ticket'), current_site.ticket_buy_link, target: '_blank', class: 'btn btn-pink' %>
+          </li>
+        <% end %>
+        <% if current_site.survey_enabled_at.present? && current_site.survey_enabled_at <= Time.zone.now.beginning_of_day %>
+          <li>
+            <%= link_to t('.survey'), current_site.survey_url, target: '_blank', class: 'btn btn-pink' %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+</nav>
