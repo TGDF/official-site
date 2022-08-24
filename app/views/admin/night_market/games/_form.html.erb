@@ -8,7 +8,7 @@
       <%= f.input :video %>
       <%= f.input :order %>
       <%= f.input :thumbnail do %>
-        <%= f.input_field :thumbnail, required: false %>
+        <%= f.input_field :thumbnail, input_html: { required: false } %>
         <%- if @game.thumbnail.present? %>
           <%= image_tag @game.thumbnail_url(:thumb) %>
           <%= f.input :remove_thumbnail, as: :boolean %>
