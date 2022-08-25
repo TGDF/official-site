@@ -22,25 +22,17 @@
       <%= render LanguageSwitchButtonComponent.new(current_locale: current_locale) %>
       <% if current_site.streaming_enabled? %>
         <% if current_site.streaming_track_1_url.present? %>
-          <li>
-            <%= link_to t('.watch_now'), current_site.streaming_track_1_url, target: '_blank', class: 'btn btn-pink' %>
-          </li>
+          <%= render NavItemComponent.new(name: t('.watch_now'), path: current_site.streaming_track_1_url, target: '_blank', button: true) %>
         <% end %>
         <% if current_site.streaming_track_3_url.present? %>
-          <li>
-            <%= link_to t('.pre_register'), current_site.streaming_track_3_url, target: '_blank', class: 'btn btn-pink' %>
-          </li>
+          <%= render NavItemComponent.new(name: t('.pre_register'), path: current_site.streaming_track_3_url, target: '_blank', button: true) %>
         <% end %>
       <% else %>
         <% if current_site.ticket_buy_link.present? %>
-          <li>
-            <%= link_to t('.buy_ticket'), current_site.ticket_buy_link, target: '_blank', class: 'btn btn-pink' %>
-          </li>
+          <%= render NavItemComponent.new(name: t('.buy_ticket'), path: current_site.ticket_buy_link, target: '_blank', button: true) %>
         <% end %>
         <% if current_site.survey_enabled_at.present? && current_site.survey_enabled_at <= Time.zone.now.beginning_of_day %>
-          <li>
-            <%= link_to t('.survey'), current_site.survey_url, target: '_blank', class: 'btn btn-pink' %>
-          </li>
+          <%= render NavItemComponent.new(name: t('.survey'), path: current_site.survey_url, target: '_blank', button: true) %>
         <% end %>
       <% end %>
     </ul>

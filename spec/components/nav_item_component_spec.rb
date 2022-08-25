@@ -18,4 +18,18 @@ RSpec.describe NavItemComponent, type: :component do
 
     it { is_expected.to have_css('.text-red-500') }
   end
+
+  context 'when target is configured' do
+    let(:component) { described_class.new(name: 'Home', path: '/', target: '_blank') }
+
+    it { is_expected.to have_css('[target=_blank]') }
+  end
+
+  context 'when display as button' do
+    let(:component) { described_class.new(name: 'Home', path: '/', button: true) }
+
+    it { is_expected.to have_css('.text-white') }
+    it { is_expected.to have_css('.bg-red-500') }
+    it { is_expected.to have_css('.rounded') }
+  end
 end
