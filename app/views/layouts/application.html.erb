@@ -17,7 +17,7 @@
       <%= render 'shared/nav' %>
     </header>
     <main>
-      <%= render_breadcrumb %>
+      <%= render BreadcrumbComponent.new(breadcrumbs: breadcrumbs) %>
       <%= yield %>
     </main>
     <%= render 'shared/footer' %>
