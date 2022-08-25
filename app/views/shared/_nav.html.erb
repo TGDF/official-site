@@ -19,7 +19,7 @@
       <%= render NavItemComponent.new(name: t('.code_of_conduct'), path: code_of_conduct_path) %>
     </ul>
     <ul class="flex flex-row items-center">
-      <%= language_toggle_button %>
+      <%= render LanguageSwitchButtonComponent.new(current_locale: current_locale) %>
       <% if current_site.streaming_enabled? %>
         <% if current_site.streaming_track_1_url.present? %>
           <li>

@@ -18,13 +18,4 @@ module NavbarHelper
   def current_params_under?(uri)
     (URI.decode_www_form(uri.query || '') - request.params.to_a).empty?
   end
-
-  def language_toggle_button
-    target_language = (current_locale || :'zh-TW') == :'zh-TW' ? :en : :'zh-TW'
-    tag.li(class: 'text-gray-500 hover:text-red-500') do
-      link_to t("locale.name.#{target_language}"),
-              url_for(lang: target_language),
-              class: 'p-2'
-    end
-  end
 end
