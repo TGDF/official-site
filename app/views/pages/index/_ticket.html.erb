@@ -1,0 +1,10 @@
+<section id="ticket" class="my-16">
+  <div class="container mx-auto text-center">
+    <%= render HeadingComponent.new(text: t('.heading')) %>
+  </div>
+  <div class="py-16 bg-red-500 text-white">
+    <div class="container mx-auto grid grid-cols-3 justify-items-stretch">
+      <%= render PassComponent.with_collection(Settings.ticket.types, site: current_site) %>
+    </div>
+  </div>
+</section>
