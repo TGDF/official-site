@@ -1,0 +1,10 @@
+<section id="proposal">
+  <% if description? %>
+  <div class="container mx-auto py-8">
+    <%= sanitize @description %>
+  </div>
+  <% end %>
+  <div class="w-full">
+    <iframe id="JotFormIFrame" src="<%= @src %>" allowtransparency="true" frameborder="0" style="width: 1px; min-width: 100%; height:539px; border:none;" scrolling="no"></iframe>
+  </div>
+</section>

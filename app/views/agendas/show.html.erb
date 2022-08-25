@@ -1,0 +1,32 @@
+<% title t('.title') %>
+<% description t('.description') %>
+<% breadcrumb :agenda %>
+
+<% if current_site.cfp_on_agenda_mode? %>
+  <%= render ProposalFormComponent.new(src: current_site.cfp_form_url) %>
+<% else %>
+  <%- column_width = @rooms.size.zero? ? 75 : 75 / @rooms.size %>
+  <section id="agenda">
+    <% @days.each do |day| %>
+      <div class="container mx-auto mt-10 mb-8">
+          <h2>
+            <%= day.label %>
+            <span><%= day.date %></span>
+          </h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <% @rooms.each do |room| %>
+                  <th><%= room.name %></th>
+                <% end %>
+              </tr>
+            <thead>
+            <tbody>
+              <%= render partial: 'time', collection: day.times, locals: { day: day } %>
+            </tbody>
+          </table>
+      </div>
+    <% end %>
+  </section>
+<% end %>

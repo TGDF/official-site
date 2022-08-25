@@ -1,10 +1,5 @@
 <% if cfp_only? %>
-  <div class="container mx-auto py-8">
-    <%= sanitize current_site.cfp_description %>
-  </div>
-  <div class="w-full">
-    <iframe id="JotFormIFrame" src="<%= current_site.cfp_form_url %>" allowtransparency="true" frameborder="0" style="width: 1px; min-width: 100%; height:539px; border:none;" scrolling="no" />
-  </div>
+  <%= render ProposalFormComponent.new(src: current_site.cfp_form_url, description: current_site.cfp_description) %>
 <% else %>
   <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
   <%= render 'pages/index/about' %>
