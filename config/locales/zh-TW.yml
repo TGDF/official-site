@@ -59,7 +59,7 @@ zh-TW:
   pages:
     index:
       about:
-        heading: <span>了解</span>台北遊戲開發者論壇
+        heading: 了解<span class="text-red-500">台北遊戲開發者論壇</span>
       news:
         heading: <span>最新</span>消息
         read_more: 了解更多

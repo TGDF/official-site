@@ -58,7 +58,7 @@ en:
   pages:
     index:
       about:
-        heading: "<span>About</span> Taipei Game Developers Forum"
+        heading: 'About <span class="text-red-500">Taipei Game Developers Forum</span>'
       news:
         heading: "<span>What's</span> New"
         read_more: "Learn more"
