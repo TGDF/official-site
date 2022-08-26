@@ -65,7 +65,7 @@ en:
       ticket:
         heading: '<span class="text-red-500">Passes</span> & Prices'
       streaming:
-        heading: "<span>Live</span> Streaming"
+        heading: 'Live <span class="text-red-500">Streaming</span>'
       partner:
         heading: Partner
   news:

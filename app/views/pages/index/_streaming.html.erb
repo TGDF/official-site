@@ -1,3 +1,14 @@
+<section id="ticket" class="my-16">
+  <div class="container mx-auto text-center">
+    <%= render HeadingComponent.new(text: t('.heading')) %>
+  </div>
+  <div class="py-16 bg-red-500 text-white">
+    <div class="container mx-auto grid grid-cols-3 justify-items-stretch">
+      <%= render StreamingTrackComponent.with_collection([1, 2, 3], site: current_site) %>
+    </div>
+  </div>
+</section>
+<!--
 section#ticket-section.mb-5
   .container
     .sec-title.text-center.mb-4
@@ -15,3 +26,4 @@ section#ticket-section.mb-5
                     li =  t("streaming.track_#{index}.description")
                 .price-box__footer.mt-4
                   = link_to t('streaming.watch_now'), current_site.send("streaming_track_#{index}_url"), class: 'btn btn-light price-box__register', target: '_blank'
+-->

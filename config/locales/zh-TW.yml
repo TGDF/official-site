@@ -66,7 +66,7 @@ zh-TW:
       ticket:
         heading: <span class="text-red-500">購票</span>與售價
       streaming:
-        heading: <span>線上</span>直播
+        heading: 線上<span class="text-red-500">直播</span>
       partner:
         heading: 合作夥伴
   news:
