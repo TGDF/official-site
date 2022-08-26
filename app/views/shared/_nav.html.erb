@@ -31,9 +31,9 @@
         <% if current_site.ticket_buy_link.present? %>
           <%= render NavItemComponent.new(name: t('.buy_ticket'), path: current_site.ticket_buy_link, target: '_blank', button: true) %>
         <% end %>
-        <% if current_site.survey_enabled_at.present? && current_site.survey_enabled_at <= Time.zone.now.beginning_of_day %>
-          <%= render NavItemComponent.new(name: t('.survey'), path: current_site.survey_url, target: '_blank', button: true) %>
-        <% end %>
+      <% end %>
+      <% if current_site.survey_enabled_at.present? && current_site.survey_enabled_at <= Time.zone.now.beginning_of_day %>
+        <%= render NavItemComponent.new(name: t('.survey'), path: current_site.survey_url, target: '_blank', button: true) %>
       <% end %>
     </ul>
   </div>
