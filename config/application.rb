@@ -24,6 +24,7 @@ module Tgdf
     config.load_defaults(6.1)
 
     config.i18n.default_locale = :'zh-TW'
+    config.i18n.fallbacks = true
     config.i18n.available_locales = %i[
       zh-TW
       en
