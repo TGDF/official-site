@@ -1,15 +1,20 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe StreamingTrackComponent, type: :component do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject { page }
 
-  # it "renders something useful" do
-  #   expect(
-  #     render_inline(described_class.new(attr: "value")) { "Hello, components!" }.css("p").to_html
-  #   ).to include(
-  #     "Hello, components!"
-  #   )
-  # end
+  let(:component) { described_class.new(track: 1, site: site) }
+  let(:site) do
+    create(
+      :site
+    )
+  end
+
+  before do
+    with_request_url('/') { render_inline(component) }
+  end
+
+  it { is_expected.to have_text('議程軌一') }
 end
