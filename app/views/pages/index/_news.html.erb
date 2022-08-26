@@ -1,3 +1,12 @@
+<section id="news" class="my-16">
+  <div class="container mx-auto text-center">
+    <%= render HeadingComponent.new(text: t('.heading')) %>
+  </div>
+  <div class="container mx-auto">
+    <%= render NewsListItemComponent.with_collection(@news) %>
+  </div>
+</section>
+<!--
 section#news.mb-5
   .container
     .sec-title.text-center.mb-4
@@ -21,3 +30,4 @@ section#news.mb-5
                 = sanitize truncate(news.content, length: 150, escape: false)
                 = link_to news, class: 'news__read-more' do
                   = t('.read_more')
+-->

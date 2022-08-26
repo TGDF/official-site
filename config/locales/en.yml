@@ -60,7 +60,7 @@ en:
       about:
         heading: 'About <span class="text-red-500">Taipei Game Developers Forum</span>'
       news:
-        heading: "<span>What's</span> New"
+        heading: "What's <span class=\"text-red-500\">New</span>"
         read_more: "Learn more"
       ticket:
         heading: '<span class="text-red-500">Passes</span> & Prices'
