@@ -1,10 +1,10 @@
-<article class="mx-4 p-8 border-2 border-white text-center">
+<article class="flex flex-col mx-4 p-8 border-2 border-white text-center">
   <h1 class="mb-6 text-3xl font-semibold"><%= name %></h1>
   <div class="mb-6">
     <p class="font-semibold">NTD $<%= current_price %></p>
     <p><%= t("ticket.description.#{@plan}") %></p>
   </div>
-  <ul class="mb-6">
+  <ul class="mb-6 flex-grow">
     <li><%= t("ticket.info.#{@plan}.origin_price", price: price) %></li>
     <% informations.each do |info| %>
       <li><%= info %></li>
