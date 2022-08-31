@@ -1,0 +1,7 @@
+<div class="<%= classes %>">
+  <%= image_tag thumbnail_url(@size), class: 'max-w-full w-full' %>
+  <span class="datetime absolute top-4 right-4 p-4 bg-white text-center text-red-500">
+    <%= created_at.day %><br />
+    <%= created_at.strftime('%b') %>
+  </span>
+</div>

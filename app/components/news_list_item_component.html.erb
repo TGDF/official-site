@@ -1,11 +1,5 @@
 <article class="flex my-8 after:conent-['']">
-  <div class="relative mr-6 w-1/3">
-    <%= image_tag @news.thumbnail_url(:thumb), class: 'max-w-full' %>
-    <span class="absolute top-4 right-4 p-4 bg-white text-center text-red-500">
-      <%= @news.created_at.day %><br />
-      <%= @news.created_at.strftime('%b') %>
-    </span>
-  </div>
+  <%= render NewsThumbnailComponent.new(news: @news, classes: 'mr-6 w-1/3') %>
   <div class="flex-1">
     <h1 class="font-semibold text-3xl text-red-500"><%= link_to @news.title, @news %></h1>
     <hr class="my-4">
