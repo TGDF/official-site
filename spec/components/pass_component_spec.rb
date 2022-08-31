@@ -30,7 +30,7 @@ RSpec.describe PassComponent, type: :component do
       )
     end
 
-    before { travel_to Time.zone.parse('2022-08-25') }
+    around { |example| travel_to(Time.zone.parse('2022-08-25')) { example.run } }
 
     it { is_expected.to have_text('早鳥票') }
     it { is_expected.to have_text('NTD $800') }
