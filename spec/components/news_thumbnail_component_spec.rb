@@ -12,6 +12,13 @@ RSpec.describe NewsThumbnailComponent, type: :component do
 
   it { is_expected.to have_selector('img.w-full') }
   it { is_expected.to have_selector('img.max-w-full') }
-  it { is_expected.to have_selector('.datetime', text: 'Aug') }
-  it { is_expected.to have_selector('.datetime', text: '31') }
+  it { is_expected.to have_selector('time', text: 'Aug') }
+  it { is_expected.to have_selector('time', text: '31') }
+
+  context 'when size is small square' do
+    let(:component) { described_class.new(news: news, size: :small_square) }
+
+    it { is_expected.not_to have_selector('.datetime', text: 'Aug') }
+    it { is_expected.not_to have_selector('.datetime', text: '31') }
+  end
 end

@@ -13,4 +13,8 @@ class NewsThumbnailComponent < ViewComponent::Base
   def classes
     ['relative', @classes].join(' ')
   end
+
+  def calendar_visible?
+    @size != :small_square
+  end
 end
