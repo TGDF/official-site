@@ -1,9 +1,0 @@
-- title t('.title')
-- description t('.description')
-- breadcrumb :sponsors
-/ TODO: Set page banner
-
-section#sponsors.sponsors.mt-5
-  .container
-    = render partial: 'group', collection: @sponsor_levels, locals: { item_name: :sponsors }
-    = render partial: 'group', collection: @partner_types, locals: { item_name: :partners }

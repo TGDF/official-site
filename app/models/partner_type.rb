@@ -9,4 +9,6 @@ class PartnerType < ApplicationRecord
   validates :name, presence: true
 
   default_scope -> { order(order: :asc) }
+
+  alias items partners
 end

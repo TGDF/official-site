@@ -9,4 +9,6 @@ class SponsorLevel < ApplicationRecord
   validates :name, presence: true
 
   default_scope -> { order(order: :asc) }
+
+  alias items sponsors
 end
