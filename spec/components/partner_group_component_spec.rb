@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe PartnerGroupComponent, type: :component do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject { page }
 
-  # it "renders something useful" do
-  #   expect(
-  #     render_inline(described_class.new(attr: "value")) { "Hello, components!" }.css("p").to_html
-  #   ).to include(
-  #     "Hello, components!"
-  #   )
-  # end
+  let(:component) { described_class.new(group: group) }
+  let(:group) { create(:partner_type, name: '媒體夥伴') }
+
+  before { render_inline(component) }
+
+  it { is_expected.to have_text('媒體夥伴') }
 end
