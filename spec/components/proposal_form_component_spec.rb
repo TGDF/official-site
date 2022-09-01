@@ -3,11 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe ProposalFormComponent, type: :component do
-  subject { page }
-
-  let(:component) { described_class.new(src: 'https://form.jotform.me/91287937269474') }
-
-  before { render_inline(component) }
+  given_a_component(src: 'https://form.jotform.me/91287937269474')
+  when_rendered
 
   it { is_expected.to have_selector('#proposal iframe') }
 

@@ -3,12 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe BlockComponent, type: :component do
-  subject { page }
-
-  let(:component) { described_class.new(block: block) }
   let(:block) { build(:text_block, content: 'Hello World') }
 
-  before { render_inline(component) }
+  given_a_component { described_class.new(block: block) }
+  when_rendered
 
   it { is_expected.to have_selector('.text-block') }
   it { is_expected.to have_text('Hello World') }

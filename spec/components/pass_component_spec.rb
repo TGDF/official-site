@@ -3,9 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe PassComponent, type: :component do
-  subject { page }
-
-  let(:component) { described_class.new(plan: :personal, site: site) }
   let(:site) do
     create(
       :site,
@@ -13,9 +10,8 @@ RSpec.describe PassComponent, type: :component do
     )
   end
 
-  before do
-    with_request_url('/') { render_inline(component) }
-  end
+  given_a_component { described_class.new(plan: :personal, site: site) }
+  when_rendered
 
   it { is_expected.to have_text('一般票') }
   it { is_expected.to have_text('NTD $1000') }
