@@ -68,7 +68,7 @@ zh-TW:
       streaming:
         heading: 線上<span class="text-red-500">直播</span>
       partner:
-        heading: 合作夥伴
+        heading: 合作<span class="text-red-500">夥伴</span>
   news:
     index:
       title: 最新消息
