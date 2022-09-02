@@ -80,7 +80,7 @@ zh-TW:
     index:
       title: 講者一覽
       description: 講師及對應議程之詳細介紹。
-      speakers: 講者列表
+      speakers: '<span class="text-red-500">講者</span>列表'
     show:
       sessions_by: "%{speaker}的議程"
       synchornize: 同步翻譯為%{to}

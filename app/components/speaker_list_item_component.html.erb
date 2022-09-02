@@ -1,0 +1,9 @@
+<article class="border border-gray-200 rounded">
+  <%= link_to @speaker do %>
+    <%= image_tag avatar_url(:v1), class: 'max-w-full min-w-full' %>
+  <% end %>
+  <div class="my-4 text-center">
+    <h1 class="my-1 font-semibold text-xl text-red-500"><%= link_to @speaker.name, @speaker, class: 'hover:text-red-700' %></h1>
+    <span class="text-gray-500"><%= @speaker.title %></span>
+  </div>
+</article>

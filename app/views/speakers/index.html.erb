@@ -1,0 +1,11 @@
+<% title t('.title') %>
+<% description t('.description') %>
+<% breadcrumb :speakers %>
+<section id="speakers">
+  <header class="text-center">
+    <%= render HeadingComponent.new(text: t('.speakers')) %>
+  </header>
+  <div class="grid grid-cols-5 container mx-auto">
+    <%= render SpeakerListItemComponent.with_collection(@speakers) %>
+  </div>
+</section>
