@@ -18,8 +18,9 @@ class GameComponent < ViewComponent::Base
   end
 
   def link_with_icon(link, label, icon_name)
-    link_to_if link.present?, helpers.label_with_icon(label, icon_name), link, target: '_blank' do
-      content_tag :div, class: 'virtual-link' do
+    link_to_if link.present?, helpers.label_with_icon(label, icon_name), link, target: '_blank',
+                                                                               class: 'text-red-500 hover:text-red-500 hover:underline' do
+      content_tag :div, class: 'text-red-500' do
         helpers.label_with_icon(label, icon_name)
       end
     end

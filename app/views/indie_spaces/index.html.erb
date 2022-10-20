@@ -1,9 +1,9 @@
 <% content_for :disable_breadcrumb, true %>
 <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
 <div class="container mx-auto mt-5 mb-4">
-  <%= render BlockComponent.with_collection(@blocks) %>
+  <%= sanitize current_site.indie_space_description %>
 </div>
-<section id="night-market">
+<section id="indie-space">
   <div class="container mx-auto mt-5 mb-4">
     <div class="grid gap-4 grid-cols-3">
       <%= render GameComponent.with_collection(@games) %>
