@@ -1,0 +1,14 @@
+<tr class="odd:bg-gray-50 align-top">
+  <th class="py-4" scope="row"><%= time.label %></th>
+  <% if time.single? %>
+    <td class="text-center py-4" colspan="<%= @rooms.size %>">
+      <%= render(partial: 'agenda', collection: time.agendas) || 'TBA' %>
+    </td>
+  <% else %>
+    <% @rooms.each do |room| %>
+      <td class="text-center border border-white py-4">
+        <%= render(partial: 'agenda', collection: time.agendas.select{ |agenda| agenda.room_id == room.id }) || 'TBA' %>
+      </td>
+    <% end %>
+  <% end %>
+</tr>

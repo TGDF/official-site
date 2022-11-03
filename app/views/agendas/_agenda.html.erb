@@ -1,0 +1,18 @@
+<article class="space-y-1 mb-2">
+  <h1><%= link_to agenda.subject, agenda.speakers.first, class: 'text-red-500 font-semibold' %></h1>
+  <p><%= agenda_speaker_links(agenda.speakers) %></p>
+  <p>
+    <% if agenda.language.present? %>
+      <% if agenda.translated_language.present? %>
+        <span class="rounded px-1 text-sm bg-blue-500 text-white">
+          <%= agenda.language %> → <%= agenda.translated_language %>
+        </span>
+      <% else %>
+        <span class="rounded px-1 text-sm bg-blue-500 text-white"><%= agenda.language %>
+      <% end %>
+    <% end %>
+  <p>
+    <% agenda.tags.each do |tag| %>
+      <span class="rounded px-1 text-sm bg-red-500 text-white"><%= tag.name %></span>
+    <% end %>
+</article>
