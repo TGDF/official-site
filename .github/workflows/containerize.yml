@@ -42,7 +42,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      sha-tag: ${{ steps.meta.outputs.tags[1] }}
+      sha-tag: ${{ fromJSON(steps.meta.outputs.json).tags[1] }}
 
     steps:
       - name: Checkout repository
