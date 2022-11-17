@@ -8,10 +8,7 @@ on:
         type: string
       environment:
         required: true
-        type: choice
-        options:
-          - beta
-          - production
+        type: environment
 
 env:
   TASK_DEFINITION: 'tgdf-beta'
