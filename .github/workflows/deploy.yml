@@ -11,18 +11,19 @@ env:
   TASK_DEFINITION: 'tgdf-beta'
 
 permissions:
-      id-token: write
-      contents: read
+  id-token: write
+  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::123456789100:role/my-github-actions-role
-          aws-region: us-east-2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.DEPLOY_IAM_ROLE }}
+      aws-region: ap-northeast-1
+
     - name: Download task definition
       run: |
         aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query taskDefinition > task-definition.json
@@ -33,4 +34,4 @@ jobs:
       with:
         task-definition: task-definition.json
         container-name: web
-        image: ${{ steps.build-image.outputs.image }}
+        image: ${{ inputs.image }}
