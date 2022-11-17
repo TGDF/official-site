@@ -98,7 +98,7 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL'
     outputs:
-      image-tag: ${{ steps.meta.outputs.tags[0] }}
+      tags: ${{ steps.meta.outputs.tags }}
 
   trigger-deployment:
     needs: build-and-push-image
@@ -110,5 +110,6 @@ jobs:
         environment: [beta]
     uses: ./.github/workflows/deployment.yml
     with:
-      image: ${{ needs.build-and-push-image.image-tag }}
+      image: ${{ needs.build-and-push-image.tags }}
       environment: ${{ matrix.environment }}
+    secrets: inherit
