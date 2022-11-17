@@ -107,8 +107,7 @@ jobs:
     strategy:
       matrix:
         environment: [beta]
-    steps:
-      uses: ./.github/workflows/deployment.yml
-      with:
-        image: ${{ steps.meta.outputs.tags[0] }}
-        environment: ${{ matrix.environment }}
+    uses: ./.github/workflows/deployment.yml
+    with:
+      image: ${{ steps.meta.outputs.tags[0] }}
+      environment: ${{ matrix.environment }}
