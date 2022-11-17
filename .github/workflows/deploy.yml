@@ -6,6 +6,12 @@ on:
       image:
         required: true
         type: string
+      environment:
+        required: true
+        type: choice
+        options:
+          - beta
+          - production
 
 env:
   TASK_DEFINITION: 'tgdf-beta'
@@ -17,6 +23,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -26,7 +33,7 @@ jobs:
 
     - name: Download task definition
       run: |
-        aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query taskDefinition > task-definition.json
+        aws ecs describe-task-definition --task-definition ${{ secrets.DEPLOY_TASK_DEFINITION }} --query taskDefinition > task-definition.json
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
@@ -35,3 +42,11 @@ jobs:
         task-definition: task-definition.json
         container-name: web
         image: ${{ inputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ secrets.DEPLOY_SERVICE }}
+        cluster: ${{ secrets.DEPLOY_CLUSTER }}
+        wait-for-service-stability: true
