@@ -1,6 +1,15 @@
-name: Deploy
+name: Deployment
 
 on:
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: environment
+
   workflow_dispatch:
     inputs:
       image:
@@ -10,15 +19,13 @@ on:
         required: true
         type: environment
 
-env:
-  TASK_DEFINITION: 'tgdf-beta'
-
 permissions:
   id-token: write
   contents: read
 
 jobs:
   deploy:
+    name: Deploy to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
