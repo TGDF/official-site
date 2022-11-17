@@ -97,6 +97,8 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL'
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags[0] }}
 
   trigger-deployment:
     needs: build-and-push-image
@@ -108,5 +110,5 @@ jobs:
         environment: [beta]
     uses: ./.github/workflows/deployment.yml
     with:
-      image: ${{ steps.meta.outputs.tags[0] }}
+      image: ${{ needs.build-and-push-image.image-tag }}
       environment: ${{ matrix.environment }}
