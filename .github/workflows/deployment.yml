@@ -8,7 +8,7 @@ on:
         type: string
       environment:
         required: true
-        type: environment
+        type: string
 
   workflow_dispatch:
     inputs:
