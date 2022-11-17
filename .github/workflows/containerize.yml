@@ -42,7 +42,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      tags: ${{ steps.meta.outputs.tags }}
+      sha-tag: ${{ steps.meta.outputs.tags[1] }}
 
     steps:
       - name: Checkout repository
@@ -68,8 +68,6 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=sha
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
             type=ref,event=branch
 
       - name: Add short SHA information
@@ -110,6 +108,6 @@ jobs:
         environment: [beta]
     uses: ./.github/workflows/deployment.yml
     with:
-      image: ${{ needs.build-and-push-image.outputs.tags }}
+      image: ${{ needs.build-and-push-image.outputs.sha-tag }}
       environment: ${{ matrix.environment }}
     secrets: inherit
