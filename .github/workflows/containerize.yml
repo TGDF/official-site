@@ -110,6 +110,6 @@ jobs:
         environment: [beta]
     uses: ./.github/workflows/deployment.yml
     with:
-      image: ${{ needs.build-and-push-image.tags }}
+      image: ${{ needs.build-and-push-image.outputs.tags[0] }}
       environment: ${{ matrix.environment }}
     secrets: inherit
