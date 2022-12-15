@@ -1,11 +1,13 @@
 <% content_for :disable_breadcrumb, true %>
 <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
 <div class="container mx-auto mt-5 mb-4">
-  <%= sanitize current_site.indie_space_description %>
+  <div class="mx-4 lg:mx-auto">
+    <%= sanitize current_site.indie_space_description %>
+  </div>
 </div>
 <section id="indie-space">
   <div class="container mx-auto mt-5 mb-4">
-    <div class="grid gap-4 grid-cols-3">
+    <div class="mx-4 space-y-4 lg:space-y-0 lg:mx-auto lg:grid lg:gap-4 lg:grid-cols-3">
       <%= render GameComponent.with_collection(@games) %>
     </div>
   </div>
