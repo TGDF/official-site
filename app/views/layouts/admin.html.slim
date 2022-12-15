@@ -7,8 +7,8 @@ html
 
     = stylesheet_link_tag    'https://use.fontawesome.com/b2e3e84e95.css', media: 'all'
 
-    = stylesheet_pack_tag    'admin', 'data-turbolinks-track': 'reload'
-    = javascript_pack_tag    'admin', 'data-turbolinks-track': 'reload'
+    = stylesheet_link_tag    'admin', 'data-turbolinks-track': 'reload', media: 'all'
+    = javascript_include_tag    'admin', 'data-turbolinks-track': 'reload'
 
   body.c-app
       = render 'admin/shared/sidebar'
