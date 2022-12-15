@@ -438,6 +438,10 @@ GEM
     thor (1.2.1)
     tilt (2.0.11)
     timeout (0.3.1)
+    turbo-rails (1.3.2)
+      actionpack (>= 6.0.0)
+      activejob (>= 6.0.0)
+      railties (>= 6.0.0)
     turbolinks (5.2.1)
       turbolinks-source (~> 5.2)
     turbolinks-source (5.2.0)
@@ -532,6 +536,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen (~> 2.0.0)
   store_attribute (~> 1.0)
+  turbo-rails
   turbolinks (~> 5)
   tzinfo-data
   uglifier (>= 1.3.0)

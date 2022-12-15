@@ -52,6 +52,7 @@ gem 'mobility', '~> 1.0'
 gem 'select2-rails'
 gem 'simple_form'
 gem 'slim-rails'
+gem 'turbo-rails'
 gem 'view_component'
 
 # SEO
