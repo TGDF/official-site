@@ -1,9 +1,9 @@
-<nav id="main-menu" class="flex flex-wrap items-center justify-between px-4 py-2">
+<nav id="main-menu" class="flex flex-wrap items-center justify-between px-4 py-2" data-controller="navbar">
   <%= link_to root_path, class: 'inline-block mr-4' do %>
     <%= image_tag current_site.logo_url, class: 'min-h-full' %>
   <% end %>
-  <button class="px-3 py-1 border border-gray-300 rounded lg:hidden" type="button"><i class="fa fa-bars text-lg" aria-hidden="true"></i></button>
-  <div class="hidden grow basis-full lg:block lg:flex lg:basis-auto lg:items-center">
+  <button class="px-3 py-1 border border-gray-300 rounded lg:hidden" type="button" data-action="navbar#toggle"><i class="fa fa-bars text-lg" aria-hidden="true"></i></button>
+  <div data-navbar-target="collapse" class="hidden grow basis-full lg:block lg:flex lg:basis-auto lg:items-center">
     <ul class="flex flex-col lg:flex-row">
       <% unless cfp_only? %>
         <%= render NavItemComponent.new(name: t('.home'), path: root_path) %>
