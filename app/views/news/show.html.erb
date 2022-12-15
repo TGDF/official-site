@@ -3,8 +3,8 @@
 <% set_meta_tags og: { image: { _: @news.thumbnail_url(:medium), width: 770, height: 420}, type: 'article' } %>
 <% banner @news.thumbnail_url(:large) %>
 <% breadcrumb :news, @news %>
-<section id="news" class="container my-8 mx-auto">
-  <div class="flex flex-col lg:flex-row mx-4">
+<section id="news" class="container px-4 my-8 mx-auto">
+  <div class="flex flex-col lg:flex-row">
     <article class="lg:basis-2/3 lg:mr-8">
       <%= render NewsThumbnailComponent.new(news: @news) %>
       <h1 class="mt-4 font-semibold text-3xl text-red-500"><%= @news.title %></h1>

@@ -1,7 +1,7 @@
 <% title t('.title') %>
 <% description t('.description') %>
 <% breadcrumb :sponsors %>
-<section id="sponsors" class="container mx-auto">
+<section id="sponsors" class="container px-4 mx-auto">
   <%= render PartnerGroupComponent.with_collection(@sponsor_levels) %>
   <%= render PartnerGroupComponent.with_collection(@partner_types) %>
 </section>

@@ -5,8 +5,8 @@
   <header class="text-center">
     <%= render HeadingComponent.new(text: t('.speakers')) %>
   </header>
-  <div class="container mx-auto">
-    <div class="mx-4 lg:mx-0 lg:grid lg:grid-cols-5">
+  <div class="container px-4 mx-auto">
+    <div class="lg:mx-0 lg:grid lg:grid-cols-5">
       <%= render SpeakerListItemComponent.with_collection(@speakers) %>
     </div>
   </div>
