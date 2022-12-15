@@ -1,6 +1,6 @@
 <% title t('.title') %>
 <% breadcrumb :news_index %>
-<section id="news">
+<section id="news" class="my-8 mx-4">
   <div class="container mx-auto space-y-16">
     <%= render NewsListItemComponent.with_collection(@news) %>
   </div>
