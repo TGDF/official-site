@@ -1,6 +1,6 @@
-<article class="flex my-4 border border-gray-300 p-6">
-  <div class="mr-4 w-1/4 text-center">
-    <%= link_to image_tag(logo_url(:v1)), url, target: '_blank', class: 'inline-block' %>
+<article class="flex flex-col lg:flex-row my-4 p-6 border border-gray-300 rounded">
+  <div class="mb-4 lg:mb-0 lg:mr-4 lg:w-1/4 text-center">
+    <%= link_to image_tag(logo_url(:v1)), url, target: '_blank', class: 'inline-block w-full' %>
   </div>
   <div class="flex-1 space-y-4">
     <%= link_to url, target: '_blank', class: 'text-red-500 hover:text-red-700' do %>
