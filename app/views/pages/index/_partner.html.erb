@@ -2,7 +2,7 @@
   <div class="container mx-auto text-center">
     <%= render HeadingComponent.new(text: t('.heading')) %>
   </div>
-  <div class="space-y-4 lg:grid lg:grid-cols-6 container mx-auto place-items-center">
+  <div class="space-y-4 text-center lg:grid lg:grid-cols-6 container mx-auto place-items-center">
     <%= render PartnerLogoComponent.with_collection(@partners_and_sponsors) %>
   </div>
 </section>
