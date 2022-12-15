@@ -9,6 +9,7 @@
     "@rails/ujs": "^6.0.3-4",
     "@rails/webpacker": "5.4.3",
     "autoprefixer": "^10.4.8",
+    "esbuild": "^0.16.7",
     "jquery": "^3.4.0",
     "perfect-scrollbar": "^1.5.0",
     "postcss": "^8.4.16",
@@ -23,6 +24,7 @@
     "webpack-dev-server": "^3"
   },
   "scripts": {
-    "build:css": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify"
+    "build:css": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets"
   }
 }
