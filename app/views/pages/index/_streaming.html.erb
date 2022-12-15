@@ -3,7 +3,7 @@
     <%= render HeadingComponent.new(text: t('.heading')) %>
   </div>
   <div class="py-16 bg-red-500 text-white">
-    <div class="container mx-auto grid grid-cols-3 justify-items-stretch">
+    <div class="container mx-auto md:grid md:grid-cols-3 space-y-4 justify-items-stretch">
       <%= render StreamingTrackComponent.with_collection([1, 2, 3], site: current_site) %>
     </div>
   </div>
