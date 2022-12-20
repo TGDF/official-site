@@ -10,7 +10,7 @@ header.c-header.c-header-light.c-header-fixed
         .dropdown-menu.dropdown-menu-right.pt-0
           .dropdown-header.bg-light.py-2
             strong = t('.all_sites')
-          = admin_navbar_site_item(t('site_name'), Settings.site.default_domain, icon: 'cil-star')
+          = admin_navbar_site_item(t('site_name'), Settings.site.default_domain)
           - @navbar_sites.each do |site|
             = admin_navbar_site_item(site.name, site.domain)
           .dropdown-divider
