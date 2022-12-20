@@ -1,6 +1,5 @@
-ARG APP_ROOT=/srv/app
+ARG APP_ROOT=/src/app
 ARG RUBY_VERSION=2.7.6
-ARG NODE_VERSION=16.14
 
 FROM ruby:${RUBY_VERSION}-alpine AS gem
 ARG APP_ROOT
@@ -11,7 +10,7 @@ RUN mkdir -p ${APP_ROOT}
 COPY Gemfile Gemfile.lock ${APP_ROOT}/
 
 WORKDIR ${APP_ROOT}
-RUN gem install bundler:2.3.7 \
+RUN gem install bundler:2.3.14 \
     && bundle config --local deployment 'true' \
     && bundle config --local frozen 'true' \
     && bundle config --local no-cache 'true' \
@@ -22,9 +21,6 @@ RUN gem install bundler:2.3.7 \
     && find ${APP_ROOT}/vendor/bundle -type f -name '*.o' -delete \
     && find ${APP_ROOT}/vendor/bundle -type f -name '*.gem' -delete
 
-FROM node:${NODE_VERSION}-alpine as node
-ARG SERVER_ROOT
-
 FROM ruby:${RUBY_VERSION}-alpine
 ARG APP_ROOT
 
@@ -33,8 +29,6 @@ RUN apk add --no-cache curl tzdata shared-mime-info postgresql-libs imagemagick
 COPY --from=gem /usr/local/bundle/config /usr/local/bundle/config
 COPY --from=gem /usr/local/bundle /usr/local/bundle
 COPY --from=gem ${APP_ROOT}/vendor/bundle ${APP_ROOT}/vendor/bundle
-
-COPY --from=node /usr/local/bin/node /usr/local/bin/node
 
 RUN mkdir -p ${APP_ROOT}
 
@@ -47,7 +41,8 @@ COPY . ${APP_ROOT}
 
 ARG REVISION
 ENV REVISION $REVISION
-RUN echo $REVISION > ${SERVER_ROOT}/REVISION
+ENV COMMIT_SHORT_SHA $REVISION
+RUN echo "${REVISION}" > ${APP_ROOT}/REVISION
 
 # Apply Execute Permission
 RUN adduser -h ${APP_ROOT} -D -s /bin/nologin ruby ruby && \
