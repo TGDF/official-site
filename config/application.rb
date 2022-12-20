@@ -9,9 +9,9 @@ require 'active_job/railtie'
 require 'active_record/railtie'
 require 'action_controller/railtie'
 require 'action_mailer/railtie'
+require 'action_text/engine'
 require 'action_view/railtie'
 require 'action_cable/engine'
-require 'sprockets/railtie'
 # require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
@@ -21,7 +21,7 @@ Bundler.require(*Rails.groups)
 module Tgdf
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults(6.1)
+    config.load_defaults 7.0
 
     config.i18n.default_locale = :'zh-TW'
     config.i18n.fallbacks = true
@@ -32,6 +32,7 @@ module Tgdf
 
     # Don't generate system test files.
     config.generators do |g|
+      g.system_tests = nil
       g.test_framework :rspec
       g.stylesheets false
       g.javascripts false

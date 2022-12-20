@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_28_075130) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_04_28_075130) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,18 +18,18 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
-    t.datetime "locked_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "locked_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_admin_users_on_unlock_token", unique: true
@@ -39,21 +38,21 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
   create_table "agenda_days", force: :cascade do |t|
     t.string "label"
     t.date "date", default: -> { "now()" }, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "agenda_tags", force: :cascade do |t|
     t.jsonb "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "agenda_times", force: :cascade do |t|
     t.string "label"
     t.integer "order", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "day_id"
     t.boolean "single"
     t.index ["day_id"], name: "index_agenda_times_on_day_id"
@@ -62,8 +61,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
   create_table "agendas", force: :cascade do |t|
     t.jsonb "subject", default: {}
     t.jsonb "description", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "time_id"
     t.bigint "room_id"
     t.integer "order", default: 0, null: false
@@ -79,8 +78,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
   create_table "agendas_speakers", force: :cascade do |t|
     t.bigint "agenda_id"
     t.bigint "speaker_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["agenda_id"], name: "index_agendas_speakers_on_agenda_id"
     t.index ["speaker_id"], name: "index_agendas_speakers_on_speaker_id"
   end
@@ -88,8 +87,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
   create_table "agendas_taggings", force: :cascade do |t|
     t.bigint "agenda_id"
     t.bigint "agenda_tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "attachments", force: :cascade do |t|
@@ -97,8 +96,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
     t.string "record_type"
     t.bigint "record_id"
     t.string "file"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "blocks", force: :cascade do |t|
@@ -106,8 +105,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
     t.string "language", default: "zh-TW", null: false
     t.string "page", null: false
     t.string "component_type", default: "text", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "order", default: 0, null: false
   end
 
@@ -117,8 +116,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
     t.jsonb "team", null: false
     t.string "video"
     t.string "thumbnail"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "website"
     t.integer "order", default: 0
     t.string "type"
@@ -131,8 +130,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
     t.bigint "author_id"
     t.string "slug", null: false
     t.integer "status", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "thumbnail"
     t.index ["author_type", "author_id"], name: "index_news_on_author"
     t.index ["slug"], name: "index_news_on_slug", unique: true
@@ -141,8 +140,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
 
   create_table "partner_types", force: :cascade do |t|
     t.jsonb "name", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "order", default: 0
   end
 
@@ -150,8 +149,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
     t.jsonb "name", default: {}
     t.string "logo"
     t.bigint "type_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "url"
     t.integer "order", default: 0
     t.jsonb "description"
@@ -161,15 +160,15 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
   create_table "rooms", force: :cascade do |t|
     t.string "name"
     t.integer "order", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "sites", force: :cascade do |t|
     t.string "domain", null: false
     t.jsonb "name", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "tenant_name"
     t.jsonb "description", default: {}
     t.string "logo"
@@ -182,8 +181,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
 
   create_table "sliders", force: :cascade do |t|
     t.string "image"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "language", default: 0, null: false
     t.integer "page", default: 0, null: false
     t.integer "interval", default: 5000
@@ -193,8 +192,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
     t.jsonb "name", default: {}
     t.jsonb "description", default: {}
     t.string "avatar"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.jsonb "title"
     t.integer "order", default: 0
     t.string "slug"
@@ -203,8 +202,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
 
   create_table "sponsor_levels", force: :cascade do |t|
     t.jsonb "name", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "order", default: 0
   end
 
@@ -213,8 +212,8 @@ ActiveRecord::Schema.define(version: 2022_04_28_075130) do
     t.string "logo"
     t.string "url"
     t.bigint "level_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "order", default: 0
     t.jsonb "description"
     t.index ["level_id"], name: "index_sponsors_on_level_id"

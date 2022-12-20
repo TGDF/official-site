@@ -4,6 +4,7 @@
 require 'apartment/elevators/domain'
 # require 'apartment/elevators/subdomain'
 # require 'apartment/elevators/first_subdomain'
+require 'middleware/full_host_elevators'
 
 #
 # Apartment Configuration

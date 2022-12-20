@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_dependency 'settings'
+
 unless Rails.env.test?
   Rails.application.config.session_store(
     :cookie_store,
