@@ -4,7 +4,7 @@ header.c-header.c-header-light.c-header-fixed
     ul.c-header-nav.dropdown
       li.c-header-nav-item.dropdown.mx-2
         = link_to '#', class: 'c-header-nav-link', data: { toggle: 'dropdown' } do
-          = svg_icon('media/sprites/free.svg', 'cil-sitemap', class: 'c-icon c-icon-lg mfe-2')
+          / = svg_icon('media/sprites/free.svg', 'cil-sitemap', class: 'c-icon c-icon-lg mfe-2')
           | &nbsp;
           span.hidden-xs = current_site.name
         .dropdown-menu.dropdown-menu-right.pt-0
@@ -15,7 +15,7 @@ header.c-header.c-header-light.c-header-fixed
             = admin_navbar_site_item(site.name, site.domain)
           .dropdown-divider
           = link_to admin_sites_url(host: Settings.site.default_domain), class: 'dropdown-item' do
-            = svg_icon('media/sprites/free.svg', 'cil-list', class: 'c-icon mfe-2')
+            / = svg_icon('media/sprites/free.svg', 'cil-list', class: 'c-icon mfe-2')
             = t('.view_all')
       li.c-header-nav-item.dropdown
         = link_to '#', class: 'c-header-nav-link', data: { toggle: 'dropdown' } do
@@ -25,6 +25,6 @@ header.c-header.c-header-light.c-header-fixed
           .dropdown-header.bg-light.py-2
             strong = t('.account')
           = link_to destroy_admin_user_session_path, class: 'dropdown-item' do
-            = svg_icon('media/sprites/free.svg', 'cil-account-logout', class: 'c-icon mfe-2')
+            / = svg_icon('media/sprites/free.svg', 'cil-account-logout', class: 'c-icon mfe-2')
             = t('.logout')
 
