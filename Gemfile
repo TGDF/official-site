@@ -75,6 +75,9 @@ gem 'rack-utf8_sanitizer'
 gem 'store_attribute', '~> 1.0'
 gem 'whenever', require: false
 
+# Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', require: false
+
 # API
 gem 'grape'
 

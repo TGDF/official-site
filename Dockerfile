@@ -1,7 +1,7 @@
 ARG APP_ROOT=/src/app
 ARG RUBY_VERSION=2.7.6
 
-FROM ruby:${RUBY_VERSION}-alpine AS gem
+FROM ruby:${RUBY_VERSION}-alpine AS base
 ARG APP_ROOT
 
 RUN apk add --no-cache build-base postgresql-dev
@@ -21,14 +21,17 @@ RUN gem install bundler:2.3.14 \
     && find ${APP_ROOT}/vendor/bundle -type f -name '*.o' -delete \
     && find ${APP_ROOT}/vendor/bundle -type f -name '*.gem' -delete
 
+RUN bundle exec bootsnap precompile --gemfile app/ lib/
+
 FROM ruby:${RUBY_VERSION}-alpine
 ARG APP_ROOT
 
 RUN apk add --no-cache curl tzdata shared-mime-info postgresql-libs imagemagick
 
-COPY --from=gem /usr/local/bundle/config /usr/local/bundle/config
-COPY --from=gem /usr/local/bundle /usr/local/bundle
-COPY --from=gem ${APP_ROOT}/vendor/bundle ${APP_ROOT}/vendor/bundle
+COPY --from=base /usr/local/bundle/config /usr/local/bundle/config
+COPY --from=base /usr/local/bundle /usr/local/bundle
+COPY --from=base ${APP_ROOT}/vendor/bundle ${APP_ROOT}/vendor/bundle
+COPY --from=base ${APP_ROOT}/tmp/cache ${APP_ROOT}/tmp/cache
 
 RUN mkdir -p ${APP_ROOT}
 
