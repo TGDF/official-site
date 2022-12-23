@@ -64,8 +64,10 @@ jobs:
         node-version: '14'
         cache: 'yarn'
     - run: yarn install
-    - name: Run Migration
-      run: bundle exec rake db:migrate
+    - name: Prepare for Test
+      run: |
+        bundle exec rake test:prepare
+        bundle exec rake db:migrate
     - name: Run RSpec
       run: bundle exec rspec
     - name: Archive RSpec coverage report
@@ -103,8 +105,10 @@ jobs:
         node-version: '14'
         cache: 'yarn'
     - run: yarn install
-    - name: Run Migration
-      run: bundle exec rake db:migrate
+    - name: Prepare for Test
+      run: |
+        bundle exec rake test:prepare
+        bundle exec rake db:migrate
     - name: Run Cucumber
       run: bundle exec cucumber -f json -o tmp/cucumber-report.json
     - name: Archive Cucumber coverage report
