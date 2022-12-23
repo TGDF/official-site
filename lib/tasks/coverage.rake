@@ -4,6 +4,6 @@ namespace :coverage do
   task report: :environment do
     require 'simplecov'
 
-    SimpleCov.collate Dir['simplecov-resultset-*/.resultset.json']
+    SimpleCov.collate Dir['simplecov-resultset-*/.resultset.json'], 'rails'
   end
 end
