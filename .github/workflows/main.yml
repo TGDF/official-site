@@ -75,7 +75,7 @@ jobs:
         path: coverage/
         retention-days: 1
 
-  cucmber:
+  cucumber:
     runs-on: ubuntu-latest
     services:
         postgres:
