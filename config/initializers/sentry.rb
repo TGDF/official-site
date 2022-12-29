@@ -3,20 +3,12 @@
 Sentry.init do |config|
   config.breadcrumbs_logger = %i[active_support_logger http_logger]
   config.traces_sampler = lambda do |sampling_context|
-    transaction_context = sampling_context[:transaction_context]
-    op = transaction_context[:op]
-    transaction_name = transaction_context[:name]
+    next sampling_context[:parent_sampled] unless sampling_context[:parent_sampled].nil?
 
-    case op
-    when /request/
-      case transaction_name
-      when /Controller\#/
-        1.0
-      else
-        0.0
-      end
-    else
-      1.0
-    end
+    transaction_context = sampling_context[:transaction_context]
+    next true unless transaction_context[:op].include?('http')
+    next 1.0 if transaction_context[:name].include?('Controller#')
+
+    false
   end
 end
