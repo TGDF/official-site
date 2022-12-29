@@ -1,13 +1,16 @@
-<tr class="odd:bg-gray-50 align-top">
-  <th class="py-4" scope="row"><%= time.label %></th>
+<tr class="block lg:table-row lg:odd:bg-gray-50 align-top">
+  <th class="block lg:table-cell bg-gray-800 lg:bg-transparent text-white lg:text-black py-4" scope="row"><%= time.label %></th>
   <% if time.single? %>
-    <td class="text-center py-4" colspan="<%= @rooms.size %>">
+    <td class="block lg:table-cell text-center py-4" colspan="<%= @rooms.size %>">
       <%= render(partial: 'agenda', collection: time.agendas) || 'TBA' %>
     </td>
   <% else %>
     <% @rooms.each do |room| %>
-      <td class="text-center border border-white py-4">
-        <%= render(partial: 'agenda', collection: time.agendas.select{ |agenda| agenda.room_id == room.id }) || 'TBA' %>
+      <td class="block lg:table-cell px-0 py-4 text-center lg:border border-white">
+        <div class="lg:hidden -mt-4 py-1 bg-white border-2 border-gray-800"><%= room.name %></div>
+        <div class="space-y-4 px-4">
+          <%= render(partial: 'agenda', collection: time.agendas.select{ |agenda| agenda.room_id == room.id }) || 'TBA' %>
+        </div>
       </td>
     <% end %>
   <% end %>

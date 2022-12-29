@@ -4,7 +4,7 @@
     <span class="block text-xl text-gray-500"><%= @day.date %></span>
   </h2>
   <table class="w-full mt-4 table-fixed">
-    <thead>
+    <thead class="hidden lg:table-header-group">
       <tr class="text-white bg-gray-800">
         <th class="w-48"></th>
         <% @rooms.each do |room| %>
@@ -12,8 +12,8 @@
         <% end %>
       </tr>
       <thead>
-        <tbody>
-          <%= render partial: 'agendas/time', collection: @day.times, locals: { day: @day } %>
-        </tbody>
+      <tbody class="block lg:table-row-group">
+        <%= render partial: 'agendas/time', collection: @day.times, locals: { day: @day } %>
+      </tbody>
   </table>
 </div>
