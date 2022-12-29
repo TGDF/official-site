@@ -2,13 +2,21 @@
 
 Sentry.init do |config|
   config.breadcrumbs_logger = %i[active_support_logger http_logger]
+  config.traces_sampler = lambda do |sampling_context|
+    transaction_context = sampling_context[:transaction_context]
+    op = transaction_context[:op]
+    transaction_name = transaction_context[:name]
 
-  # Set tracesSampleRate to 1.0 to capture 100%
-  # of transactions for performance monitoring.
-  # We recommend adjusting this value in production
-  config.traces_sample_rate = 1.0
-  # or
-  config.traces_sampler = lambda do |_context|
-    true
+    case op
+    when /request/
+      case transaction_name
+      when /Controller\#/
+        1.0
+      else
+        0.0
+      end
+    else
+      1.0
+    end
   end
 end
