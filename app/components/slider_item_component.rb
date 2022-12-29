@@ -10,7 +10,7 @@ class SliderItemComponent < ViewComponent::Base
   end
 
   def classes
-    item = %w[carousel-item slide]
+    item = %w[swiper-slide]
     item << %w[active] if @iteration.first?
     item.join(' ')
   end

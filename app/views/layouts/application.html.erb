@@ -8,8 +8,9 @@
     <%= seo_tags %>
     <%= stylesheet_link_tag    'https://use.fontawesome.com/b2e3e84e95.css', media: 'all' %>
     <%= stylesheet_link_tag    'https://fonts.googleapis.com/css?family=Noto+Sans+TC:400,900&amp;subset=chinese-traditional' %>
+    <%= stylesheet_link_tag    'theme', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <%= javascript_include_tag 'application', 'data-turbo-track': 'reload', defer: true %>
   </head>
   <body>
     <header class="sticky top-0 bg-white z-50">
