@@ -9,5 +9,5 @@
     <%= render 'pages/index/ticket' %>
   <% end %>
   <%= render 'pages/index/news' if @news.exists? %>
-  <%= render 'pages/index/partner' if @partners_and_sponsors.exists? %>
+  <%= render 'pages/index/partner' if Sponsor.exists? || Partner.exists? %>
 <% end %>
