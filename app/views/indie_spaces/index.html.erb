@@ -1,7 +1,7 @@
 <% content_for :disable_breadcrumb, true %>
 <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
 <div class="container px-4 mx-auto mt-5 mb-4">
-  <article class="prose max-w-none">
+  <article class="prose max-w-none break-words">
     <%= sanitize current_site.indie_space_description %>
   </article>
 </div>
