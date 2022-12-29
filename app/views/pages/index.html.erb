@@ -8,6 +8,6 @@
   <% else %>
     <%= render 'pages/index/ticket' %>
   <% end %>
-  <%= render 'pages/index/news' if @news.present? %>
-  <%= render 'pages/index/partner' if @partners_and_sponsors.present? %>
+  <%= render 'pages/index/news' if @news.exists? %>
+  <%= render 'pages/index/partner' if @partners_and_sponsors.exists? %>
 <% end %>

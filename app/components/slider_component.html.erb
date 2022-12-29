@@ -1,6 +1,6 @@
 <section id="<%= @id %>" class="swiper swiper-container" data-controller="carousel" data-carousel-options-value='{"lazy": true, "loop": true, "autoplay": {"delay": 5000, "disableOnInteraction": false}}'>
   <div class="swiper-wrapper">
-    <%- unless @sliders.present? %>
+    <%- unless @sliders.exists? %>
       <div class="swiper-slide">
         <%= image_tag 'sliders/slide_1.jpg', class: 'd-block w-100 swiper-lazy' %>
       </div>
