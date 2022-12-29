@@ -1,6 +1,9 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
   content: [
     './app/helpers/**/*.rb',
     './app/javascript/**/*.js',

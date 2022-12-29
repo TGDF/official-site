@@ -8,7 +8,7 @@
     <article class="lg:basis-2/3 lg:mr-8">
       <%= render NewsThumbnailComponent.new(news: @news) %>
       <h1 class="mt-4 font-semibold text-3xl text-red-500"><%= @news.title %></h1>
-      <div class="mt-2">
+      <div class="mt-2 prose max-w-none">
         <%= sanitize @news.content %>
       </div>
     </article>

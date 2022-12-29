@@ -4,7 +4,9 @@
     <h1 class="font-semibold text-3xl text-red-500"><%= link_to @news.title, @news %></h1>
     <hr class="my-4">
     <div class="space-y-4">
-      <%= sanitize truncate(@news.content, length: 150, escape: false) %>
+      <div class="prose max-w-none">
+        <%= sanitize truncate(@news.content, length: 150, escape: false) %>
+      </div>
       <p class="pt-2">
         <%= link_to t('.read_more'),@news, class: 'px-4 py-2 bg-red-500 text-white hover:bg-red-600' %>
       </p>
