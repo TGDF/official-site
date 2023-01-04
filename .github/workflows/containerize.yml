@@ -105,7 +105,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        environment: [beta]
+        environment: [beta,production]
     uses: ./.github/workflows/deployment.yml
     with:
       image: ${{ needs.build-and-push-image.outputs.sha-tag }}
