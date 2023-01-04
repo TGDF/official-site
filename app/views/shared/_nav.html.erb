@@ -17,7 +17,7 @@
       <% end %>
       <%= render NavItemComponent.new(name: t('.code_of_conduct'), path: code_of_conduct_path) %>
     </ul>
-    <ul class="flex flex-col ml-auto lg:flex-row">
+    <ul class="flex flex-col ml-auto lg:flex-row space-x-2">
       <%= render LanguageSwitchButtonComponent.new(current_locale: current_locale) %>
       <% if current_site.streaming_enabled? %>
         <% if current_site.streaming_track_1_url.present? %>
