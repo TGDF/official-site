@@ -1,15 +1,21 @@
 <% set_meta_tags og: { image: @sliders.map { |slider| slider.image_url(:large) } } %>
 <% content_for :disable_breadcrumb, true %>
 <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
-<div class="container px-4 mx-auto mt-5 mb-4">
-  <article class="prose max-w-none break-words">
-    <%= sanitize current_site.indie_space_description %>
-  </article>
-</div>
-<section id="indie-space">
+<% if current_site.indie_space_apply_mode? %>
   <div class="container px-4 mx-auto mt-5 mb-4">
-    <div class="space-y-4 lg:space-y-0 lg:mx-auto lg:grid lg:gap-4 lg:grid-cols-3">
-      <%= render GameComponent.with_collection(@games) %>
-    </div>
+    <iframe id="JotFormIFrame" src="<%= current_site.indie_space_form_url %>" allowtransparency="true" frameborder="0" class="w-full"></iframe>
   </div>
-</section>
+<% else %>
+  <div class="container px-4 mx-auto mt-5 mb-4">
+    <article class="prose max-w-none break-words">
+      <%= sanitize current_site.indie_space_description %>
+    </article>
+  </div>
+  <section id="indie-space">
+    <div class="container px-4 mx-auto mt-5 mb-4">
+      <div class="space-y-4 lg:space-y-0 lg:mx-auto lg:grid lg:gap-4 lg:grid-cols-3">
+        <%= render GameComponent.with_collection(@games) %>
+      </div>
+    </div>
+  </section>
+<% end %>
