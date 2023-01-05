@@ -1,3 +1,4 @@
+<% set_meta_tags og: { image: @sliders.map { |slider| slider.image_url(:large) } } %>
 <% if cfp_only? %>
   <%= render ProposalFormComponent.new(src: current_site.cfp_form_url, description: current_site.cfp_description) %>
 <% else %>

@@ -1,3 +1,4 @@
+<% set_meta_tags og: { image: @sliders.map { |slider| slider.image_url(:large) } } %>
 <% content_for :disable_breadcrumb, true %>
 <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
 <%= render BlockComponent.with_collection(@blocks) %>

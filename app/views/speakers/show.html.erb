@@ -1,6 +1,6 @@
 <% title @speaker.name %>
 <% description truncate(strip_tags(@speaker.description), length: 150) %>
-<% set_meta_tags og: { image: { _: @speaker.avatar_url(:v1_large), width: 370, height: 370}, type: 'profile' } %>
+<% set_meta_tags og: { image: { _: @speaker.avatar_url(:v1_large), width: 370, height: 370 }, type: 'profile' } %>
 <% breadcrumb :speaker, @speaker %>
 <section id="speaker" class="container px-4 mx-auto my-8">
   <div class="flex flex-col lg:flex-row lg:mx-0">
