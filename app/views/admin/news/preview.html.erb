@@ -1,0 +1,22 @@
+<% title @news.title %>
+<% description truncate(strip_tags(@news.content), length: 150) %>
+<% set_meta_tags og: { image: { _: @news.thumbnail_url(:medium), width: 770, height: 420 }, type: 'article' } %>
+<% banner @news.thumbnail_url(:large) %>
+<% breadcrumb :news, @news %>
+<section id="news" class="container px-4 my-8 mx-auto">
+  <div class="flex flex-col lg:flex-row">
+    <article class="lg:basis-2/3 lg:mr-8">
+      <%= render NewsThumbnailComponent.new(news: @news) %>
+      <h1 class="mt-4 font-semibold text-3xl text-red-500"><%= @news.title %></h1>
+      <div class="mt-2 prose max-w-none">
+        <%= sanitize @news.content %>
+      </div>
+    </article>
+    <aside class="mt-8 lg:mt-0 lg:basis-1/3">
+      <h1 class="mb-4 font-semibold text-2xl"><%= t('.latest_news') %></h1>
+      <div class="flex flex-col">
+        <%= render NewsSideItemComponent.with_collection(@latest) %>
+      </div>
+    </aside>
+  </div>
+</section>
