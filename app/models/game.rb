@@ -7,7 +7,8 @@ class Game < ApplicationRecord
 
   mount_uploader :thumbnail, GameThumbnailUploader
 
-  validates :name, :description, :team, :thumbnail, presence: true
+  validates :name, :description, :team, presence: true
+  validates :thumbnail, presence: true, on: :create
 
   default_scope -> { order(order: :asc) }
 end
