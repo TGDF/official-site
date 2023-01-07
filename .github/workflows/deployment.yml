@@ -28,6 +28,9 @@ jobs:
     name: Deploy to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    concurrency:
+      group: ${{ inputs.environment }}
+      cancel-in-progress: true
     steps:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
