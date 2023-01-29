@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
   def ensure_site_created!
     return if current_site.domain == request.host
 
-    redirect_to root_url(host: Settings.site.default_domain)
+    redirect_to root_url(host: Settings.site.default_domain, allow_other_host: true)
   end
 
   private
