@@ -67,12 +67,12 @@ gem 'carrierwave'
 gem 'fog-aws'
 gem 'gretel'
 gem 'liveness'
-gem 'lograge'
 gem 'mini_magick'
 gem 'oj'
 gem 'openbox'
 gem 'rack-attack'
 gem 'rack-utf8_sanitizer'
+gem 'rails_semantic_logger'
 gem 'store_attribute', '~> 1.0'
 gem 'whenever', require: false
 
