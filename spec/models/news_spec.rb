@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe News, type: :model do
+RSpec.describe News do
   subject { build(:news) }
 
   it { is_expected.to belong_to(:author) }

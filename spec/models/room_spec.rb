@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe(Room, type: :model) do
+RSpec.describe(Room) do
   it { is_expected.to(validate_presence_of(:name)) }
 end

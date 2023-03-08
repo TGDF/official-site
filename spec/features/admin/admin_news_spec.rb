@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Admin::News', type: :feature) do
+RSpec.describe('Admin::News') do
   let(:admin) { create(:admin_user) }
   let(:news) { create(:news) }
 

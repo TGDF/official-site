@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe(SponsorLevel, type: :model) do
+RSpec.describe(SponsorLevel) do
   it { is_expected.to(validate_presence_of(:name)) }
 end

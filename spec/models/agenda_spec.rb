@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe(Agenda, type: :model) do
+RSpec.describe(Agenda) do
   it { is_expected.to(validate_presence_of(:subject)) }
   it { is_expected.to(validate_presence_of(:description)) }
 

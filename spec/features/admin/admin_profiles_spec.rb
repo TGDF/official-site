@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Admin::Profiles', type: :feature) do
+RSpec.describe('Admin::Profiles') do
   let(:admin) { create(:admin_user) }
 
   before { sign_in admin }

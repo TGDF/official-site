@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe(Site, type: :model) do
+RSpec.describe(Site) do
   it { is_expected.to(validate_presence_of(:name)) }
   it { is_expected.to(validate_presence_of(:domain)) }
   it { is_expected.to(validate_presence_of(:tenant_name)) }

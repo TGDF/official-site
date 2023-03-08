@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe(AgendasSpeaker, type: :model) do
+RSpec.describe(AgendasSpeaker) do
   pending "add some examples to (or delete) #{__FILE__}"
 end

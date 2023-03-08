@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Dir[Rails.root.join('app/uploaders/*.rb')].sort.each { |file| require file }
+Dir[Rails.root.join('app/uploaders/*.rb')].each { |file| require file }
 
 RSpec.configure do |config|
   CarrierWave::Uploader::Base.descendants.each do |klass|

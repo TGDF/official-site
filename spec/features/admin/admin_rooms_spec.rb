@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Admin::Rooms', type: :feature) do
+RSpec.describe('Admin::Rooms') do
   let(:admin) { create(:admin_user) }
   let(:room) { create(:room) }
 

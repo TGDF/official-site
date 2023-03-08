@@ -12,14 +12,14 @@ module Admin
       @slider = Slider.new
     end
 
+    def edit; end
+
     def create
       @slider = Slider.new(permitted_params)
       return redirect_to(admin_sliders_path) if @slider.save
 
       render(:new)
     end
-
-    def edit; end
 
     def update
       return redirect_to(admin_sliders_path) if @slider.update(permitted_params)

@@ -10,7 +10,7 @@ module Localizable
   end
 
   def rewrite_locale_path
-    return unless /zh-TW/.match?(request.path)
+    return unless request.path.include?('zh-TW')
 
     # NOTE: turbolinks-rails didn't rewrite url for now
     redirect_to(url_for(lang: nil))

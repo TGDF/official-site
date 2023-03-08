@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Admin::AgendaTimes', type: :feature) do
+RSpec.describe('Admin::AgendaTimes') do
   let(:admin) { create(:admin_user) }
   let(:agenda_time) { create(:agenda_time) }
 

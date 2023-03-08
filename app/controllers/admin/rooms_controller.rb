@@ -12,14 +12,14 @@ module Admin
       @room = Room.new
     end
 
+    def edit; end
+
     def create
       @room = Room.new(room_params)
       return redirect_to(admin_rooms_path) if @room.save
 
       render(:new)
     end
-
-    def edit; end
 
     def update
       return redirect_to(admin_rooms_path) if @room.update(room_params)

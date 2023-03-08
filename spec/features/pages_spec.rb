@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Pages', type: :feature) do
+RSpec.describe('Pages') do
   describe '#index' do
     let!(:news) { create(:news, status: :published) }
 

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Admin::Partners', type: :feature) do
+RSpec.describe('Admin::Partners') do
   let(:admin) { create(:admin_user) }
   let(:partner) { create(:partner) }
 

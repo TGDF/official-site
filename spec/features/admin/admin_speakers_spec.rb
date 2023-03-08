@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Admin::Speakers', type: :feature) do
+RSpec.describe('Admin::Speakers') do
   let(:admin) { create(:admin_user) }
   let(:speaker) { create(:speaker) }
 

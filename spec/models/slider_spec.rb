@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe(Slider, type: :model) do
+RSpec.describe(Slider) do
   it { is_expected.to(validate_presence_of(:image)) }
 end

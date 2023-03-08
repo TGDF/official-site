@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe(AdminUser, type: :model) do
+RSpec.describe(AdminUser) do
   let(:email) { 'admin@example.com' }
 
   describe '#display_name' do

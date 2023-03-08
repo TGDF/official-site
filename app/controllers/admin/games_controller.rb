@@ -12,6 +12,8 @@ module Admin
       @game = resource.new
     end
 
+    def edit; end
+
     def create
       Mobility.with_locale(I18n.default_locale) do
         return redirect_to(index_path) if resource.create(game_params)
@@ -19,8 +21,6 @@ module Admin
         render :new
       end
     end
-
-    def edit; end
 
     def update
       Mobility.with_locale(admin_current_resource_locale) do

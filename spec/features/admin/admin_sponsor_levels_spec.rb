@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Admin::SponsorLevels', type: :feature) do
+RSpec.describe('Admin::SponsorLevels') do
   let(:admin) { create(:admin_user) }
   let(:sponsor_level) { create(:sponsor_level) }
 

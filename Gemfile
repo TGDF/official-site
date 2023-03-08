@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 2.7.0'
+ruby '~> 3.1.3'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -23,8 +23,6 @@ gem 'puma', '~> 6.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
-# Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
-gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
@@ -35,6 +33,9 @@ gem 'turbolinks', '~> 5'
 # Config
 gem 'rails-i18n'
 gem 'settingslogic'
+
+# FIXME: https://stackoverflow.com/questions/71191685/visit-psych-nodes-alias-unknown-alias-default-psychbadalias
+gem 'psych', '< 4'
 
 # Multi-Tenancy
 gem 'ros-apartment', require: 'apartment'
@@ -74,13 +75,9 @@ gem 'rack-attack'
 gem 'rack-utf8_sanitizer'
 gem 'rails_semantic_logger'
 gem 'store_attribute', '~> 1.0'
-gem 'whenever', require: false
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
-
-# API
-gem 'grape'
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
@@ -100,20 +97,16 @@ group :development, :test do
   gem 'capybara-selenium', require: false
 
   gem 'brakeman', require: false
-  gem 'rubocop', '~> 1.8.1', require: false
+  gem 'rubocop', '~> 1.35.0', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
 end
 
 group :development do
-  gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
 
   gem 'overcommit', require: false
-
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
 
   gem 'pry-rails'
 

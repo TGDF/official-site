@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe('Admin::Sites', type: :feature) do
+RSpec.describe('Admin::Sites') do
   let(:admin) { create(:admin_user) }
   let(:site) { create(:site) }
 
@@ -14,7 +14,7 @@ RSpec.describe('Admin::Sites', type: :feature) do
   describe '#index' do
     let!(:sites) { create_list(:site, 5) }
 
-    xit 'can see all sites' do
+    it 'can see all sites', pending: 'root tentant not resloved' do
       visit admin_sites_path
       sites.each { |site| expect(page).to(have_content(site.name)) }
     end
@@ -29,11 +29,13 @@ RSpec.describe('Admin::Sites', type: :feature) do
       click_button '新增Site'
     end
 
-    xit { expect(page).to(have_content('Example')) }
+    it 'is expected to create a new site', pending: 'root tentant not resloved' do
+      expect(page).to(have_content('Example'))
+    end
   end
 
   describe '#edit' do
-    xit 'can edit site' do
+    it 'can edit site', pending: 'root tentant not resloved' do
       visit edit_admin_site_path(site)
       fill_in 'site_name', with: 'New Site Name'
       click_button '更新Site'
@@ -44,7 +46,7 @@ RSpec.describe('Admin::Sites', type: :feature) do
   describe '#destroy' do
     let!(:site) { create(:site) }
 
-    xit 'can destroy site type' do
+    it 'can destroy site type', pending: 'root tentant not resloved' do
       visit admin_sites_path
 
       within first('td', text: site.name).first(:xpath, './/..') do

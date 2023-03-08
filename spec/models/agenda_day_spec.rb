@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe(AgendaDay, type: :model) do
+RSpec.describe(AgendaDay) do
   it { is_expected.to(validate_presence_of(:label)) }
 end
