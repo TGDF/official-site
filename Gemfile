@@ -31,11 +31,8 @@ gem 'puma', '~> 6.0'
 # gem 'bcrypt', '~> 3.1.7'
 
 # Config
+gem 'config'
 gem 'rails-i18n'
-gem 'settingslogic'
-
-# FIXME: https://stackoverflow.com/questions/71191685/visit-psych-nodes-alias-unknown-alias-default-psychbadalias
-gem 'psych', '< 4'
 
 # Multi-Tenancy
 gem 'ros-apartment', require: 'apartment'

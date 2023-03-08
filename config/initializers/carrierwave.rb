@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_dependency 'settings'
-
 CarrierWave.configure do |config|
   if Settings.s3.enabled
     config.storage = :fog

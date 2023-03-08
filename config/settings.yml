@@ -1,32 +1,19 @@
-default: &default
-  site:
-    default_domain: <%= ENV.fetch('SITE_DEFAULT_DOMAIN', 'tgdf.tw') %>
-    session_key: <%= ENV.fetch('SETTINGS__SITE__SESSION_KEY', '_tgdf_session') %>
-  assets:
-    host: <%= ENV.fetch('ASSETS_HOST', 'https://tgdf.tw') %>
-  news:
-    latest:
-      size: <%= ENV.fetch('NEWS_LATEST_SIZE', 5).to_i %>
-  ticket:
-    types:
-      - personal
-      - group
-      - student
-  s3:
-    enabled: <%= ENV.fetch('SETTINGS__S3__ENABLED', false) %>
-    access_key_id: <%= ENV['SETTINGS__S3__ACCESS_KEY_ID'] %>
-    secret_access_key: <%= ENV['SETTINGS__S3__SECRET_ACCESS_KEY'] %>
-    region: <%= ENV.fetch('SETTINGS__S3__REGION', 'ap-northeast-1') %>
-    bucket: <%= ENV['SETTINGS__S3__BUCKET'] %>
-
-development:
-  <<: *default
-
-staging:
-  <<: *default
-
-test:
-  <<: *default
-
-production:
-  <<: *default
+site:
+  default_domain: <%= ENV.fetch('SITE_DEFAULT_DOMAIN', 'tgdf.tw') %>
+  session_key: <%= ENV.fetch('SETTINGS__SITE__SESSION_KEY', '_tgdf_session') %>
+assets:
+  host: <%= ENV.fetch('ASSETS_HOST', 'https://tgdf.tw') %>
+news:
+  latest:
+    size: <%= ENV.fetch('NEWS_LATEST_SIZE', 5).to_i %>
+ticket:
+  types:
+    - personal
+    - group
+    - student
+s3:
+  enabled: <%= ENV.fetch('SETTINGS__S3__ENABLED', false) %>
+  access_key_id: <%= ENV['SETTINGS__S3__ACCESS_KEY_ID'] %>
+  secret_access_key: <%= ENV['SETTINGS__S3__SECRET_ACCESS_KEY'] %>
+  region: <%= ENV.fetch('SETTINGS__S3__REGION', 'ap-northeast-1') %>
+  bucket: <%= ENV['SETTINGS__S3__BUCKET'] %>
