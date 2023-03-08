@@ -1,5 +1,5 @@
 ARG APP_ROOT=/src/app
-ARG RUBY_VERSION=2.7.6
+ARG RUBY_VERSION=3.1.3
 
 FROM ruby:${RUBY_VERSION}-alpine AS base
 ARG APP_ROOT
@@ -26,7 +26,7 @@ RUN bundle exec bootsnap precompile --gemfile app/ lib/
 FROM ruby:${RUBY_VERSION}-alpine
 ARG APP_ROOT
 
-RUN apk add --no-cache curl tzdata shared-mime-info postgresql-libs imagemagick
+RUN apk add --no-cache curl shared-mime-info tzdata postgresql-libs imagemagick
 
 COPY --from=base /usr/local/bundle/config /usr/local/bundle/config
 COPY --from=base /usr/local/bundle /usr/local/bundle
