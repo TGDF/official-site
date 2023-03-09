@@ -3,7 +3,8 @@ name: Rails
 on:
   push:
     branches:
-      - main
+      - 'main'
+      - 'epic/**'
   pull_request:
 
 env:
