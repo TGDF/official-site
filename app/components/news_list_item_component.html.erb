@@ -1,4 +1,4 @@
-<% cache @news do %>
+<% cache [helpers.current_locale, @news] do %>
 <article class="flex flex-col lg:flex-row after:conent-['']">
   <%= render NewsThumbnailComponent.new(news: @news, classes: 'mb-4 lg:mb-0 lg:mr-6 lg:w-1/3') %>
   <div class="flex-1">
