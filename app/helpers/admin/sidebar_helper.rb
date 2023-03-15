@@ -25,11 +25,11 @@ module Admin
     end
 
     def admin_sidebar_treeview(name, icon:)
-      options = { class: 'c-sidebar-nav-dropdown' }
+      options = { class: 'c-sidebar-nav-item c-sidebar-nav-dropdown' }
 
       items = capture { yield if block_given? }
       options[:class] += ' c-show' if items.to_str.match?(/class="[^"]*c-active[^"]*"/)
-      tag.li(options) do
+      tag.li(**options) do
         concat admin_sidebar_link(name, '#', icon: icon, style: 'c-sidebar-nav-dropdown-toggle')
         concat tag.ul(items, class: 'c-sidebar-nav-dropdown-items')
       end
