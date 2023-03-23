@@ -1,7 +1,7 @@
 ARG APP_ROOT=/src/app
 ARG RUBY_VERSION=3.2.1
 
-FROM --platform=$BUILDPLATFORM ruby:${RUBY_VERSION}-alpine AS base
+FROM --platform=$TARGETPLATFORM ruby:${RUBY_VERSION}-alpine AS base
 ARG APP_ROOT
 
 RUN apk add --no-cache build-base postgresql-dev
@@ -23,7 +23,7 @@ RUN gem install bundler:2.3.14 \
 
 RUN bundle exec bootsnap precompile --gemfile app/ lib/
 
-FROM --platform=$BUILDPLATFORM ruby:${RUBY_VERSION}-alpine
+FROM --platform=$TARGETPLATFORM ruby:${RUBY_VERSION}-alpine
 ARG APP_ROOT
 
 RUN apk add --no-cache curl shared-mime-info tzdata postgresql-libs imagemagick
