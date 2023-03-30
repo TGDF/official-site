@@ -20,6 +20,10 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    authenticated :admin_user do
+      mount Flipper::UI.app(Flipper) => '/flipper'
+    end
+
     root 'dashboard#index'
 
     resources :news, except: :show do

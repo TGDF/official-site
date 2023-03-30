@@ -60,6 +60,12 @@ gem 'sitemap_generator'
 gem 'sentry-rails'
 gem 'sentry-ruby'
 
+# Feature
+gem 'flipper-active_record'
+gem 'flipper-active_support_cache_store'
+gem 'flipper-cloud'
+gem 'flipper-ui'
+
 # Utilities
 gem 'carrierwave'
 gem 'fog-aws'
