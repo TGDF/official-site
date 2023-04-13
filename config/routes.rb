@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   # Health Check
   mount Liveness::Status => '/status'
 
+  mount Lookbook::Engine, at: '/lookbook' if Rails.env.development?
+
   scope '/(:lang)', lang: /#{I18n.available_locales.join('|')}/ do
     # TODO: Use get instead resources
     root to: 'pages#index', format: false
