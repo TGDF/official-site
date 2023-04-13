@@ -2,12 +2,12 @@
 
 module Admin
   module NavtabHelper
-    def admin_navtab_box(&block)
-      tag.div(class: 'card', &block)
+    def admin_navtab_box(&)
+      tag.div(class: 'card', &)
     end
 
-    def admin_navtab_nav(&block)
-      tag.ul(class: 'nav nav-tabs', &block)
+    def admin_navtab_nav(&)
+      tag.ul(class: 'nav nav-tabs', &)
     end
 
     def admin_navtab_nav_item(name, path, options = {})

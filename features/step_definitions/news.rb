@@ -4,7 +4,7 @@ Given('There are some news') do |table|
   author = create(:admin_user)
 
   table.hashes.each do |attributes|
-    News.create!(**attributes, author: author, thumbnail: uploaded_thumbnail)
+    News.create!(**attributes, author:, thumbnail: uploaded_thumbnail)
   end
 end
 

@@ -30,7 +30,7 @@ module Admin
       items = capture { yield if block_given? }
       options[:class] += ' c-show' if items.to_str.match?(/class="[^"]*c-active[^"]*"/)
       tag.li(**options) do
-        concat admin_sidebar_link(name, '#', icon: icon, style: 'c-sidebar-nav-dropdown-toggle')
+        concat admin_sidebar_link(name, '#', icon:, style: 'c-sidebar-nav-dropdown-toggle')
         concat tag.ul(items, class: 'c-sidebar-nav-dropdown-items')
       end
     end
@@ -39,7 +39,7 @@ module Admin
       style = 'c-sidebar-nav-link'
       style += ' c-active' if current_admin_path_under?(path)
       tag.li class: 'c-sidebar-nav-item' do
-        admin_sidebar_link(name, path, icon: icon, style: style)
+        admin_sidebar_link(name, path, icon:, style:)
       end
     end
 

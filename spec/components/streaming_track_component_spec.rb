@@ -9,7 +9,7 @@ RSpec.describe StreamingTrackComponent, type: :component do
     )
   end
 
-  given_a_component { described_class.new(track: 1, site: site) }
+  given_a_component { described_class.new(track: 1, site:) }
   when_rendered
 
   it { is_expected.to have_text('議程軌一') }

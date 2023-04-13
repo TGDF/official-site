@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe NewsListItemComponent, type: :component do
   let(:news) { create(:news, title: '報名即將開始') }
 
-  given_a_component { described_class.new(news: news) }
+  given_a_component { described_class.new(news:) }
   when_rendered
 
   it { is_expected.to have_link('報名即將開始') }

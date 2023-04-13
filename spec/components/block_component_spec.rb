@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe BlockComponent, type: :component do
   let(:block) { build(:text_block, content: 'Hello World') }
 
-  given_a_component { described_class.new(block: block) }
+  given_a_component { described_class.new(block:) }
   when_rendered
 
   it { is_expected.to have_selector('.text-block') }

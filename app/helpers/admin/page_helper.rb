@@ -13,20 +13,20 @@ module Admin
       # end
     end
 
-    def admin_box(&block)
-      tag.div(class: 'card', &block)
+    def admin_box(&)
+      tag.div(class: 'card', &)
     end
 
     def admin_box_header(title, options = {})
       tag.div(title, class: ['card-header', options[:class]].join(' '))
     end
 
-    def admin_box_body(options = {}, &block)
-      tag.div(class: ['card-body', options[:class]].join(' '), &block)
+    def admin_box_body(options = {}, &)
+      tag.div(class: ['card-body', options[:class]].join(' '), &)
     end
 
-    def admin_box_footer(&block)
-      tag.div(class: 'card-footer', &block)
+    def admin_box_footer(&)
+      tag.div(class: 'card-footer', &)
     end
 
     def admin_locale_navtab

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe PartnerItemComponent, type: :component do
   let(:item) { create(:partner, name: '唯晶科技', url: 'https://www.winkingworks.com/zh-TW/') }
 
-  given_a_component { described_class.new(item: item) }
+  given_a_component { described_class.new(item:) }
   when_rendered
 
   it { is_expected.to have_selector('img') }

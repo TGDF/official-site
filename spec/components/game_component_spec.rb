@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe GameComponent, type: :component do
   let(:game) { create(:game, name: '遠古神話', description: '範例遊戲', team: '玄武工作室') }
 
-  given_a_component { described_class.new(game: game) }
+  given_a_component { described_class.new(game:) }
   when_rendered
 
   it { is_expected.to have_css('.indie-game__name', text: '遠古神話') }

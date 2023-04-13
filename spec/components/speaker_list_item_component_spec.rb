@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe SpeakerListItemComponent, type: :component do
   let(:speaker) { create(:speaker, name: '詹承翰') }
 
-  given_a_component { described_class.new(speaker: speaker) }
+  given_a_component { described_class.new(speaker:) }
   when_rendered
 
   it { is_expected.to have_link('詹承翰') }

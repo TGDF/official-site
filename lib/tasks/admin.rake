@@ -9,7 +9,7 @@ namespace :admin do
     password = $stdin.getpass
 
     begin
-      AdminUser.create!(email: email, password: password)
+      AdminUser.create!(email:, password:)
       puts "Create #{email} success!"
     rescue ActiveRecord::RecordInvalid => e
       puts ''

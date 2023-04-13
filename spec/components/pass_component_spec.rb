@@ -10,7 +10,7 @@ RSpec.describe PassComponent, type: :component do
     )
   end
 
-  given_a_component { described_class.new(plan: :personal, site: site) }
+  given_a_component { described_class.new(plan: :personal, site:) }
   when_rendered
 
   it { is_expected.to have_text('一般票') }
