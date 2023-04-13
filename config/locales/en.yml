@@ -62,10 +62,6 @@ en:
       news:
         heading: "What's <span class=\"text-red-500\">New</span>"
         read_more: "Learn more"
-      ticket:
-        heading: '<span class="text-red-500">Passes</span> & Prices'
-      streaming:
-        heading: 'Live <span class="text-red-500">Streaming</span>'
       partner:
         heading: Partner
   news:

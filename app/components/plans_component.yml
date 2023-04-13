@@ -1,0 +1,7 @@
+en:
+  ticket: '<span class="text-red-500">Passes</span> & Prices'
+  streaming: 'Live <span class="text-red-500">Streaming</span>'
+
+zh-TW:
+  ticket: <span class="text-red-500">購票</span>與售價
+  streaming: 線上<span class="text-red-500">直播</span>

@@ -63,10 +63,6 @@ zh-TW:
       news:
         heading: 最新<span class="text-red-500">消息</span>
         read_more: 了解更多
-      ticket:
-        heading: <span class="text-red-500">購票</span>與售價
-      streaming:
-        heading: 線上<span class="text-red-500">直播</span>
       partner:
         heading: 合作<span class="text-red-500">夥伴</span>
   news:
