@@ -22,6 +22,10 @@ When('I click link {string}') do |link_name|
   click_on link_name
 end
 
+Then('I can see {string}') do |text|
+  expect(page).to have_text(text)
+end
+
 Then('I can see these items in table') do |table|
   table.hashes.each do |row|
     expect(page).to have_selector('tr td', text: row[:text])
