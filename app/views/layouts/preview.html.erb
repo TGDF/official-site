@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html style="background-color: <%= params[:lookbook][:display][:bg_color] || "white" %>">
+<head>
+  <title>Component Preview</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= stylesheet_link_tag    'https://use.fontawesome.com/b2e3e84e95.css', media: 'all' %>
+  <%= stylesheet_link_tag    'https://fonts.googleapis.com/css?family=Noto+Sans+TC:400,900&amp;subset=chinese-traditional' %>
+  <%= stylesheet_link_tag    'theme', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbo-track': 'reload', defer: true %>
+</head>
+<body style="padding: 20px">
+  <div style="
+    margin-left: auto;
+    margin-right: auto;
+    max-width: <%= params[:lookbook][:display][:max_width] || "100%" %>
+  ">
+    <%= yield %> <!-- rendered preview will be injected here -->
+  </div>
+</body>
+</html>
