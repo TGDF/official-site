@@ -19,6 +19,8 @@
         devShell = with pkgs;
           mkShell {
             buildInputs = [
+              postgresql_14
+              libiconv
               ruby
             ];
           };
