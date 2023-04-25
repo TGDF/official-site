@@ -62,7 +62,7 @@ jobs:
     - name: Set up Node
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '18'
         cache: 'yarn'
     - run: yarn install
     - name: Prepare for Test
@@ -103,7 +103,7 @@ jobs:
     - name: Set up Node
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '18'
         cache: 'yarn'
     - run: yarn install
     - name: Prepare for Test
