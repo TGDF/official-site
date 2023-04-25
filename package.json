@@ -2,15 +2,15 @@
   "name": "tgdf",
   "private": true,
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^18.0.0",
+    "@ckeditor/ckeditor5-build-classic": "^37.0.0",
     "@coreui/coreui": "^3.4.0",
     "@coreui/icons": "^2.1.0",
     "@hotwired/stimulus": "^3.2.1",
     "@hotwired/turbo-rails": "^7.2.4",
     "@popperjs/core": "^2.11.5",
-    "@rails/ujs": "^6.0.3-4",
+    "@rails/ujs": "^7.0.4-3",
     "@tailwindcss/typography": "^0.5.8",
-    "esbuild": "^0.16.7",
+    "esbuild": "^0.17.7",
     "perfect-scrollbar": "^1.5.0",
     "stimulus-carousel": "^5.0.1",
     "tailwindcss": "^3.1.8"
