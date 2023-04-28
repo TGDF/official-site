@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  RUBY_VERSION: '3.2.1'
+  RUBY_VERSION: '3.2.2'
   RAILS_ENV: production
   SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
   REGISTRY: ghcr.io
