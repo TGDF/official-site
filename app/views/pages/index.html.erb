@@ -4,7 +4,11 @@
 <% else %>
   <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
   <%= render 'pages/index/about' %>
-  <%= render PlansComponent.new(site: current_site) %>
+  <%= render PlansComponent.new(site: current_site) do %>
+    <% Plan.all.each do |plan| %>
+      <%= plan.name %>
+    <% end %>
+  <% end %>
   <%= render 'pages/index/news' if @news.exists? %>
   <%= render 'pages/index/partner' if Sponsor.exists? || Partner.exists? %>
 <% end %>
