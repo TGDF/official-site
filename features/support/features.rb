@@ -13,3 +13,11 @@ Around('@streaming') do |_scenario, block|
   block&.call
   site.update(streaming_enabled: false)
 end
+
+Before do
+  Flipper.instance = Flipper.new(Flipper::Adapters::Memory.new)
+end
+
+Before('@preview') do
+  Flipper.enable(:preview)
+end
