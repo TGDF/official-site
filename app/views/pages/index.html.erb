@@ -4,7 +4,7 @@
 <% else %>
   <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
   <%= render 'pages/index/about' %>
-  <%= render PlansComponent.new(site: current_site) do %>
+  <%= render PlanListComponent.new(site: current_site) do %>
     <% Plan.all.each do |plan| %>
       <%= plan.name %>
     <% end %>

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PlansComponent < ViewComponent::Base
+class PlanListComponent < ViewComponent::Base
   def initialize(site:)
     super
     @site = site
