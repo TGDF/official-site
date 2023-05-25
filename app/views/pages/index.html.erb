@@ -4,8 +4,12 @@
 <% else %>
   <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
   <%= render 'pages/index/about' %>
-  <%= render PlanListComponent.new(site: current_site) do %>
-    <%= render PlanComponent.with_collection(Plan.all) %>
+  <% if @plans.any? %>
+    <%= render PlanListComponent.new(site: current_site) do %>
+      <%= render PlanComponent.with_collection(Plan.all) %>
+    <% end %>
+  <% else %>
+    <%= render PlanListComponent.new(site: current_site) %>
   <% end %>
   <%= render 'pages/index/news' if @news.exists? %>
   <%= render 'pages/index/partner' if Sponsor.exists? || Partner.exists? %>
