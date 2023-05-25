@@ -5,9 +5,7 @@
   <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
   <%= render 'pages/index/about' %>
   <%= render PlanListComponent.new(site: current_site) do %>
-    <% Plan.all.each do |plan| %>
-      <%= plan.name %>
-    <% end %>
+    <%= render PlanComponent.with_collection(Plan.all) %>
   <% end %>
   <%= render 'pages/index/news' if @news.exists? %>
   <%= render 'pages/index/partner' if Sponsor.exists? || Partner.exists? %>

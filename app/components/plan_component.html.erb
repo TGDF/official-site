@@ -1,0 +1,7 @@
+<article class="flex flex-col mx-4 p-8 border-2 border-white text-center">
+  <h1 class="mb-6 text-3xl font-semibold"><%= name %></h1>
+  <%= sanitize @plan.content %>
+  <div>
+    <%= link_to button, '#', class: 'inline-block px-8 py-3 rounded-full bg-white text-red-500', target: '_blank' %>
+  </div>
+</article>
