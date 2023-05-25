@@ -4,8 +4,11 @@
   </div>
   <div class="py-16 bg-red-500 text-white">
     <div class="container mx-auto lg:grid lg:grid-cols-3 space-y-4 lg:space-y-0 justify-items-stretch">
-      <%= render section_content %>
-      <%= content if Flipper.enabled?(:preview) %>
+      <% if content? %>
+        <%= content if Flipper.enabled?(:preview) %>
+      <% else %>
+        <%= render section_content %>
+      <% end %>
     </div>
   </div>
 </section>
