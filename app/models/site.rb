@@ -11,7 +11,7 @@ class Site < ApplicationRecord
   end
 
   validates :name, :domain, :tenant_name, presence: true
-  validates :domain, format: /\A[a-z0-9]+([\-.]{1}[a-z0-9]+)*\.[a-z]+\z/ix
+  validates :domain, format: /\A[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]+\z/ix
   validates :tenant_name, format: /\A[a-z0-9]+([_a-z0-9]+)*[a-z0-9]+\z/ix
 
   scope :recent, -> { order(updated_at: :desc) }

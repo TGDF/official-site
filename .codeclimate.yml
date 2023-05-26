@@ -1,7 +1,7 @@
 plugins:
   rubocop:
     enabled: true
-    channel: rubocop-1-8-1
+    channel: rubocop-1-50-2
     config:
       file: .rubocop.yml
   bundler-audit:

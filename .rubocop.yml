@@ -2,10 +2,12 @@ require:
   - rubocop-rails
   - rubocop-performance
   - rubocop-rspec
+  - rubocop-capybara
 
 AllCops:
   TargetRubyVersion: 3.2
   DisplayCopNames: true
+  SuggestExtensions: false
   NewCops: enable
   Exclude:
     - bin/*
