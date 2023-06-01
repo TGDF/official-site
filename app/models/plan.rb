@@ -1,21 +1,7 @@
 # frozen_string_literal: true
 
-class Plan
-  class << self
-    def create!(**attributes)
-      @items ||= []
-      @items << new(attributes)
-    end
+class Plan < ApplicationRecord
+  translates :name, :content, :button_label, :button_target
 
-    def all
-      @items&.dup || []
-    end
-  end
-
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-
-  attribute :name
-  attribute :content
-  attribute :button
+  alias_attribute :button, :button_label
 end

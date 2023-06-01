@@ -6,7 +6,7 @@
   <%= render 'pages/index/about' %>
   <% if @plans.any? %>
     <%= render PlanListComponent.new(site: current_site) do %>
-      <%= render PlanComponent.with_collection(Plan.all) %>
+      <%= render PlanComponent.with_collection(@plans) %>
     <% end %>
   <% else %>
     <%= render PlanListComponent.new(site: current_site) %>

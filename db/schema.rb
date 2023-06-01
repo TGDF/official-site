@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_30_113719) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_01_120500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -171,6 +171,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_30_113719) do
     t.integer "order", default: 0
     t.jsonb "description"
     t.index ["type_id"], name: "index_partners_on_type_id"
+  end
+
+  create_table "plans", force: :cascade do |t|
+    t.jsonb "name", default: {}
+    t.jsonb "content", default: {}
+    t.jsonb "button_label", default: {}
+    t.jsonb "button_target", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "rooms", force: :cascade do |t|
