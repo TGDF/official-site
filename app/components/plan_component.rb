@@ -8,4 +8,8 @@ class PlanComponent < ViewComponent::Base
     super
     @plan = plan
   end
+
+  def render?
+    name.present?
+  end
 end
