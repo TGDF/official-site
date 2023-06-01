@@ -38,6 +38,7 @@ Rails.application.routes.draw do
 
     resources :sliders, except: :show
     resources :blocks, except: :show
+    resources :plans, except: :show
 
     resources :partner_types, except: :show
     resources :partners, except: :show
