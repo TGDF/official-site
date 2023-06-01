@@ -21,6 +21,14 @@ module Admin
       end
     end
 
+    def update
+      Mobility.with_locale(admin_current_resource_locale) do
+        return redirect_to(admin_plans_path) if @plan.update(plan_params)
+
+        render :edit
+      end
+    end
+
     def destroy
       @plan.destroy
       redirect_to admin_plans_path
