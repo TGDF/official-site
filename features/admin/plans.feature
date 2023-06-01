@@ -14,3 +14,17 @@ Background:
       | text   |
       | 自訂票 |
       | 學生票 |
+
+  Scenario: Admin User can add new plan
+    When I visit "/admin"
+    And I click admin sidebar "New" in "Plans"
+    And I fill the "plan" form
+      | field         | value            |
+      | name          | 學生票           |
+      | content       | 測試內容         |
+      | button_label  | 立即購票         |
+      | button_target | https://tgdf.tw/ |
+    And I click "新增Plan" button
+    Then I can see these items in table
+      | text   |
+      | 學生票 |
