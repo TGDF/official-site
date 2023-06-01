@@ -28,3 +28,14 @@ Background:
     Then I can see these items in table
       | text   |
       | 學生票 |
+
+  Scenario: Admin User can delete plan
+    Given there are some plans
+      | name   | content                   | button   |
+      | 自訂票 | <strong>強調顯示</strong> | 立即預留 |
+    When I visit "/admin"
+    And I click admin sidebar "List" in "Plans"
+    And I click "Destroy" on row "自訂票"
+    Then I should not see in the table
+      | text   |
+      | 自訂票 |
