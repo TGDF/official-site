@@ -7,6 +7,7 @@ class PlanListComponent < ViewComponent::Base
   end
 
   def section_name
+    return :participate if content?
     return :streaming if @site.streaming_enabled?
 
     :ticket

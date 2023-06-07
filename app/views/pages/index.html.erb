@@ -4,7 +4,7 @@
 <% else %>
   <%= render SliderComponent.new(id: 'slider', sliders: @sliders) %>
   <%= render 'pages/index/about' %>
-  <% if @plans.any? %>
+  <% if @plans.any? && Flipper.enabled?(:preview) %>
     <%= render PlanListComponent.new(site: current_site) do %>
       <%= render PlanComponent.with_collection(@plans) %>
     <% end %>

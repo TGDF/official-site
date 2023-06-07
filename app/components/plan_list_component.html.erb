@@ -5,7 +5,7 @@
   <div class="py-16 bg-red-500 text-white">
     <div class="container mx-auto lg:grid lg:grid-cols-3 space-y-4 lg:space-y-0 justify-items-stretch">
       <% if content? %>
-        <%= content if Flipper.enabled?(:preview) %>
+        <%= content %>
       <% else %>
         <%= render section_content %>
       <% end %>
