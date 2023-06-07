@@ -29,7 +29,7 @@ module Admin
 
     def destroy
       @room.destroy
-      redirect_toadmin_rooms_path
+      redirect_to admin_rooms_path
     end
 
     private
