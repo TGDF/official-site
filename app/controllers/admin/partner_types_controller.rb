@@ -19,7 +19,7 @@ module Admin
         @type = PartnerType.create(partner_type_params)
         return redirect_to(admin_partner_types_path) if @type.save
 
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -27,13 +27,13 @@ module Admin
       Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to(admin_partner_types_path) if @type.update(partner_type_params)
 
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
       @type.destroy
-      redirect_to(admin_partner_types_path)
+      redirect_to admin_partner_types_path
     end
 
     private

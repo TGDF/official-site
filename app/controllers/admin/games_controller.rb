@@ -18,7 +18,7 @@ module Admin
       Mobility.with_locale(I18n.default_locale) do
         return redirect_to(index_path) if resource.create(game_params)
 
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -26,7 +26,7 @@ module Admin
       Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to(index_path) if @game.update(game_params)
 
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 

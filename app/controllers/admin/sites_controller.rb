@@ -19,7 +19,7 @@ module Admin
         @site = Site.new(site_params)
         return redirect_to(admin_sites_path) if @site.save
 
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -27,14 +27,14 @@ module Admin
       Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to(admin_sites_path) if @site.update(site_params)
 
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
       # TODO: Add error message if destroy failed
       @site.destroy
-      redirect_to(admin_sites_path)
+      redirect_to admin_sites_path
     end
 
     protected

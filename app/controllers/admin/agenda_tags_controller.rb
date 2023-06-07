@@ -19,7 +19,7 @@ module Admin
         @agenda_tag = AgendaTag.new(agenda_tag_params)
         return redirect_to(admin_agenda_tags_path) if @agenda_tag.save
 
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -27,13 +27,13 @@ module Admin
       Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to(admin_agenda_tags_path) if @agenda_tag.update(agenda_tag_params)
 
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
       @agenda_tag.destroy
-      redirect_to(admin_agenda_tags_path)
+      redirect_to admin_agenda_tags_path
     end
 
     private

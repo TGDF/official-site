@@ -19,7 +19,7 @@ module Admin
         @speaker = Speaker.new(speaker_params)
         return redirect_to(admin_speakers_path) if @speaker.save
 
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -27,13 +27,13 @@ module Admin
       Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to(admin_speakers_path) if @speaker.update(speaker_params)
 
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
       @speaker.destroy
-      redirect_to(admin_speakers_path)
+      redirect_to admin_speakers_path
     end
 
     private

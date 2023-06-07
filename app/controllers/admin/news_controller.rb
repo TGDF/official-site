@@ -23,7 +23,7 @@ module Admin
         @news.author = current_admin_user
         return redirect_to(admin_news_index_path) if @news.save
 
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -31,14 +31,14 @@ module Admin
       Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to(admin_news_index_path) if @news.update(news_params)
 
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
       # TODO: Add policy manager to limit admin or author can delete
       @news.update(status: :deleted)
-      redirect_to(admin_news_index_path)
+      redirect_to admin_news_index_path
     end
 
     def preview; end

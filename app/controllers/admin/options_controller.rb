@@ -7,7 +7,7 @@ module Admin
     def update
       return redirect_to(edit_admin_options_path) if current_site.update(permitted_params)
 
-      render(:edit)
+      render :edit, status: :unprocessable_entity
     end
 
     private

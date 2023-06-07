@@ -18,13 +18,13 @@ module Admin
       @slider = Slider.new(permitted_params)
       return redirect_to(admin_sliders_path) if @slider.save
 
-      render(:new)
+      render :new, status: :unprocessable_entity
     end
 
     def update
       return redirect_to(admin_sliders_path) if @slider.update(permitted_params)
 
-      render(:edit)
+      render :edit, status: :unprocessable_entity
     end
 
     def destroy

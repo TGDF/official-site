@@ -16,18 +16,18 @@ module Admin
       @block = Block.new(permitted_params)
       return redirect_to(admin_blocks_path) if @block.save
 
-      render(:new)
+      render :new, status: :unprocessable_entity
     end
 
     def update
       return redirect_to(admin_blocks_path) if @block.update(permitted_params)
 
-      render(:edit)
+      render :edit, status: :unprocessable_entity
     end
 
     def destroy
       @block.destroy
-      redirect_to(admin_blocks_path)
+      redirect_to admin_blocks_path
     end
 
     private

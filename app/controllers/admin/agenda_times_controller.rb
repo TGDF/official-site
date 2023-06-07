@@ -18,18 +18,18 @@ module Admin
       @agenda_time = AgendaTime.new(agenda_time_params)
       return redirect_to(admin_agenda_times_path) if @agenda_time.save
 
-      render(:new)
+      render :new, status: :unprocessable_entity
     end
 
     def update
       return redirect_to(admin_agenda_times_path) if @agenda_time.update(agenda_time_params)
 
-      render(:edit)
+      render :edit, status: :unprocessable_entity
     end
 
     def destroy
       @agenda_time.destroy
-      redirect_to(admin_agenda_times_path)
+      redirect_to admin_agenda_times_path
     end
 
     private

@@ -8,7 +8,7 @@ module Admin
       Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to(edit_admin_indie_space_path) if current_site.update(permitted_params)
 
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 

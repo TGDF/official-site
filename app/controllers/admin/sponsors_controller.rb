@@ -19,7 +19,7 @@ module Admin
         @sponsor = Sponsor.new(sponsor_params)
         return redirect_to(admin_sponsors_path) if @sponsor.save
 
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -27,13 +27,13 @@ module Admin
       Mobility.with_locale(admin_current_resource_locale) do
         return redirect_to(admin_sponsors_path) if @sponsor.update(sponsor_params)
 
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
       @sponsor.destroy
-      redirect_to(admin_sponsors_path)
+      redirect_to admin_sponsors_path
     end
 
     private

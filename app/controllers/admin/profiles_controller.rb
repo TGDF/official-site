@@ -10,7 +10,7 @@ module Admin
         return redirect_to(admin_root_path)
       end
 
-      render(:edit)
+      render :edit, status: :unprocessable_entity
     end
 
     private

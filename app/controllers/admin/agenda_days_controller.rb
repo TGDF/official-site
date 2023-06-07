@@ -18,18 +18,18 @@ module Admin
       @agenda_day = AgendaDay.new(agenda_day_params)
       return redirect_to(admin_agenda_days_path) if @agenda_day.save
 
-      render(:new)
+      render :new, status: :unprocessable_entity
     end
 
     def update
       return redirect_to(admin_agenda_days_path) if @agenda_day.update(agenda_day_params)
 
-      render(:edit)
+      render :edit, status: :unprocessable_entity
     end
 
     def destroy
       @agenda_day.destroy
-      redirect_to(admin_agenda_days_path)
+      redirect_to admin_agenda_days_path
     end
 
     private

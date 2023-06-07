@@ -18,18 +18,18 @@ module Admin
       @room = Room.new(room_params)
       return redirect_to(admin_rooms_path) if @room.save
 
-      render(:new)
+      render :new, status: :unprocessable_entity
     end
 
     def update
       return redirect_to(admin_rooms_path) if @room.update(room_params)
 
-      render(:edit)
+      render :edit, status: :unprocessable_entity
     end
 
     def destroy
       @room.destroy
-      redirect_to(admin_rooms_path)
+      redirect_toadmin_rooms_path
     end
 
     private
