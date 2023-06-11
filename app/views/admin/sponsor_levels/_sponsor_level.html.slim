@@ -6,4 +6,4 @@ tr
     .btn-group
       = link_to t('.edit'), edit_admin_sponsor_level_path(sponsor_level), class: 'btn btn-primary'
       / TODO: Create helper
-      = link_to t('.destroy'), admin_sponsor_level_path(sponsor_level), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }
+      = button_to t('.destroy'), admin_sponsor_level_path(sponsor_level), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }
