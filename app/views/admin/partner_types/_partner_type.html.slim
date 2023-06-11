@@ -3,7 +3,7 @@ tr
   td = partner_type.name
   td = partner_type.order
   td
-    .btn-group
+    .d-flex.align-items-start
       = link_to t('.edit'), edit_admin_partner_type_path(partner_type), class: 'btn btn-primary'
       / TODO: Create helper
       = button_to t('.destroy'), admin_partner_type_path(partner_type), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

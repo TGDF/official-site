@@ -4,5 +4,5 @@ tr
   td = game.team
   td = game.order
   td
-    .btn-group
+    .d-flex.align-items-start
       = button_to t('.destroy'), admin_indie_space_game_path(game), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

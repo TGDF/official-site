@@ -4,7 +4,7 @@ tr
   td = news.author.display_name
   td = news.status
   td
-    .btn-group
+    .d-flex.align-items-start
       / TODO: Create helper
       = link_to t('.preview'), preview_admin_news_path(news), class: 'btn btn-primary', target: '_blank'
       = button_to t('.destroy'), admin_news_path(news), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

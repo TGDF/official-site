@@ -3,7 +3,7 @@ tr
   td = room.name
   td = room.order
   td
-    .btn-group
+    .d-flex.align-items-start
       = link_to t('.edit'), edit_admin_room_path(room), class: 'btn btn-primary'
       / TODO: Create helper
       = button_to t('.destroy'), admin_room_path(room), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

@@ -4,7 +4,7 @@
   <td><%= t("locale.name.#{block.language}") %></td>
   <td><%= t("shared.nav.#{block.page}") %></td>
   <td>
-    <div class="btn-group">
+    <div class="d-flex align-items-start">
       <%= link_to t('.edit'), edit_admin_block_path(block), class: 'btn btn-primary' %>
       <%= button_to t('.destroy'), admin_block_path(block), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') } %>
     </div>
