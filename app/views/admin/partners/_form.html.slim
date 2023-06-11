@@ -7,7 +7,7 @@
       = f.input :description, as: :text
       = f.input :order
       = f.input :logo do
-        = f.input_field :logo, required: false
+        = f.input_field :logo, required: @partner.new_record?
         -if @partner.logo.present?
           = image_tag @partner.logo.url
           = f.input :remove_logo, as: :boolean
