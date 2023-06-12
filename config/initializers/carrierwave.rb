@@ -7,7 +7,8 @@ CarrierWave.configure do |config|
       provider: 'AWS',
       aws_access_key_id: Settings.s3.access_key_id,
       aws_secret_access_key: Settings.s3.secret_access_key,
-      region: Settings.s3.region
+      region: Settings.s3.region,
+      path_style: true
     }
     config.fog_directory  = Settings.s3.bucket
     config.fog_public     = true
