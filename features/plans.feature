@@ -1,4 +1,3 @@
-@preview
 Feature: Plans
 
   Background:
