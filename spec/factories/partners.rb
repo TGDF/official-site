@@ -9,6 +9,6 @@ FactoryBot.define do
         'image/jpeg'
       )
     end
-    type { create(:partner_type) }
+    type { association :partner_type }
   end
 end

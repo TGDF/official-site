@@ -9,6 +9,6 @@ FactoryBot.define do
         'image/jpeg'
       )
     end
-    level { create(:sponsor_level) }
+    level { association :sponsor_level }
   end
 end

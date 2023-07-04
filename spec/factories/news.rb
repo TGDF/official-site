@@ -5,7 +5,7 @@ FactoryBot.define do
     title { Faker::Lorem.sentence }
     sequence(:slug) { |id| "#{Faker::Lorem.word}_#{id}" }
     content { Faker::Lorem.paragraph }
-    author { create(:admin_user) }
+    author { association :admin_user }
     thumbnail do
       Rack::Test::UploadedFile.new(
         Rails.root.join('spec/support/brands/logos/TGDF.png'),
