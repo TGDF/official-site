@@ -6,12 +6,17 @@ class NavItemComponent < ViewComponent::Base
   BASE_STYLES = %w[hover:text-red-500].freeze
   BASE_LINK_STYLES = %w[inline-block px-4 py-2 lg:px-2].freeze
 
-  def initialize(name:, path:, target: nil, button: false)
+  def initialize(name:, path:, target: nil, button: false, visible: true)
     super
     @name = name
     @path = path
     @target = target
     @button = button
+    @visible = visible
+  end
+
+  def render?
+    @visible == true
   end
 
   def button?

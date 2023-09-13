@@ -14,6 +14,13 @@ Around('@streaming') do |_scenario, block|
   site.update(streaming_enabled: false)
 end
 
+Around('@cfp_mode') do |_scenario, block|
+  site = Site.find_by(tenant_name: 'main')
+  site.update(cfp_only_mode: true)
+  block&.call
+  site.update(cfp_only_mode: false)
+end
+
 Before do
   Flipper.instance = Flipper.new(Flipper::Adapters::Memory.new)
 end
