@@ -94,7 +94,6 @@ group :development, :test do
   gem 'shoulda-matchers'
   gem 'simplecov', require: false
 
-  gem 'bcrypt_pbkdf'
   gem 'capybara', require: false
   gem 'capybara-selenium', require: false
 
