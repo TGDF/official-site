@@ -44,7 +44,7 @@ RSpec.describe('Admin::Rooms') do
       visit admin_rooms_path
 
       within first('td', text: room.name).first(:xpath, './/..') do
-        click_on 'Destroy'
+        click_button 'Destroy'
       end
 
       expect(page).not_to(have_content(room.name))

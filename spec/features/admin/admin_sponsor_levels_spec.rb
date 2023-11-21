@@ -44,7 +44,7 @@ RSpec.describe('Admin::SponsorLevels') do
       visit admin_sponsor_levels_path
 
       within first('td', text: level.name).first(:xpath, './/..') do
-        click_on 'Destroy'
+        click_button 'Destroy'
       end
 
       expect(page).not_to(have_content(level.name))

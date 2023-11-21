@@ -53,7 +53,7 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
       visit admin_indie_space_games_path
 
       within first('td', text: game.name).first(:xpath, './/..') do
-        click_on 'Destroy'
+        click_button 'Destroy'
       end
 
       expect(page).not_to(have_content(game.name))

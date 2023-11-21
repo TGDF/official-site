@@ -48,7 +48,7 @@ RSpec.describe('Admin::Speakers') do
       visit admin_speakers_path
 
       within first('td', text: speaker.name).first(:xpath, './/..') do
-        click_on 'Destroy'
+        click_button 'Destroy'
       end
 
       expect(page).not_to(have_content(speaker.name))

@@ -8,6 +8,6 @@ RSpec.describe PartnerItemComponent, type: :component do
   given_a_component { described_class.new(item:) }
   when_rendered
 
-  it { is_expected.to have_selector('img') }
+  it { is_expected.to have_css('img') }
   it { is_expected.to have_link('唯晶科技') }
 end

@@ -8,9 +8,9 @@ Given('there are some block in {string}') do |page_name, table|
 end
 
 Then('I can see the text block with {string}') do |string|
-  expect(page).to have_selector('.text-block', text: string)
+  expect(page).to have_css('.text-block', text: string)
 end
 
 Then('I can see twitch embed placeholder') do
-  expect(page).to have_selector('#twitch-embed')
+  expect(page).to have_css('#twitch-embed')
 end

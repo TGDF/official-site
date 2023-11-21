@@ -9,5 +9,5 @@ Given('there are some slide in {string}') do |page_name, table|
 end
 
 Then('I can see the {int} slide in page') do |amount|
-  expect(page).to have_selector('#slider .swiper-slide', count: amount)
+  expect(page).to have_css('#slider .swiper-slide', count: amount)
 end

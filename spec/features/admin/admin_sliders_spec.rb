@@ -50,7 +50,7 @@ RSpec.describe('Admin::Sliders', level: :feature) do
       visit admin_sliders_path
 
       within first('td', text: slider.id).first(:xpath, './/..') do
-        click_on 'Destroy'
+        click_button 'Destroy'
       end
 
       expect(page).not_to(have_content(slider.id))

@@ -47,7 +47,7 @@ RSpec.describe('Admin::AgendaTimes') do
       visit admin_agenda_times_path
 
       within first('td', text: agenda_time.label).first(:xpath, './/..') do
-        click_on 'Destroy'
+        click_button 'Destroy'
       end
 
       expect(page).not_to(have_content(agenda_time.label))

@@ -50,7 +50,7 @@ RSpec.describe('Admin::Sites') do
       visit admin_sites_path
 
       within first('td', text: site.name).first(:xpath, './/..') do
-        click_on 'Destroy'
+        click_button 'Destroy'
       end
 
       expect(page).not_to(have_content(site.name))

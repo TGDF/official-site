@@ -9,5 +9,5 @@ RSpec.describe NewsSideItemComponent, type: :component do
   when_rendered
 
   it { is_expected.to have_link('報名即將開始') }
-  it { is_expected.to have_selector('time', text: '08月31日 00:00') }
+  it { is_expected.to have_css('time', text: '08月31日 00:00') }
 end

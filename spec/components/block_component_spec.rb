@@ -8,12 +8,12 @@ RSpec.describe BlockComponent, type: :component do
   given_a_component { described_class.new(block:) }
   when_rendered
 
-  it { is_expected.to have_selector('.text-block') }
+  it { is_expected.to have_css('.text-block') }
   it { is_expected.to have_text('Hello World') }
 
   context 'when component type is twitch_live' do
     let(:block) { build(:twitch_live_block, content: 'tgdf_offical') }
 
-    it { is_expected.to have_selector('#twitch-embed') }
+    it { is_expected.to have_css('#twitch-embed') }
   end
 end

@@ -9,7 +9,7 @@ RSpec.describe SpeakerListItemComponent, type: :component do
   when_rendered
 
   it { is_expected.to have_link('詹承翰') }
-  it { is_expected.to have_selector('a > img') }
+  it { is_expected.to have_css('a > img') }
 
   context 'when speaker title given' do
     let(:speaker) { create(:speaker, name: '詹承翰', title: '唯晶科技 創辦人暨執行長') }

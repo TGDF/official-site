@@ -49,7 +49,7 @@ RSpec.describe('Admin::News') do
       visit admin_news_index_path
 
       within first('td', text: news.title).first(:xpath, './/..') do
-        click_on 'Destroy'
+        click_button 'Destroy'
       end
 
       expect(page).not_to(have_content(news.title))

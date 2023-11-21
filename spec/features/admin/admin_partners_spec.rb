@@ -50,7 +50,7 @@ RSpec.describe('Admin::Partners') do
       visit admin_partners_path
 
       within first('td', text: partner.name).first(:xpath, './/..') do
-        click_on 'Destroy'
+        click_button 'Destroy'
       end
 
       expect(page).not_to(have_content(partner.name))
