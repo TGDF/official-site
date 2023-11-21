@@ -143,7 +143,7 @@ GEM
       rexml (~> 3.0)
       webrick (~> 1.7)
     cucumber-tag-expressions (4.1.0)
-    database_rewinder (0.9.8)
+    database_rewinder (0.9.9)
     date (3.3.4)
     deep_merge (1.2.2)
     devise (4.9.3)
