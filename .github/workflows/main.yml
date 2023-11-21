@@ -118,7 +118,7 @@ jobs:
         name: simplecov-resultset-cucumber
         path: coverage/
         retention-days: 1
-    - uses: deblockt/cucumber-report-annotations-action@v1.7
+    - uses: deblockt/cucumber-report-annotations-action@v1.12
       with:
         access-token: ${{ secrets.GITHUB_TOKEN }}
         path: "tmp/cucumber-report.json"
