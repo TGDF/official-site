@@ -80,6 +80,9 @@ jobs:
 
   cucumber:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
     services:
         postgres:
           image: postgres
