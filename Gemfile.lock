@@ -226,7 +226,7 @@ GEM
       fog-core
       nokogiri (>= 1.5.11, < 2.0.0)
     formatador (1.1.0)
-    friendly_id (5.4.2)
+    friendly_id (5.5.1)
       activerecord (>= 4.0.0)
     fuubar (2.5.1)
       rspec-core (~> 3.0)
@@ -543,7 +543,7 @@ DEPENDENCIES
   flipper-active_support_cache_store
   flipper-ui
   fog-aws
-  friendly_id (~> 5.4.0)
+  friendly_id (~> 5.5.1)
   fuubar
   gretel
   jsbundling-rails

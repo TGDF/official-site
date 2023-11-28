@@ -43,7 +43,7 @@ gem 'devise'
 
 # Front End
 gem 'cssbundling-rails'
-gem 'friendly_id', '~> 5.4.0'
+gem 'friendly_id', '~> 5.5.1'
 gem 'jsbundling-rails'
 gem 'mobility', '~> 1.0'
 gem 'select2-rails'
