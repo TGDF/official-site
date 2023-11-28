@@ -9,7 +9,7 @@
     "@hotwired/turbo-rails": "^7.2.4",
     "@popperjs/core": "^2.11.8",
     "@rails/ujs": "^7.1.2",
-    "@tailwindcss/typography": "^0.5.8",
+    "@tailwindcss/typography": "^0.5.10",
     "esbuild": "^0.19.8",
     "perfect-scrollbar": "^1.5.0",
     "stimulus-carousel": "^5.0.1",
