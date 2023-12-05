@@ -9,8 +9,8 @@ class BreadcrumbComponent < ViewComponent::Base
   end
 
   def render?
-    return if current_page?('/')
-    return if content_for(:disable_breadcrumb).present?
+    return false if current_page?('/')
+    return false if content_for(:disable_breadcrumb).present?
 
     any?
   end
