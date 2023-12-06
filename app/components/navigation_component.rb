@@ -10,7 +10,27 @@ class NavigationComponent < ViewComponent::Base
     @current_locale = current_locale
   end
 
-  def cfp_only?
+  def closed?
     current_site.cfp_only_mode?
+  end
+
+  def agenda_opened?
+    opened? && !current_site.cfp_on_agenda_mode?
+  end
+
+  def cfp_opened?
+    opened? && current_site.cfp_on_agenda_mode?
+  end
+
+  def opened?
+    !closed?
+  end
+
+  def indie_space?
+    opened? && !current_site.indie_space_disabled?
+  end
+
+  def night_market?
+    opened? && current_site.night_market_enabled?
   end
 end
