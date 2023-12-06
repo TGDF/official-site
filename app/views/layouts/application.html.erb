@@ -14,7 +14,7 @@
   </head>
   <body>
     <header class="sticky top-0 bg-white z-50">
-      <%= render 'shared/nav' %>
+      <%= render NavigationComponent.new(current_site: current_site, current_locale: current_locale) %>
     </header>
     <main>
       <%= render BreadcrumbComponent.new(breadcrumbs: breadcrumbs) %>

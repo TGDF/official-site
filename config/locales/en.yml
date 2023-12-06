@@ -41,20 +41,6 @@ en:
     name:
       zh-TW: 繁體中文
       en: English
-  shared:
-    nav:
-      home: Home
-      news: News
-      speakers: Speakers
-      agenda: Agenda
-      cfp: CFP
-      sponsors: Partners
-      buy_ticket: Register
-      watch_now: Watch Now
-      pre_register: Pre-Register
-      indie_spaces: "Indie Space"
-      night_market: "Nightmarket Festival"
-      code_of_conduct: CoC
   pages:
     index:
       about:
@@ -97,6 +83,8 @@ en:
   indie_spaces:
     index:
       view_video: "View trailer"
+  block_types:
+    night_market: "Nightmarket Festival"
   admin_users:
     sessions:
       new:

@@ -41,21 +41,6 @@ zh-TW:
     name:
       zh-TW: 繁體中文
       en: English
-  shared:
-    nav:
-      home: 首頁
-      news: 新聞
-      speakers: 講者
-      agenda: 議程表
-      cfp: 講題徵集
-      sponsors: 合作夥伴
-      buy_ticket: 立即購票
-      watch_now: 前往參與
-      pre_register: 事前登錄
-      indie_spaces: 獨立遊戲空間
-      night_market: 遊戲夜市
-      code_of_conduct: 活動守則
-      survey: 會後問卷
   pages:
     index:
       about:
@@ -98,6 +83,8 @@ zh-TW:
   indie_spaces:
     index:
       view_video: 觀看影片
+  block_types:
+    night_market: 遊戲夜市
   admin_users:
     sessions:
       new:
