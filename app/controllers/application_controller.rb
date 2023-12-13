@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   include TenantSite
   include Localizable
   include Previewable
+  include NavigationItem
 
   before_action :ensure_site_created!
 

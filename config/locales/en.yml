@@ -2,6 +2,17 @@
 en:
   site_name: "Taipei Game Developers Forum"
   site_introduce: "<p>The official website for Taipei Game Developers Forum.</p>\n"
+  shared:
+    nav:
+      home: Home
+      news: News
+      speakers: Speakers
+      agenda: Agenda
+      cfp: CFP
+      sponsors: Partners
+      indie_spaces: "Indie Space"
+      night_market: "Nightmarket Festival"
+      code_of_conduct: CoC
   ticket:
     type:
       student: "Student Pass"

@@ -5,18 +5,15 @@
   <button class="px-3 py-1 border border-gray-300 rounded lg:hidden" type="button" data-action="navbar#toggle"><i class="fa fa-bars text-lg" aria-hidden="true"></i></button>
   <div data-navbar-target="collapse" class="hidden grow basis-full lg:block lg:flex lg:basis-auto lg:items-center">
     <ul class="flex flex-col lg:flex-row">
-      <%= render NavItemComponent.new(name: t('.home'), path: root_path, visible: opened?) %>
-      <%= render NavItemComponent.new(name: t('.news'), path: news_index_path, visible: opened?) %>
-      <%= render NavItemComponent.new(name: t('.speakers'), path: speakers_path, visible: opened?) %>
-      <%= render NavItemComponent.new(name: t('.cfp'), path: agenda_path, visible: cfp_opened?) %>
-      <%= render NavItemComponent.new(name: t('.agenda'), path: agenda_path, visible: agenda_opened?) %>
-      <%= render NavItemComponent.new(name: t('.sponsors'), path: sponsors_path, visible: opened?) %>
-      <%= render NavItemComponent.new(name: t('.indie_spaces'), path: indie_spaces_path, visible: indie_space?) %>
-      <%= render NavItemComponent.new(name: t('.night_market'), path: night_market_index_path, visible: night_market?) %>
-      <%= render NavItemComponent.new(name: t('.code_of_conduct'), path: code_of_conduct_path) %>
+      <% primary_items.each do |item| %>
+        <%= item %>
+      <% end %>
     </ul>
     <ul class="flex flex-col ml-auto lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2">
       <%= render LanguageSwitchButtonComponent.new(current_locale: current_locale) %>
+      <% secondary_items.each do |item| %>
+        <%= item %>
+      <% end %>
       <% if current_site.streaming_enabled? %>
         <% if current_site.streaming_track_1_url.present? %>
           <%= render NavItemComponent.new(name: t('.watch_now'), path: current_site.streaming_track_1_url, target: '_blank', button: true) %>

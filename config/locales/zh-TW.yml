@@ -2,6 +2,17 @@
 zh-TW:
   site_name: 台北遊戲開發者論壇
   site_introduce: "<p>台北遊戲開發者論壇官方網站。</p>\n"
+  shared:
+    nav:
+      home: 首頁
+      news: 新聞
+      speakers: 講者
+      agenda: 議程表
+      cfp: 講題徵集
+      sponsors: 合作夥伴
+      indie_spaces: 獨立遊戲空間
+      night_market: 遊戲夜市
+      code_of_conduct: 活動守則
   ticket:
     type:
       student: 學生票
