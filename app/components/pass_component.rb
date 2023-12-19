@@ -28,11 +28,11 @@ class PassComponent < ViewComponent::Base
   end
 
   def price
-    @site.send("ticket_#{@plan}_price").to_i
+    @site.send(:"ticket_#{@plan}_price").to_i
   end
 
   def early_price
-    @site.send("ticket_early_#{@plan}_price").to_i
+    @site.send(:"ticket_early_#{@plan}_price").to_i
   end
 
   def informations
