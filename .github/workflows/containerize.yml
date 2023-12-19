@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: "containerize"
+  cancel-in-progress: true
+
 env:
   RUBY_VERSION: '3.2.2'
   RAILS_ENV: production
@@ -51,8 +55,6 @@ jobs:
         with:
           name: assets
           path: public/
-      - name: set up QEMU
-        uses: docker/setup-qemu-action@v2
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Log in to the Container registry
