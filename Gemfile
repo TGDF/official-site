@@ -86,7 +86,7 @@ group :development, :test do
 
   gem 'dotenv-rails'
 
-  gem 'factory_bot_rails', '~> 6.4.2'
+  gem 'factory_bot_rails', '~> 6.4.3'
   gem 'faker'
   gem 'fuubar'
   gem 'rspec-rails'
