@@ -74,9 +74,9 @@ GEM
     bindex (0.8.1)
     bootsnap (1.17.0)
       msgpack (~> 1.2)
-    boxing (0.10.0)
+    boxing (0.11.0)
       bundler (~> 2.0)
-      thor (~> 1.0)
+      zeitwerk (~> 2.6)
     brakeman (6.1.1)
       racc
     builder (3.2.4)
