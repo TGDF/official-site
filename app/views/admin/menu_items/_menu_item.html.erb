@@ -5,7 +5,7 @@
   <td><%= menu_item.visible? %></td>
   <td>
     <div class="d-flex align-items-start">
-      <%= link_to t('.edit'), edit_admin_menu_path(menu_item), class: 'btn btn-primary' %>
-      <%= button_to t('.destroy'), admin_menu_path(menu_item), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') } %>
+      <%= link_to t('.edit'), edit_admin_menu_item_path(menu_item), class: 'btn btn-primary' %>
+      <%= button_to t('.destroy'), admin_menu_item_path(menu_item), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') } %>
     </div>
 </tr>

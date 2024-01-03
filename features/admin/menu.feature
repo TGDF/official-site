@@ -14,3 +14,15 @@ Feature: Manage Menu
       | text     |
       | 立即購票 |
       | 會後問卷 |
+
+  Scenario: Admin can create a new menu item
+    When I visit "/admin"
+    And I click admin sidebar "New" in "Menus"
+    And I fill the "menu_item" form
+      | field | value                |
+      | name  | 立即購票             |
+      | link  | https://example.com |
+    And I click "新增Menu item" button
+    Then I can see these items in table
+      | text     |
+      | 立即購票 |

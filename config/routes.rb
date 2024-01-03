@@ -36,7 +36,7 @@ Rails.application.routes.draw do
 
     resource :profile, only: %i[edit update]
 
-    resources :menus, expect: :show
+    resources :menu_items, expect: :show
     resources :sliders, except: :show
     resources :blocks, except: :show
     resources :plans, except: :show
