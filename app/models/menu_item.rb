@@ -4,6 +4,8 @@ class MenuItem < ApplicationRecord
   translates :name
   translates :link
 
+  validates :name, :link, :menu_id, presence: true
+
   enum menu_id: {
     secondary: :secondary
   }
