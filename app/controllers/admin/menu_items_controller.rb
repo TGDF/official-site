@@ -31,7 +31,7 @@ module Admin
 
     def destroy
       @menu_item.destroy
-      redirect_to admin_menus_path
+      redirect_to admin_menu_items_path
     end
 
     private
