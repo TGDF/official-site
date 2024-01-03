@@ -25,7 +25,7 @@ module NavigationItem
   end
 
   def secondary_menu_items
-    @secondary_menu_items ||= menu_query.execute
+    @secondary_menu_items ||= menu_query.execute(:secondary)
   end
 
   def closed?

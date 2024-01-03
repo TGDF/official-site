@@ -16,4 +16,11 @@ Feature: Menu
     And I can not see "議程表" in menu
     And I can not see "合作夥伴" in menu
 
-
+  Scenario: The secondary menu can be customize
+    Given there have a "secondary" menu with
+      | name     | link                | visible |
+      | 立即購票 | https://example.com | yes     |
+      | 會後問卷 | https://example.com | no      |
+    When I visit "/"
+    Then I can see "立即購票" in menu
+    And I can not see "會後問卷" in menu
