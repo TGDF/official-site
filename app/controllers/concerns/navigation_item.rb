@@ -25,7 +25,9 @@ module NavigationItem
   end
 
   def secondary_menu_items
-    @secondary_menu_items ||= menu_query.execute(:secondary)
+    @secondary_menu_items ||= menu_query.execute(:secondary).map do |item|
+      { **item, button: true }
+    end
   end
 
   def closed?
