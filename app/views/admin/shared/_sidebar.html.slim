@@ -19,6 +19,8 @@ aside.c-sidebar.c-sidebar-dark.c-sidebar-fixed.c-sidebar-lg-show
       = admin_sidebar_item t('.list'), admin_blocks_path, icon: 'list'
       = admin_sidebar_item t('.new'), new_admin_block_path, icon: 'plus'
     - if tenant_site?
+      = admin_sidebar_treeview t('.menus'), icon: 'bars' do
+        = admin_sidebar_item t('.list'), admin_menus_path, icon: 'list'
       = admin_sidebar_treeview t('.plans'), icon: 'cube' do
         = admin_sidebar_item t('.list'), admin_plans_path, icon: 'list'
         = admin_sidebar_item t('.new'), new_admin_plan_path, icon: 'plus'
