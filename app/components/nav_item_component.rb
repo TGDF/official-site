@@ -16,11 +16,19 @@ class NavItemComponent < ViewComponent::Base
   end
 
   def render?
-    @visible == true
+    valid? && visible?
   end
 
   def button?
     @button == true
+  end
+
+  def visible?
+    @visible == true
+  end
+
+  def valid?
+    @name.present? && @path.present?
   end
 
   def style
