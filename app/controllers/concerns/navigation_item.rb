@@ -4,6 +4,8 @@ module NavigationItem
   extend ActiveSupport::Concern
 
   included do
+    include Tgdf::Deps['menu_query']
+
     helper_method :primary_menu_items
     helper_method :secondary_menu_items
   end
@@ -23,7 +25,7 @@ module NavigationItem
   end
 
   def secondary_menu_items
-    @secondary_menu_items ||= MenuQuery.new.execute
+    @secondary_menu_items ||= menu_query.execute
   end
 
   def closed?

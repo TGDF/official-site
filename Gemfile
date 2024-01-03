@@ -65,6 +65,9 @@ gem 'flipper-active_record'
 gem 'flipper-active_support_cache_store'
 gem 'flipper-ui'
 
+# Architecture
+gem 'dry-rails', '~> 0.7'
+
 # Utilities
 gem 'carrierwave'
 gem 'fog-aws'
