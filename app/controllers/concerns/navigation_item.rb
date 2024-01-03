@@ -5,6 +5,7 @@ module NavigationItem
 
   included do
     helper_method :primary_menu_items
+    helper_method :secondary_menu_items
   end
 
   def primary_menu_items # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -19,6 +20,10 @@ module NavigationItem
       { name: t('shared.nav.night_market'), path: night_market_index_path, visible: night_market? },
       { name: t('shared.nav.code_of_conduct'), path: code_of_conduct_path }
     ]
+  end
+
+  def secondary_menu_items
+    @secondary_menu_items ||= MenuQuery.new.execute
   end
 
   def closed?

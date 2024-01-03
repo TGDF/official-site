@@ -16,6 +16,7 @@
     <header class="sticky top-0 bg-white z-50">
       <%= render NavigationComponent.new(current_site: current_site, current_locale: current_locale) do |c| %>
         <% c.with_primary_items(primary_menu_items) %>
+        <% c.with_secondary_items(secondary_menu_items) %>
       <% end %>
     </header>
     <main>
