@@ -16,7 +16,7 @@ RSpec.describe NewsThumbnailComponent, type: :component do
   context 'when size is small square' do
     let(:component) { described_class.new(news:, size: :small_square) }
 
-    it { is_expected.not_to have_css('.datetime', text: 'Aug') }
-    it { is_expected.not_to have_css('.datetime', text: '31') }
+    it { is_expected.to have_no_css('.datetime', text: 'Aug') }
+    it { is_expected.to have_no_css('.datetime', text: '31') }
   end
 end

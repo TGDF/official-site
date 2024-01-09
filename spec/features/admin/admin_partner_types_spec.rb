@@ -21,7 +21,7 @@ RSpec.describe('Admin::PartnerTypes') do
     it 'can add new partner type' do
       visit new_admin_partner_type_path
       fill_in 'partner_type_name', with: 'Example'
-      click_button '新增Partner type'
+      click_on '新增Partner type'
       expect(page).to(have_content('Example'))
     end
   end
@@ -32,7 +32,7 @@ RSpec.describe('Admin::PartnerTypes') do
     it 'can edit partner type' do
       visit edit_admin_partner_type_path(type)
       fill_in 'partner_type_name', with: 'New Type Name'
-      click_button '更新Partner type'
+      click_on '更新Partner type'
       expect(page).to(have_content('New Type Name'))
     end
   end
@@ -44,10 +44,10 @@ RSpec.describe('Admin::PartnerTypes') do
       visit admin_partner_types_path
 
       within first('td', text: type.name).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(type.name))
+      expect(page).to(have_no_content(type.name))
     end
   end
 end

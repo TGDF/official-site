@@ -26,7 +26,7 @@ RSpec.describe('Admin::Speakers') do
         'speaker_avatar',
         Rails.root.join('spec/support/avatars/Aotoki.jpg')
       )
-      click_button '新增Speaker'
+      click_on '新增Speaker'
     end
 
     it { expect(page).to(have_content('Example')) }
@@ -36,7 +36,7 @@ RSpec.describe('Admin::Speakers') do
     it 'can edit speaker' do
       visit edit_admin_speaker_path(speaker)
       fill_in 'speaker_name', with: 'New speaker Name'
-      click_button '更新Speaker'
+      click_on '更新Speaker'
       expect(page).to(have_content('New speaker Name'))
     end
   end
@@ -48,10 +48,10 @@ RSpec.describe('Admin::Speakers') do
       visit admin_speakers_path
 
       within first('td', text: speaker.name).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(speaker.name))
+      expect(page).to(have_no_content(speaker.name))
     end
   end
 end

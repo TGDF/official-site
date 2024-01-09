@@ -26,7 +26,7 @@ RSpec.describe('Admin::Sites') do
       fill_in 'site_name', with: 'Example'
       fill_in 'site_domain', with: 'example.com'
       fill_in 'site_tenant_name', with: 'example'
-      click_button '新增Site'
+      click_on '新增Site'
     end
 
     it 'is expected to create a new site', pending: 'root tentant not resloved' do
@@ -38,7 +38,7 @@ RSpec.describe('Admin::Sites') do
     it 'can edit site', pending: 'root tentant not resloved' do
       visit edit_admin_site_path(site)
       fill_in 'site_name', with: 'New Site Name'
-      click_button '更新Site'
+      click_on '更新Site'
       expect(page).to(have_content('New Site Name'))
     end
   end
@@ -50,10 +50,10 @@ RSpec.describe('Admin::Sites') do
       visit admin_sites_path
 
       within first('td', text: site.name).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(site.name))
+      expect(page).to(have_no_content(site.name))
     end
   end
 end

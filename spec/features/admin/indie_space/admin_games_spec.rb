@@ -27,7 +27,7 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
         'indie_space_game_thumbnail',
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
-      click_button '新增Game'
+      click_on '新增Game'
     end
 
     it { expect(page).to(have_content('Example')) }
@@ -41,7 +41,7 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
         'indie_space_game_thumbnail',
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
-      click_button '更新Game'
+      click_on '更新Game'
       expect(page).to(have_content('New Game Name'))
     end
   end
@@ -53,10 +53,10 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
       visit admin_indie_space_games_path
 
       within first('td', text: game.name).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(game.name))
+      expect(page).to(have_no_content(game.name))
     end
   end
 end

@@ -21,7 +21,7 @@ RSpec.describe('Admin::SponsorLevels') do
     it 'can add new sponsor level' do
       visit new_admin_sponsor_level_path
       fill_in 'sponsor_level_name', with: 'Example'
-      click_button '新增Sponsor level'
+      click_on '新增Sponsor level'
       expect(page).to(have_content('Example'))
     end
   end
@@ -32,7 +32,7 @@ RSpec.describe('Admin::SponsorLevels') do
     it 'can edit sponsor level' do
       visit edit_admin_sponsor_level_path(level)
       fill_in 'sponsor_level_name', with: 'New Level Name'
-      click_button '更新Sponsor level'
+      click_on '更新Sponsor level'
       expect(page).to(have_content('New Level Name'))
     end
   end
@@ -44,10 +44,10 @@ RSpec.describe('Admin::SponsorLevels') do
       visit admin_sponsor_levels_path
 
       within first('td', text: level.name).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(level.name))
+      expect(page).to(have_no_content(level.name))
     end
   end
 end

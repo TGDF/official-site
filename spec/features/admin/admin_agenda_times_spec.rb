@@ -24,7 +24,7 @@ RSpec.describe('Admin::AgendaTimes') do
       visit new_admin_agenda_time_path
       fill_in 'agenda_time_label', with: 'Example'
       select agenda_day.name, from: 'agenda_time_day_id'
-      click_button '新增Agenda time'
+      click_on '新增Agenda time'
       expect(page).to(have_content('Example'))
     end
   end
@@ -35,7 +35,7 @@ RSpec.describe('Admin::AgendaTimes') do
     it 'can edit agenda_time' do
       visit edit_admin_agenda_time_path(agenda_time)
       fill_in 'agenda_time_label', with: 'New agenda_time Label'
-      click_button '更新Agenda time'
+      click_on '更新Agenda time'
       expect(page).to(have_content('New agenda_time Label'))
     end
   end
@@ -47,10 +47,10 @@ RSpec.describe('Admin::AgendaTimes') do
       visit admin_agenda_times_path
 
       within first('td', text: agenda_time.label).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(agenda_time.label))
+      expect(page).to(have_no_content(agenda_time.label))
     end
   end
 end

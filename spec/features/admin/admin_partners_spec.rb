@@ -28,7 +28,7 @@ RSpec.describe('Admin::Partners') do
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       select type.name, from: 'partner_type_id'
-      click_button '新增Partner'
+      click_on '新增Partner'
     end
 
     it { expect(page).to(have_content('Example')) }
@@ -38,7 +38,7 @@ RSpec.describe('Admin::Partners') do
     it 'can edit partner' do
       visit edit_admin_partner_path(partner)
       fill_in 'partner_name', with: 'New Partner Name'
-      click_button '更新Partner'
+      click_on '更新Partner'
       expect(page).to(have_content('New Partner Name'))
     end
   end
@@ -50,10 +50,10 @@ RSpec.describe('Admin::Partners') do
       visit admin_partners_path
 
       within first('td', text: partner.name).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(partner.name))
+      expect(page).to(have_no_content(partner.name))
     end
   end
 end

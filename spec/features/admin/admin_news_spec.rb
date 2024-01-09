@@ -27,7 +27,7 @@ RSpec.describe('Admin::News') do
         'news_thumbnail',
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
-      click_button '新增News'
+      click_on '新增News'
     end
 
     it { expect(page).to(have_content('Example')) }
@@ -37,7 +37,7 @@ RSpec.describe('Admin::News') do
     it 'can edit news' do
       visit edit_admin_news_path(news)
       fill_in 'news_title', with: 'New News Name'
-      click_button '更新News'
+      click_on '更新News'
       expect(page).to(have_content('New News Name'))
     end
   end
@@ -49,10 +49,10 @@ RSpec.describe('Admin::News') do
       visit admin_news_index_path
 
       within first('td', text: news.title).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(news.title))
+      expect(page).to(have_no_content(news.title))
     end
   end
 

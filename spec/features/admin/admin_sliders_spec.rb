@@ -24,7 +24,7 @@ RSpec.describe('Admin::Sliders', level: :feature) do
         'slider_image',
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
-      click_button '新增Slider'
+      click_on '新增Slider'
     end
 
     it { expect(page).to(have_css("img[src*='TGDF.png']")) }
@@ -37,7 +37,7 @@ RSpec.describe('Admin::Sliders', level: :feature) do
         'slider_image',
         Rails.root.join('spec/support/sliders/slide_1.jpg')
       )
-      click_button '更新Slider'
+      click_on '更新Slider'
     end
 
     it { expect(page).to(have_css("img[src*='slide_1.jpg']")) }
@@ -50,10 +50,10 @@ RSpec.describe('Admin::Sliders', level: :feature) do
       visit admin_sliders_path
 
       within first('td', text: slider.id).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(slider.id))
+      expect(page).to(have_no_content(slider.id))
     end
   end
 end

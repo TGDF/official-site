@@ -25,7 +25,7 @@ RSpec.describe('Admin::Sponsors', level: :feature) do
       fill_in 'sponsor_name', with: 'Example'
       attach_file('sponsor_logo', Rails.root.join('spec/support/brands/logos/TGDF.png'))
       select level.name, from: 'sponsor_level_id'
-      click_button '新增Sponsor'
+      click_on '新增Sponsor'
     end
 
     it { expect(page).to(have_content('Example')) }
@@ -35,7 +35,7 @@ RSpec.describe('Admin::Sponsors', level: :feature) do
     it 'can edit sponsor' do
       visit edit_admin_sponsor_path(sponsor)
       fill_in 'sponsor_name', with: 'New sponsor Name'
-      click_button '更新Sponsor'
+      click_on '更新Sponsor'
       expect(page).to(have_content('New sponsor Name'))
     end
   end
@@ -47,10 +47,10 @@ RSpec.describe('Admin::Sponsors', level: :feature) do
       visit admin_sponsors_path
 
       within first('td', text: sponsor.name).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(sponsor.name))
+      expect(page).to(have_no_content(sponsor.name))
     end
   end
 end

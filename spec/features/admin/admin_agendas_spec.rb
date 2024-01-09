@@ -22,7 +22,7 @@ RSpec.describe('Admin::Agendas') do
       visit new_admin_agenda_path
       fill_in 'agenda_subject', with: 'Example'
       fill_in 'agenda_description', with: 'Example Content'
-      click_button '新增Agenda'
+      click_on '新增Agenda'
       expect(page).to(have_content('Example'))
     end
   end
@@ -31,7 +31,7 @@ RSpec.describe('Admin::Agendas') do
     it 'can edit agenda' do
       visit edit_admin_agenda_path(agenda)
       fill_in 'agenda_subject', with: 'New agenda Name'
-      click_button '更新Agenda'
+      click_on '更新Agenda'
       expect(page).to(have_content('New agenda Name'))
     end
   end
@@ -43,10 +43,10 @@ RSpec.describe('Admin::Agendas') do
       visit admin_agendas_path
 
       within first('td', text: agenda.subject).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(agenda.subject))
+      expect(page).to(have_no_content(agenda.subject))
     end
   end
 end

@@ -21,7 +21,7 @@ RSpec.describe('Admin::Rooms') do
     it 'can add new room' do
       visit new_admin_room_path
       fill_in 'room_name', with: 'Example'
-      click_button '新增Room'
+      click_on '新增Room'
       expect(page).to(have_content('Example'))
     end
   end
@@ -32,7 +32,7 @@ RSpec.describe('Admin::Rooms') do
     it 'can edit room' do
       visit edit_admin_room_path(room)
       fill_in 'room_name', with: 'New room Name'
-      click_button '更新Room'
+      click_on '更新Room'
       expect(page).to(have_content('New room Name'))
     end
   end
@@ -44,10 +44,10 @@ RSpec.describe('Admin::Rooms') do
       visit admin_rooms_path
 
       within first('td', text: room.name).first(:xpath, './/..') do
-        click_button 'Destroy'
+        click_on 'Destroy'
       end
 
-      expect(page).not_to(have_content(room.name))
+      expect(page).to(have_no_content(room.name))
     end
   end
 end

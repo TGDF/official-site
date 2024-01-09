@@ -12,7 +12,7 @@ RSpec.describe('Admin::Profiles') do
       visit edit_admin_profile_path
       fill_in 'admin_user_password', with: 'new_password'
       fill_in 'admin_user_password_confirmation', with: 'new_password'
-      click_button '更新Admin user'
+      click_on '更新Admin user'
       expect(page).to(have_content('Dashboard'))
     end
   end
