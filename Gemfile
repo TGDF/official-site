@@ -35,6 +35,7 @@ gem 'config'
 gem 'rails-i18n'
 
 # Multi-Tenancy
+gem 'acts_as_tenant'
 gem 'ros-apartment', require: 'apartment'
 
 # User
