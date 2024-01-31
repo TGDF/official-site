@@ -73,6 +73,7 @@ gem 'dry-rails', '~> 0.7'
 gem 'carrierwave'
 gem 'fog-aws'
 gem 'gretel'
+gem 'irb'
 gem 'liveness'
 gem 'mini_magick'
 gem 'oj'
@@ -115,7 +116,7 @@ group :development do
 
   gem 'overcommit', require: false
 
-  gem 'pry-rails'
+  gem 'amazing_print'
 
   gem 'boxing'
 end
