@@ -3,6 +3,7 @@
 class Slider < ApplicationRecord
   include HasTranslation
 
+  acts_as_tenant :site, optional: true, has_global_records: true
   mount_uploader :image, SliderUploader
 
   enum language: {
