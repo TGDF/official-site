@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_31_125057) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_31_125539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -198,6 +198,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_125057) do
     t.jsonb "button_target", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "site_id"
   end
 
   create_table "rooms", force: :cascade do |t|
