@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_31_124727) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_31_125057) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -151,6 +151,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_124727) do
     t.boolean "visible", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "site_id"
+    t.index ["site_id"], name: "index_menu_items_on_site_id"
   end
 
   create_table "news", force: :cascade do |t|
