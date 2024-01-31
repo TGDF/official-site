@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_31_122838) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_31_124727) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -139,6 +139,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_122838) do
     t.string "website"
     t.integer "order", default: 0
     t.string "type"
+    t.bigint "site_id"
+    t.index ["site_id"], name: "index_games_on_site_id"
   end
 
   create_table "menu_items", force: :cascade do |t|
