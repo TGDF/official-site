@@ -3,6 +3,8 @@
 class Block < ApplicationRecord
   include HasTranslation
 
+  acts_as_tenant :site, optional: true, has_global_records: true
+
   enum language: {
     'zh-TW': 'zh-TW',
     en: 'en'
