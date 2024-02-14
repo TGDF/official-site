@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_31_125716) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_14_115431) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -251,6 +251,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_125716) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "order", default: 0
+    t.bigint "site_id"
   end
 
   create_table "sponsors", force: :cascade do |t|
@@ -262,7 +263,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_125716) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "order", default: 0
     t.jsonb "description"
+    t.bigint "site_id"
     t.index ["level_id"], name: "index_sponsors_on_level_id"
+    t.index ["site_id", "level_id"], name: "index_sponsors_on_site_id_and_level_id"
   end
 
   add_foreign_key "agenda_times", "agenda_days", column: "day_id"

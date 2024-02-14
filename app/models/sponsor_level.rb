@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SponsorLevel < ApplicationRecord
+  acts_as_tenant :site, optional: true, has_global_records: true
+
   translates :name
 
   has_many :sponsors, dependent: :destroy, foreign_key: :level_id,
