@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_14_115431) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_21_082704) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -177,6 +177,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_14_115431) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "order", default: 0
+    t.bigint "site_id"
   end
 
   create_table "partners", force: :cascade do |t|
@@ -188,6 +189,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_14_115431) do
     t.string "url"
     t.integer "order", default: 0
     t.jsonb "description"
+    t.bigint "site_id"
+    t.index ["site_id", "type_id"], name: "index_partners_on_site_id_and_type_id"
     t.index ["type_id"], name: "index_partners_on_type_id"
   end
 

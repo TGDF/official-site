@@ -7,7 +7,6 @@ Given('there are some sponsor levels') do |table|
 end
 
 Given('there are some sponsors') do |table|
-  pp SponsorLevel.all
   table.hashes.each do |attr|
     attr['level'] = SponsorLevel.i18n.find_by!(name: attr.delete('level'))
     attr['logo'] = uploaded_thumbnail(attr['logo'])
