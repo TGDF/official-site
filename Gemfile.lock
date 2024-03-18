@@ -141,7 +141,7 @@ GEM
       cucumber (>= 5, < 10)
       railties (>= 5.2, < 8)
     cucumber-tag-expressions (5.0.6)
-    database_rewinder (1.0.0)
+    database_rewinder (1.0.1)
     date (3.3.4)
     deep_merge (1.2.2)
     devise (4.9.3)
