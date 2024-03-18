@@ -15,6 +15,13 @@ module.exports = {
       fontFamily: {
         'sans': ['Noto Sans TC', ...defaultTheme.fontFamily.sans],
       },
+      typography: (theme) => ({
+        white: {
+          css: {
+            color: theme('colors.white'),
+          }
+        }
+      }),
     }
   }
 }

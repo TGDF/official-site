@@ -10,7 +10,7 @@
     <div class="flex-1">
       <h1 class="my-2 font-semibold text-2xl"><%= @speaker.name %></h1>
       <span class="text-red-500"><%= @speaker.title %></span>
-      <div class="my-4 space-y-4">
+      <div class="my-4 space-y-4 prose">
         <%= sanitize @speaker.description %>
       </div>
     </div>
@@ -44,7 +44,7 @@
             <% end %>
           <% end %>
         </div>
-        <div class="my-4 space-y-4">
+        <div class="my-4 space-y-4 prose prose-white">
           <%= sanitize agenda.description %>
         </div>
       </article>
