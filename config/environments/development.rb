@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.configure do
-  config.hosts << '.tgdf.test'
+  config.hosts << '.tgdf.localhost'
 
   # Settings specified here will take precedence over those in config/application.rb.
 
