@@ -18,7 +18,9 @@ module.exports = {
       typography: (theme) => ({
         white: {
           css: {
-            color: theme('colors.white'),
+            '--tw-prose-body': theme('colors.white'),
+            '--tw-prose-counters': theme('colors.white'),
+            '--tw-prose-bullets': theme('colors.white'),
           }
         }
       }),
