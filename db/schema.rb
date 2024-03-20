@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_20_121148) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_20_122137) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -98,6 +98,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_20_121148) do
     t.string "file"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.bigint "site_id"
+    t.index ["site_id"], name: "index_attachments_on_site_id"
   end
 
   create_table "blocks", force: :cascade do |t|
