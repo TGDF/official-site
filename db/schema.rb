@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_20_122137) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_20_122349) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,12 +40,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_20_122137) do
     t.date "date", default: -> { "now()" }, null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.bigint "site_id"
+    t.index ["site_id"], name: "index_agenda_days_on_site_id"
   end
 
   create_table "agenda_tags", force: :cascade do |t|
     t.jsonb "name"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.bigint "site_id"
+    t.index ["site_id"], name: "index_agenda_tags_on_site_id"
   end
 
   create_table "agenda_times", force: :cascade do |t|
@@ -55,7 +59,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_20_122137) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "day_id"
     t.boolean "single"
+    t.bigint "site_id"
     t.index ["day_id"], name: "index_agenda_times_on_day_id"
+    t.index ["site_id"], name: "index_agenda_times_on_site_id"
   end
 
   create_table "agendas", force: :cascade do |t|
@@ -71,7 +77,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_20_122137) do
     t.integer "translated_type"
     t.string "begin_at"
     t.string "end_at"
+    t.bigint "site_id"
     t.index ["room_id"], name: "index_agendas_on_room_id"
+    t.index ["site_id"], name: "index_agendas_on_site_id"
     t.index ["time_id"], name: "index_agendas_on_time_id"
   end
 
@@ -80,7 +88,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_20_122137) do
     t.bigint "speaker_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.bigint "site_id"
     t.index ["agenda_id"], name: "index_agendas_speakers_on_agenda_id"
+    t.index ["site_id"], name: "index_agendas_speakers_on_site_id"
     t.index ["speaker_id"], name: "index_agendas_speakers_on_speaker_id"
   end
 
@@ -89,6 +99,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_20_122137) do
     t.bigint "agenda_tag_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.bigint "site_id"
+    t.index ["site_id"], name: "index_agendas_taggings_on_site_id"
   end
 
   create_table "attachments", force: :cascade do |t|

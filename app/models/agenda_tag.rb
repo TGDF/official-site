@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AgendaTag < ApplicationRecord
+  acts_as_tenant :site, optional: true, has_global_records: true
+
   translates :name
 
   has_many :taggings, class_name: 'AgendasTagging', dependent: :destroy
