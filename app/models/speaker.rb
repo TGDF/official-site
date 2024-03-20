@@ -3,6 +3,7 @@
 class Speaker < ApplicationRecord
   extend FriendlyId
 
+  acts_as_tenant :site, optional: true, has_global_records: true
   translates :name, :title, :description
   friendly_id :name, use: :slugged
 

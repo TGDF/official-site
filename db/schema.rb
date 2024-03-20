@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_21_082704) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_20_121148) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -246,6 +246,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_21_082704) do
     t.jsonb "title"
     t.integer "order", default: 0
     t.string "slug"
+    t.bigint "site_id"
+    t.index ["site_id", "slug"], name: "index_speakers_on_site_id_and_slug", unique: true
     t.index ["slug"], name: "index_speakers_on_slug", unique: true
   end
 
