@@ -103,7 +103,7 @@ group :development, :test do
   gem 'capybara-selenium', require: false
 
   gem 'brakeman', require: false
-  gem 'rubocop', '~> 1.62.1', require: false
+  gem 'rubocop', '~> 1.63.0', require: false
   gem 'rubocop-capybara', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
