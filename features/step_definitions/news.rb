@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Given('There are some news') do |table|
+Given('there are some news') do |table|
   author = create(:admin_user)
 
   table.hashes.each do |attributes|
