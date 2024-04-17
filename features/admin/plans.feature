@@ -1,6 +1,6 @@
 Feature: Manage Plans
 
-Background:
+  Background:
     Given an user logged as admin
 
   Scenario: Admin User can see a list of plans
