@@ -26,7 +26,7 @@ RUN bundle exec bootsnap precompile --gemfile app/ lib/
 FROM ruby:${RUBY_VERSION}-alpine
 ARG APP_ROOT
 
-RUN apk add --no-cache curl shared-mime-info tzdata postgresql-libs imagemagick imagemagick-libs
+RUN apk add --no-cache curl shared-mime-info tzdata postgresql-libs imagemagick imagemagick-jpeg
 
 COPY --from=base /usr/local/bundle/config /usr/local/bundle/config
 COPY --from=base /usr/local/bundle /usr/local/bundle
