@@ -5,9 +5,9 @@ Feature: Manage Plans
 
   Scenario: Admin User can see a list of plans
     Given there are some plans
-      | name   | content                   | button_label |
-      | 自訂票 | <strong>強調顯示</strong> | 立即預留     |
-      | 學生票 | <strong>強調顯示</strong> | 立即預留     |
+      | name   | content                   | button_label | order |
+      | 自訂票 | <strong>強調顯示</strong> | 立即預留     | 1     |
+      | 學生票 | <strong>強調顯示</strong> | 立即預留     | 2     |
     When I visit "/admin"
     And I click admin sidebar "List" in "Plans"
     Then I can see these items in table
@@ -24,6 +24,7 @@ Feature: Manage Plans
       | content       | 測試內容         |
       | button_label  | 立即購票         |
       | button_target | https://tgdf.tw/ |
+      | order         | 1                |
     And I click "新增Plan" button
     Then I can see these items in table
       | text   |

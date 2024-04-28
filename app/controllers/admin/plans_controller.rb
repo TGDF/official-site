@@ -5,7 +5,7 @@ module Admin
     before_action :find_plan, except: %i[index new create]
 
     def index
-      @plans = Plan.all
+      @plans = Plan.ordered
     end
 
     def new
@@ -39,7 +39,7 @@ module Admin
     def plan_params
       params
         .require(:plan)
-        .permit(:name, :content, :button_label, :button_target)
+        .permit(:name, :content, :button_label, :button_target, :order)
     end
 
     def find_plan

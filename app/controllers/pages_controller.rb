@@ -5,7 +5,7 @@ class PagesController < ApplicationController
     @news = News.published.latest
                 .limit(Settings.news.latest.size)
     @sliders = Slider.localized.home
-    @plans = Plan.all
+    @plans = Plan.ordered
     @partners_and_sponsors = (Partner.all + Sponsor.all)
   end
 

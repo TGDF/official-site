@@ -6,4 +6,6 @@ class Plan < ApplicationRecord
   translates :name, :content, :button_label, :button_target
 
   validates :name, presence: true
+
+  scope :ordered, -> { order(order: :asc) }
 end
