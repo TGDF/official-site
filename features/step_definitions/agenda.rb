@@ -11,3 +11,16 @@ Given('there are some agenda rooms') do |table|
     Room.create!(room)
   end
 end
+
+Given('there are some agenda days') do |table|
+  table.hashes.each do |day|
+    AgendaDay.create!(day)
+  end
+end
+
+Given('there are some agenda times') do |table|
+  table.hashes.each do |time|
+    time['day'] = AgendaDay.find_by(label: time.delete('day'))
+    AgendaTime.create!(time)
+  end
+end
