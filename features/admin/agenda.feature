@@ -240,3 +240,52 @@ Feature: Manage Agenda
     Then I should not see in the table
       | text              |
       | 08:00-09:00       |
+
+  Scenario: Admin User can see a list of agenda items
+    Given there are some agenda
+      | subject                 | description                     |
+      | The Game and AI in 2024 | Discuss the game and AI in 2024 |
+    When I visit "/admin"
+    And I click admin sidebar "List" in "Agenda"
+    Then I can see these items in table
+      | text                    |
+      | The Game and AI in 2024 |
+
+  Scenario: Admin User can create a new agenda item
+    When I visit "/admin"
+    And I click admin sidebar "New" in "Agenda"
+    And I fill the "agenda" form
+      | field       | value                           |
+      | subject     | The Game and AI in 2024         |
+      | description | Discuss the game and AI in 2024 |
+    And I click "新增Agenda"
+    Then I can see these items in table
+      | text                    |
+      | The Game and AI in 2024 |
+
+  Scenario: Admin User can edit an agenda item
+    Given there are some agenda
+      | subject                 | description                     |
+      | The Game and AI in 2024 | Discuss the game and AI in 2024 |
+    When I visit "/admin"
+    And I click admin sidebar "List" in "Agenda"
+    And I click "Edit" on row "The Game and AI in 2024"
+    And I fill the "agenda" form
+      | field       | value                           |
+      | subject     | The Game and AI in 2025         |
+      | description | Discuss the game and AI in 2025 |
+    And I click "更新Agenda"
+    Then I can see these items in table
+      | text                    |
+      | The Game and AI in 2025 |
+
+  Scenario: Admin User can delete an agenda item
+    Given there are some agenda
+      | subject                 | description                     |
+      | The Game and AI in 2024 | Discuss the game and AI in 2024 |
+    When I visit "/admin"
+    And I click admin sidebar "List" in "Agenda"
+    And I click "Destroy" on row "The Game and AI in 2024"
+    Then I should not see in the table
+      | text                    |
+      | The Game and AI in 2024 |

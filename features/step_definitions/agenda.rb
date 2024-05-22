@@ -24,3 +24,9 @@ Given('there are some agenda times') do |table|
     AgendaTime.create!(time)
   end
 end
+
+Given('there are some agenda') do |table|
+  table.hashes.each do |agenda|
+    Agenda.create!(agenda)
+  end
+end
