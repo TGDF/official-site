@@ -143,6 +143,9 @@ GEM
     cucumber-tag-expressions (5.0.6)
     database_rewinder (1.0.1)
     date (3.3.4)
+    debug (1.9.2)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
     deep_merge (1.2.2)
     devise (4.9.4)
       bcrypt (~> 3.0)
@@ -571,6 +574,7 @@ DEPENDENCIES
   cssbundling-rails
   cucumber-rails
   database_rewinder
+  debug
   devise
   dotenv-rails
   dry-rails (~> 0.7)

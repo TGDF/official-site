@@ -112,6 +112,8 @@ group :development, :test do
 end
 
 group :development do
+  gem 'debug'
+
   gem 'lookbook'
   gem 'web-console', '>= 3.3.0'
 
