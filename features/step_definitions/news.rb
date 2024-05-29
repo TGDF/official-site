@@ -13,3 +13,9 @@ Then('I can see some news') do |table|
     expect(page).to have_content(news[:title])
   end
 end
+
+Then("I can't see the unpublished news") do |table|
+  table.hashes.each do |news|
+    expect(page).to have_no_content(news[:title])
+  end
+end
