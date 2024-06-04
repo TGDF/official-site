@@ -11,7 +11,7 @@ end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 # NOTE: dry-rails not support Rails 7.1: https://github.com/dry-rb/dry-rails/issues/53
-gem 'rails', '~> 7.0.8'
+gem 'rails', '~> 7.1.3'
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'sprockets-rails'
 
