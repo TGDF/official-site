@@ -4,8 +4,6 @@ module NavigationItem
   extend ActiveSupport::Concern
 
   included do
-    include Tgdf::Deps['menu_query']
-
     helper_method :primary_menu_items
     helper_method :secondary_menu_items
   end
@@ -52,5 +50,9 @@ module NavigationItem
 
   def night_market?
     opened? && current_site.night_market_enabled?
+  end
+
+  def menu_query
+    @menu_query ||= Tgdf::Container['menu_query']
   end
 end
