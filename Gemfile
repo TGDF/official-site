@@ -61,6 +61,7 @@ gem 'sitemap_generator'
 # Monitor
 gem 'sentry-rails'
 gem 'sentry-ruby'
+gem 'stackprof'
 
 # Feature
 gem 'flipper-active_record'

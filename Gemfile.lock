@@ -527,6 +527,7 @@ GEM
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
     ssrf_filter (1.1.2)
+    stackprof (0.2.26)
     store_attribute (1.2.0)
       activerecord (>= 6.0)
     stringio (3.1.1)
@@ -631,6 +632,7 @@ DEPENDENCIES
   sitemap_generator
   slim-rails
   sprockets-rails
+  stackprof
   store_attribute (~> 1.2)
   turbo-rails
   tzinfo-data
