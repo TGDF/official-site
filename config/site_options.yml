@@ -59,7 +59,7 @@ development:
 test:
   <<: *default
 
-staging:
+beta:
   <<: *default
 
 production:
