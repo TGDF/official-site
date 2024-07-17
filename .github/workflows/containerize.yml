@@ -12,7 +12,7 @@ concurrency:
 env:
   RUBY_VERSION: '3.3.2'
   RAILS_ENV: production
-  SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+  SECRET_KEY_BASE_DUMMY: 1
   REGISTRY: ghcr.io
   IMAGE_NAME: tgdf/official-site
 

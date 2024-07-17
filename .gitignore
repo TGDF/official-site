@@ -52,3 +52,6 @@ yarn-debug.log*
 # Nix
 .direnv/
 .envrc
+
+/config/master.key
+/config/credentials/*.key
