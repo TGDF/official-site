@@ -491,10 +491,10 @@
     ckeditor5 "42.0.1"
     lodash-es "4.17.21"
 
-"@coreui/coreui@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@coreui/coreui/-/coreui-3.4.0.tgz#3e3627a1f48a00f6289204a23f71eaa6ea94e370"
-  integrity sha512-WqzockdWVkXUNmNwlqdu+AxM+9JoiWGe4rKaySu/dZme1NvVOn2ukjJlpTkssal8UKcSHyitzNixtkMCmUxE1A==
+"@coreui/coreui@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@coreui/coreui/-/coreui-5.1.0.tgz#1cae8f0344d5cb6d4812b28aed908806d6f51875"
+  integrity sha512-3t8Ekib5pUVYp6mpCvXL9oGyFJ9znFqWWHwxUjKD8QHW0JMJ2znjS5oADICQ+xvWaK6ATgwIipjQGi7lQ819MA==
 
 "@coreui/icons@^3.0.1":
   version "3.0.1"
