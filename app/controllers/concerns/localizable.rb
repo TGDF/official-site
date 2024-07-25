@@ -14,6 +14,8 @@ module Localizable
 
     # NOTE: turbolinks-rails didn't rewrite url for now
     redirect_to(url_for(lang: nil))
+  rescue ActionController::UrlGenerationError
+    redirect_to(root_path(lang: nil))
   end
 
   def current_locale
