@@ -121,7 +121,7 @@ GEM
     crass (1.0.6)
     css_parser (1.17.1)
       addressable
-    cssbundling-rails (1.4.0)
+    cssbundling-rails (1.4.1)
       railties (>= 6.0.0)
     cucumber (9.1.0)
       builder (~> 3.2, >= 3.2.4)
