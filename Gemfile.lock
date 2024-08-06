@@ -448,7 +448,7 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.1)
-    rubocop (1.65.0)
+    rubocop (1.65.1)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -615,7 +615,7 @@ DEPENDENCIES
   rails_semantic_logger
   ros-apartment
   rspec-rails
-  rubocop (~> 1.65.0)
+  rubocop (~> 1.65.1)
   rubocop-capybara
   rubocop-performance
   rubocop-rails
