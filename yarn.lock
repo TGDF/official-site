@@ -659,10 +659,10 @@
     ckeditor5 "43.0.0"
     lodash-es "4.17.21"
 
-"@coreui/coreui@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@coreui/coreui/-/coreui-3.4.0.tgz#3e3627a1f48a00f6289204a23f71eaa6ea94e370"
-  integrity sha512-WqzockdWVkXUNmNwlqdu+AxM+9JoiWGe4rKaySu/dZme1NvVOn2ukjJlpTkssal8UKcSHyitzNixtkMCmUxE1A==
+"@coreui/coreui@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@coreui/coreui/-/coreui-5.1.1.tgz#0c3326e5e1a10ef6b88f79051e9be9aed6900e94"
+  integrity sha512-oXAqIoHwY19Xj0uS6OKwAoCxpe7lw44YWJr54i9Sq1tDL0dzWK6GOqMav3a23SjvFW9yDSpqdC9xCbVZd2spBQ==
 
 "@coreui/icons@^3.0.1":
   version "3.0.1"
