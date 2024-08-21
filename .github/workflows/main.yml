@@ -17,7 +17,7 @@ jobs:
   rubocop:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -29,7 +29,7 @@ jobs:
   brakeman:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -54,14 +54,14 @@ jobs:
           ports:
             - 5432:5432
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
     - name: Set up Node
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'yarn'
@@ -73,7 +73,7 @@ jobs:
     - name: Run RSpec
       run: bundle exec rspec
     - name: Archive RSpec coverage report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: simplecov-resultset-rspec
         path: coverage/
@@ -98,14 +98,14 @@ jobs:
           ports:
             - 5432:5432
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
     - name: Set up Node
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'yarn'
@@ -117,7 +117,7 @@ jobs:
     - name: Run Cucumber
       run: bundle exec cucumber -f json -o tmp/cucumber-report.json
     - name: Archive Cucumber coverage report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: simplecov-resultset-cucumber
         path: coverage/
@@ -145,7 +145,7 @@ jobs:
       - rspec
       - cucumber
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
