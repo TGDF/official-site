@@ -72,6 +72,7 @@ gem 'flipper-ui'
 gem 'dry-rails', '~> 0.7'
 
 # Utilities
+gem 'aws-sdk-s3', require: false
 gem 'carrierwave'
 gem 'fog-aws'
 gem 'gretel'
