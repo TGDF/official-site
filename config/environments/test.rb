@@ -27,6 +27,8 @@ Rails.application.configure do
   config.action_controller.perform_caching = false
   config.cache_store = :null_store
 
+  config.active_storage.service = :test
+
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = :none
 
