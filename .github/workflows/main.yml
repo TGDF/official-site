@@ -122,7 +122,7 @@ jobs:
         name: simplecov-resultset-cucumber
         path: coverage/
         retention-days: 1
-    - uses: deblockt/cucumber-report-annotations-action@v1.12
+    - uses: deblockt/cucumber-report-annotations-action@v1.16
       with:
         access-token: ${{ secrets.GITHUB_TOKEN }}
         path: "tmp/cucumber-report.json"
@@ -152,12 +152,12 @@ jobs:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
     - name: Download RSpec coverage report
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: simplecov-resultset-rspec
         path: simplecov-resultset-rspec/
     - name: Download Cucumber coverage report
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: simplecov-resultset-cucumber
         path: simplecov-resultset-cucumber/
