@@ -17,19 +17,19 @@ class Agenda < ApplicationRecord
 
   default_scope -> { order(order: :asc, id: :asc) }
 
-  enum language: {
+  enum :language, {
     ZH: 1,
     EN: 2,
     JP: 3
   }
 
-  enum translated_language: {
+  enum :translated_language, {
     ZH: 1,
     EN: 2,
     JP: 3
-  }, _prefix: :translated
+  }, prefix: :translated
 
-  enum translated_type: {
+  enum :translated_type, {
     sentence: 1,
     synchornize: 2,
     subtitle: 3

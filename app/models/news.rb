@@ -11,7 +11,7 @@ class News < ApplicationRecord
 
   mount_uploader :thumbnail, ThumbnailUploader
 
-  enum status: {
+  enum :status, {
     draft: 0,
     published: 1,
     deleted: 2
