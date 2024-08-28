@@ -9,9 +9,9 @@ module PageHelper
     url_for(only_path: false)
   end
 
-  def seo_tags
+  def seo_tags(site)
     display_meta_tags(
-      site: t('site_name'),
+      site: site.name,
       title: nil,
       description: nil,
       og: seo_og_options,

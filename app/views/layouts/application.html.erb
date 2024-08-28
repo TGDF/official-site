@@ -5,7 +5,7 @@
     <meta content="IE=edge" http-equiv="X-UA-Compatible" />
     <%= alternate_langs %>
     <%= csrf_meta_tags %>
-    <%= seo_tags %>
+    <%= seo_tags(current_site) %>
     <%= stylesheet_link_tag    'https://use.fontawesome.com/b2e3e84e95.css', media: 'all' %>
     <%= stylesheet_link_tag    'https://fonts.googleapis.com/css?family=Noto+Sans+TC:400,900&amp;subset=chinese-traditional' %>
     <%= stylesheet_link_tag    'theme', media: 'all', 'data-turbolinks-track': 'reload' %>
