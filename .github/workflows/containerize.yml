@@ -38,6 +38,7 @@ jobs:
       with:
         name: assets
         path: public/
+        include-hidden-files: true
         retention-days: 7
   build-and-push-image:
     runs-on: ubuntu-latest
