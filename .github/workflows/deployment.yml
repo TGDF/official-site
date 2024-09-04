@@ -57,3 +57,17 @@ jobs:
         service: ${{ secrets.DEPLOY_SERVICE }}
         cluster: ${{ secrets.DEPLOY_CLUSTER }}
         wait-for-service-stability: true
+    # Release to Sentry
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Create Sentry release
+      uses: getsentry/action-release@v1
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+        SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        SENTRY_URL: ${{ secrets.SENTRY_URL }}
+      with:
+        environment: ${{ inputs.environment }}
