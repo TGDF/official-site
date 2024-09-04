@@ -69,7 +69,9 @@ gem 'flipper-active_support_cache_store'
 gem 'flipper-ui'
 
 # Architecture
-gem 'dry-rails', '~> 0.7'
+gem 'dry-monads'
+gem 'dry-rails'
+gem 'dry-transaction'
 
 # Utilities
 gem 'aws-sdk-s3', require: false
