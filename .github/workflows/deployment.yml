@@ -63,8 +63,8 @@ jobs:
       with:
         fetch-depth: 0
     - name: Add short SHA information
-        id: commit
-        run: echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      id: commit
+      run: echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
     - name: Create Sentry release
       uses: getsentry/action-release@v1
       env:
