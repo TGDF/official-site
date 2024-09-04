@@ -76,7 +76,8 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: simplecov-resultset-rspec
-        path: coverage/
+        path: coverage/.resultset.json
+        include-hidden-files: true
         retention-days: 1
 
   cucumber:
@@ -120,7 +121,8 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: simplecov-resultset-cucumber
-        path: coverage/
+        path: coverage/.resultset.json
+        include-hidden-files: true
         retention-days: 1
     - uses: deblockt/cucumber-report-annotations-action@v1.16
       with:
@@ -128,19 +130,6 @@ jobs:
         path: "tmp/cucumber-report.json"
   report-coverage:
     runs-on: ubuntu-latest
-    services:
-        postgres:
-          image: postgres
-          env:
-            POSTGRES_USER: tgdf
-            POSTGRES_PASSWORD: tgdf
-          options: >-
-            --health-cmd pg_isready
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
-          ports:
-            - 5432:5432
     needs:
       - rspec
       - cucumber
