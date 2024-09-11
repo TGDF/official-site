@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   include NavigationItem
 
   before_action :ensure_site_created!
+  after_action :track_current_site
 
   protect_from_forgery
 
@@ -51,5 +52,10 @@ class ApplicationController < ActionController::Base
 
   def admin_portal?
     params[:controller].start_with?('admin/')
+  end
+
+  def track_current_site
+    logger.debug("Apartment: #{Apartment::Tenant.current}")
+    logger.debug("ActsAsTenant: #{ActsAsTenant.current_tenant&.tenant_name}")
   end
 end
