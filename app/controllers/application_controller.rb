@@ -55,7 +55,10 @@ class ApplicationController < ActionController::Base
   end
 
   def track_current_site
-    logger.debug("Apartment: #{Apartment::Tenant.current}")
-    logger.debug("ActsAsTenant: #{ActsAsTenant.current_tenant&.tenant_name}")
+    logger.warn(
+      'Multi Tenant Status',
+      apartment: Apartment::Tenant.current,
+      acts_as_tenant: ActsAsTenant.current_tenant&.tenant_name
+    )
   end
 end
