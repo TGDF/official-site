@@ -86,7 +86,7 @@ gem 'openbox'
 gem 'rack-attack'
 gem 'rack-utf8_sanitizer'
 gem 'rails_semantic_logger'
-gem 'store_attribute', '~> 1.2'
+gem 'store_attribute', '~> 1.3'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
