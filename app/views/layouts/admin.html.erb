@@ -17,6 +17,13 @@
     <%= render 'admin/shared/header' %>
       <div class="c-body">
         <main class="c-main">
+          <div class="container-fluid">
+          <% flash.each do |type, msg| %>
+            <div class="alert alert-warning" role="alert">
+              <%= msg %>
+            </div>
+          <% end %>
+          </div>
           <%= yield %>
         </main>
       </div>
