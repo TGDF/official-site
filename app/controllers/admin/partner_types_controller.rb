@@ -9,26 +9,19 @@ module Admin
     end
 
     def new
-      @type = PartnerType.new
+      redirect_to admin_partner_types_path, alert: t('.deprecated')
     end
 
-    def edit; end
+    def edit
+      redirect_to admin_partner_types_path, alert: t('.deprecated')
+    end
 
     def create
-      Mobility.with_locale(I18n.default_locale) do
-        @type = PartnerType.create(partner_type_params)
-        return redirect_to(admin_partner_types_path) if @type.save
-
-        render :new, status: :unprocessable_entity
-      end
+      redirect_to admin_partner_types_path, alert: t('.deprecated')
     end
 
     def update
-      Mobility.with_locale(admin_current_resource_locale) do
-        return redirect_to(admin_partner_types_path) if @type.update(partner_type_params)
-
-        render :edit, status: :unprocessable_entity
-      end
+      redirect_to admin_partner_types_path, alert: t('.deprecated')
     end
 
     def destroy

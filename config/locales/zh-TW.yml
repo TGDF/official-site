@@ -101,3 +101,8 @@ zh-TW:
       new:
         hint: 輸入信箱及密碼進入管理後台
         login: 登入
+  admin:
+    partners:
+      deprecated: This feature is deprecated, please use Sponsor instead.
+    partner_types:
+      deprecated: This feature is deprecated, please use Sponsor instead.

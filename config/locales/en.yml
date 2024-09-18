@@ -100,3 +100,8 @@ en:
     sessions:
       new:
         hint: "Sign in to start your session"
+  admin:
+    partners:
+      deprecated: This feature is deprecated, please use Sponsor instead.
+    partner_types:
+      deprecated: This feature is deprecated, please use Sponsor instead.
