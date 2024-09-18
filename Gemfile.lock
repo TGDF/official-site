@@ -179,6 +179,8 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    devise-i18n (1.12.1)
+      devise (>= 4.9.0)
     diff-lcs (1.5.1)
     docile (1.4.0)
     dotenv (3.1.2)
@@ -367,6 +369,8 @@ GEM
     nio4r (2.7.3)
     nokogiri (1.16.7)
       mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
+    nokogiri (1.16.7-arm-linux)
       racc (~> 1.4)
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
@@ -619,6 +623,7 @@ DEPENDENCIES
   database_rewinder
   debug
   devise
+  devise-i18n
   dotenv-rails
   dry-monads
   dry-rails

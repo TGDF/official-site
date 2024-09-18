@@ -33,6 +33,7 @@ gem 'puma', '~> 6.4'
 
 # Config
 gem 'config'
+gem 'devise-i18n'
 gem 'rails-i18n'
 
 # Multi-Tenancy
