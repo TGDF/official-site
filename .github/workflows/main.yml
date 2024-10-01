@@ -6,6 +6,7 @@ on:
       - 'main'
       - 'epic/**'
   pull_request:
+  merge_group:
 
 env:
   RUBY_VERSION: '3.3.2'
