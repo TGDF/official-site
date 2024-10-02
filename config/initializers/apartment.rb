@@ -10,7 +10,7 @@ require 'middleware/full_host_elevators'
 # Apartment Configuration
 #
 Apartment.configure do |config|
-  config.excluded_models = %w[Site AdminUser]
+  config.excluded_models = %w[Site AdminUser MenuItem]
 
   config.tenant_names = -> { Site.pluck(:tenant_name) }
   # config.use_sql = true
