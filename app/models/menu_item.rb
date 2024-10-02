@@ -9,6 +9,6 @@ class MenuItem < ApplicationRecord
   validates :name, :link, :menu_id, presence: true
 
   enum :menu_id, {
-    secondary: :secondary
+    secondary: 'secondary'
   }
 end
