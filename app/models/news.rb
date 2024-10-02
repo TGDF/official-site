@@ -18,7 +18,7 @@ class News < ApplicationRecord
   }
 
   validates :title, :content, :slug, :thumbnail, presence: true
-  validates :slug, uniqueness: true
+  validates :slug, uniqueness: { scope: :site_id }
 
   scope :latest, -> { order(created_at: :desc) }
 
