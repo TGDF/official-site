@@ -1,3 +1,4 @@
+@apartment
 Feature: Manage Agenda
 
   Background:

@@ -1,19 +1,33 @@
 # frozen_string_literal: true
 
-BeforeAll do
+Before do |_scenario|
   begin
     Apartment::Tenant.drop('main')
-  rescue # rubocop:disable Style/RescueStandardError
+  rescue StandardError
     nil
   end
 
-  DatabaseRewinder.clean_all
   Site.create!(name: 'Main Site', domain: 'www.example.com', tenant_name: 'main')
+  Apartment::Tenant.switch!('main')
 end
 
-Around do |_scenario, block|
-  Apartment::Tenant.switch('main') do
-    block&.call
-    DatabaseRewinder.clean
-  end
+# Ensure run after the main tenant is created
+Before('@night_market_enabled') do |_scenario|
+  site = Site.find_by(tenant_name: 'main')
+  site.update(night_market_enabled: true)
+end
+
+Before('@streaming') do |_scenario|
+  site = Site.find_by(tenant_name: 'main')
+  site.update(streaming_enabled: true)
+end
+
+Before('@cfp_mode') do |_scenario|
+  site = Site.find_by(tenant_name: 'main')
+  site.update(cfp_only_mode: true)
+end
+
+After do
+  Apartment::Tenant.reset
+  DatabaseRewinder.clean_all
 end
