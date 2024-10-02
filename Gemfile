@@ -75,6 +75,7 @@ gem 'dry-rails'
 gem 'dry-transaction'
 
 # Utilities
+gem 'activerecord-import'
 gem 'aws-sdk-s3', require: false
 gem 'carrierwave'
 gem 'fog-aws'
