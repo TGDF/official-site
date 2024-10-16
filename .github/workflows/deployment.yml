@@ -33,7 +33,7 @@ jobs:
       cancel-in-progress: true
     steps:
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ secrets.DEPLOY_IAM_ROLE }}
         aws-region: ap-northeast-1
