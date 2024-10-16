@@ -166,7 +166,7 @@ jobs:
         path: simplecov-resultset-cucumber/
     - name: Upload coverage report
       if: ${{ github.ref_name == 'main' }}
-      uses: paambaati/codeclimate-action@v5.0.0
+      uses: paambaati/codeclimate-action@v9
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
