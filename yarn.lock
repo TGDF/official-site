@@ -882,10 +882,10 @@
   resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-7.0.4.tgz#70a3ca56809f7aaabb80af2f9c01ae51e1a8ed41"
   integrity sha512-tz4oM+Zn9CYsvtyicsa/AwzKZKL+ITHWkhiu7x+xF77clh2b4Rm+s6xnOgY/sGDWoFWZmtKsE95hxBPkgQQNnQ==
 
-"@rails/ujs@^7.1.402":
-  version "7.1.402"
-  resolved "https://registry.yarnpkg.com/@rails/ujs/-/ujs-7.1.402.tgz#5d4e7e5d1e2e22df081bf5693fc75f0725635130"
-  integrity sha512-q9dDlIR+anDtuGcV56rLnqHAxtWo8vkSnvfFt7juthvHc+97NEtGlnM++uhvnlDbR+7EGkX8nGqQIF8R93oWMQ==
+"@rails/ujs@^7.1.500":
+  version "7.1.500"
+  resolved "https://registry.yarnpkg.com/@rails/ujs/-/ujs-7.1.500.tgz#84bb037b6a823ec7fb7782a2ac03452deb505128"
+  integrity sha512-PfPtQrxFOn55RlJ4ygXkcIHFkoPO1JMTRJcSdPb0EavcSZ3Ekl9ujAAPrrqj2zKwkbe0pGGR79RJhnUr5ngQjw==
 
 "@tailwindcss/typography@^0.5.15":
   version "0.5.15"
