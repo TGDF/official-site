@@ -404,7 +404,7 @@ GEM
     psych (5.2.0)
       stringio
     public_suffix (5.1.1)
-    puma (6.4.3)
+    puma (6.5.0)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (2.2.10)
@@ -657,7 +657,7 @@ DEPENDENCIES
   openbox
   overcommit
   pg (>= 0.18, < 2.0)
-  puma (~> 6.4)
+  puma (~> 6.5)
   rack-attack
   rack-utf8_sanitizer
   rails (~> 7.1.5)
