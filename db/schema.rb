@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_02_113320) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_04_113917) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -73,7 +73,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_02_113320) do
   end
 
   create_table "agenda_tags", force: :cascade do |t|
-    t.jsonb "name"
+    t.jsonb "name", default: {}
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "site_id"
@@ -171,9 +171,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_02_113320) do
   end
 
   create_table "games", force: :cascade do |t|
-    t.jsonb "name", null: false
-    t.jsonb "description", null: false
-    t.jsonb "team", null: false
+    t.jsonb "name", default: {}, null: false
+    t.jsonb "description", default: {}, null: false
+    t.jsonb "team", default: {}, null: false
     t.string "video"
     t.string "thumbnail"
     t.datetime "created_at", precision: nil, null: false
@@ -187,8 +187,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_02_113320) do
 
   create_table "menu_items", force: :cascade do |t|
     t.string "menu_id"
-    t.jsonb "name"
-    t.jsonb "link"
+    t.jsonb "name", default: {}
+    t.jsonb "link", default: {}
     t.integer "position", default: 0, null: false
     t.boolean "visible", default: true, null: false
     t.datetime "created_at", null: false
@@ -198,7 +198,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_02_113320) do
   end
 
   create_table "news", force: :cascade do |t|
-    t.jsonb "title", default: {}
+    t.jsonb "title", default: {}, null: false
     t.jsonb "content", default: {}
     t.string "author_type"
     t.bigint "author_id"
@@ -229,7 +229,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_02_113320) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "url"
     t.integer "order", default: 0
-    t.jsonb "description"
+    t.jsonb "description", default: {}
     t.bigint "site_id"
     t.index ["site_id", "type_id"], name: "index_partners_on_site_id_and_type_id"
     t.index ["type_id"], name: "index_partners_on_type_id"
@@ -265,7 +265,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_02_113320) do
     t.string "logo"
     t.jsonb "options"
     t.string "figure"
-    t.jsonb "indie_space_description"
+    t.jsonb "indie_space_description", default: {}
     t.index ["domain"], name: "index_sites_on_domain"
     t.index ["tenant_name"], name: "index_sites_on_tenant_name"
   end
@@ -287,7 +287,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_02_113320) do
     t.string "avatar"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.jsonb "title"
+    t.jsonb "title", default: {}
     t.integer "order", default: 0
     t.string "slug"
     t.bigint "site_id"
@@ -311,7 +311,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_02_113320) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "order", default: 0
-    t.jsonb "description"
+    t.jsonb "description", default: {}
     t.bigint "site_id"
     t.index ["level_id"], name: "index_sponsors_on_level_id"
     t.index ["site_id", "level_id"], name: "index_sponsors_on_site_id_and_level_id"
