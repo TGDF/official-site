@@ -362,7 +362,7 @@ GEM
     mini_mime (1.1.5)
     mini_portile2 (2.8.8)
     minitest (5.25.2)
-    mobility (1.2.9)
+    mobility (1.3.1)
       i18n (>= 0.6.10, < 2)
       request_store (~> 1.0)
     msgpack (1.7.2)
@@ -466,7 +466,7 @@ GEM
     regexp_parser (2.9.3)
     reline (0.5.11)
       io-console (~> 0.5)
-    request_store (1.5.1)
+    request_store (1.7.0)
       rack (>= 1.4)
     responders (3.1.1)
       actionpack (>= 5.2)
@@ -654,7 +654,7 @@ DEPENDENCIES
   lookbook
   meta-tags
   mini_magick
-  mobility (~> 1.0)
+  mobility (~> 1.3)
   oj
   openbox
   overcommit
