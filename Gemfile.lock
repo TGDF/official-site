@@ -128,7 +128,7 @@ GEM
     capybara-selenium (0.0.6)
       capybara
       selenium-webdriver
-    carrierwave (3.1.0)
+    carrierwave (3.1.1)
       activemodel (>= 6.0.0)
       activesupport (>= 6.0.0)
       addressable (~> 2.6)
@@ -141,7 +141,7 @@ GEM
     config (5.5.2)
       deep_merge (~> 1.2, >= 1.2.1)
       ostruct
-    connection_pool (2.4.1)
+    connection_pool (2.5.0)
     crass (1.0.6)
     css_parser (1.19.1)
       addressable
@@ -265,8 +265,8 @@ GEM
       railties (>= 5.0.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
-    ffi (1.17.0)
-    ffi (1.17.0-x86_64-linux-gnu)
+    ffi (1.17.1)
+    ffi (1.17.1-x86_64-linux-gnu)
     flipper (1.3.2)
       concurrent-ruby (< 2)
     flipper-active_record (1.3.2)
@@ -328,7 +328,7 @@ GEM
     language_server-protocol (3.17.0.3)
     liveness (0.3.2)
       rack (>= 1.0)
-    logger (1.6.4)
+    logger (1.6.5)
     loofah (2.24.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
