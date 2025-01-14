@@ -128,7 +128,7 @@ GEM
     capybara-selenium (0.0.6)
       capybara
       selenium-webdriver
-    carrierwave (3.1.0)
+    carrierwave (3.1.1)
       activemodel (>= 6.0.0)
       activesupport (>= 6.0.0)
       addressable (~> 2.6)
@@ -266,8 +266,8 @@ GEM
       railties (>= 5.0.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
-    ffi (1.17.0)
-    ffi (1.17.0-x86_64-linux-gnu)
+    ffi (1.17.1)
+    ffi (1.17.1-x86_64-linux-gnu)
     flipper (1.3.2)
       concurrent-ruby (< 2)
     flipper-active_record (1.3.2)
