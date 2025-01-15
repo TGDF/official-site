@@ -4,7 +4,7 @@ ARG RUBY_VERSION=3.3
 FROM ruby:${RUBY_VERSION}-alpine AS base
 ARG APP_ROOT
 
-RUN apk add --no-cache build-base postgresql-dev
+RUN apk add --no-cache build-base postgresql-dev yaml-dev
 
 RUN mkdir -p ${APP_ROOT}
 COPY Gemfile Gemfile.lock ${APP_ROOT}/
