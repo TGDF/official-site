@@ -328,6 +328,7 @@ GEM
       railties (>= 6.0.0)
     json (2.10.1)
     language_server-protocol (3.17.0.4)
+    lint_roller (1.1.0)
     liveness (0.3.2)
       rack (>= 1.0)
     logger (1.6.5)
@@ -502,9 +503,10 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.2)
-    rubocop (1.71.2)
+    rubocop (1.72.2)
       json (~> 2.3)
-      language_server-protocol (>= 3.17.0)
+      language_server-protocol (~> 3.17.0.2)
+      lint_roller (~> 1.1.0)
       parallel (~> 1.10)
       parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
@@ -675,7 +677,7 @@ DEPENDENCIES
   rails_semantic_logger
   ros-apartment
   rspec-rails
-  rubocop (~> 1.71.2)
+  rubocop (~> 1.72.2)
   rubocop-capybara
   rubocop-performance
   rubocop-rails
