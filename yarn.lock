@@ -721,10 +721,10 @@
     ckeditor5 "44.2.1"
     lodash-es "4.17.21"
 
-"@coreui/coreui@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@coreui/coreui/-/coreui-3.4.0.tgz#3e3627a1f48a00f6289204a23f71eaa6ea94e370"
-  integrity sha512-WqzockdWVkXUNmNwlqdu+AxM+9JoiWGe4rKaySu/dZme1NvVOn2ukjJlpTkssal8UKcSHyitzNixtkMCmUxE1A==
+"@coreui/coreui@^5.3.1":
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/@coreui/coreui/-/coreui-5.3.1.tgz#a028c291bf2eb7118c6f1ba18bbe74813bf549ce"
+  integrity sha512-gHwLILMOh0RmLUbBmXhWF9qrLLjbzyIj6P1/58v//q62zQ03wb6djkiUkdB4bpWPtJViBVrpKsfA82OOItL3Qw==
 
 "@coreui/icons@^3.0.1":
   version "3.0.1"
