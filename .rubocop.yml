@@ -7,42 +7,9 @@ inherit_gem:
   rubocop-rails-omakase: rubocop.yml
 
 AllCops:
-  TargetRubyVersion: 3.2
+  TargetRubyVersion: 3.3
   DisplayCopNames: true
   SuggestExtensions: false
   NewCops: enable
   Exclude:
-    - bin/*
-    - vendor/bundle/**/*
-    - node_modules/**/*
-    - db/schema.rb
     - .licenses/**/*
-Rails:
-  Enabled: true
-
-Layout:
-  Exclude:
-    - config/environments/*
-Style:
-  Exclude:
-    - spec/*_helper.rb
-Style/BlockComments:
-  Exclude:
-    - config/**/*
-    - spec/**/*
-Style/Documentation:
-  Enabled: false
-
-Style/MethodCallWithArgsParentheses:
-  Enabled: false
-
-Metrics/BlockLength:
-  Exclude:
-    - config/routes.rb
-    - config/initializers/**/*
-    - lib/tasks/**/*
-    - spec/**/*
-
-Metrics/MethodLength:
-  Exclude:
-    - db/migrate/*
