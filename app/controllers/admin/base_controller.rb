@@ -10,7 +10,7 @@ module Admin
     def admin_current_resource_locale
       save_admin_resource_locale
 
-      (([cookies[:resource_locale]&.to_sym] & I18n.available_locales).first ||
+      (([ cookies[:resource_locale]&.to_sym ] & I18n.available_locales).first ||
        I18n.default_locale).to_s
     end
 

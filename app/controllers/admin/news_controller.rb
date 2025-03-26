@@ -2,8 +2,8 @@
 
 module Admin
   class NewsController < Admin::BaseController
-    layout 'application', only: :preview
-    layout 'admin', except: :preview
+    layout "application", only: :preview
+    layout "admin", except: :preview
 
     before_action :find_news, except: %i[index new create]
 

@@ -42,7 +42,7 @@ module Admin
     def site_params
       # TODO: Use permission gem
       allow_fields = %i[name domain logo description figure tenant_name]
-      allow_fields.delete(:tenant_name) if params[:action] == 'update'
+      allow_fields.delete(:tenant_name) if params[:action] == "update"
       params.require(:site).permit(allow_fields)
     end
 

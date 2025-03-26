@@ -12,6 +12,6 @@ class SliderItemComponent < ViewComponent::Base
   def classes
     item = %w[swiper-slide]
     item << %w[active] if @iteration.first?
-    item.join(' ')
+    item.join(" ")
   end
 end

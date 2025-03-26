@@ -14,7 +14,7 @@ class PlanListComponent < ViewComponent::Base
   end
 
   def section_content
-    return StreamingTrackComponent.with_collection([1, 2, 3], site: @site) if @site.streaming_enabled?
+    return StreamingTrackComponent.with_collection([ 1, 2, 3 ], site: @site) if @site.streaming_enabled?
 
     PassComponent.with_collection(Settings.ticket.types, site: @site)
   end

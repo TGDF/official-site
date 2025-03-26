@@ -4,7 +4,7 @@ CarrierWave.configure do |config|
   if Settings.s3.enabled
     config.storage = :fog
     config.fog_credentials = {
-      provider: 'AWS',
+      provider: "AWS",
       aws_access_key_id: Settings.s3.access_key_id,
       aws_secret_access_key: Settings.s3.secret_access_key,
       region: Settings.s3.region,

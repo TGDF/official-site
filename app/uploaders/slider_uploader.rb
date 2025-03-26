@@ -11,11 +11,11 @@ class SliderUploader < CarrierWave::Uploader::Base
   end
 
   version :large do
-    process resize_to_fill: [1920, 850]
+    process resize_to_fill: [ 1920, 850 ]
   end
 
   version :thumb do
-    process resize_to_fill: [384, 170]
+    process resize_to_fill: [ 384, 170 ]
   end
 
   def extension_allowlist

@@ -9,19 +9,19 @@ module Admin
     end
 
     def new
-      redirect_to admin_partner_types_path, alert: t('.deprecated')
+      redirect_to admin_partner_types_path, alert: t(".deprecated")
     end
 
     def edit
-      redirect_to admin_partner_types_path, alert: t('.deprecated')
+      redirect_to admin_partner_types_path, alert: t(".deprecated")
     end
 
     def create
-      redirect_to admin_partner_types_path, alert: t('.deprecated')
+      redirect_to admin_partner_types_path, alert: t(".deprecated")
     end
 
     def update
-      redirect_to admin_partner_types_path, alert: t('.deprecated')
+      redirect_to admin_partner_types_path, alert: t(".deprecated")
     end
 
     def destroy

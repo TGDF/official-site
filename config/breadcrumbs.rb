@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 crumb :root do
-  link t('shared.nav.home'), root_path
+  link t("shared.nav.home"), root_path
 end
 
 crumb :news_index do
-  link t('shared.nav.news'), news_index_path
+  link t("shared.nav.news"), news_index_path
 end
 
 crumb :news do |news|
@@ -14,7 +14,7 @@ crumb :news do |news|
 end
 
 crumb :speakers do
-  link t('shared.nav.speakers'), speakers_path
+  link t("shared.nav.speakers"), speakers_path
 end
 
 crumb :speaker do |speaker|
@@ -23,9 +23,9 @@ crumb :speaker do |speaker|
 end
 
 crumb :agenda do
-  link t('shared.nav.agenda'), agenda_path
+  link t("shared.nav.agenda"), agenda_path
 end
 
 crumb :sponsors do
-  link t('shared.nav.sponsors'), sponsors_path
+  link t("shared.nav.sponsors"), sponsors_path
 end

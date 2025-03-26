@@ -14,19 +14,19 @@ module Admin
     end
 
     def admin_box(&)
-      tag.div(class: 'card', &)
+      tag.div(class: "card", &)
     end
 
     def admin_box_header(title, options = {})
-      tag.div(title, class: ['card-header', options[:class]].join(' '))
+      tag.div(title, class: [ "card-header", options[:class] ].join(" "))
     end
 
     def admin_box_body(options = {}, &)
-      tag.div(class: ['card-body', options[:class]].join(' '), &)
+      tag.div(class: [ "card-body", options[:class] ].join(" "), &)
     end
 
     def admin_box_footer(&)
-      tag.div(class: 'card-footer', &)
+      tag.div(class: "card-footer", &)
     end
 
     def admin_locale_navtab

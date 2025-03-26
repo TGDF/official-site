@@ -7,8 +7,8 @@ Sentry.init do |config|
     next sampling_context[:parent_sampled] unless sampling_context[:parent_sampled].nil?
 
     transaction_context = sampling_context[:transaction_context]
-    next true unless transaction_context[:op].include?('http')
-    next false if transaction_context[:name].include?('/status')
+    next true unless transaction_context[:op].include?("http")
+    next false if transaction_context[:name].include?("/status")
 
     1.0
   end

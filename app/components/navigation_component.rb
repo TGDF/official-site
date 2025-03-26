@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class NavigationComponent < ViewComponent::Base
-  renders_many :primary_items, 'NavItemComponent'
-  renders_many :secondary_items, 'NavItemComponent'
+  renders_many :primary_items, "NavItemComponent"
+  renders_many :secondary_items, "NavItemComponent"
 
   attr_reader :current_site, :current_locale
 

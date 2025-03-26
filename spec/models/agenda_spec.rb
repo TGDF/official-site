@@ -12,7 +12,7 @@ RSpec.describe(Agenda) do
     let(:agenda) { create(:agenda) }
     let(:tag) { create(:agenda_tag) }
 
-    before { agenda.update!(tags: [tag]) }
+    before { agenda.update!(tags: [ tag ]) }
 
     it { is_expected.to(be_truthy) }
     it { expect { destroy }.not_to(change { tag.reload.present? }) }

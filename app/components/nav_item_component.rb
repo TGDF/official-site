@@ -33,17 +33,17 @@ class NavItemComponent < ViewComponent::Base
 
   def style
     if current_path_under?(@path)
-      ['text-red-500']
+      [ "text-red-500" ]
     else
-      ['text-gray-500']
-    end.concat(BASE_STYLES).join(' ')
+      [ "text-gray-500" ]
+    end.concat(BASE_STYLES).join(" ")
   end
 
   def link_style
     if button?
-      ['rounded text-white bg-red-500 hover:bg-red-600']
+      [ "rounded text-white bg-red-500 hover:bg-red-600" ]
     else
       []
-    end.concat(BASE_LINK_STYLES).join(' ')
+    end.concat(BASE_LINK_STYLES).join(" ")
   end
 end

@@ -5,28 +5,28 @@ Rails.application.routes.draw do
   devise_for :admin_users, path: :admin
 
   # Health Check
-  mount Liveness::Status => '/status'
+  mount Liveness::Status => "/status"
 
-  mount Lookbook::Engine, at: '/lookbook' if Rails.env.development?
+  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
 
-  scope '/(:lang)', lang: /#{I18n.available_locales.join('|')}/ do
+  scope "/(:lang)", lang: /#{I18n.available_locales.join('|')}/ do
     # TODO: Use get instead resources
-    root to: 'pages#index', format: false
+    root to: "pages#index", format: false
     resources :news, only: %i[index show]
     resources :speakers, only: %i[index show]
     resource :agenda, only: %i[show]
     resources :sponsors, only: %i[index]
     resources :indie_spaces, only: %i[index]
     resources :night_market, only: %i[index]
-    get :code_of_conduct, to: 'pages#coc'
+    get :code_of_conduct, to: "pages#coc"
   end
 
   namespace :admin do
     authenticated :admin_user do
-      mount Flipper::UI.app(Flipper) => '/flipper'
+      mount Flipper::UI.app(Flipper) => "/flipper"
     end
 
-    root 'dashboard#index'
+    root "dashboard#index"
 
     resources :news, except: :show do
       member do
@@ -65,14 +65,14 @@ Rails.application.routes.draw do
 
     resources :images, only: %i[create]
 
-    constraints ->(_req) { Apartment::Tenant.current != 'public' } do
+    constraints ->(_req) { Apartment::Tenant.current != "public" } do
       resource :options, only: %w[edit update]
     end
 
-    constraints ->(_req) { Apartment::Tenant.current == 'public' } do
+    constraints ->(_req) { Apartment::Tenant.current == "public" } do
       resources :sites, except: :show
     end
   end
 
-  get('*path', to: proc { |env| ApplicationController.action('not_found').call(env) }) if Rails.env.production?
+  get("*path", to: proc { |env| ApplicationController.action("not_found").call(env) }) if Rails.env.production?
 end

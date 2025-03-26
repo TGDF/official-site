@@ -10,7 +10,7 @@ class AdminUser < ApplicationRecord
 
   # TODO: Add display name field
   def display_name
-    email.split('@').first
+    email.split("@").first
   end
 
   def avatar(size: 100)

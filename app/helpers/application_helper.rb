@@ -2,7 +2,7 @@
 
 module ApplicationHelper
   def site_name
-    current_site.name || t('site_name')
+    current_site.name || t("site_name")
   end
 
   def alternate_langs
@@ -15,8 +15,8 @@ module ApplicationHelper
   end
 
   def alternate_lang(lang = nil)
-    tag.link(nil, rel: 'alternate',
-                  hreflang: lang || 'x-default',
+    tag.link(nil, rel: "alternate",
+                  hreflang: lang || "x-default",
                   href: url_for(lang:, only_path: false))
   end
 

@@ -4,6 +4,6 @@ module HasUploaderTenant
   extend ActiveSupport::Concern
 
   def tenant_name
-    ActsAsTenant.current_tenant&.tenant_name || 'default'
+    ActsAsTenant.current_tenant&.tenant_name || "default"
   end
 end

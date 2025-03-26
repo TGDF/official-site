@@ -57,7 +57,7 @@ module Admin
     end
 
     def index_path
-      polymorphic_url([:admin, resource])
+      polymorphic_url([ :admin, resource ])
     end
   end
 end

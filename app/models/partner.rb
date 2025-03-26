@@ -3,7 +3,7 @@
 class Partner < ApplicationRecord
   acts_as_tenant :site, optional: true, has_global_records: true
 
-  belongs_to :type, class_name: 'PartnerType', inverse_of: nil
+  belongs_to :type, class_name: "PartnerType", inverse_of: nil
 
   translates :name
   translates :description

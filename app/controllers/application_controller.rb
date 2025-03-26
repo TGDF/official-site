@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
 
   # TODO: Use Rails to handler errors
   def not_found
-    render(file: 'public/404.html', status: :not_found, layout: false)
+    render(file: "public/404.html", status: :not_found, layout: false)
   end
 
   def ensure_site_created!
@@ -40,10 +40,10 @@ class ApplicationController < ActionController::Base
   private
 
   def layout_by_resource
-    return 'admin_login' if devise_admin_user_controller?
-    return 'admin' if admin_portal?
+    return "admin_login" if devise_admin_user_controller?
+    return "admin" if admin_portal?
 
-    'application'
+    "application"
   end
 
   def devise_admin_user_controller?
@@ -51,12 +51,12 @@ class ApplicationController < ActionController::Base
   end
 
   def admin_portal?
-    params[:controller].start_with?('admin/')
+    params[:controller].start_with?("admin/")
   end
 
   def track_current_site
     logger.warn(
-      'Multi Tenant Status',
+      "Multi Tenant Status",
       apartment: Apartment::Tenant.current,
       acts_as_tenant: ActsAsTenant.current_tenant&.tenant_name
     )

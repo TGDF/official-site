@@ -25,7 +25,7 @@ module TenantSite
   end
 
   def tenant_site?
-    Apartment::Tenant.current != 'public'
+    Apartment::Tenant.current != "public"
   end
 
   private
@@ -33,8 +33,8 @@ module TenantSite
   def default_site
     Site.new(
       domain: Settings.site.default_domain,
-      name: I18n.t('site_name'),
-      tenant_name: 'public'
+      name: I18n.t("site_name"),
+      tenant_name: "public"
     )
   end
 end

@@ -13,9 +13,9 @@ class LanguageSwitchButtonComponent < ViewComponent::Base
   def target_locale
     @target_locale ||= if zh?
                          :en
-                       else
+    else
                          :'zh-TW'
-                       end
+    end
   end
 
   def name

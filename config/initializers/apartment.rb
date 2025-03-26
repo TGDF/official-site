@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 # require 'apartment/elevators/generic'
-require 'apartment/elevators/domain'
+require "apartment/elevators/domain"
 # require 'apartment/elevators/subdomain'
 # require 'apartment/elevators/first_subdomain'
-require 'middleware/full_host_elevators'
+require "middleware/full_host_elevators"
 
 #
 # Apartment Configuration

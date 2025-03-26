@@ -16,6 +16,6 @@ module NavbarHelper
   end
 
   def current_params_under?(uri)
-    (URI.decode_www_form(uri.query || '') - request.params.to_a).empty?
+    (URI.decode_www_form(uri.query || "") - request.params.to_a).empty?
   end
 end

@@ -10,15 +10,15 @@ module NavigationItem
 
   def primary_menu_items # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     [
-      { name: t('shared.nav.home'), path: root_path, visible: opened? },
-      { name: t('shared.nav.news'), path: news_index_path, visible: opened? },
-      { name: t('shared.nav.speakers'), path: speakers_path, visible: opened? },
-      { name: t('shared.nav.cfp'), path: agenda_path, visible: cfp_opened? },
-      { name: t('shared.nav.agenda'), path: agenda_path, visible: agenda_opened? },
-      { name: t('shared.nav.sponsors'), path: sponsors_path, visible: opened? },
-      { name: t('shared.nav.indie_spaces'), path: indie_spaces_path, visible: indie_space? },
-      { name: t('shared.nav.night_market'), path: night_market_index_path, visible: night_market? },
-      { name: t('shared.nav.code_of_conduct'), path: code_of_conduct_path }
+      { name: t("shared.nav.home"), path: root_path, visible: opened? },
+      { name: t("shared.nav.news"), path: news_index_path, visible: opened? },
+      { name: t("shared.nav.speakers"), path: speakers_path, visible: opened? },
+      { name: t("shared.nav.cfp"), path: agenda_path, visible: cfp_opened? },
+      { name: t("shared.nav.agenda"), path: agenda_path, visible: agenda_opened? },
+      { name: t("shared.nav.sponsors"), path: sponsors_path, visible: opened? },
+      { name: t("shared.nav.indie_spaces"), path: indie_spaces_path, visible: indie_space? },
+      { name: t("shared.nav.night_market"), path: night_market_index_path, visible: night_market? },
+      { name: t("shared.nav.code_of_conduct"), path: code_of_conduct_path }
     ]
   end
 
@@ -53,6 +53,6 @@ module NavigationItem
   end
 
   def menu_query
-    @menu_query ||= Tgdf::Container['menu_query']
+    @menu_query ||= Tgdf::Container["menu_query"]
   end
 end

@@ -6,7 +6,7 @@ Site.find_each do |site|
   SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/#{site.domain.split('.').first}"
   SitemapGenerator::Sitemap.create do
     Apartment::Tenant.switch(site.tenant_name) do
-      ([nil] + I18n.available_locales).each do |locale|
+      ([ nil ] + I18n.available_locales).each do |locale|
         add root_path(lang: locale)
         add news_index_path(lang: locale)
         add speakers_path(lang: locale)
