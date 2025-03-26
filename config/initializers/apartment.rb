@@ -21,4 +21,4 @@ end
 # Rails.application.config.middleware.use Apartment::Elevators::Domain
 # Rails.application.config.middleware.use Apartment::Elevators::Subdomain
 # Rails.application.config.middleware.use Apartment::Elevators::FirstSubdomain
-Rails.application.config.middleware.use(FullHostElevators)
+Rails.application.config.middleware.use(Middleware::FullHostElevators)
