@@ -1,4 +1,9 @@
 plugins:
+  rubocop:
+    enabled: false
+    channel: rubocop-1-50-2
+    config:
+      file: .rubocop.yml
   bundler-audit:
     enabled: true
   fixme:
