@@ -10,7 +10,7 @@ class SliderComponent < ViewComponent::Base
   def options
     {
       lazy: true,
-      loop: @sliders.size > 1 ? "true" : false,
+      loop: @sliders.size > 1,
       autoplay: {
         delay: 5000,
         disableOnInteraction: false,
