@@ -969,6 +969,13 @@
   resolved "https://registry.yarnpkg.com/@rails/ujs/-/ujs-7.1.501.tgz#e560a7b6885a12a659c4beb47f4336c8a9353056"
   integrity sha512-7EDRGUlgns12IgP3SXVSaxA3CwRzbLOypPXn1EqEZiZ/NS/PwaQ/oa7Z2VRO4B46JifoVr0PYg+G5ERSGQJHxQ==
 
+"@stimulus-components/carousel@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@stimulus-components/carousel/-/carousel-6.0.0.tgz#8ee0c5b78da38322c21133cbd580c0412eedca13"
+  integrity sha512-Jj7lwJI9B13+Wyt6Q27G5b45w5wyjVC79RB6eIuWt9ZYMRbjPWsV2kDofpiM1wUZi7h1+xk+vAZorPPnvGd4dA==
+  dependencies:
+    swiper "^11.0.6"
+
 "@tailwindcss/typography@^0.5.16":
   version "0.5.16"
   resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.5.16.tgz#a926c8f44d5c439b2915e231cad80058850047c6"
@@ -1214,13 +1221,6 @@ dlv@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/dlv/-/dlv-1.1.3.tgz#5c198a8a11453596e751494d49874bc7732f2e79"
   integrity sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==
-
-dom7@^4.0.4:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/dom7/-/dom7-4.0.4.tgz#8b68c5d8e5e2ed0fddb1cb93e433bc9060c8f3fb"
-  integrity sha512-DSSgBzQ4rJWQp1u6o+3FVwMNnT5bzQbMb+o31TjYYeRi05uAcpF8koxdfzeoe5ElzPmua7W7N28YJhF7iEKqIw==
-  dependencies:
-    ssr-window "^4.0.0"
 
 eastasianwidth@^0.2.0:
   version "0.2.0"
@@ -1669,18 +1669,6 @@ source-map-js@^1.2.1:
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.2.1.tgz#1ce5650fddd87abc099eda37dcff024c2667ae46"
   integrity sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==
 
-ssr-window@^4.0.0, ssr-window@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/ssr-window/-/ssr-window-4.0.2.tgz#dc6b3ee37be86ac0e3ddc60030f7b3bc9b8553be"
-  integrity sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==
-
-stimulus-carousel@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/stimulus-carousel/-/stimulus-carousel-5.0.1.tgz#87306f7619ea64a8c36258f6f90f2989089c848d"
-  integrity sha512-j37fjoUc/4hkroxuEK6OuhYMd7d9sZN/5pKB5Y+PJzM9Wy5KvAfsURW4c7zMo58BQAlVrrz45XJrHc/XleEU3Q==
-  dependencies:
-    swiper "^8.4.5"
-
 "string-width-cjs@npm:string-width@^4.2.0":
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
@@ -1747,13 +1735,10 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-swiper@^8.4.5:
-  version "8.4.5"
-  resolved "https://registry.yarnpkg.com/swiper/-/swiper-8.4.5.tgz#149ca81f67393d3f33abddd0f968fc37e99980b5"
-  integrity sha512-zveyEFBBv4q1sVkbJHnuH4xCtarKieavJ4SxP0QEHvdpPLJRuD7j/Xg38IVVLbp7Db6qrPsLUePvxohYx39Agw==
-  dependencies:
-    dom7 "^4.0.4"
-    ssr-window "^4.0.2"
+swiper@^11.0.6:
+  version "11.2.6"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-11.2.6.tgz#826943bf87158518ca0b1f57d387272b12a07c52"
+  integrity sha512-8aXpYKtjy3DjcbzZfz+/OX/GhcU5h+looA6PbAzHMZT6ESSycSp9nAjPCenczgJyslV+rUGse64LMGpWE3PX9Q==
 
 tailwindcss@^3.4.17:
   version "3.4.17"

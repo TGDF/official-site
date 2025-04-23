@@ -1,6 +1,6 @@
 import { Turbo } from "@hotwired/turbo-rails"
 import { Application } from "@hotwired/stimulus"
-import Carousel from 'stimulus-carousel'
+import Carousel from '@stimulus-components/carousel'
 import 'swiper/css/bundle'
 
 import NavbarController from "./controllers/navbar_controller"
