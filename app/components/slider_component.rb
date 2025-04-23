@@ -6,4 +6,16 @@ class SliderComponent < ViewComponent::Base
     @id = id
     @sliders = sliders
   end
+
+  def options
+    {
+      lazy: true,
+      loop: @sliders.size > 1 ? "true" : false,
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true
+      }
+    }
+  end
 end

@@ -1,4 +1,4 @@
-<section id="<%= @id %>" class="swiper swiper-container" data-controller="carousel" data-carousel-options-value='{"lazy": true, "loop": true, "autoplay": { "disableOnInteraction": false}}'>
+<section id="<%= @id %>" class="swiper" data-controller="carousel" data-carousel-options-value='<%= options.to_json %>'>
   <div class="swiper-wrapper">
     <%- unless @sliders.exists? %>
       <div class="swiper-slide">

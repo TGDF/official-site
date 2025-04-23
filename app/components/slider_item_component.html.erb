@@ -1,5 +1,5 @@
 <% cache @slider do %>
-<div class="<%= classes %>" data-swiper-autoplay="<%= @slider.interval %>">
+<div class="swiper-slide" data-swiper-autoplay="<%= @slider.interval %>">
   <%== image_tag @slider.image_url(:large), class: 'd-block w-100 swiper-lazy' %>
 </div>
 <% end %>
