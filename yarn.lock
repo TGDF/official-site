@@ -721,10 +721,13 @@
     ckeditor5 "44.3.0"
     lodash-es "4.17.21"
 
-"@coreui/coreui@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@coreui/coreui/-/coreui-3.4.0.tgz#3e3627a1f48a00f6289204a23f71eaa6ea94e370"
-  integrity sha512-WqzockdWVkXUNmNwlqdu+AxM+9JoiWGe4rKaySu/dZme1NvVOn2ukjJlpTkssal8UKcSHyitzNixtkMCmUxE1A==
+"@coreui/coreui@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@coreui/coreui/-/coreui-5.4.0.tgz#3cf76941aecbad3d17054909007618b3b10b3ce4"
+  integrity sha512-PtLossDHiU8Q7l/MDwaNjvpleDcPKDhkqvYGAhF+/rolZQteQFwjTx/7jD+v5c0YP+PHu9kmhrfTCaHMwK0UPA==
+  dependencies:
+    html-entities "^2.6.0"
+    html-to-md "^0.8.8"
 
 "@coreui/icons@^3.0.1":
   version "3.0.1"
@@ -1348,6 +1351,16 @@ hasown@^2.0.0:
   integrity sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA==
   dependencies:
     function-bind "^1.1.2"
+
+html-entities@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/html-entities/-/html-entities-2.6.0.tgz#7c64f1ea3b36818ccae3d3fb48b6974208e984f8"
+  integrity sha512-kig+rMn/QOVRvr7c86gQ8lWXq+Hkv6CbAH1hLu+RG338StTpE8Z0b44SDVaqVu7HGKf27frdmUYEs9hTUX/cLQ==
+
+html-to-md@^0.8.8:
+  version "0.8.8"
+  resolved "https://registry.yarnpkg.com/html-to-md/-/html-to-md-0.8.8.tgz#50e589dd8dcf26c3ccfdb294be5ab2e20409e459"
+  integrity sha512-lgK3KKagobOguNi1XOfNaTtFSsjySir1CPfzewzVUjFM4x0RASnyZu47Hoe9nStpWFwpOwIrdxXzhxLIRbWllQ==
 
 is-binary-path@~2.1.0:
   version "2.1.0"
