@@ -6,10 +6,13 @@ This is a Rails application for [Taipei Game Developer Forum](https://tgdf.tw) t
 
 ## Requirements
 
-* Ruby 2.7.5+
+* Ruby ~> 3.3.0
+* Rails ~> 8.0.2
 * PostgreSQL 9.6+
-* Node.js 8.0+
-  * Yarn 1.2.1+
+* Node.js (Latest LTS version recommended)
+  * Yarn (Latest version recommended)
+* `jsbundling-rails` (using `esbuild` for JavaScript bundling)
+* `cssbundling-rails` (using `tailwindcss` for CSS bundling)
 
 ## Development
 
@@ -21,20 +24,19 @@ We already setup for install environments, just execute setup script.
 $ ./bin/setup
 ```
 
-And make sure you are installed `foreman` to start server
-
+Also, install JavaScript dependencies:
 ```
-$ gem install foreman
+$ yarn install
 ```
 
 Notice that this project use [carrierwave](https://github.com/carrierwaveuploader/carrierwave#adding-versions) gem as file uploader, make sure you have installed its dependency imagemagick [mentioned here](https://github.com/carrierwaveuploader/carrierwave#adding-versions)
 
 ### Starting Server
 
-We use `Procile` to define which process have to start for development.
+`./bin/dev` will run the processes defined in `Procfile.dev` (like the Rails server and asset builders).
 
 ```
-$ foreman start
+$ ./bin/dev
 ```
 
 ### Style Guide
@@ -51,3 +53,4 @@ $ bundle exec overcommit --install
 ## Contribute
 
 We are welcome to receive yours issue and pull request, if you found any problem about our system.
+
