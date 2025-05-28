@@ -1,4 +1,5 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
+const colors = require('tailwindcss/colors')
 
 module.exports = {
   plugins: [
@@ -13,22 +14,22 @@ module.exports = {
   theme: {
     extend: {
       // Design tokens for admin v2 panel
-      colors: theme => ({
-        primary: theme('colors.indigo.600'),
-        'primary-foreground': theme('colors.white'),
-        secondary: theme('colors.gray.600'),
-        'secondary-foreground': theme('colors.white'),
-        destructive: theme('colors.red.600'),
-        'destructive-foreground': theme('colors.white'),
-        muted: theme('colors.gray.100'),
-        'muted-foreground': theme('colors.gray.600'),
-        accent: theme('colors.pink.600'),
-        'accent-foreground': theme('colors.white'),
-        background: theme('colors.white'),
-        foreground: theme('colors.gray.900'),
-        border: theme('colors.gray.200'),
-        'input-background': theme('colors.gray.50'),
-      }),
+      colors: {
+        primary: colors.indigo[600],
+        'primary-foreground': colors.white,
+        secondary: colors.gray[600],
+        'secondary-foreground': colors.white,
+        destructive: colors.red[600],
+        'destructive-foreground': colors.white,
+        muted: colors.gray[100],
+        'muted-foreground': colors.gray[600],
+        accent: colors.pink[600],
+        'accent-foreground': colors.white,
+        background: colors.white,
+        foreground: colors.gray[900],
+        border: colors.gray[200],
+        'input-background': colors.gray[50],
+      },
       fontFamily: {
         sans: ['Noto Sans TC', ...defaultTheme.fontFamily.sans],
       },
