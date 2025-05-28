@@ -1,0 +1,10 @@
+<tr>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= block.id %></td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= strip_tags(block.content).truncate_words(10) %></td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= t("locale.name.#{block.language}") %></td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= t("block_types.#{block.page}") %></td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+    <%= link_to t('.edit'), edit_admin_block_path(block), class: 'inline-flex items-center px-3 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
+    <%= button_to t('.destroy'), admin_block_path(block), method: :delete, data: { confirm: t('shared.destroy_confirm') }, class: 'inline-flex items-center px-3 py-1 bg-destructive text-destructive-foreground text-sm font-medium rounded-md hover:bg-destructive/90 transition' %>
+  </td>
+</tr>
