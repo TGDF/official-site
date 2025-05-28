@@ -1,128 +1,411 @@
-<nav class="flex flex-col p-4 bg-white space-y-2 h-full">
-  <ul class="space-y-1">
-    <li>
-      <%= link_to t('.dashboard'), admin_root_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %>
-    </li>
-  </ul>
-
-  <% unless tenant_site? %>
-    <div>
-      <h2 class="px-3 mt-4 text-xs font-semibold text-gray-500 uppercase"><%= t('.system') %></h2>
-      <ul class="pl-4 mt-2 space-y-1">
-        <li><%= link_to t('.list'), admin_sites_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-        <li><%= link_to t('.new'), new_admin_site_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-      </ul>
-    </div>
-  <% end %>
-
-  <div>
-    <h2 class="px-3 mt-4 text-xs font-semibold text-gray-500 uppercase"><%= t('.general') %></h2>
-    <ul class="pl-4 mt-2 space-y-1">
-      <li>
-        <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.news') %></h3>
-        <ul class="pl-4 mt-1 space-y-1">
-          <li><%= link_to t('.list'), admin_news_index_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          <li><%= link_to t('.new'), new_admin_news_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-        </ul>
-      </li>
-      <li>
-        <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.slider') %></h3>
-        <ul class="pl-4 mt-1 space-y-1">
-          <li><%= link_to t('.list'), admin_sliders_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          <li><%= link_to t('.new'), new_admin_slider_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-        </ul>
-      </li>
-      <li>
-        <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.blocks') %></h3>
-        <ul class="pl-4 mt-1 space-y-1">
-          <li><%= link_to t('.list'), admin_blocks_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          <li><%= link_to t('.new'), new_admin_block_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-        </ul>
-      </li>
-    </ul>
+<aside class="flex flex-col h-full w-64 bg-white border-r">
+  <div class="flex items-center justify-center h-16 border-b">
+    <span class="text-xl font-bold">Admin</span>
   </div>
-
-  <% if tenant_site? %>
+  <nav class="flex-1 overflow-y-auto px-2 py-4 space-y-6" aria-label="Sidebar">
+    <!-- Dashboard -->
     <div>
-      <h2 class="px-3 mt-4 text-xs font-semibold text-gray-500 uppercase"><%= t('.tenant_features') %></h2>
-      <ul class="pl-4 mt-2 space-y-1">
-        <li>
-          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.menus') %></h3>
-          <ul class="pl-4 mt-1 space-y-1">
-            <li><%= link_to t('.list'), admin_menu_items_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new'), new_admin_menu_item_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          </ul>
-        </li>
-        <li>
-          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.plans') %></h3>
-          <ul class="pl-4 mt-1 space-y-1">
-            <li><%= link_to t('.list'), admin_plans_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new'), new_admin_plan_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          </ul>
-        </li>
-        <li>
-          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.partner') %></h3>
-          <ul class="pl-4 mt-1 space-y-1">
-            <li><%= link_to t('.list'), admin_partners_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new'), new_admin_partner_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.types'), admin_partner_types_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new_type'), new_admin_partner_type_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          </ul>
-        </li>
-        <li>
-          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.sponsor') %></h3>
-          <ul class="pl-4 mt-1 space-y-1">
-            <li><%= link_to t('.list'), admin_sponsors_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new'), new_admin_sponsor_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.levels'), admin_sponsor_levels_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new_level'), new_admin_sponsor_level_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          </ul>
-        </li>
-        <li>
-          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.speaker') %></h3>
-          <ul class="pl-4 mt-1 space-y-1">
-            <li><%= link_to t('.list'), admin_speakers_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new'), new_admin_speaker_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          </ul>
-        </li>
-        <li>
-          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.agenda') %></h3>
-          <ul class="pl-4 mt-1 space-y-1">
-            <li><%= link_to t('.list'), admin_agendas_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new'), new_admin_agenda_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.rooms'), admin_rooms_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new_room'), new_admin_room_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.days'), admin_agenda_days_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new_day'), new_admin_agenda_day_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.times'), admin_agenda_times_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new_time'), new_admin_agenda_time_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.tags'), admin_agenda_tags_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new_tag'), new_admin_agenda_tag_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          </ul>
-        </li>
-        <li>
-          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.indie_space') %></h3>
-          <ul class="pl-4 mt-1 space-y-1">
-            <li><%= link_to t('.list'), admin_indie_space_games_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new'), new_admin_indie_space_game_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.options'), edit_admin_indie_space_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          </ul>
-        </li>
-        <li>
-          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.night_market') %></h3>
-          <ul class="pl-4 mt-1 space-y-1">
-            <li><%= link_to t('.list'), admin_night_market_games_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-            <li><%= link_to t('.new'), new_admin_night_market_game_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
-          </ul>
-        </li>
-        <li>
-          <%= link_to t('.options'), edit_admin_options_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %>
-        </li>
-      </ul>
+      <%= link_to admin_root_path,
+                  class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                             #{current_page?(admin_root_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+        <i class="fa fa-dashboard mr-2"></i>
+        <span><%= t('.dashboard') %></span>
+      <% end %>
     </div>
-  <% end %>
 
-  <div class="mt-auto px-3 py-4 text-xs text-gray-500">
-    <strong>Version:</strong> <%= ENV['REVISION'] || 'dev' %>
+    <% unless tenant_site? %>
+      <!-- System -->
+      <div>
+        <h3 class="px-3 mb-2 text-xs font-semibold uppercase text-gray-500"><%= t('.system') %></h3>
+        <ul class="space-y-1">
+          <li>
+            <%= link_to admin_sites_path,
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                   #{current_page?(admin_sites_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+              <i class="fa fa-sitemap mr-2"></i>
+              <span><%= t('.list') %></span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to new_admin_site_path,
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                   #{current_page?(new_admin_site_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+              <i class="fa fa-plus mr-2"></i>
+              <span><%= t('.new') %></span>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- General -->
+    <div>
+      <h3 class="px-3 mb-2 text-xs font-semibold uppercase text-gray-500"><%= t('.general') %></h3>
+      <!-- News -->
+      <div>
+        <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.news') %></h4>
+        <ul class="space-y-1 pl-4">
+          <li>
+            <%= link_to admin_news_index_path,
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                   #{current_page?(admin_news_index_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+              <i class="fa fa-newspaper-o mr-2"></i>
+              <span><%= t('.list') %></span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to new_admin_news_path,
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                   #{current_page?(new_admin_news_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+              <i class="fa fa-plus mr-2"></i>
+              <span><%= t('.new') %></span>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+      <!-- Slider -->
+      <div>
+        <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.slider') %></h4>
+        <ul class="space-y-1 pl-4">
+          <li>
+            <%= link_to admin_sliders_path,
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                   #{current_page?(admin_sliders_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+              <i class="fa fa-picture-o mr-2"></i>
+              <span><%= t('.list') %></span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to new_admin_slider_path,
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                   #{current_page?(new_admin_slider_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+              <i class="fa fa-plus mr-2"></i>
+              <span><%= t('.new') %></span>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+      <!-- Blocks -->
+      <div>
+        <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.blocks') %></h4>
+        <ul class="space-y-1 pl-4">
+          <li>
+            <%= link_to admin_blocks_path,
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                   #{current_page?(admin_blocks_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+              <i class="fa fa-cube mr-2"></i>
+              <span><%= t('.list') %></span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to new_admin_block_path,
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                   #{current_page?(new_admin_block_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+              <i class="fa fa-plus mr-2"></i>
+              <span><%= t('.new') %></span>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <% if tenant_site? %>
+      <!-- Tenant Features -->
+      <div>
+        <h3 class="px-3 mb-2 text-xs font-semibold uppercase text-gray-500"><%= t('.tenant_features') %></h3>
+        <!-- Menus -->
+        <div>
+          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.menus') %></h4>
+          <ul class="space-y-1 pl-4">
+            <li>
+              <%= link_to admin_menu_items_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_menu_items_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-bars mr-2"></i>
+                <span><%= t('.list') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_menu_item_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_menu_item_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new') %></span>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+        <!-- Plans -->
+        <div>
+          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.plans') %></h4>
+          <ul class="space-y-1 pl-4">
+            <li>
+              <%= link_to admin_plans_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_plans_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-cube mr-2"></i>
+                <span><%= t('.list') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_plan_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_plan_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new') %></span>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+        <!-- Partners -->
+        <div>
+          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.partner') %></h4>
+          <ul class="space-y-1 pl-4">
+            <li>
+              <%= link_to admin_partners_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_partners_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-handshake-o mr-2"></i>
+                <span><%= t('.list') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_partner_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_partner_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to admin_partner_types_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_partner_types_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-folder-o mr-2"></i>
+                <span><%= t('.types') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_partner_type_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_partner_type_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new_type') %></span>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+        <!-- Sponsors -->
+        <div>
+          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.sponsor') %></h4>
+          <ul class="space-y-1 pl-4">
+            <li>
+              <%= link_to admin_sponsors_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_sponsors_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-money mr-2"></i>
+                <span><%= t('.list') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_sponsor_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_sponsor_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to admin_sponsor_levels_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_sponsor_levels_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-diamond mr-2"></i>
+                <span><%= t('.levels') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_sponsor_level_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_sponsor_level_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new_level') %></span>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+        <!-- Speakers -->
+        <div>
+          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.speaker') %></h4>
+          <ul class="space-y-1 pl-4">
+            <li>
+              <%= link_to admin_speakers_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_speakers_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-users mr-2"></i>
+                <span><%= t('.list') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_speaker_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_speaker_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new') %></span>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+        <!-- Agenda -->
+        <div>
+          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.agenda') %></h4>
+          <ul class="space-y-1 pl-4">
+            <li>
+              <%= link_to admin_agendas_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_agendas_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-file-text mr-2"></i>
+                <span><%= t('.list') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_agenda_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_agenda_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to admin_rooms_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_rooms_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-columns mr-2"></i>
+                <span><%= t('.rooms') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_room_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_room_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new_room') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to admin_agenda_days_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_agenda_days_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-calendar mr-2"></i>
+                <span><%= t('.days') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_agenda_day_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_agenda_day_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new_day') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to admin_agenda_times_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_agenda_times_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-clock-o mr-2"></i>
+                <span><%= t('.times') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_agenda_time_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_agenda_time_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new_time') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to admin_agenda_tags_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_agenda_tags_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-tags mr-2"></i>
+                <span><%= t('.tags') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_agenda_tag_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_agenda_tag_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new_tag') %></span>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+        <!-- Indie Space -->
+        <div>
+          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.indie_space') %></h4>
+          <ul class="space-y-1 pl-4">
+            <li>
+              <%= link_to admin_indie_space_games_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_indie_space_games_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-list mr-2"></i>
+                <span><%= t('.list') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_indie_space_game_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_indie_space_game_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to edit_admin_indie_space_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(edit_admin_indie_space_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-gear mr-2"></i>
+                <span><%= t('.options') %></span>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+        <!-- Night Market -->
+        <div>
+          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.night_market') %></h4>
+          <ul class="space-y-1 pl-4">
+            <li>
+              <%= link_to admin_night_market_games_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(admin_night_market_games_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-list mr-2"></i>
+                <span><%= t('.list') %></span>
+              <% end %>
+            </li>
+            <li>
+              <%= link_to new_admin_night_market_game_path,
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                     #{current_page?(new_admin_night_market_game_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+                <i class="fa fa-plus mr-2"></i>
+                <span><%= t('.new') %></span>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+        <!-- Options -->
+        <div>
+          <%= link_to edit_admin_options_path,
+                      class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
+                                 #{current_page?(edit_admin_options_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
+            <i class="fa fa-gear mr-2"></i>
+            <span><%= t('.options') %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </nav>
+  <div class="px-4 py-4 border-t">
+    <span class="text-xs text-gray-400">Version <%= ENV['REVISION'] || 'dev' %></span>
   </div>
-</nav>
+</aside>
