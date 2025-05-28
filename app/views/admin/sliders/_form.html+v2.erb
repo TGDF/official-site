@@ -1,0 +1,40 @@
+<%# Admin Sliders Form - TailwindCSS v2 variant %>
+<%= form_with model: [:admin, @slider], local: true, html: { multipart: true, class: 'space-y-6' } do |f| %>
+  <% if @slider.errors.any? %>
+    <div class="bg-destructive/10 text-destructive rounded-md p-4">
+      <h2 class="text-destructive font-semibold"><%= t('errors.template.header', count: @slider.errors.count) %></h2>
+      <ul class="mt-2 list-disc list-inside space-y-1">
+        <% @slider.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="grid grid-cols-1 gap-6">
+    <div>
+      <%= f.label :image, class: 'block text-sm font-medium text-foreground' %>
+      <%= f.file_field :image, class: 'mt-1 block w-full text-sm text-foreground' %>
+      <% if @slider.image.present? %>
+        <div class="mt-2">
+          <%= image_tag @slider.image_url(:thumb), class: 'h-16 w-auto rounded-md' %>
+        </div>
+      <% end %>
+    </div>
+    <div>
+      <%= f.label :language, class: 'block text-sm font-medium text-foreground' %>
+      <%= f.select :language, Slider.languages.map { |lang, _| [t("locale.name.#{lang}"), lang] }, {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+    </div>
+    <div>
+      <%= f.label :page, class: 'block text-sm font-medium text-foreground' %>
+      <%= f.select :page, Slider.pages.map { |page, _| [t("shared.nav.#{page}"), page] }, {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+    </div>
+    <div>
+      <%= f.label :interval, class: 'block text-sm font-medium text-foreground' %>
+      <%= f.number_field :interval, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+    </div>
+  </div>
+  <div class="pt-6 flex space-x-2">
+    <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
+    <%= link_to 'Cancel', admin_sliders_path, class: 'inline-flex items-center px-4 py-2 bg-muted text-muted-foreground text-sm font-medium rounded-md hover:bg-muted/90 transition' %>
+  </div>
+<% end %>
