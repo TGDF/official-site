@@ -1,14 +1,14 @@
-<aside class="flex flex-col h-full w-64 bg-white border-r">
-  <div class="flex items-center justify-center h-16 border-b">
-    <span class="text-xl font-bold">Admin</span>
+<div class="flex flex-col h-full w-64">
+  <div class="flex items-center justify-center h-16 border-b border-border">
+    <span class="text-xl font-bold text-primary">Admin</span>
   </div>
-  <nav class="flex-1 overflow-y-auto px-2 py-4 space-y-6" aria-label="Sidebar">
+  <nav class="flex-1 overflow-y-auto px-3 py-6 space-y-6" aria-label="Sidebar">
     <!-- Dashboard -->
     <div>
       <%= link_to admin_root_path,
-                  class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                             #{current_page?(admin_root_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-        <i class="fa fa-dashboard mr-2"></i>
+                  class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                             #{current_page?(admin_root_path) ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}" do %>
+        <i class="fa fa-dashboard mr-3 w-4 h-4 flex-shrink-0"></i>
         <span><%= t('.dashboard') %></span>
       <% end %>
     </div>
@@ -16,21 +16,21 @@
     <% unless tenant_site? %>
       <!-- System -->
       <div>
-        <h3 class="px-3 mb-2 text-xs font-semibold uppercase text-gray-500"><%= t('.system') %></h3>
+        <h3 class="px-3 mb-3 text-xs font-semibold uppercase text-muted-foreground tracking-wider"><%= t('.system') %></h3>
         <ul class="space-y-1">
           <li>
             <%= link_to admin_sites_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                   #{current_page?(admin_sites_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-              <i class="fa fa-sitemap mr-2"></i>
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                                   #{current_page?(admin_sites_path) ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}" do %>
+              <i class="fa fa-sitemap mr-3 w-4 h-4 flex-shrink-0"></i>
               <span><%= t('.list') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to new_admin_site_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                   #{current_page?(new_admin_site_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-              <i class="fa fa-plus mr-2"></i>
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                                   #{current_page?(new_admin_site_path) ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}" do %>
+              <i class="fa fa-plus mr-3 w-4 h-4 flex-shrink-0"></i>
               <span><%= t('.new') %></span>
             <% end %>
           </li>
@@ -40,68 +40,68 @@
 
     <!-- General -->
     <div>
-      <h3 class="px-3 mb-2 text-xs font-semibold uppercase text-gray-500"><%= t('.general') %></h3>
+      <h3 class="px-3 mb-3 text-xs font-semibold uppercase text-muted-foreground tracking-wider"><%= t('.general') %></h3>
       <!-- News -->
-      <div>
-        <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.news') %></h4>
+      <div class="mb-4">
+        <h4 class="px-3 py-1 text-sm font-medium text-foreground"><%= t('.news') %></h4>
         <ul class="space-y-1 pl-4">
           <li>
             <%= link_to admin_news_index_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                   #{current_page?(admin_news_index_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-              <i class="fa fa-newspaper-o mr-2"></i>
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                                   #{current_page?(admin_news_index_path) ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}" do %>
+              <i class="fa fa-newspaper-o mr-3 w-4 h-4 flex-shrink-0"></i>
               <span><%= t('.list') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to new_admin_news_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                   #{current_page?(new_admin_news_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-              <i class="fa fa-plus mr-2"></i>
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                                   #{current_page?(new_admin_news_path) ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}" do %>
+              <i class="fa fa-plus mr-3 w-4 h-4 flex-shrink-0"></i>
               <span><%= t('.new') %></span>
             <% end %>
           </li>
         </ul>
       </div>
       <!-- Slider -->
-      <div>
-        <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.slider') %></h4>
+      <div class="mb-4">
+        <h4 class="px-3 py-1 text-sm font-medium text-foreground"><%= t('.slider') %></h4>
         <ul class="space-y-1 pl-4">
           <li>
             <%= link_to admin_sliders_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                   #{current_page?(admin_sliders_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-              <i class="fa fa-picture-o mr-2"></i>
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                                   #{current_page?(admin_sliders_path) ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}" do %>
+              <i class="fa fa-picture-o mr-3 w-4 h-4 flex-shrink-0"></i>
               <span><%= t('.list') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to new_admin_slider_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                   #{current_page?(new_admin_slider_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-              <i class="fa fa-plus mr-2"></i>
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                                   #{current_page?(new_admin_slider_path) ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}" do %>
+              <i class="fa fa-plus mr-3 w-4 h-4 flex-shrink-0"></i>
               <span><%= t('.new') %></span>
             <% end %>
           </li>
         </ul>
       </div>
       <!-- Blocks -->
-      <div>
-        <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.blocks') %></h4>
+      <div class="mb-4">
+        <h4 class="px-3 py-1 text-sm font-medium text-foreground"><%= t('.blocks') %></h4>
         <ul class="space-y-1 pl-4">
           <li>
             <%= link_to admin_blocks_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                   #{current_page?(admin_blocks_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-              <i class="fa fa-cube mr-2"></i>
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                                   #{current_page?(admin_blocks_path) ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}" do %>
+              <i class="fa fa-cube mr-3 w-4 h-4 flex-shrink-0"></i>
               <span><%= t('.list') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to new_admin_block_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                   #{current_page?(new_admin_block_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-              <i class="fa fa-plus mr-2"></i>
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                                   #{current_page?(new_admin_block_path) ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}" do %>
+              <i class="fa fa-plus mr-3 w-4 h-4 flex-shrink-0"></i>
               <span><%= t('.new') %></span>
             <% end %>
           </li>
@@ -112,7 +112,7 @@
     <% if tenant_site? %>
       <!-- Tenant Features -->
       <div>
-        <h3 class="px-3 mb-2 text-xs font-semibold uppercase text-gray-500"><%= t('.tenant_features') %></h3>
+        <h3 class="px-3 mb-3 text-xs font-semibold uppercase text-muted-foreground tracking-wider"><%= t('.tenant_features') %></h3>
         <!-- Menus -->
         <div>
           <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.menus') %></h4>
@@ -405,7 +405,7 @@
       </div>
     <% end %>
   </nav>
-  <div class="px-4 py-4 border-t">
-    <span class="text-xs text-gray-400">Version <%= ENV['REVISION'] || 'dev' %></span>
+  <div class="px-4 py-4 border-t border-border">
+    <span class="text-xs text-muted-foreground">Version <%= ENV['REVISION'] || 'dev' %></span>
   </div>
-</aside>
+</div>

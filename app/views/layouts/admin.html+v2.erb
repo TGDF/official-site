@@ -1,5 +1,7 @@
-<html>
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
   <head>
+    <meta charset="utf-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible" />
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
     <%= display_meta_tags site: t('site_name') %>
@@ -9,23 +11,33 @@
     <%= stylesheet_link_tag 'theme', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'admin', 'data-turbo-track': 'reload', defer: true %>
   </head>
-  <body class="min-h-screen flex bg-gray-100 font-sans text-gray-900">
+  <body class="min-h-screen flex bg-background font-sans text-foreground antialiased">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white border-r">
+    <aside class="w-64 bg-white shadow-sm border-r border-border">
       <%= render 'admin/shared/sidebar' %>
     </aside>
 
     <!-- Main content -->
     <div class="flex-1 flex flex-col">
       <!-- Header -->
-      <header class="h-16 bg-white border-b flex items-center px-4">
+      <header class="h-16 bg-white border-b border-border shadow-sm flex items-center px-6">
         <%= render 'admin/shared/header' %>
       </header>
 
       <!-- Page content -->
       <main class="flex-1 p-6 overflow-auto">
         <% flash.each do |type, msg| %>
-          <div class="mb-4 px-4 py-2 rounded bg-amber-100 text-amber-800">
+          <% alert_class = type.to_s == 'alert' ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary' %>
+          <div class="mb-6 px-4 py-3 rounded-md <%= alert_class %> flex items-center">
+            <% if type.to_s == 'alert' %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+            <% else %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            <% end %>
             <%= msg %>
           </div>
         <% end %>
