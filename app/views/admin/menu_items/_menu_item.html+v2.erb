@@ -1,0 +1,10 @@
+<tr>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= menu_item.id %></td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= menu_item.name %></td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-primary hover:underline"><%= menu_item.link %></td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= menu_item.visible? %></td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+    <%= link_to t('.edit'), edit_admin_menu_item_path(menu_item), class: 'inline-flex items-center px-3 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
+    <%= button_to t('.destroy'), admin_menu_item_path(menu_item), method: :delete, data: { confirm: t('shared.destroy_confirm') }, class: 'inline-flex items-center px-3 py-1 bg-destructive text-destructive-foreground text-sm font-medium rounded-md hover:bg-destructive/90 transition' %>
+  </td>
+</tr>
