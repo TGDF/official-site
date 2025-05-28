@@ -2,6 +2,10 @@
 
 module Admin
   class BaseController < ::ApplicationController
+    # Toggle TailwindCSS-based admin panel when ?variant=v2 is present
+    before_action do
+      request.variant = :v2 if params[:variant] == "v2"
+    end
     before_action :authenticate_admin_user!
     before_action -> { @navbar_sites = Site.recent.limit(5) }
 
