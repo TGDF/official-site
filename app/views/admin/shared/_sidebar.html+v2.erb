@@ -1,0 +1,128 @@
+<nav class="flex flex-col p-4 bg-white space-y-2 h-full">
+  <ul class="space-y-1">
+    <li>
+      <%= link_to t('.dashboard'), admin_root_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %>
+    </li>
+  </ul>
+
+  <% unless tenant_site? %>
+    <div>
+      <h2 class="px-3 mt-4 text-xs font-semibold text-gray-500 uppercase"><%= t('.system') %></h2>
+      <ul class="pl-4 mt-2 space-y-1">
+        <li><%= link_to t('.list'), admin_sites_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+        <li><%= link_to t('.new'), new_admin_site_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <h2 class="px-3 mt-4 text-xs font-semibold text-gray-500 uppercase"><%= t('.general') %></h2>
+    <ul class="pl-4 mt-2 space-y-1">
+      <li>
+        <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.news') %></h3>
+        <ul class="pl-4 mt-1 space-y-1">
+          <li><%= link_to t('.list'), admin_news_index_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          <li><%= link_to t('.new'), new_admin_news_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+        </ul>
+      </li>
+      <li>
+        <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.slider') %></h3>
+        <ul class="pl-4 mt-1 space-y-1">
+          <li><%= link_to t('.list'), admin_sliders_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          <li><%= link_to t('.new'), new_admin_slider_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+        </ul>
+      </li>
+      <li>
+        <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.blocks') %></h3>
+        <ul class="pl-4 mt-1 space-y-1">
+          <li><%= link_to t('.list'), admin_blocks_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          <li><%= link_to t('.new'), new_admin_block_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <% if tenant_site? %>
+    <div>
+      <h2 class="px-3 mt-4 text-xs font-semibold text-gray-500 uppercase"><%= t('.tenant_features') %></h2>
+      <ul class="pl-4 mt-2 space-y-1">
+        <li>
+          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.menus') %></h3>
+          <ul class="pl-4 mt-1 space-y-1">
+            <li><%= link_to t('.list'), admin_menu_items_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new'), new_admin_menu_item_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          </ul>
+        </li>
+        <li>
+          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.plans') %></h3>
+          <ul class="pl-4 mt-1 space-y-1">
+            <li><%= link_to t('.list'), admin_plans_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new'), new_admin_plan_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          </ul>
+        </li>
+        <li>
+          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.partner') %></h3>
+          <ul class="pl-4 mt-1 space-y-1">
+            <li><%= link_to t('.list'), admin_partners_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new'), new_admin_partner_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.types'), admin_partner_types_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new_type'), new_admin_partner_type_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          </ul>
+        </li>
+        <li>
+          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.sponsor') %></h3>
+          <ul class="pl-4 mt-1 space-y-1">
+            <li><%= link_to t('.list'), admin_sponsors_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new'), new_admin_sponsor_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.levels'), admin_sponsor_levels_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new_level'), new_admin_sponsor_level_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          </ul>
+        </li>
+        <li>
+          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.speaker') %></h3>
+          <ul class="pl-4 mt-1 space-y-1">
+            <li><%= link_to t('.list'), admin_speakers_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new'), new_admin_speaker_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          </ul>
+        </li>
+        <li>
+          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.agenda') %></h3>
+          <ul class="pl-4 mt-1 space-y-1">
+            <li><%= link_to t('.list'), admin_agendas_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new'), new_admin_agenda_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.rooms'), admin_rooms_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new_room'), new_admin_room_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.days'), admin_agenda_days_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new_day'), new_admin_agenda_day_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.times'), admin_agenda_times_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new_time'), new_admin_agenda_time_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.tags'), admin_agenda_tags_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new_tag'), new_admin_agenda_tag_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          </ul>
+        </li>
+        <li>
+          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.indie_space') %></h3>
+          <ul class="pl-4 mt-1 space-y-1">
+            <li><%= link_to t('.list'), admin_indie_space_games_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new'), new_admin_indie_space_game_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.options'), edit_admin_indie_space_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          </ul>
+        </li>
+        <li>
+          <h3 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.night_market') %></h3>
+          <ul class="pl-4 mt-1 space-y-1">
+            <li><%= link_to t('.list'), admin_night_market_games_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+            <li><%= link_to t('.new'), new_admin_night_market_game_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %></li>
+          </ul>
+        </li>
+        <li>
+          <%= link_to t('.options'), edit_admin_options_path, class: 'block px-3 py-2 rounded text-gray-700 hover:bg-gray-100' %>
+        </li>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mt-auto px-3 py-4 text-xs text-gray-500">
+    <strong>Version:</strong> <%= ENV['REVISION'] || 'dev' %>
+  </div>
+</nav>

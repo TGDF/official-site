@@ -9,13 +9,25 @@
     <%= stylesheet_link_tag 'theme', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'admin', 'data-turbo-track': 'reload', defer: true %>
   </head>
-  <body>
-    <%= render 'admin/shared/sidebar' %>
-    <div>
-      <%= render 'admin/shared/header' %>
-      <main>
+  <body class="min-h-screen flex bg-gray-100 font-sans text-gray-900">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r">
+      <%= render 'admin/shared/sidebar' %>
+    </aside>
+
+    <!-- Main content -->
+    <div class="flex-1 flex flex-col">
+      <!-- Header -->
+      <header class="h-16 bg-white border-b flex items-center px-4">
+        <%= render 'admin/shared/header' %>
+      </header>
+
+      <!-- Page content -->
+      <main class="flex-1 p-6 overflow-auto">
         <% flash.each do |type, msg| %>
-          <div class="alert"><%= msg %></div>
+          <div class="mb-4 px-4 py-2 rounded bg-amber-100 text-amber-800">
+            <%= msg %>
+          </div>
         <% end %>
         <%= yield %>
       </main>
