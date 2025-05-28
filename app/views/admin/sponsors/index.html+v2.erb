@@ -1,0 +1,22 @@
+<%# Admin Sponsors Index - TailwindCSS v2 variant %>
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold"><%= t('.sponsors') %></h1>
+  </div>
+  <div class="overflow-x-auto bg-white rounded-lg shadow">
+    <table class="min-w-full divide-y divide-border">
+      <thead class="bg-muted">
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider">#</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.name') %></th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.level') %></th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.order') %></th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.actions') %></th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-border">
+        <%= render @sponsors %>
+      </tbody>
+    </table>
+  </div>
+</div>
