@@ -12,8 +12,25 @@ module.exports = {
   ],
   theme: {
     extend: {
+      // Design tokens for admin v2 panel
+      colors: theme => ({
+        primary: theme('colors.indigo.600'),
+        'primary-foreground': theme('colors.white'),
+        secondary: theme('colors.gray.600'),
+        'secondary-foreground': theme('colors.white'),
+        destructive: theme('colors.red.600'),
+        'destructive-foreground': theme('colors.white'),
+        muted: theme('colors.gray.100'),
+        'muted-foreground': theme('colors.gray.600'),
+        accent: theme('colors.pink.600'),
+        'accent-foreground': theme('colors.white'),
+        background: theme('colors.white'),
+        foreground: theme('colors.gray.900'),
+        border: theme('colors.gray.200'),
+        'input-background': theme('colors.gray.50'),
+      }),
       fontFamily: {
-        'sans': ['Noto Sans TC', ...defaultTheme.fontFamily.sans],
+        sans: ['Noto Sans TC', ...defaultTheme.fontFamily.sans],
       },
       typography: (theme) => ({
         white: {
