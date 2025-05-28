@@ -1,0 +1,7 @@
+/*
+ TailwindCSS entrypoint for the v2 admin panel variant
+ This will be compiled to app/assets/builds/admin_v2.css via the build:css script
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

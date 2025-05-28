@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+    <%= display_meta_tags site: t('site_name') %>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag 'https://use.fontawesome.com/b2e3e84e95.css', media: 'all' %>
+    <%= stylesheet_link_tag 'theme', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'admin', 'data-turbo-track': 'reload', defer: true %>
+  </head>
+  <body>
+    <%= render 'admin/shared/sidebar' %>
+    <div>
+      <%= render 'admin/shared/header' %>
+      <main>
+        <% flash.each do |type, msg| %>
+          <div class="alert"><%= msg %></div>
+        <% end %>
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>
