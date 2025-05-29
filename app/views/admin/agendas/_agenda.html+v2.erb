@@ -1,0 +1,19 @@
+<%# Admin Agenda Row - TailwindCSS v2 variant %>
+<tr class="border-b border-gray-200">
+  <td class="py-3 px-4 text-sm font-medium"><%= agenda.id %></td>
+  <td class="py-3 px-4 text-sm font-medium">
+    <%= link_to agenda.subject, edit_admin_agenda_path(agenda), class: 'text-blue-600 hover:underline' %>
+  </td>
+  <td class="py-3 px-4 text-sm">
+    <div class="flex items-center gap-2.5">
+      <%= link_to edit_admin_agenda_path(agenda), class: 'flex items-center text-sm px-3 py-1.5 rounded-md text-gray-600 hover:bg-gray-100' do %>
+        <i class="fa fa-edit w-4 h-4 mr-1"></i>
+        <span><%= t('.edit') %></span>
+      <% end %>
+      <%= link_to admin_agenda_path(agenda), method: :delete, data: { turbo_method: :delete, confirm: t('shared.destroy_confirm') }, class: 'flex items-center text-sm px-3 py-1.5 rounded-md text-red-600 hover:bg-red-50' do %>
+        <i class="fa fa-trash w-4 h-4 mr-1"></i>
+        <span><%= t('.destroy') %></span>
+      <% end %>
+    </div>
+  </td>
+</tr>

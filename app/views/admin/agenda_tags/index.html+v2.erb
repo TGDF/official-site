@@ -1,0 +1,24 @@
+<%# Admin Agenda Tags Index - TailwindCSS v2 variant %>
+<div class="space-y-6">
+  <div class="mb-6">
+    <h1 class="text-xl font-semibold text-gray-900 mb-2"><%= t('.tags') %></h1>
+    <p class="text-gray-600 text-sm"><%= t('.description', default: 'Manage agenda tags') %></p>
+  </div>
+
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6">
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="border-b border-gray-200">
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">#</th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.name') %></th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render @agenda_tags %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
