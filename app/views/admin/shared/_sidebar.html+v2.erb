@@ -406,9 +406,9 @@
     <% end %>
   </nav>
   <div class="px-4 py-2 border-t border-border">
-    <%= link_to admin_feature_toggle_path(feature: 'admin_v2'), method: :patch, class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
-                       #{admin_v2_enabled? ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}", data: { turbo_method: :patch } do %>
-      <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> mr-2 w-4 h-4 flex-shrink-0"></i>
+    <%= link_to admin_feature_toggle_path(feature: 'admin_v2'), method: :patch, class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
+                       #{admin_v2_enabled? ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}", data: { turbo_method: :patch } do %>
+      <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
       <span><%= admin_v2_enabled? ? 'Disable Admin V2' : 'Enable Admin V2' %></span>
     <% end %>
   </div>
