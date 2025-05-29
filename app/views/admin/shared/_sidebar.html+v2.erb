@@ -405,6 +405,13 @@
       </div>
     <% end %>
   </nav>
+  <div class="px-4 py-2 border-t border-border">
+    <%= link_to admin_feature_toggle_path(feature: 'admin_v2'), method: :patch, class: "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
+                       #{admin_v2_enabled? ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}", data: { turbo_method: :patch } do %>
+      <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> mr-2 w-4 h-4 flex-shrink-0"></i>
+      <span><%= admin_v2_enabled? ? 'Disable Admin V2' : 'Enable Admin V2' %></span>
+    <% end %>
+  </div>
   <div class="px-4 py-4 border-t border-border">
     <span class="text-xs text-muted-foreground">Version <%= ENV['REVISION'] || 'dev' %></span>
   </div>

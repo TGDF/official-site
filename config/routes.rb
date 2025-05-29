@@ -72,6 +72,8 @@ Rails.application.routes.draw do
     constraints ->(_req) { Apartment::Tenant.current == "public" } do
       resources :sites, except: :show
     end
+    # Feature toggle for admin variant v2
+    patch 'feature_toggle/:feature', to: 'feature_toggles#update', as: :feature_toggle
   end
 
   get("*path", to: proc { |env| ApplicationController.action("not_found").call(env) }) if Rails.env.production?
