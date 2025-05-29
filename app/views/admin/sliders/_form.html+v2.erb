@@ -1,8 +1,8 @@
 <%# Admin Sliders Form - TailwindCSS v2 variant %>
 <%= form_with model: [:admin, @slider], local: true, html: { multipart: true, class: 'space-y-6' } do |f| %>
   <% if @slider.errors.any? %>
-    <div class="bg-destructive/10 text-destructive rounded-md p-4">
-      <h2 class="text-destructive font-semibold"><%= t('errors.template.header', count: @slider.errors.count) %></h2>
+    <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-6">
+      <h2 class="font-semibold"><%= t('errors.template.header', count: @slider.errors.count) %></h2>
       <ul class="mt-2 list-disc list-inside space-y-1">
         <% @slider.errors.full_messages.each do |msg| %>
           <li><%= msg %></li>
@@ -12,8 +12,8 @@
   <% end %>
   <div class="grid grid-cols-1 gap-6">
     <div>
-      <%= f.label :image, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.file_field :image, class: 'mt-1 block w-full text-sm text-foreground' %>
+      <%= f.label :image, class: 'block text-sm font-medium text-gray-900' %>
+      <%= f.file_field :image, class: 'mt-1 block w-full text-sm text-gray-900' %>
       <% if @slider.image.present? %>
         <div class="mt-2">
           <%= image_tag @slider.image_url(:thumb), class: 'h-16 w-auto rounded-md' %>
@@ -21,20 +21,20 @@
       <% end %>
     </div>
     <div>
-      <%= f.label :language, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.select :language, Slider.languages.map { |lang, _| [t("locale.name.#{lang}"), lang] }, {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      <%= f.label :language, class: 'block text-sm font-medium text-gray-900' %>
+      <%= f.select :language, Slider.languages.map { |lang, _| [t("locale.name.#{lang}"), lang] }, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
     </div>
     <div>
-      <%= f.label :page, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.select :page, Slider.pages.map { |page, _| [t("shared.nav.#{page}"), page] }, {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      <%= f.label :page, class: 'block text-sm font-medium text-gray-900' %>
+      <%= f.select :page, Slider.pages.map { |page, _| [t("shared.nav.#{page}"), page] }, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
     </div>
     <div>
-      <%= f.label :interval, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.number_field :interval, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      <%= f.label :interval, class: 'block text-sm font-medium text-gray-900' %>
+      <%= f.number_field :interval, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
     </div>
   </div>
-  <div class="pt-6 flex space-x-2">
-    <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
-    <%= link_to 'Cancel', admin_sliders_path, class: 'inline-flex items-center px-4 py-2 bg-muted text-muted-foreground text-sm font-medium rounded-md hover:bg-muted/90 transition' %>
-  </div>
+  <footer class="pt-3 border-t border-gray-200 flex justify-end space-x-2">
+    <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
+    <%= link_to t('shared.cancel', default: 'Cancel'), admin_sliders_path, class: 'px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50' %>
+  </footer>
 <% end %>
