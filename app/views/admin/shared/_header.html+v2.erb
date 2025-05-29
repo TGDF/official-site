@@ -2,31 +2,31 @@
 <div class="flex items-center justify-between w-full">
   <!-- Site switcher dropdown -->
   <div class="relative group">
-    <button type="button" class="flex items-center px-3 py-2 text-foreground hover:bg-muted rounded-md transition-colors duration-150 ease-in-out">
+    <button type="button" class="flex items-center px-3 py-2 text-admin-text-primary hover:bg-admin-background-muted rounded-admin-radius-md transition-colors duration-150 ease-in-out">
       <span class="font-medium"><%= current_site.name %></span>
-      <svg class="ml-1.5 w-4 h-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg class="ml-1.5 w-4 h-4 text-admin-text-secondary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
       </svg>
     </button>
-    <div class="hidden group-hover:block absolute left-0 mt-2 w-56 bg-background border border-border rounded-md shadow-md z-50 overflow-hidden">
-      <div class="px-4 py-2 text-xs font-semibold text-muted-foreground bg-muted"><%= t('.all_sites') %></div>
-      <%= link_to t('site_name'), admin_root_url(host: Settings.site.default_domain), class: 'block px-4 py-2 text-foreground hover:bg-muted transition-colors duration-150 ease-in-out' %>
+    <div class="hidden group-hover:block absolute left-0 mt-2 w-56 bg-admin-background border border-admin-border rounded-admin-radius-md shadow-admin-shadow z-50 overflow-hidden">
+      <div class="px-4 py-2 text-xs font-semibold text-admin-text-secondary bg-admin-background-muted"><%= t('.all_sites') %></div>
+      <%= link_to t('site_name'), admin_root_url(host: Settings.site.default_domain), class: 'block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted transition-colors duration-150 ease-in-out' %>
       <% @navbar_sites.each do |site| %>
-        <%= link_to site.name, admin_root_url(host: site.domain), class: 'block px-4 py-2 text-foreground hover:bg-muted transition-colors duration-150 ease-in-out' %>
+        <%= link_to site.name, admin_root_url(host: site.domain), class: 'block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted transition-colors duration-150 ease-in-out' %>
       <% end %>
-      <div class="border-t border-border my-1"></div>
-      <%= link_to t('.view_all'), admin_sites_url(host: Settings.site.default_domain), class: 'block px-4 py-2 text-foreground hover:bg-muted transition-colors duration-150 ease-in-out' %>
+      <div class="border-t border-admin-border my-1"></div>
+      <%= link_to t('.view_all'), admin_sites_url(host: Settings.site.default_domain), class: 'block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted transition-colors duration-150 ease-in-out' %>
     </div>
   </div>
 
   <!-- User menu dropdown -->
   <div class="relative group">
-    <button type="button" class="flex items-center p-1.5 rounded-full hover:bg-muted transition-colors duration-150 ease-in-out">
-      <%= image_tag current_admin_user.avatar(size: 36), class: 'w-8 h-8 rounded-full ring-1 ring-border' %>
+    <button type="button" class="flex items-center p-1.5 rounded-admin-radius-full hover:bg-admin-background-muted transition-colors duration-150 ease-in-out">
+      <%= image_tag current_admin_user.avatar(size: 36), class: 'w-10 h-10 rounded-admin-radius-full object-cover border border-admin-border' %>
     </button>
-    <div class="hidden group-hover:block absolute right-0 mt-2 w-56 bg-background border border-border rounded-md shadow-md z-50 overflow-hidden">
-      <div class="px-4 py-2 text-xs font-semibold text-muted-foreground bg-muted"><%= t('.account') %></div>
-      <%= link_to t('.logout'), destroy_admin_user_session_path, method: :delete, class: 'block px-4 py-2 text-destructive hover:bg-destructive/10 transition-colors duration-150 ease-in-out' %>
+    <div class="hidden group-hover:block absolute right-0 mt-2 w-56 bg-admin-background border border-admin-border rounded-admin-radius-md shadow-admin-shadow z-50 overflow-hidden">
+      <div class="px-4 py-2 text-xs font-semibold text-admin-text-secondary bg-admin-background-muted"><%= t('.account') %></div>
+      <%= link_to t('.logout'), destroy_admin_user_session_path, method: :delete, class: 'block px-4 py-2 text-red-600 hover:bg-red-50 transition-colors duration-150 ease-in-out', data: { turbo_method: :delete } %>
     </div>
   </div>
 </div>
