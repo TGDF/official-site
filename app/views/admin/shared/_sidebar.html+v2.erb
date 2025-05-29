@@ -8,7 +8,7 @@
       <%= link_to admin_root_path,
                   class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                              #{current_page?(admin_root_path) ? 'bg-admin-primary text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
-        <i class="fa fa-dashboard mr-3 w-5 h-5 flex-shrink-0 <%= current_page?(admin_root_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
+        <i class="fa fa-dashboard mr-3 w-5 h-5 flex-shrink-0 flex items-center justify-center <%= current_page?(admin_root_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
         <span><%= t('.dashboard') %></span>
       <% end %>
     </div>
@@ -22,7 +22,7 @@
             <%= link_to admin_sites_path,
                         class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(admin_sites_path) ? 'bg-admin-primary text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
-              <i class="fa fa-sitemap mr-3 w-5 h-5 flex-shrink-0 <%= current_page?(admin_sites_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
+              <i class="fa fa-sitemap mr-3 w-5 h-5 flex-shrink-0 flex items-center justify-center <%= current_page?(admin_sites_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
               <span><%= t('.list') %></span>
             <% end %>
           </li>
@@ -30,7 +30,7 @@
             <%= link_to new_admin_site_path,
                         class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(new_admin_site_path) ? 'bg-admin-primary text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
-              <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 <%= current_page?(new_admin_site_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
+              <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 flex items-center justify-center <%= current_page?(new_admin_site_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
               <span><%= t('.new') %></span>
             <% end %>
           </li>
@@ -49,7 +49,7 @@
             <%= link_to admin_news_index_path,
                         class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(admin_news_index_path) ? 'bg-admin-primary text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
-              <i class="fa fa-newspaper-o mr-3 w-5 h-5 flex-shrink-0 <%= current_page?(admin_news_index_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
+              <i class="fa fa-newspaper-o mr-3 w-5 h-5 flex-shrink-0 flex items-center justify-center <%= current_page?(admin_news_index_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
               <span><%= t('.list') %></span>
             <% end %>
           </li>
@@ -57,7 +57,7 @@
             <%= link_to new_admin_news_path,
                         class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(new_admin_news_path) ? 'bg-admin-primary text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
-              <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 <%= current_page?(new_admin_news_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
+              <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 flex items-center justify-center <%= current_page?(new_admin_news_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
               <span><%= t('.new') %></span>
             <% end %>
           </li>
@@ -71,7 +71,7 @@
             <%= link_to admin_sliders_path,
                         class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(admin_sliders_path) ? 'bg-admin-primary text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
-              <i class="fa fa-picture-o mr-3 w-5 h-5 flex-shrink-0 <%= current_page?(admin_sliders_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
+              <i class="fa fa-picture-o mr-3 w-5 h-5 flex-shrink-0 flex items-center justify-center <%= current_page?(admin_sliders_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
               <span><%= t('.list') %></span>
             <% end %>
           </li>
@@ -79,7 +79,7 @@
             <%= link_to new_admin_slider_path,
                         class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(new_admin_slider_path) ? 'bg-admin-primary text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
-              <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 <%= current_page?(new_admin_slider_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
+              <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 flex items-center justify-center <%= current_page?(new_admin_slider_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
               <span><%= t('.new') %></span>
             <% end %>
           </li>
@@ -93,7 +93,7 @@
             <%= link_to admin_blocks_path,
                         class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(admin_blocks_path) ? 'bg-admin-primary text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
-              <i class="fa fa-cube mr-3 w-5 h-5 flex-shrink-0 <%= current_page?(admin_blocks_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
+              <i class="fa fa-cube mr-3 w-5 h-5 flex-shrink-0 flex items-center justify-center <%= current_page?(admin_blocks_path) ? 'text-white' : 'text-admin-text-secondary' %>"></i>
               <span><%= t('.list') %></span>
             <% end %>
           </li>
@@ -408,7 +408,7 @@
   <div class="px-4 py-2 border-t border-admin-border">
     <%= link_to admin_feature_toggle_path(feature: 'admin_v2'), method: :patch, class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                        #{admin_v2_enabled? ? 'bg-admin-primary text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}", data: { turbo_method: :patch } do %>
-      <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> mr-3 w-5 h-5 flex-shrink-0 <%= admin_v2_enabled? ? 'text-white' : 'text-admin-text-secondary' %>"></i>
+      <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> mr-3 w-5 h-5 flex-shrink-0 flex items-center justify-center <%= admin_v2_enabled? ? 'text-white' : 'text-admin-text-secondary' %>"></i>
       <span><%= admin_v2_enabled? ? 'Disable Admin V2' : 'Enable Admin V2' %></span>
     <% end %>
   </div>
