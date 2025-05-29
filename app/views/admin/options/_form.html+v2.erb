@@ -1,7 +1,7 @@
 <%# Admin Options Form - TailwindCSS v2 variant %>
 <%= form_with model: current_site, url: admin_options_path, local: true, html: { class: 'space-y-6' } do |f| %>
   <% if current_site.errors.any? %>
-    <div class="bg-destructive/10 text-destructive rounded-md p-4">
+    <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-6">
       <h2 class="text-destructive font-semibold"><%= t('errors.template.header', count: current_site.errors.count) %></h2>
       <ul class="mt-2 list-disc list-inside space-y-1">
         <% current_site.errors.full_messages.each do |msg| %>
@@ -12,147 +12,130 @@
   <% end %>
 
   <%# General Settings %>
-  <div class="bg-white rounded-lg shadow p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-foreground"><%= t('.general') %></h2>
-    <div class="grid grid-cols-1 gap-6">
-      <div>
-        <%= f.label :google_analytics_id, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.text_field :google_analytics_id, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-gray-900"><%= t('.general') %></h2>
+      <div class="space-y-4">
+        <div>
+          <%= f.label :google_analytics_id, class: 'block text-sm font-medium text-gray-900' %>
+          <%= f.text_field :google_analytics_id, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+        </div>
       </div>
-    </div>
-    <div class="pt-4">
-      <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
+      <footer class="pt-3 border-t border-gray-200 flex justify-end">
+        <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
+      </footer>
     </div>
   </div>
 
   <%# Ticket Settings %>
-  <div class="bg-white rounded-lg shadow p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-foreground"><%= t('.ticket') %></h2>
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <div>
-        <%= f.label :ticket_early_personal_price, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.number_field :ticket_early_personal_price, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-gray-900"><%= t('.ticket') %></h2>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <% [:early_personal_price, :personal_price, :early_group_price, :group_price, :early_student_price, :student_price].each do |field| %>
+          <div>
+            <%= f.label "ticket_#{field}", class: 'block text-sm font-medium text-gray-900' %>
+            <%= f.number_field "ticket_#{field}", class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+          </div>
+        <% end %>
+        <div>
+          <%= f.label :ticket_early_bird_due_to, class: 'block text-sm font-medium text-gray-900' %>
+          <%= f.date_field :ticket_early_bird_due_to, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+        </div>
+        <div>
+          <%= f.label :ticket_buy_link, class: 'block text-sm font-medium text-gray-900' %>
+          <%= f.url_field :ticket_buy_link, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+        </div>
       </div>
-      <div>
-        <%= f.label :ticket_personal_price, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.number_field :ticket_personal_price, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div>
-        <%= f.label :ticket_early_group_price, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.number_field :ticket_early_group_price, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div>
-        <%= f.label :ticket_group_price, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.number_field :ticket_group_price, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div>
-        <%= f.label :ticket_early_student_price, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.number_field :ticket_early_student_price, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div>
-        <%= f.label :ticket_student_price, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.number_field :ticket_student_price, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div>
-        <%= f.label :ticket_early_bird_due_to, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.date_field :ticket_early_bird_due_to, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div>
-        <%= f.label :ticket_buy_link, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.url_field :ticket_buy_link, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-    </div>
-    <div class="pt-4">
-      <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
+      <footer class="pt-3 border-t border-gray-200 flex justify-end">
+        <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
+      </footer>
     </div>
   </div>
 
   <%# Streaming Settings %>
-  <div class="bg-white rounded-lg shadow p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-foreground"><%= t('.streaming') %></h2>
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <div>
-        <%= f.label :streaming_enabled, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.select :streaming_enabled, [['No', false], ['Yes', true]], {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+  <div class="bg-white border border_gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-gray-900"><%= t('.streaming') %></h2>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div>
+          <%= f.label :streaming_enabled, class: 'block text-sm font-medium text-gray-900' %>
+          <%= f.select :streaming_enabled, [['No', false], ['Yes', true]], {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+        </div>
+        <% [:track_1_url, :track_2_url, :track_3_url].each do |track| %>
+          <div>
+            <%= f.label "streaming_#{track}", class: 'block text-sm font-medium text-gray-900' %>
+            <%= f.url_field "streaming_#{track}", class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+          </div>
+        <% end %>
       </div>
-      <div>
-        <%= f.label :streaming_track_1_url, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.url_field :streaming_track_1_url, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div>
-        <%= f.label :streaming_track_2_url, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.url_field :streaming_track_2_url, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div>
-        <%= f.label :streaming_track_3_url, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.url_field :streaming_track_3_url, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-    </div>
-    <div class="pt-4">
-      <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
+      <footer class="pt-3 border-t border-gray-200 flex justify-end">
+        <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
+      </footer>
     </div>
   </div>
 
   <%# Call for Paper Settings %>
-  <div class="bg-white rounded-lg shadow p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-foreground"><%= t('.call_for_paper') %></h2>
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <div>
-        <%= f.label :cfp_only_mode, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.select :cfp_only_mode, [['No', false], ['Yes', true]], {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-gray-900"><%= t('.call_for_paper') %></h2>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <% [:cfp_only_mode, :cfp_on_agenda_mode].each do |opt| %>
+          <div>
+            <%= f.label opt, class: 'block text-sm font-medium text-gray-900' %>
+            <%= f.select opt, [['No', false], ['Yes', true]], {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+          </div>
+        <% end %>
+        <div class="md:col-span-2">
+          <%= f.label :cfp_form_url, class: 'block text-sm font-medium text-gray-900' %>
+          <%= f.url_field :cfp_form_url, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+        </div>
+        <div class="md:col-span-2">
+          <%= f.label :cfp_description, class: 'block text-sm font-medium text-gray-900' %>
+          <%= f.text_area :cfp_description, rows: 4, data: { editor: true }, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-36 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+        </div>
       </div>
-      <div>
-        <%= f.label :cfp_on_agenda_mode, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.select :cfp_on_agenda_mode, [['No', false], ['Yes', true]], {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div class="md:col-span-2">
-        <%= f.label :cfp_form_url, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.url_field :cfp_form_url, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div class="md:col-span-2">
-        <%= f.label :cfp_description, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.text_area :cfp_description, rows: 4, data: { editor: true }, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-    </div>
-    <div class="pt-4">
-      <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
+      <footer class="pt-3 border-t border-gray-200 flex justify-end">
+        <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
+      </footer>
     </div>
   </div>
 
   <%# Indie Space Settings %>
-  <div class="bg-white rounded-lg shadow p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-foreground"><%= t('.indie_space') %></h2>
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <div>
-        <%= f.label :indie_space_disabled, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.select :indie_space_disabled, [['No', false], ['Yes', true]], {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-gray-900"><%= t('.indie_space') %></h2>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <% [:indie_space_disabled, :indie_space_apply_mode].each do |opt| %>
+          <div>
+            <%= f.label opt, class: 'block text-sm font-medium text-gray-900' %>
+            <%= f.select opt, [['No', false], ['Yes', true]], {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+          </div>
+        <% end %>
+        <div class="md:col-span-2">
+          <%= f.label :indie_space_form_url, class: 'block text-sm font-medium text-gray-900' %>
+          <%= f.url_field :indie_space_form_url, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+        </div>
       </div>
-      <div>
-        <%= f.label :indie_space_apply_mode, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.select :indie_space_apply_mode, [['No', false], ['Yes', true]], {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-      <div class="md:col-span-2">
-        <%= f.label :indie_space_form_url, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.url_field :indie_space_form_url, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-      </div>
-    </div>
-    <div class="pt-4">
-      <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
+      <footer class="pt-3 border-t border-gray-200 flex justify-end">
+        <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
+      </footer>
     </div>
   </div>
 
   <%# Night Market Settings %>
-  <div class="bg-white rounded-lg shadow p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-foreground"><%= t('.night_market') %></h2>
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-gray-900"><%= t('.night_market') %></h2>
     <div class="grid grid-cols-1 gap-6">
       <div>
-        <%= f.label :night_market_enabled, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.select :night_market_enabled, [['No', false], ['Yes', true]], {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+        <%= f.label :night_market_enabled, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.select :night_market_enabled, [['No', false], ['Yes', true]], {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
     </div>
-    <div class="pt-4">
-      <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
-    </div>
+    <footer class="pt-3 border-t border-gray-200 flex justify-end">
+      <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
+    </footer>
   </div>
 
   <%# Survey Settings %>
