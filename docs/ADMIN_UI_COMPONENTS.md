@@ -297,7 +297,7 @@ Input fields have white backgrounds, subtle border with `admin-border`, medium r
 ### Example Code
 
 ```html
-<input class="bg-admin-input-background text-admin-text-primary border border-admin-border rounded-admin-md p-2 text-base focus:outline-none focus:ring-1 focus:ring-admin-border-active" type="text" />
+<input class="bg-admin-background text-admin-text-primary border border-admin-border rounded-admin-md p-2 text-base focus:outline-none focus:ring-1 focus:ring-admin-border-active" type="text" />
 ```
 
 ### Usage Guidance
