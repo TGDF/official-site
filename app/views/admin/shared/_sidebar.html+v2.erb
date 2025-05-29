@@ -163,33 +163,33 @@
           <ul class="space-y-1 pl-4">
             <li>
               <%= link_to admin_partners_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(admin_partners_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-handshake-o mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(admin_partners_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-handshake-o mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.list') %></span>
               <% end %>
             </li>
             <li>
               <%= link_to new_admin_partner_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(new_admin_partner_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-plus mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(new_admin_partner_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.new') %></span>
               <% end %>
             </li>
             <li>
               <%= link_to admin_partner_types_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(admin_partner_types_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-folder-o mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(admin_partner_types_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-folder-o mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.types') %></span>
               <% end %>
             </li>
             <li>
               <%= link_to new_admin_partner_type_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(new_admin_partner_type_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-plus mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(new_admin_partner_type_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.new_type') %></span>
               <% end %>
             </li>
@@ -197,37 +197,37 @@
         </div>
         <!-- Sponsors -->
         <div>
-          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.sponsor') %></h4>
+          <h4 class="px-3 py-1 text-sm font-medium text-admin-text-primary"><%= t('.sponsor') %></h4>
           <ul class="space-y-1 pl-4">
             <li>
               <%= link_to admin_sponsors_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(admin_sponsors_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-money mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(admin_sponsors_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-money mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.list') %></span>
               <% end %>
             </li>
             <li>
               <%= link_to new_admin_sponsor_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(new_admin_sponsor_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-plus mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(new_admin_sponsor_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.new') %></span>
               <% end %>
             </li>
             <li>
               <%= link_to admin_sponsor_levels_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(admin_sponsor_levels_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-diamond mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(admin_sponsor_levels_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-diamond mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.levels') %></span>
               <% end %>
             </li>
             <li>
               <%= link_to new_admin_sponsor_level_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(new_admin_sponsor_level_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-plus mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(new_admin_sponsor_level_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.new_level') %></span>
               <% end %>
             </li>
@@ -235,21 +235,21 @@
         </div>
         <!-- Speakers -->
         <div>
-          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.speaker') %></h4>
+          <h4 class="px-3 py-1 text-sm font-medium text-admin-text-primary"><%= t('.speaker') %></h4>
           <ul class="space-y-1 pl-4">
             <li>
               <%= link_to admin_speakers_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(admin_speakers_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-users mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(admin_speakers_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-users mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.list') %></span>
               <% end %>
             </li>
             <li>
               <%= link_to new_admin_speaker_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(new_admin_speaker_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-plus mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(new_admin_speaker_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.new') %></span>
               <% end %>
             </li>
@@ -257,29 +257,29 @@
         </div>
         <!-- Agenda -->
         <div>
-          <h4 class="px-3 py-1 text-sm font-medium text-gray-700"><%= t('.agenda') %></h4>
+          <h4 class="px-3 py-1 text-sm font-medium text-admin-text-primary"><%= t('.agenda') %></h4>
           <ul class="space-y-1 pl-4">
             <li>
               <%= link_to admin_agendas_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(admin_agendas_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-file-text mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(admin_agendas_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-file-text mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.list') %></span>
               <% end %>
             </li>
             <li>
               <%= link_to new_admin_agenda_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(new_admin_agenda_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-plus mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(new_admin_agenda_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.new') %></span>
               <% end %>
             </li>
             <li>
               <%= link_to admin_rooms_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-md \
-                                     #{current_page?(admin_rooms_path) ? 'bg-primary text-primary-foreground' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}" do %>
-                <i class="fa fa-columns mr-2"></i>
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                                     #{current_page?(admin_rooms_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
+                <i class="fa fa-columns mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.rooms') %></span>
               <% end %>
             </li>
@@ -405,7 +405,7 @@
       </div>
     <% end %>
   </nav>
-  <div class="px-4 py-2 border-t border-border">
+  <div class="px-4 py-2 border-t border-admin-border">
     <%= link_to admin_feature_toggle_path(feature: 'admin_v2'), method: :patch, class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
                        #{admin_v2_enabled? ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}", data: { turbo_method: :patch } do %>
       <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
