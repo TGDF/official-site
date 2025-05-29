@@ -6,7 +6,7 @@
     <!-- Dashboard -->
     <div>
       <%= link_to admin_root_path,
-                  class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
+                  class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                              #{current_page?(admin_root_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
         <i class="fa fa-dashboard mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
         <span><%= t('.dashboard') %></span>
@@ -20,7 +20,7 @@
         <ul class="space-y-1">
           <li>
             <%= link_to admin_sites_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(admin_sites_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
               <i class="fa fa-sitemap mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
               <span><%= t('.list') %></span>
@@ -28,7 +28,7 @@
           </li>
           <li>
             <%= link_to new_admin_site_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(new_admin_site_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
               <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
               <span><%= t('.new') %></span>
@@ -47,7 +47,7 @@
         <ul class="space-y-1 pl-4">
           <li>
             <%= link_to admin_news_index_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(admin_news_index_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
               <i class="fa fa-newspaper-o mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
               <span><%= t('.list') %></span>
@@ -55,7 +55,7 @@
           </li>
           <li>
             <%= link_to new_admin_news_path,
-                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
+                        class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                                    #{current_page?(new_admin_news_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
               <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
               <span><%= t('.new') %></span>
@@ -119,7 +119,7 @@
           <ul class="space-y-1 pl-4">
             <li>
               <%= link_to admin_menu_items_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md \
                                      #{current_page?(admin_menu_items_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
                 <i class="fa fa-bars mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.list') %></span>
@@ -127,7 +127,7 @@
             </li>
             <li>
               <%= link_to new_admin_menu_item_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md \
                                      #{current_page?(new_admin_menu_item_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
                 <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.new') %></span>
@@ -141,7 +141,7 @@
           <ul class="space-y-1 pl-4">
             <li>
               <%= link_to admin_plans_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md \
                                      #{current_page?(admin_plans_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
                 <i class="fa fa-cube mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.list') %></span>
@@ -149,7 +149,7 @@
             </li>
             <li>
               <%= link_to new_admin_plan_path,
-                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md \
+                          class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md \
                                      #{current_page?(new_admin_plan_path) ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}" do %>
                 <i class="fa fa-plus mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
                 <span><%= t('.new') %></span>
@@ -406,7 +406,7 @@
     <% end %>
   </nav>
   <div class="px-4 py-2 border-t border-admin-border">
-    <%= link_to admin_feature_toggle_path(feature: 'admin_v2'), method: :patch, class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-radius-md transition-colors duration-150 ease-in-out \
+    <%= link_to admin_feature_toggle_path(feature: 'admin_v2'), method: :patch, class: "flex items-center px-3 py-2 text-sm font-medium rounded-admin-md transition-colors duration-150 ease-in-out \
                        #{admin_v2_enabled? ? 'bg-indigo-600 text-white' : 'text-admin-text-primary hover:bg-admin-background-muted'}", data: { turbo_method: :patch } do %>
       <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> mr-3 w-5 h-5 flex-shrink-0 text-admin-text-secondary"></i>
       <span><%= admin_v2_enabled? ? 'Disable Admin V2' : 'Enable Admin V2' %></span>
