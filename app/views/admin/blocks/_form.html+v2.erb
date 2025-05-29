@@ -1,8 +1,8 @@
 <%# Admin Blocks Form - TailwindCSS v2 variant %>
 <%= form_with model: [:admin, @block], local: true, html: { class: 'space-y-6' } do |f| %>
   <% if @block.errors.any? %>
-    <div class="bg-destructive/10 text-destructive rounded-md p-4">
-      <h2 class="text-destructive font-semibold"><%= t('errors.template.header', count: @block.errors.count) %></h2>
+    <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-6">
+      <h2 class="font-semibold"><%= t('errors.template.header', count: @block.errors.count) %></h2>
       <ul class="mt-2 list-disc list-inside space-y-1">
         <% @block.errors.full_messages.each do |msg| %>
           <li><%= msg %></li>
@@ -12,28 +12,28 @@
   <% end %>
   <div class="grid grid-cols-1 gap-6">
     <div>
-      <%= f.label :content, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.text_area :content, rows: 10, data: { editor: true }, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      <%= f.label :content, class: 'block text-sm font-medium text-gray-900' %>
+      <%= f.text_area :content, rows: 10, data: { editor: true }, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-36 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
     </div>
     <div>
-      <%= f.label :language, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.select :language, Block.languages.map { |lang,_| [t("locale.name.#{lang}"), lang] }, {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      <%= f.label :language, class: 'block text-sm font-medium text-gray-900' %>
+      <%= f.select :language, Block.languages.map { |lang,_| [t("locale.name.#{lang}"), lang] }, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
     </div>
     <div>
-      <%= f.label :page, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.select :page, Block.pages.map { |page,_| [t("block_types.#{page}"), page] }, {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      <%= f.label :page, class: 'block text-sm font-medium text-gray-900' %>
+      <%= f.select :page, Block.pages.map { |page,_| [t("block_types.#{page}"), page] }, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
     </div>
     <div>
-      <%= f.label :component_type, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.select :component_type, Block.component_types.map { |type,_| [type, type] }, {}, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      <%= f.label :component_type, class: 'block text-sm font-medium text-gray-900' %>
+      <%= f.select :component_type, Block.component_types.map { |type,_| [type, type] }, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
     </div>
     <div>
-      <%= f.label :order, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.number_field :order, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      <%= f.label :order, class: 'block text-sm font-medium text-gray-900' %>
+      <%= f.number_field :order, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
     </div>
   </div>
-  <div class="pt-6 flex space-x-2">
-    <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
-    <%= link_to 'Cancel', admin_blocks_path, class: 'inline-flex items-center px-4 py-2 bg-muted text-muted-foreground text-sm font-medium rounded-md hover:bg-muted/90 transition' %>
-  </div>
+  <footer class="pt-3 border-t border-gray-200 flex justify-end space-x-2">
+    <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
+    <%= link_to t('shared.cancel', default: 'Cancel'), admin_blocks_path, class: 'px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50' %>
+  </footer>
 <% end %>
