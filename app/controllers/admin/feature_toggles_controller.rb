@@ -1,5 +1,5 @@
  # frozen_string_literal: true
- 
+
  module Admin
    class FeatureTogglesController < BaseController
      def update
