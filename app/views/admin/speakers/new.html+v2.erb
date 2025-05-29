@@ -1,9 +1,13 @@
 <%# Admin Speakers New - TailwindCSS v2 variant %>
 <div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-semibold"><%= t('.create') %></h1>
+  <div class="mb-6">
+    <h1 class="text-xl font-semibold text-gray-900 mb-2"><%= t('.create') %></h1>
+    <p class="text-gray-600 text-sm"><%= t('.description', default: 'Create a new speaker') %></p>
   </div>
-  <div class="bg-white rounded-lg shadow p-6">
-    <%= render 'form' %>
+
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6">
+      <%= render 'form' %>
+    </div>
   </div>
 </div>

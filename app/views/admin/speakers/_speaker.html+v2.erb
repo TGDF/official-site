@@ -1,9 +1,17 @@
-<tr>
-  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= speaker.id %></td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= speaker.name %></td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground"><%= speaker.order %></td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <%= link_to t('.edit'), edit_admin_speaker_path(speaker), class: 'inline-flex items-center px-3 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
-    <%= button_to t('.destroy'), admin_speaker_path(speaker), method: :delete, data: { confirm: t('shared.destroy_confirm') }, class: 'inline-flex items-center px-3 py-1 bg-destructive text-destructive-foreground text-sm font-medium rounded-md hover:bg-destructive/90 transition' %>
+<tr class="border-b border-gray-200">
+  <td class="py-3 px-4 text-sm font-medium"><%= speaker.id %></td>
+  <td class="py-3 px-4 text-sm font-medium"><%= speaker.name %></td>
+  <td class="py-3 px-4 text-sm"><%= speaker.order %></td>
+  <td class="py-3 px-4 text-sm">
+    <div class="flex items-center gap-2.5">
+      <%= link_to edit_admin_speaker_path(speaker), class: 'flex items-center text-sm px-3 py-1.5 rounded-md text-gray-600 hover:bg-gray-100' do %>
+        <i class="fa fa-edit w-4 h-4 mr-1"></i>
+        <span><%= t('.edit') %></span>
+      <% end %>
+      <%= link_to admin_speaker_path(speaker), method: :delete, data: { turbo_method: :delete, confirm: t('shared.destroy_confirm') }, class: 'flex items-center text-sm px-3 py-1.5 rounded-md text-red-600 hover:bg-red-50' do %>
+        <i class="fa fa-trash w-4 h-4 mr-1"></i>
+        <span><%= t('.destroy') %></span>
+      <% end %>
+    </div>
   </td>
 </tr>
