@@ -28,7 +28,7 @@ Boxes are containers with white background `admin-background`, medium border rad
 ### Example Code
 
 ```html
-<div class="bg-admin-background rounded-admin-radius-md shadow-admin-shadow-sm border border-admin-border p-4">
+<div class="bg-admin-background rounded-admin-md shadow-admin-sm border border-admin-border p-4">
   <!-- content here -->
 </div>
 ```
@@ -88,8 +88,8 @@ Sidebar header contains the branding or setup action. It uses prominent `admin-p
 ### Example Code
 
 ```html
-<div class="flex items-center p-4 bg-admin-background rounded-admin-radius-md">
-  <button class="bg-admin-primary text-white rounded-admin-radius-md py-2 px-4 shadow-admin-shadow-sm hover:bg-indigo-700">
+<div class="flex items-center p-4 bg-admin-background rounded-admin-md">
+  <button class="bg-admin-primary text-white rounded-admin-md py-2 px-4 shadow-admin-sm hover:bg-admin-primary-hover">
     + Connect New Account
   </button>
 </div>
@@ -110,7 +110,7 @@ Sidebar items are vertically stacked links with icon and text. They use `admin-t
 ### Example Code
 
 ```html
-<a href="#" class="flex items-center px-4 py-2 rounded-admin-radius-md hover:bg-admin-background-muted text-admin-text-primary">
+<a href="#" class="flex items-center px-4 py-2 rounded-admin-md hover:bg-admin-background-muted text-admin-text-primary">
   <svg class="w-5 h-5 mr-3 text-admin-text-secondary" fill="none" stroke="currentColor" stroke-width="2">...</svg>
   Dashboard
 </a>
@@ -176,10 +176,10 @@ Dropdown menus have white background, rounded corners, subtle shadow, and define
 
 ```html
 <div class="relative inline-block text-left">
-  <button class="bg-admin-background rounded-admin-radius-md shadow-admin-shadow-sm border border-admin-border px-3 py-2">
+  <button class="bg-admin-background rounded-admin-md shadow-admin-sm border border-admin-border px-3 py-2">
     Menu
   </button>
-  <div class="origin-top-right absolute right-0 mt-2 w-56 rounded-admin-radius-md shadow-admin-shadow bg-admin-background border border-admin-border ring-1 ring-black ring-opacity-5">
+  <div class="origin-top-right absolute right-0 mt-2 w-56 rounded-admin-md shadow-admin bg-admin-background border border-admin-border ring-1 ring-black ring-opacity-5">
     <a href="#" class="block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted">Option 1</a>
     <a href="#" class="block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted">Option 2</a>
   </div>
@@ -201,7 +201,7 @@ Avatars are circular images or initials with `admin-radius-full`, fixed size, an
 ### Example Code
 
 ```html
-<img src="avatar.jpg" alt="User Avatar" class="w-10 h-10 rounded-admin-radius-full object-cover border border-admin-border" />
+<img src="avatar.jpg" alt="User Avatar" class="w-10 h-10 rounded-admin-full object-cover border border-admin-border" />
 ```
 
 ### Usage Guidance
@@ -277,7 +277,7 @@ Forms use vertical layout with consistent spacing between fields, labels aligned
 ```html
 <form class="space-y-4">
   <label class="block font-semibold text-admin-text-primary" for="email">Email</label>
-  <input id="email" type="email" class="border border-admin-border rounded-admin-radius-md p-2 w-full focus:ring-1 focus:ring-admin-primary focus:outline-none" />
+  <input id="email" type="email" class="border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none" />
   <!-- More fields -->
 </form>
 ```
@@ -297,7 +297,7 @@ Input fields have white backgrounds, subtle border with `admin-border`, medium r
 ### Example Code
 
 ```html
-<input class="bg-admin-background text-admin-text-primary border border-admin-border rounded-admin-radius-md p-2 text-base focus:outline-none focus:ring-1 focus:ring-admin-primary" type="text" />
+<input class="bg-admin-input-background text-admin-text-primary border border-admin-border rounded-admin-md p-2 text-base focus:outline-none focus:ring-1 focus:ring-admin-border-active" type="text" />
 ```
 
 ### Usage Guidance
@@ -315,7 +315,7 @@ Buttons have strong `admin-primary` background, white text, medium rounded corne
 ### Example Code
 
 ```html
-<button class="bg-admin-primary text-white rounded-admin-radius-md h-10 px-4 shadow-admin-shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-admin-primary">
+<button class="bg-admin-primary text-white rounded-admin-md h-10 px-4 shadow-admin-sm hover:bg-admin-primary-hover focus:outline-none focus:ring-2 focus:ring-admin-border-active">
   Save Changes
 </button>
 ```
