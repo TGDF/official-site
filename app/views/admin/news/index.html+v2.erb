@@ -1,20 +1,22 @@
 <%# Admin News Index - TailwindCSS v2 variant %>
 <div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-semibold"><%= t('.news') %></h1>
-  </div>
-  <div class="overflow-x-auto bg-white rounded-lg shadow">
-    <table class="min-w-full divide-y divide-border">
-      <thead class="bg-muted">
-        <tr>
-          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider">#</th>
-          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.title') %></th>
-          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.author') %></th>
-          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.status') %></th>
-          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.actions') %></th>
+  <header class="mb-6">
+    <h1 class="text-lg font-bold text-admin-text-primary"><%= t('.news') %></h1>
+    <p class="text-sm text-admin-text-secondary mt-1"><%= t('.description', default: 'Manage all news posts') %></p>
+  </header>
+
+  <div class="bg-admin-background rounded-admin-md shadow-admin-sm border border-admin-border overflow-hidden">
+    <table class="w-full border-collapse text-sm text-admin-text-primary">
+      <thead>
+        <tr class="border-b border-admin-border font-semibold">
+          <th class="text-left py-2 px-4">#</th>
+          <th class="text-left py-2 px-4"><%= t('.title') %></th>
+          <th class="text-left py-2 px-4"><%= t('.author') %></th>
+          <th class="text-left py-2 px-4"><%= t('.status') %></th>
+          <th class="text-left py-2 px-4"><%= t('.actions') %></th>
         </tr>
       </thead>
-      <tbody class="bg-white divide-y divide-border">
+      <tbody>
         <%= render @news %>
       </tbody>
     </table>
