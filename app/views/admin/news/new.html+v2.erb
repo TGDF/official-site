@@ -1,12 +1,12 @@
 <%# Admin News New - TailwindCSS v2 variant %>
 <div class="space-y-6">
-  <header class="mb-6">
-    <h1 class="text-lg font-bold text-admin-text-primary"><%= t('.create') %></h1>
-    <p class="text-sm text-admin-text-secondary mt-1"><%= t('.description', default: 'Create a new news post') %></p>
-  </header>
+  <div class="mb-6">
+    <h1 class="text-xl font-semibold text-gray-900 mb-2"><%= t('.create') %></h1>
+    <p class="text-gray-600 text-sm"><%= t('.description', default: 'Create a new news post') %></p>
+  </div>
 
-  <div class="bg-admin-background rounded-admin-md shadow-admin-sm border border-admin-border">
-    <div class="p-4">
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6">
       <%= render 'form' %>
     </div>
   </div>

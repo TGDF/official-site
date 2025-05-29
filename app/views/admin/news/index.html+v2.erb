@@ -1,24 +1,26 @@
 <%# Admin News Index - TailwindCSS v2 variant %>
 <div class="space-y-6">
-  <header class="mb-6">
-    <h1 class="text-lg font-bold text-admin-text-primary"><%= t('.news') %></h1>
-    <p class="text-sm text-admin-text-secondary mt-1"><%= t('.description', default: 'Manage all news posts') %></p>
-  </header>
+  <div class="mb-6">
+    <h1 class="text-xl font-semibold text-gray-900 mb-2"><%= t('.news') %></h1>
+    <p class="text-gray-600 text-sm"><%= t('.description', default: 'Manage all news posts') %></p>
+  </div>
 
-  <div class="bg-admin-background rounded-admin-md shadow-admin-sm border border-admin-border overflow-hidden">
-    <table class="w-full border-collapse text-sm text-admin-text-primary">
-      <thead>
-        <tr class="border-b border-admin-border font-semibold">
-          <th class="text-left py-2 px-4">#</th>
-          <th class="text-left py-2 px-4"><%= t('.title') %></th>
-          <th class="text-left py-2 px-4"><%= t('.author') %></th>
-          <th class="text-left py-2 px-4"><%= t('.status') %></th>
-          <th class="text-left py-2 px-4"><%= t('.actions') %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= render @news %>
-      </tbody>
-    </table>
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6">
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="border-b border-gray-200">
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">#</th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.title') %></th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.author') %></th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.status') %></th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render @news %>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

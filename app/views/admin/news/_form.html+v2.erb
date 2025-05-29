@@ -3,7 +3,7 @@
 <% Mobility.with_locale(admin_current_resource_locale) do %>
   <%= form_with model: [:admin, @news], local: true, html: { multipart: true, class: 'space-y-6' } do |f| %>
     <% if @news.errors.any? %>
-      <div class="bg-red-50 text-red-600 rounded-admin-md p-4">
+      <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-6">
         <h2 class="font-semibold"><%= t('errors.template.header', count: @news.errors.count) %></h2>
         <ul class="mt-2 list-disc list-inside space-y-1">
           <% @news.errors.full_messages.each do |msg| %>
@@ -14,30 +14,30 @@
     <% end %>
     <div class="space-y-4">
       <div>
-        <%= f.label :title, class: 'block font-semibold text-admin-text-primary' %>
-        <%= f.text_field :title, class: 'mt-1 block w-full border border-admin-border rounded-admin-md bg-admin-background text-admin-text-primary px-3 py-2 focus:border-admin-border-active focus:ring-admin-border-active focus:ring-1 focus:outline-none' %>
+        <%= f.label :title, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.text_field :title, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
       <div>
-        <%= f.label :slug, class: 'block font-semibold text-admin-text-primary' %>
-        <%= f.text_field :slug, class: 'mt-1 block w-full border border-admin-border rounded-admin-md bg-admin-background text-admin-text-primary px-3 py-2 focus:border-admin-border-active focus:ring-admin-border-active focus:ring-1 focus:outline-none' %>
+        <%= f.label :slug, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.text_field :slug, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
       <div>
-        <%= f.label :status, class: 'block font-semibold text-admin-text-primary' %>
-        <%= f.select :status, [['draft', 'draft'], ['published', 'published']], {}, class: 'mt-1 block w-full border border-admin-border rounded-admin-md bg-admin-background text-admin-text-primary px-3 py-2 focus:border-admin-border-active focus:ring-admin-border-active focus:ring-1 focus:outline-none' %>
+        <%= f.label :status, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.select :status, [['draft', 'draft'], ['published', 'published']], {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
       <div>
-        <%= f.label :content, class: 'block font-semibold text-admin-text-primary' %>
-        <%= f.text_area :content, rows: 10, data: { editor: true }, class: 'mt-1 block w-full border border-admin-border rounded-admin-md bg-admin-background text-admin-text-primary px-3 py-2 focus:border-admin-border-active focus:ring-admin-border-active focus:ring-1 focus:outline-none' %>
+        <%= f.label :content, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.text_area :content, rows: 10, data: { editor: true }, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-36 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
       <div>
-        <%= f.label :thumbnail, class: 'block font-semibold text-admin-text-primary' %>
-        <%= f.file_field :thumbnail, class: 'mt-1 block w-full text-sm text-admin-text-primary' %>
+        <%= f.label :thumbnail, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.file_field :thumbnail, class: 'mt-1 block w-full text-sm text-gray-900' %>
       </div>
     </div>
 
-    <footer class="pt-3 border-t border-admin-border flex justify-end space-x-2">
-      <%= f.submit class: 'bg-admin-primary text-white rounded-admin-md h-10 px-4 shadow-admin-sm hover:bg-admin-primary-hover focus:outline-none focus:ring-2 focus:ring-admin-border-active' %>
-      <%= link_to t('shared.cancel', default: 'Cancel'), admin_news_index_path, class: 'bg-admin-background-muted text-admin-text-primary rounded-admin-md h-10 px-4 shadow-admin-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-admin-border-active inline-flex items-center justify-center' %>
+    <footer class="pt-3 border-t border-gray-200 flex justify-end space-x-2">
+      <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
+      <%= link_to t('shared.cancel', default: 'Cancel'), admin_news_index_path, class: 'px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50' %>
     </footer>
   <% end %>
 <% end %>

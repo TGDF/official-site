@@ -1,13 +1,13 @@
 <%# Admin News Edit - TailwindCSS v2 variant %>
 <div class="space-y-6">
-  <header class="mb-6">
-    <h1 class="text-lg font-bold text-admin-text-primary"><%= t('.edit') %></h1>
-    <p class="text-sm text-admin-text-secondary mt-1"><%= t('.description', default: 'Edit news post') %></p>
-  </header>
+  <div class="mb-6">
+    <h1 class="text-xl font-semibold text-gray-900 mb-2"><%= t('.edit') %></h1>
+    <p class="text-gray-600 text-sm"><%= t('.description', default: 'Edit news post') %></p>
+  </div>
 
-  <div class="bg-admin-background rounded-admin-md shadow-admin-sm border border-admin-border">
-    <div class="p-4 space-y-4">
-      <div class="mb-4 border-b border-admin-border pb-2">
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6 space-y-6">
+      <div class="mb-4 border-b border-gray-200 pb-2">
         <%= admin_locale_navtab %>
       </div>
       <%= render 'form' %>
