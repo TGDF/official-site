@@ -2,7 +2,7 @@
 <% Mobility.with_locale(admin_current_resource_locale) do %>
   <%= form_with model: [:admin, @site], local: true, html: { multipart: true, class: 'space-y-6' } do |f| %>
     <% if @site.errors.any? %>
-      <div class="bg-red-50 text-red-600 rounded-admin-md p-4">
+      <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-6">
         <h2 class="font-semibold"><%= t('errors.template.header', count: @site.errors.count) %></h2>
         <ul class="mt-2 list-disc list-inside space-y-1">
           <% @site.errors.full_messages.each do |msg| %>
@@ -14,44 +14,44 @@
     
     <div class="space-y-4">
       <div>
-        <%= f.label :name, class: 'block font-semibold text-admin-text-primary' %>
-        <%= f.text_field :name, class: 'border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none' %>
+        <%= f.label :name, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.text_field :name, class: 'border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
       
       <div>
-        <%= f.label :domain, class: 'block font-semibold text-admin-text-primary' %>
-        <%= f.text_field :domain, class: 'border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none' %>
+        <%= f.label :domain, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.text_field :domain, class: 'border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
       
       <div>
-        <%= f.label :logo, class: 'block font-semibold text-admin-text-primary' %>
-        <%= f.file_field :logo, class: 'mt-1 block w-full text-sm text-admin-text-primary' %>
+        <%= f.label :logo, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.file_field :logo, class: 'mt-1 block w-full text-sm text-gray-900' %>
       </div>
       
       <% if @site.new_record? %>
         <div>
-          <%= f.label :tenant_name, class: 'block font-semibold text-admin-text-primary' %>
-          <%= f.text_field :tenant_name, class: 'border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none' %>
+          <%= f.label :tenant_name, class: 'block text-sm font-medium text-gray-900' %>
+          <%= f.text_field :tenant_name, class: 'border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
         </div>
       <% end %>
       
       <div>
-        <%= f.label :description, class: 'block font-semibold text-admin-text-primary' %>
+        <%= f.label :description, class: 'block text-sm font-medium text-gray-900' %>
         <%= f.text_area :description,
               rows: 4,
               data: { editor: true },
-              class: 'border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none' %>
+              class: 'border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
       
       <div>
-        <%= f.label :figure, class: 'block font-semibold text-admin-text-primary' %>
-        <%= f.file_field :figure, class: 'mt-1 block w-full text-sm text-admin-text-primary' %>
+        <%= f.label :figure, class: 'block text-sm font-medium text-gray-900' %>
+        <%= f.file_field :figure, class: 'mt-1 block w-full text-sm text-gray-900' %>
       </div>
     </div>
     
-    <footer class="pt-3 border-t border-admin-border flex justify-end space-x-2">
-      <%= f.submit class: 'bg-admin-primary text-white rounded-admin-md h-10 px-4 shadow-admin-sm hover:bg-admin-primary-hover focus:outline-none focus:ring-2 focus:ring-admin-border-active' %>
-      <%= link_to t('shared.cancel', default: 'Cancel'), admin_sites_path, class: 'bg-admin-background-muted text-admin-text-primary rounded-admin-md h-10 px-4 shadow-admin-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-admin-border-active inline-flex items-center justify-center' %>
+    <footer class="pt-3 border-t border-gray-200 flex justify-end space-x-2">
+      <%= f.submit class: 'bg-blue-600 text-white rounded-lg h-10 px-4 shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500' %>
+      <%= link_to t('shared.cancel', default: 'Cancel'), admin_sites_path, class: 'bg-gray-50 text-gray-900 rounded-lg h-10 px-4 shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 inline-flex items-center justify-center' %>
     </footer>
   <% end %>
 <% end %>
