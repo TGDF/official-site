@@ -11,16 +11,16 @@
     <%= stylesheet_link_tag 'theme', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'admin', 'data-turbo-track': 'reload', defer: true %>
   </head>
-  <body class="min-h-screen flex bg-admin-background-muted font-sans text-admin-text-primary antialiased">
+  <body class="min-h-screen flex bg-gray-50 font-sans text-gray-900 antialiased">
     <!-- Sidebar -->
-    <aside class="w-64 bg-admin-background shadow-admin-shadow-sm border-r border-admin-border">
+    <aside class="w-64 bg-white border-r border-gray-200">
       <%= render 'admin/shared/sidebar' %>
     </aside>
 
     <!-- Main content -->
     <div class="flex-1 flex flex-col">
       <!-- Header -->
-      <header class="h-16 bg-admin-background border-b border-admin-border shadow-admin-shadow-sm flex items-center px-6">
+      <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <%= render 'admin/shared/header' %>
       </header>
 

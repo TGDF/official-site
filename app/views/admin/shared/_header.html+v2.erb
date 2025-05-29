@@ -1,32 +1,30 @@
 <!-- TailwindCSS-based header for v2 admin -->
 <div class="flex items-center justify-between w-full">
-  <!-- Site switcher dropdown -->
-  <div class="relative group">
-    <button type="button" class="flex items-center px-3 py-2 text-admin-text-primary hover:bg-admin-background-muted rounded-admin-md transition-colors duration-150 ease-in-out">
-      <span class="font-medium"><%= current_site.name %></span>
-      <svg class="ml-1.5 w-4 h-4 text-admin-text-secondary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-      </svg>
-    </button>
-    <div class="hidden group-hover:block absolute left-0 mt-2 w-56 bg-admin-background border border-admin-border rounded-admin-md shadow-admin z-50 overflow-hidden">
-      <div class="px-4 py-2 text-xs font-semibold text-admin-text-secondary bg-admin-background-muted"><%= t('.all_sites') %></div>
-      <%= link_to t('site_name'), admin_root_url(host: Settings.site.default_domain), class: 'block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted transition-colors duration-150 ease-in-out' %>
-      <% @navbar_sites.each do |site| %>
-        <%= link_to site.name, admin_root_url(host: site.domain), class: 'block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted transition-colors duration-150 ease-in-out' %>
-      <% end %>
-      <div class="border-t border-admin-border my-1"></div>
-      <%= link_to t('.view_all'), admin_sites_url(host: Settings.site.default_domain), class: 'block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted transition-colors duration-150 ease-in-out' %>
+  <div class="flex items-center gap-4">
+    <div class="relative">
+      <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+      <input
+        type="text"
+        placeholder="Type to search"
+        class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
+      />
     </div>
   </div>
-
-  <!-- User menu dropdown -->
-  <div class="relative group">
-    <button type="button" class="flex items-center p-1.5 rounded-admin-full hover:bg-admin-background-muted transition-colors duration-150 ease-in-out">
-      <%= image_tag current_admin_user.avatar(size: 36), class: 'w-10 h-10 rounded-admin-full object-cover border border-admin-border' %>
+  <div class="flex items-center gap-4">
+    <button type="button" class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-150 ease-in-out">
+      <i class="fa fa-comment w-5 h-5 text-gray-600"></i>
     </button>
-    <div class="hidden group-hover:block absolute right-0 mt-2 w-56 bg-admin-background border border-admin-border rounded-admin-md shadow-admin z-50 overflow-hidden">
-      <div class="px-4 py-2 text-xs font-semibold text-admin-text-secondary bg-admin-background-muted"><%= t('.account') %></div>
-      <%= link_to t('.logout'), destroy_admin_user_session_path, method: :delete, class: 'block px-4 py-2 text-red-600 hover:bg-red-50 transition-colors duration-150 ease-in-out', data: { turbo_method: :delete } %>
+    <button type="button" class="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-150 ease-in-out">
+      <i class="fa fa-bell w-5 h-5 text-gray-600"></i>
+    </button>
+    <div class="relative group">
+      <button type="button" class="p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-150 ease-in-out">
+        <%= image_tag current_admin_user.avatar(size: 36), class: 'w-10 h-10 rounded-full object-cover border border-gray-200' %>
+      </button>
+      <div class="hidden group-hover:block absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+        <div class="px-4 py-2 text-xs font-semibold text-gray-500 bg-gray-50"><%= t('.account') %></div>
+        <%= link_to t('.logout'), destroy_admin_user_session_path, method: :delete, class: 'block px-4 py-2 text-red-600 hover:bg-red-50 transition-colors duration-150 ease-in-out', data: { turbo_method: :delete } %>
+      </div>
     </div>
   </div>
 </div>
