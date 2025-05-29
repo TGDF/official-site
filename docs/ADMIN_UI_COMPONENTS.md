@@ -3,79 +3,84 @@
 ## Page Header
 
 ### Appearance Description
-The page header serves as the primary title area, featuring a clear and bold heading with supporting subtitle text below. It uses `admin-text-primary` color for the title and `admin-text-secondary` for supplementary text. The spacing below the title ensures clear separation from content sections.
+The page header serves as the primary title area, featuring a clear and bold heading with supporting subtitle text below. It uses text-gray-900 color for the title and text-gray-600 for supplementary text. The spacing below the title (mb-6) ensures clear separation from content sections.
 
 ### Example Code
 
 ```html
-<header class="mb-6">
-  <h1 class="text-lg font-bold text-admin-text-primary">Settings</h1>
-  <p class="text-sm text-admin-text-secondary mt-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-</header>
-```
-
-### Usage Guidance
-Use for main page titles in the CMS Admin Panel. Maintain consistent margin below to separate from subsequent cards or tabs. Titles should use medium-large font size (`text-lg`) and semibold to bold weight for clarity.
-
----
-
-## Box
-
-### Appearance Description
-
-Boxes are containers with white background `admin-background`, medium border radius (`admin-radius-md`), subtle `admin-shadow-sm` shadow and a 1px `admin-border` border to visually separate content blocks.
-
-### Example Code
-
-```html
-<div class="bg-admin-background rounded-admin-md shadow-admin-sm border border-admin-border p-4">
-  <!-- content here -->
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold text-gray-900 mb-2">Settings</h1>
+  <p class="text-gray-600">
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Turpis morbi pulvinar venenatis non.
+  </p>
 </div>
 ```
 
 ### Usage Guidance
-
-Use boxes to group related UI sections such as form areas or payment info. Padding is recommended inside boxes to create breathing room (`p-4`). Avoid nested boxes without spacing to maintain clarity.
+Use for main page titles in the Admin Panel. Maintain consistent margin below (mb-6) to separate from subsequent cards or tabs. Titles should use text-2xl font size and semibold weight for clarity.
 
 ---
 
-## Box Body
+## Card
 
 ### Appearance Description
 
-The box body is the main content area inside a Box with spacing that ensures readability and neat layout.
+Cards are containers with white background, medium border radius, subtle shadow and an optional border to visually separate content blocks. They use the Card component from the UI library.
 
 ### Example Code
 
 ```html
-<div class="p-4 space-y-4">
-  <!-- content elements -->
-</div>
+<Card>
+  <CardContent className="p-6">
+    <h3 className="text-lg font-medium text-gray-900 mb-4">Profile Settings</h3>
+    <p className="text-gray-600">Profile settings content would go here.</p>
+  </CardContent>
+</Card>
 ```
 
 ### Usage Guidance
 
-Use `space-y-4` to add vertical spacing between child content elements for clear separation. Maintains consistent padding within parent Box.
+Use cards to group related UI sections such as form areas or payment info. Consistent padding (p-6) is recommended inside cards to create breathing room. Cards can contain headers, content sections, and footers.
 
 ---
 
-## Box Footer
+## Card Content
 
 ### Appearance Description
 
-The footer area in a box typically contains smaller auxiliary elements such as buttons or status indicators aligned to the right or center.
+The card content is the main content area inside a Card with spacing that ensures readability and neat layout.
 
 ### Example Code
 
 ```html
-<footer class="pt-3 border-t border-admin-border flex justify-end space-x-2">
-  <!-- footer controls -->
-</footer>
+<CardContent className="p-6">
+  <div className="flex items-center justify-between mb-4">
+    <div>
+      <h3 className="text-lg font-medium text-gray-900">
+        Subscription Plan: <span className="text-blue-600">Standard</span>
+      </h3>
+      <p className="text-gray-600">Monthly Plan</p>
+    </div>
+    <Button variant="outline">Cancel Subscription</Button>
+  </div>
+  
+  <div className="flex items-center justify-between py-4 border-t border-gray-200">
+    <div>
+      <p className="text-gray-900">
+        Your next payment is <span className="font-semibold">$59.00 USD</span>, to be charged on{" "}
+        <span className="font-semibold">April 08, 2022</span>
+      </p>
+    </div>
+    <div>
+      <p className="text-gray-600 text-sm">Your payment will be automatically renewed each month</p>
+    </div>
+  </div>
+</CardContent>
 ```
 
 ### Usage Guidance
 
-Use a top border to visually separate footer from body content. Provide consistent vertical padding (`pt-3`). Footer elements generally align right and have horizontal gaps between controls.
+Use consistent padding (p-6) and add vertical spacing between child content elements with margin-bottom (mb-4) for clear separation. Use border-t for separating sections within the card content.
 
 ---
 
@@ -83,21 +88,31 @@ Use a top border to visually separate footer from body content. Provide consiste
 
 ### Appearance Description
 
-Sidebar header contains the branding or setup action. It uses prominent `admin-primary` color for buttons and icons with spacing `p-4` for comfortable click area.
+Sidebar header contains the branding or setup action. It uses prominent blue-600 color for buttons and a clean white background with border-r border-gray-200.
 
 ### Example Code
 
 ```html
-<div class="flex items-center p-4 bg-admin-background rounded-admin-md">
-  <button class="bg-admin-primary text-white rounded-admin-md py-2 px-4 shadow-admin-sm hover:bg-admin-primary-hover">
-    + Connect New Account
-  </button>
+<div className="p-6 border-b border-gray-200">
+  <div className="flex items-center gap-2">
+    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+      <div className="w-4 h-4 bg-white rounded-full"></div>
+    </div>
+    <span className="text-xl font-semibold text-gray-900">ClarityOI</span>
+  </div>
+</div>
+
+<div className="p-4">
+  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+    <Plus className="w-4 h-4 mr-2" />
+    Connect New Account
+  </Button>
 </div>
 ```
 
 ### Usage Guidance
 
-Use sidebar header for main sidebar actions or branding. Ensure button has sufficient hit area and stands out with strong background color and shadow.
+Use sidebar header for main sidebar actions or branding. Ensure button has sufficient hit area and stands out with strong background color. The logo should be simple and recognizable.
 
 ---
 
@@ -105,90 +120,125 @@ Use sidebar header for main sidebar actions or branding. Ensure button has suffi
 
 ### Appearance Description
 
-Sidebar items are vertically stacked links with icon and text. They use `admin-text-primary` and `admin-text-secondary` for active and inactive states, with some left padding and hover background to highlight.
+Sidebar items are vertically stacked links with icon and text. They use text-gray-900 for active and text-gray-600 for inactive states, with left padding and hover background to highlight.
 
 ### Example Code
 
 ```html
-<a href="#" class="flex items-center px-4 py-2 rounded-admin-md hover:bg-admin-background-muted text-admin-text-primary">
-  <svg class="w-5 h-5 mr-3 text-admin-text-secondary" fill="none" stroke="currentColor" stroke-width="2">...</svg>
-  Dashboard
-</a>
-```
+<div className="flex items-center gap-3 px-3 py-2 text-gray-900 bg-gray-100 rounded-lg">
+  <Home className="w-5 h-5" />
+  <span className="font-medium">Dashboard</span>
+</div>
 
-### Usage Guidance
-
-Use consistent padding for click targets. Highlight hovered items with muted background color. Active or selected item text uses `admin-primary` color for emphasis.
-
----
-
-## Sidebar Treeview
-
-### Appearance Description
-
-Treeview sidebar items feature nesting indicated by indentation and arrow icons. Child items are slightly lighter or secondary in text color.
-
-### Example Code
-
-```html
-<div class="pl-6 space-y-1">
-  <a href="#" class="flex items-center text-admin-text-secondary hover:text-admin-primary">Sub-item</a>
+<div className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg cursor-pointer">
+  <BarChart3 className="w-5 h-5" />
+  <span>Performance</span>
 </div>
 ```
 
 ### Usage Guidance
 
-Indent child items with padding-left. Use color to differentiate parent/child levels, maintaining clear hierarchy. Toggle icons indicate expand/collapse.
+Use consistent padding (px-3 py-2) for click targets. Highlight active items with bg-gray-100 and text-gray-900. Inactive items should have text-gray-600 with hover:text-gray-900 and hover:bg-gray-50. Use gap-3 for spacing between icon and text.
 
 ---
 
-## Navbar Site Item
+## Sidebar Section
 
 ### Appearance Description
 
-Navbar site items include icons and badges aligned horizontally with subtle spacing and interactive states using `admin-primary` color for badges or highlights.
+Sidebar sections group related navigation items with a header label in uppercase. Items within a section are stacked vertically with consistent spacing.
 
 ### Example Code
 
 ```html
-<div class="flex items-center space-x-4">
-  <button class="relative">
-    <svg class="w-6 h-6 text-admin-text-primary">...</svg>
-    <span class="absolute -top-1 -right-1 bg-admin-primary text-white rounded-full text-xs px-1">2</span>
-  </button>
-  <!-- profile avatar / user menu -->
-</div>
-```
-
-### Usage Guidance
-
-Provide clear visual notification badges on icons. Use `relative` positioning for badges. Keep space between items consistent for tidy layout.
-
----
-
-## Dropdown
-
-### Appearance Description
-
-Dropdown menus have white background, rounded corners, subtle shadow, and defined border. Dropdown items highlight on hover with background color in `admin-background-muted`.
-
-### Example Code
-
-```html
-<div class="relative inline-block text-left">
-  <button class="bg-admin-background rounded-admin-md shadow-admin-sm border border-admin-border px-3 py-2">
-    Menu
-  </button>
-  <div class="origin-top-right absolute right-0 mt-2 w-56 rounded-admin-md shadow-admin bg-admin-background border border-admin-border ring-1 ring-black ring-opacity-5">
-    <a href="#" class="block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted">Option 1</a>
-    <a href="#" class="block px-4 py-2 text-admin-text-primary hover:bg-admin-background-muted">Option 2</a>
+<div className="space-y-1">
+  <div className="px-3 py-1 text-xs font-medium text-gray-500 uppercase tracking-wider">ANALYTICS</div>
+  <div className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg cursor-pointer">
+    <BarChart3 className="w-5 h-5" />
+    <span>Performance</span>
+  </div>
+  <div className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg cursor-pointer">
+    <Target className="w-5 h-5" />
+    <span>Hotjar</span>
+    <Badge variant="secondary" className="ml-auto bg-blue-100 text-blue-800 text-xs">
+      NEW
+    </Badge>
   </div>
 </div>
 ```
 
 ### Usage Guidance
 
-Use accessible keyboard and mouse interactions. Dropdown container must have relative positioning. Items must have hover background and sufficient padding for clickable area.
+Use uppercase text-xs font-medium text-gray-500 for section headers. Maintain consistent spacing between sections (mt-6) and items within sections (space-y-1). Badge indicators should be positioned with ml-auto.
+
+---
+
+## Header Navigation
+
+### Appearance Description
+
+Header navigation includes search, notification icons, and user profile elements aligned horizontally with subtle spacing and interactive states.
+
+### Example Code
+
+```html
+<header className="bg-white border-b border-gray-200 px-6 py-4">
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-4">
+      <div className="relative">
+        <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Type to search"
+          className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
+        />
+      </div>
+    </div>
+    <div className="flex items-center gap-4">
+      <Button variant="ghost" size="icon">
+        <MessageSquare className="w-5 h-5" />
+      </Button>
+      <Button variant="ghost" size="icon">
+        <Bell className="w-5 h-5" />
+      </Button>
+      <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+    </div>
+  </div>
+</header>
+```
+
+### Usage Guidance
+
+Position search input on the left with an icon inside. Use ghost buttons for notification icons. Keep consistent spacing (gap-4) between elements. Use rounded-full for user avatar.
+
+---
+
+## Dropdown Menu
+
+### Appearance Description
+
+Dropdown menus use the DropdownMenu component with trigger and content. They provide a clean interface for additional options.
+
+### Example Code
+
+```html
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="ghost" size="sm">
+      Sort by: Recent <ChevronDown className="w-4 h-4 ml-1" />
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuItem>Recent</DropdownMenuItem>
+    <DropdownMenuItem>Oldest</DropdownMenuItem>
+    <DropdownMenuItem>Amount</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+### Usage Guidance
+
+Use DropdownMenu components for consistent dropdown behavior. Trigger elements should indicate dropdown functionality (e.g., with ChevronDown icon). Menu items should have consistent styling and sufficient padding for clickable area.
 
 ---
 
@@ -196,17 +246,17 @@ Use accessible keyboard and mouse interactions. Dropdown container must have rel
 
 ### Appearance Description
 
-Avatars are circular images or initials with `admin-radius-full`, fixed size, and optionally a subtle ring or border for emphasis.
+Avatars are circular elements with fixed size, used for user profiles or placeholders.
 
 ### Example Code
 
 ```html
-<img src="avatar.jpg" alt="User Avatar" class="w-10 h-10 rounded-admin-full object-cover border border-admin-border" />
+<div className="w-8 h-8 bg-gray-300 rounded-full"></div>
 ```
 
 ### Usage Guidance
 
-Use consistent sizing `w-10 h-10`. Use `object-cover` to maintain aspect ratio and crop overflow. Add border for distinction on light backgrounds.
+Use consistent sizing (w-8 h-8 for header, potentially larger elsewhere). For image avatars, use object-cover to maintain aspect ratio. For placeholder avatars, use bg-gray-300 or similar neutral color.
 
 ---
 
@@ -214,19 +264,19 @@ Use consistent sizing `w-10 h-10`. Use `object-cover` to maintain aspect ratio a
 
 ### Appearance Description
 
-Icons are used throughout the UI, sized typically 20px by 20px (`w-5 h-5`), with tailwind text color used to adapt color dynamically.
-
-> Use Font Awesome by default.
+Icons are used throughout the UI, sized typically 20px by 20px (w-5 h-5), with text color classes to adapt color dynamically.
 
 ### Example Code
 
 ```html
-<svg class="w-5 h-5 text-admin-text-secondary" fill="none" stroke="currentColor" stroke-width="2" ...></svg>
+<Home className="w-5 h-5" />
+<Plus className="w-4 h-4 mr-2" />
+<Bell className="w-5 h-5" />
 ```
 
 ### Usage Guidance
 
-Use SVG icons with `currentColor` stroke/fill for color flexibility through Tailwind text color classes. Maintain consistent sizes.
+Use Lucide icons for consistency. Maintain standard sizes: w-5 h-5 for navigation and standalone icons, w-4 h-4 for icons within buttons or smaller contexts. Add appropriate margin (mr-2) when used alongside text.
 
 ---
 
@@ -234,57 +284,54 @@ Use SVG icons with `currentColor` stroke/fill for color flexibility through Tail
 
 ### Appearance Description
 
-Tables have full width with minimal borders, header with bold text, rows separated by subtle border or background difference. Text uses `admin-text-primary` and `admin-text-secondary` for muted columns.
+Tables use the Table component with TableHeader, TableRow, TableHead, TableBody, and TableCell components for structured data display.
 
 ### Example Code
 
 ```html
-<table class="w-full border-collapse text-sm text-admin-text-primary">
-  <thead>
-    <tr class="border-b border-admin-border font-semibold">
-      <th class="text-left py-2 px-4">Invoice</th>
-      <th class="text-left py-2 px-4">Date</th>
-      <th class="text-right py-2 px-4">Amount</th>
-      <th class="text-left py-2 px-4">Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr class="border-b border-admin-border">
-      <td class="py-2 px-4 font-semibold">Standard Plan - Feb 2022</td>
-      <td class="py-2 px-4 text-admin-text-secondary">07 February, 2022</td>
-      <td class="py-2 px-4 text-right font-semibold">$59.00</td>
-      <td class="py-2 px-4 text-green-500">● Complete</td>
-    </tr>
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Invoice</TableHead>
+      <TableHead>Date</TableHead>
+      <TableHead>Amount</TableHead>
+      <TableHead>Status</TableHead>
+      <TableHead className="w-12"></TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell className="font-medium">Standard Plan - Feb 2022</TableCell>
+      <TableCell>07 February, 2022</TableCell>
+      <TableCell>$59.00</TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span className="text-green-700">Complete</span>
+        </div>
+      </TableCell>
+      <TableCell>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Download</DropdownMenuItem>
+            <DropdownMenuItem>View Details</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
     <!-- More rows -->
-  </tbody>
-</table>
+  </TableBody>
+</Table>
 ```
 
 ### Usage Guidance
 
-Use semantic table markup for accessibility. Keep row padding consistent. Use `border-b` for row separation. Use color tokens for status labels.
-
----
-
-## Form
-
-### Appearance Description
-
-Forms use vertical layout with consistent spacing between fields, labels aligned left in bold, and input fields with border and rounded corners.
-
-### Example Code
-
-```html
-<form class="space-y-4">
-  <label class="block font-semibold text-admin-text-primary" for="email">Email</label>
-  <input id="email" type="email" class="border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none" />
-  <!-- More fields -->
-</form>
-```
-
-### Usage Guidance
-
-Use vertical stacking with `space-y-4` for clear separation. Labels should be associated with inputs via `for` attributes. Inputs use consistent padding and correct focus states.
+Use the Table component family for consistent table styling. Use font-medium for primary column data. For status indicators, combine a colored dot (w-2 h-2 bg-green-500 rounded-full) with text. Add action buttons in the last column with appropriate dropdown menus.
 
 ---
 
@@ -292,17 +339,24 @@ Use vertical stacking with `space-y-4` for clear separation. Labels should be as
 
 ### Appearance Description
 
-Input fields have white backgrounds, subtle border with `admin-border`, medium rounded corners, and shadow focus ring in `admin-primary` color. Font size for input text is `text-base`.
+Input fields have white backgrounds, subtle border with border-gray-300, rounded corners (rounded-lg), and focus states with ring-2 ring-blue-500. Search inputs often include an icon.
 
 ### Example Code
 
 ```html
-<input class="bg-admin-background text-admin-text-primary border border-admin-border rounded-admin-md p-2 text-base focus:outline-none focus:ring-1 focus:ring-admin-border-active" type="text" />
+<div className="relative">
+  <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+  <input
+    type="text"
+    placeholder="Type to search"
+    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
+  />
+</div>
 ```
 
 ### Usage Guidance
 
-Provide sufficient padding for touch targets and typing comfort. Use focus ring for accessibility. Match font size to body text for consistency.
+For search inputs, position the icon absolutely within the input. Use sufficient padding (py-2) for touch targets and typing comfort. Include placeholder text for guidance. Define appropriate width based on context (w-80 for search). Use focus:outline-none focus:ring-2 focus:ring-blue-500 for accessible focus states.
 
 ---
 
@@ -310,16 +364,88 @@ Provide sufficient padding for touch targets and typing comfort. Use focus ring 
 
 ### Appearance Description
 
-Buttons have strong `admin-primary` background, white text, medium rounded corners, fixed height (40px), horizontal padding, and subtle shadow for depth. Hover darkens background.
+Buttons use the Button component with various variants (default, outline, ghost) and sizes. They can include icons and text.
 
 ### Example Code
 
 ```html
-<button class="bg-admin-primary text-white rounded-admin-md h-10 px-4 shadow-admin-sm hover:bg-admin-primary-hover focus:outline-none focus:ring-2 focus:ring-admin-border-active">
-  Save Changes
-</button>
+<!-- Primary Button -->
+<Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+  <Plus className="w-4 h-4 mr-2" />
+  Connect New Account
+</Button>
+
+<!-- Outline Button -->
+<Button variant="outline">Cancel Subscription</Button>
+
+<!-- Ghost Button -->
+<Button variant="ghost" size="sm">
+  Sort by: Recent <ChevronDown className="w-4 h-4 ml-1" />
+</Button>
+
+<!-- Icon Button -->
+<Button variant="ghost" size="icon">
+  <MessageSquare className="w-5 h-5" />
+</Button>
 ```
 
 ### Usage Guidance
 
-Use primary buttons for main actions in forms or dialogs. Ensure consistent sizing and contrast for accessibility. Provide hover and focus styles for interaction feedback.
+Use primary buttons (bg-blue-600) for main actions. Use outline buttons for secondary actions. Use ghost buttons for tertiary actions or in compact spaces. Include icons where appropriate to enhance meaning. Size appropriately (default, sm, icon) based on context and available space.
+
+## Tabs
+
+### Appearance Description
+
+Tabs use the Tabs component family to organize content into different sections that can be switched between.
+
+### Example Code
+
+```html
+<Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+  <TabsList className="grid w-full grid-cols-6 bg-gray-100">
+    <TabsTrigger value="profile">Profile</TabsTrigger>
+    <TabsTrigger value="password">Password</TabsTrigger>
+    <TabsTrigger value="team">Team</TabsTrigger>
+    <TabsTrigger value="notification">Notification</TabsTrigger>
+    <TabsTrigger value="billing-details">Billing Details</TabsTrigger>
+    <TabsTrigger value="integration">Integration</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="billing-details" className="space-y-6">
+    <!-- Content for this tab -->
+  </TabsContent>
+  
+  <TabsContent value="profile">
+    <!-- Content for this tab -->
+  </TabsContent>
+  
+  <!-- Other tab contents -->
+</Tabs>
+```
+
+### Usage Guidance
+
+Use Tabs for organizing related content that doesn't need to be visible simultaneously. TabsList should use appropriate styling (bg-gray-100) and layout (grid grid-cols-6). Each TabsContent should maintain consistent spacing (space-y-6) for content sections.
+
+## Badge
+
+### Appearance Description
+
+Badges are small indicators used to highlight status, counts, or labels.
+
+### Example Code
+
+```html
+<Badge variant="secondary" className="ml-auto bg-blue-100 text-blue-800 text-xs">
+  NEW
+</Badge>
+
+<Badge variant="secondary" className="ml-auto bg-gray-200 text-gray-700 text-xs">
+  15
+</Badge>
+```
+
+### Usage Guidance
+
+Use badges sparingly to highlight important information. Position with ml-auto when used in navigation items. Use appropriate color combinations for different states (blue for new features, gray for counts, etc.). Keep text concise and uppercase for emphasis.
