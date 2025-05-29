@@ -1,51 +1,57 @@
-<%# Admin Sites Form - TailwindCSS v2 variant %>
 <%# Admin Sites Form - TailwindCSS v2 variant: scope translations to selected locale %>
 <% Mobility.with_locale(admin_current_resource_locale) do %>
   <%= form_with model: [:admin, @site], local: true, html: { multipart: true, class: 'space-y-6' } do |f| %>
     <% if @site.errors.any? %>
-    <div class="bg-destructive/10 text-destructive rounded-md p-4">
-      <h2 class="text-destructive font-semibold"><%= t('errors.template.header', count: @site.errors.count) %></h2>
-      <ul class="mt-2 list-disc list-inside space-y-1">
-        <% @site.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-  <div class="grid grid-cols-1 gap-6">
-    <div>
-      <%= f.label :name, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.text_field :name, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-    </div>
-    <div>
-      <%= f.label :domain, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.text_field :domain, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
-    </div>
-    <div>
-      <%= f.label :logo, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.file_field :logo, class: 'mt-1 block w-full text-sm text-foreground' %>
-    </div>
-    <% if @site.new_record? %>
-      <div>
-        <%= f.label :tenant_name, class: 'block text-sm font-medium text-foreground' %>
-        <%= f.text_field :tenant_name, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      <div class="bg-red-50 text-red-600 rounded-admin-md p-4">
+        <h2 class="font-semibold"><%= t('errors.template.header', count: @site.errors.count) %></h2>
+        <ul class="mt-2 list-disc list-inside space-y-1">
+          <% @site.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
       </div>
     <% end %>
-    <div>
-      <%= f.label :description, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.text_area :description,
-            rows: 4,
-            data: { editor: true },
-            class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+    
+    <div class="space-y-4">
+      <div>
+        <%= f.label :name, class: 'block font-semibold text-admin-text-primary' %>
+        <%= f.text_field :name, class: 'border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none' %>
+      </div>
+      
+      <div>
+        <%= f.label :domain, class: 'block font-semibold text-admin-text-primary' %>
+        <%= f.text_field :domain, class: 'border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none' %>
+      </div>
+      
+      <div>
+        <%= f.label :logo, class: 'block font-semibold text-admin-text-primary' %>
+        <%= f.file_field :logo, class: 'mt-1 block w-full text-sm text-admin-text-primary' %>
+      </div>
+      
+      <% if @site.new_record? %>
+        <div>
+          <%= f.label :tenant_name, class: 'block font-semibold text-admin-text-primary' %>
+          <%= f.text_field :tenant_name, class: 'border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none' %>
+        </div>
+      <% end %>
+      
+      <div>
+        <%= f.label :description, class: 'block font-semibold text-admin-text-primary' %>
+        <%= f.text_area :description,
+              rows: 4,
+              data: { editor: true },
+              class: 'border border-admin-border rounded-admin-md p-2 w-full focus:ring-1 focus:ring-admin-border-active focus:outline-none' %>
+      </div>
+      
+      <div>
+        <%= f.label :figure, class: 'block font-semibold text-admin-text-primary' %>
+        <%= f.file_field :figure, class: 'mt-1 block w-full text-sm text-admin-text-primary' %>
+      </div>
     </div>
-    <div>
-      <%= f.label :figure, class: 'block text-sm font-medium text-foreground' %>
-      <%= f.file_field :figure, class: 'mt-1 block w-full text-sm text-foreground' %>
-    </div>
-  </div>
-  <div class="pt-6 flex space-x-2">
-    <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
-    <%= link_to 'Cancel', admin_sites_path, class: 'inline-flex items-center px-4 py-2 bg-muted text-muted-foreground text-sm font-medium rounded-md hover:bg-muted/90 transition' %>
-  </div>
+    
+    <footer class="pt-3 border-t border-admin-border flex justify-end space-x-2">
+      <%= f.submit class: 'bg-admin-primary text-white rounded-admin-md h-10 px-4 shadow-admin-sm hover:bg-admin-primary-hover focus:outline-none focus:ring-2 focus:ring-admin-border-active' %>
+      <%= link_to t('shared.cancel', default: 'Cancel'), admin_sites_path, class: 'bg-admin-background-muted text-admin-text-primary rounded-admin-md h-10 px-4 shadow-admin-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-admin-border-active inline-flex items-center justify-center' %>
+    </footer>
   <% end %>
 <% end %>
