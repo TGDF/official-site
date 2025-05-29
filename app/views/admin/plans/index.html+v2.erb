@@ -1,20 +1,24 @@
 <%# Admin Plans Index - TailwindCSS v2 variant %>
 <div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-semibold"><%= t('.plans') %></h1>
+  <div class="mb-6">
+    <h1 class="text-xl font-semibold text-gray-900 mb-2"><%= t('.plans') %></h1>
+    <p class="text-gray-600 text-sm"><%= t('.description', default: 'Manage all plans') %></p>
   </div>
-  <div class="overflow-x-auto bg-white rounded-lg shadow">
-    <table class="min-w-full divide-y divide-border">
-      <thead class="bg-muted">
-        <tr>
-          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider">#</th>
-          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.name') %></th>
-          <th class="px-6 py-3 text-left text-sm font-medium text-muted-foreground uppercase tracking-wider"><%= t('.actions') %></th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-border">
-        <%= render @plans %>
-      </tbody>
-    </table>
+
+  <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+    <div class="p-6">
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="border-b border-gray-200">
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">#</th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.name') %></th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render @plans %>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
