@@ -1,22 +1,8 @@
 <!-- TailwindCSS-based header for v2 admin -->
 <div class="flex items-center justify-between w-full">
   <div class="flex items-center gap-4">
-    <div class="relative">
-<i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-        <input
-        type="text"
-        placeholder="Type to search"
-        class="pl-9 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-72 text-sm h-9"
-      />
-    </div>
   </div>
   <div class="flex items-center gap-3">
-    <button type="button" class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gray-100">
-      <i class="fa fa-comment w-4 h-4 text-gray-500"></i>
-    </button>
-    <button type="button" class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gray-100">
-      <i class="fa fa-bell w-4 h-4 text-gray-500"></i>
-    </button>
     <div class="relative group">
       <button type="button" class="h-8 w-8 rounded-full overflow-hidden hover:bg-gray-100">
         <%= image_tag current_admin_user.avatar(size: 32), class: 'w-full h-full object-cover' %>
