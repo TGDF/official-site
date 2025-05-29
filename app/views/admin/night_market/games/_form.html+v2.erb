@@ -1,0 +1,51 @@
+<%# Admin Night Market Games Form - TailwindCSS v2 variant %>
+<%# Scoped to selected locale via Mobility %>
+<% Mobility.with_locale(admin_current_resource_locale) do %>
+  <%= form_with model: [:admin, @game], local: true, html: { multipart: true, class: 'space-y-6' } do |f| %>
+    <% if @game.errors.any? %>
+      <div class="bg-destructive/10 text-destructive rounded-md p-4">
+        <h2 class="text-destructive font-semibold"><%= t('errors.template.header', count: @game.errors.count) %></h2>
+        <ul class="mt-2 list-disc list-inside space-y-1">
+          <% @game.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div class="grid grid-cols-1 gap-6">
+      <div>
+        <%= f.label :name, class: 'block text-sm font-medium text-foreground' %>
+        <%= f.text_field :name, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      </div>
+      <div>
+        <%= f.label :description, class: 'block text-sm font-medium text-foreground' %>
+        <%= f.text_area :description, rows: 4, data: { editor: true }, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      </div>
+      <div>
+        <%= f.label :team, class: 'block text-sm font-medium text-foreground' %>
+        <%= f.text_field :team, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      </div>
+      <div>
+        <%= f.label :order, class: 'block text-sm font-medium text-foreground' %>
+        <%= f.number_field :order, class: 'mt-1 block w-full border border-border rounded-md bg-input-background text-foreground px-3 py-2 focus:border-primary focus:ring-primary focus:ring-1' %>
+      </div>
+      <div>
+        <%= f.label :thumbnail, class: 'block text-sm font-medium text-foreground' %>
+        <%= f.file_field :thumbnail, class: 'mt-1 block w-full text-sm text-foreground' %>
+        <% if @game.thumbnail.present? %>
+          <div class="mt-2">
+            <%= image_tag @game.thumbnail_url(:thumb), class: 'h-20' %>
+            <div class="mt-1 flex items-center">
+              <%= f.check_box :remove_thumbnail, class: 'h-4 w-4 text-primary border-border rounded' %>
+              <%= f.label :remove_thumbnail, class: 'ml-2 text-sm text-foreground' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="pt-6 flex space-x-2">
+      <%= f.submit class: 'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 transition' %>
+      <%= link_to 'Cancel', admin_night_market_games_path, class: 'inline-flex items-center px-4 py-2 bg-muted text-muted-foreground text-sm font-medium rounded-md hover:bg-muted/90 transition' %>
+    </div>
+  <% end %>
+<% end %>
