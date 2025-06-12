@@ -11,7 +11,7 @@
         <i class="fa fa-edit w-4 h-4 mr-1"></i>
         <span><%= t('.edit') %></span>
       <% end %>
-      <%= link_to admin_menu_item_path(menu_item), method: :delete, data: { turbo_method: :delete, confirm: t('shared.destroy_confirm') }, class: 'flex items-center text-sm px-3 py-1.5 rounded-md text-red-600 hover:bg-red-50' do %>
+      <%= button_to admin_menu_item_path(menu_item), method: :delete, data: { turbo_confirm: t('shared.destroy_confirm') }, class: 'flex items-center text-sm px-3 py-1.5 rounded-md text-red-600 hover:bg-red-50', form_class: 'inline-block' do %>
         <i class="fa fa-trash w-4 h-4 mr-1"></i>
         <span><%= t('.destroy') %></span>
       <% end %>
