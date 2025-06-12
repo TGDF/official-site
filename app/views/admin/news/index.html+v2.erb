@@ -6,10 +6,11 @@
   </div>
 
   <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
-    <div class="card-header px-6 py-4 border-b border-gray-200 font-medium">
-      <%= t('.news') %>
-    </div>
     <div class="p-6">
+      <div class="mb-6">
+        <h3 class="text-base font-medium text-gray-900"><%= t('.news') %></h3>
+        <p class="text-gray-600 text-sm"><%= t('.manage_news_posts', default: 'View and manage news posts') %></p>
+      </div>
       <table class="w-full border-collapse">
         <thead>
           <tr class="border-b border-gray-200">

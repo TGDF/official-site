@@ -8,10 +8,11 @@
   <%= admin_v2_locale_navtab %>
 
   <div class="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
-    <div class="card-header px-6 py-4 border-b border-gray-200 font-medium">
-      <%= t('.edit_news', default: 'Edit News') %>
-    </div>
     <div class="p-6">
+      <div class="mb-6">
+        <h3 class="text-base font-medium text-gray-900"><%= t('.edit_news', default: 'Edit News') %></h3>
+        <p class="text-gray-600 text-sm"><%= t('.edit_description', default: 'Update news content and properties') %></p>
+      </div>
       <%= render 'form' %>
     </div>
   </div>
