@@ -1,26 +1,28 @@
 <%# Admin Partner Types Form - TailwindCSS v2 variant %>
-<%= form_with model: [:admin, @partner_type], local: true, html: { class: 'space-y-6' } do |f| %>
-  <% if @partner_type.errors.any? %>
-    <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-6">
-      <h2 class="font-semibold"><%= t('errors.template.header', count: @partner_type.errors.count) %></h2>
-      <ul class="mt-2 list-disc list-inside space-y-1">
-        <% @partner_type.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+<% Mobility.with_locale(admin_current_resource_locale) do %>
+  <%= form_with model: [:admin, @partner_type], local: true, html: { class: 'space-y-6' } do |f| %>
+    <% if @partner_type.errors.any? %>
+      <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-6">
+        <h2 class="font-semibold"><%= t('errors.template.header', count: @partner_type.errors.count) %></h2>
+        <ul class="mt-2 list-disc list-inside space-y-1">
+          <% @partner_type.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div class="space-y-4">
+      <div class="space-y-2">
+        <%= f.label :name, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.text_field :name, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.name_placeholder', default: 'Enter partner type name') %>
+      </div>
+      <div class="space-y-2">
+        <%= f.label :order, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.number_field :order, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.order_placeholder', default: 'Enter display order') %>
+        <p class="text-sm text-gray-500 mt-1"><%= t('.order_help', default: 'Lower numbers appear first') %></p>
+      </div>
     </div>
-  <% end %>
-  <div class="space-y-4">
-    <div>
-      <%= f.label :name, class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.text_field :name, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
-    </div>
-    <div>
-      <%= f.label :order, class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.number_field :order, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
-    </div>
-  </div>
-  <footer class="pt-3 border-t border-gray-200 flex justify-end space-x-2">
+    <footer class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
     <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
     <%= link_to t('shared.cancel', default: 'Cancel'), admin_partner_types_path, class: 'px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50' %>
   </footer>
