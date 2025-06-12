@@ -20,60 +20,30 @@ module Admin
       (URI.decode_www_form(uri.query || "") - request.params.to_a).empty?
     end
 
-    # V2 sidebar helper methods
-    def admin_v2_sidebar_active?(path)
-      # Check if current path starts with the provided path (for section matching)
-      if path.is_a?(Symbol)
-        path = url_for(path) rescue nil
-        return false unless path
-      end
-      
-      # Special case for root path to avoid matching all admin routes
-      return request.path == path if path == admin_root_path
-      
-      # Parse controller and action from path
-      path_parts = path.split('/')
-      controller_name = path_parts[2] # admin/controller_name/...
-      
-      # Get current controller name from request path
-      current_path_parts = request.path.split('/')
-      current_controller = current_path_parts[2]
-
-      # Match controller name
-      controller_match = controller_name == current_controller
-      
-      # For index paths, do exact matching
-      if path.end_with?('index') || path.end_with?('index.html')
-        return request.path == path
-      end
-      
-      controller_match
-    end
-    
     # V2 sidebar item helpers
     def admin_v2_sidebar_section(name)
-      content_tag :div, class: 'px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide' do
+      content_tag :div, class: "px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide" do
         name
       end
     end
-    
+
     def admin_v2_sidebar_group(name)
       content_tag :div do
-        concat content_tag(:h4, name, class: 'px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide')
-        concat content_tag(:ul, capture { yield if block_given? }, class: 'space-y-0.5 pl-4')
+        concat content_tag(:h4, name, class: "px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide")
+        concat content_tag(:ul, capture { yield if block_given? }, class: "space-y-0.5 pl-4")
       end
     end
-    
+
     def admin_v2_sidebar_item(name, path, icon:)
-      is_active = admin_v2_sidebar_active?(path)
+      is_active = current_admin_path_under?(path)
       content_tag :li do
         link_to path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{is_active ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} cursor-pointer" do
-          concat content_tag(:i, '', class: "fa fa-#{icon} w-4 h-4 flex-shrink-0 #{is_active ? 'text-gray-900' : 'text-gray-600'}")
-          concat content_tag(:span, name, class: 'text-sm font-medium')
+          concat content_tag(:i, "", class: "fa fa-#{icon} w-4 h-4 flex-shrink-0 #{is_active ? 'text-gray-900' : 'text-gray-600'}")
+          concat content_tag(:span, name, class: "text-sm font-medium")
         end
       end
     end
-    
+
     def admin_sidebar_header(name)
       tag.li(name, class: "c-sidebar-nav-title")
     end
