@@ -17,9 +17,9 @@
     </div>
 
     <% unless tenant_site? %>
-      <!-- System -->
+      <!-- Sites -->
       <div>
-        <div class="px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide"><%= t('.system') %></div>
+        <div class="px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide"><%= t('.sites') %></div>
         <ul class="space-y-0.5">
           <li>
             <%= link_to admin_sites_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{current_page?(admin_sites_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}" do %>
