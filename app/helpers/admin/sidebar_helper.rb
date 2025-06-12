@@ -20,6 +20,28 @@ module Admin
       (URI.decode_www_form(uri.query || "") - request.params.to_a).empty?
     end
 
+    # V2 sidebar helper methods
+    def admin_v2_sidebar_active?(path)
+      # Check if current path starts with the provided path (for section matching)
+      if path.is_a?(Symbol)
+        path = url_for(path) rescue nil
+        return false unless path
+      end
+      
+      # Special case for root path to avoid matching all admin routes
+      return request.path == path if path == admin_root_path
+      
+      # For controllers with ids, match the controller name
+      controller_match = request.path.start_with?(path.split('?').first)
+      
+      # For index paths, do exact matching
+      if path.end_with?('index') || path.end_with?('index.html')
+        return request.path == path
+      end
+      
+      controller_match
+    end
+    
     def admin_sidebar_header(name)
       tag.li(name, class: "c-sidebar-nav-title")
     end

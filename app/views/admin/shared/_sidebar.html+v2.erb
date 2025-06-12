@@ -10,8 +10,8 @@
   <nav class="flex-1 overflow-y-auto px-2.5 py-6 space-y-6 max-h-full" aria-label="Sidebar">
     <!-- Dashboard -->
     <div>
-      <%= link_to admin_root_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{current_page?(admin_root_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}" do %>
-        <i class="fa fa-dashboard w-4 h-4 flex-shrink-0 <%= current_page?(admin_root_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
+      <%= link_to admin_root_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{admin_v2_sidebar_active?(admin_root_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}" do %>
+        <i class="fa fa-dashboard w-4 h-4 flex-shrink-0 <%= admin_v2_sidebar_active?(admin_root_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
         <span class="text-sm font-medium"><%= t('.dashboard') %></span>
       <% end %>
     </div>
@@ -22,8 +22,8 @@
         <div class="px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide"><%= t('.sites') %></div>
         <ul class="space-y-0.5">
           <li>
-            <%= link_to admin_sites_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{current_page?(admin_sites_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}" do %>
-              <i class="fa fa-sitemap w-4 h-4 flex-shrink-0 <%= current_page?(admin_sites_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
+            <%= link_to admin_sites_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{admin_v2_sidebar_active?(admin_sites_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}" do %>
+              <i class="fa fa-sitemap w-4 h-4 flex-shrink-0 <%= admin_v2_sidebar_active?(admin_sites_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
               <span class="text-sm font-medium"><%= t('.list') %></span>
             <% end %>
           </li>
@@ -45,14 +45,14 @@
         <h4 class="px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide"><%= t('.news') %></h4>
         <ul class="space-y-0.5 pl-4">
           <li>
-            <%= link_to admin_news_index_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{current_page?(admin_news_index_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} cursor-pointer" do %>
-              <i class="fa fa-newspaper-o w-4 h-4 flex-shrink-0 <%= current_page?(admin_news_index_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
+            <%= link_to admin_news_index_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{admin_v2_sidebar_active?(admin_news_index_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} cursor-pointer" do %>
+              <i class="fa fa-newspaper-o w-4 h-4 flex-shrink-0 <%= admin_v2_sidebar_active?(admin_news_index_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
               <span class="text-sm font-medium"><%= t('.list') %></span>
             <% end %>
           </li>
           <li>
-            <%= link_to new_admin_news_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{current_page?(new_admin_news_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} cursor-pointer" do %>
-              <i class="fa fa-plus w-4 h-4 flex-shrink-0 <%= current_page?(new_admin_news_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
+            <%= link_to new_admin_news_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{admin_v2_sidebar_active?(new_admin_news_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} cursor-pointer" do %>
+              <i class="fa fa-plus w-4 h-4 flex-shrink-0 <%= admin_v2_sidebar_active?(new_admin_news_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
               <span class="text-sm font-medium"><%= t('.new') %></span>
             <% end %>
           </li>
@@ -63,8 +63,8 @@
         <h4 class="px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide"><%= t('.slider') %></h4>
         <ul class="space-y-0.5 pl-4">
           <li>
-            <%= link_to admin_sliders_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{current_page?(admin_sliders_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} cursor-pointer" do %>
-              <i class="fa fa-picture-o w-4 h-4 flex-shrink-0 <%= current_page?(admin_sliders_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
+            <%= link_to admin_sliders_path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{admin_v2_sidebar_active?(admin_sliders_path) ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} cursor-pointer" do %>
+              <i class="fa fa-picture-o w-4 h-4 flex-shrink-0 <%= admin_v2_sidebar_active?(admin_sliders_path) ? 'text-gray-900' : 'text-gray-600' %>"></i>
               <span class="text-sm font-medium"><%= t('.list') %></span>
             <% end %>
           </li>
