@@ -13,37 +13,46 @@
     </div>
   <% end %>
   <div class="space-y-4">
-    <div>
-      <%= f.label :name, class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.text_field :name, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+    <div class="space-y-2">
+      <%= f.label :name, class: 'text-sm font-medium text-gray-900' %>
+      <%= f.text_field :name, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.name_placeholder', default: 'Enter game name') %>
     </div>
-    <div>
-      <%= f.label :description, class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.text_area :description, rows: 4, data: { editor: true }, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-36 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+    <div class="space-y-2">
+      <%= f.label :description, class: 'text-sm font-medium text-gray-900' %>
+      <%= f.text_area :description, rows: 4, data: { editor: true }, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.description_placeholder', default: 'Enter game description') %>
     </div>
-    <div>
-      <%= f.label :team, class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.text_field :team, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+    <div class="space-y-2">
+      <%= f.label :team, class: 'text-sm font-medium text-gray-900' %>
+      <%= f.text_field :team, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.team_placeholder', default: 'Enter team name') %>
     </div>
-    <div>
-      <%= f.label :order, class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.number_field :order, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+    <div class="space-y-2">
+      <%= f.label :website, class: 'text-sm font-medium text-gray-900' %>
+      <%= f.url_field :website, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.website_placeholder', default: 'Enter website URL') %>
     </div>
-    <div>
-      <%= f.label :thumbnail, class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.file_field :thumbnail, class: 'mt-1 block w-full text-sm text-gray-900' %>
+    <div class="space-y-2">
+      <%= f.label :video, class: 'text-sm font-medium text-gray-900' %>
+      <%= f.url_field :video, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.video_placeholder', default: 'Enter video URL') %>
+    </div>
+    <div class="space-y-2">
+      <%= f.label :order, class: 'text-sm font-medium text-gray-900' %>
+      <%= f.number_field :order, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.order_placeholder', default: 'Enter display order') %>
+      <p class="text-sm text-gray-500 mt-1"><%= t('.order_help', default: 'Lower numbers appear first') %></p>
+    </div>
+    <div class="space-y-2">
+      <%= f.label :thumbnail, class: 'text-sm font-medium text-gray-900' %>
+      <%= f.file_field :thumbnail, class: 'block w-full text-sm text-gray-900 mt-1' %>
       <% if @game.thumbnail.present? %>
         <div class="mt-2">
           <%= image_tag @game.thumbnail_url(:thumb), class: 'h-20 w-auto rounded-md' %>
           <div class="mt-2 flex items-center">
-            <%= f.check_box :remove_thumbnail, class: 'h-4 w-4 text-red-600 border border-gray-300 rounded focus:ring-red-500 focus:ring-2' %>
+            <%= f.check_box :remove_thumbnail, class: 'h-4 w-4 text-blue-600 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2' %>
             <%= f.label :remove_thumbnail, t('.remove_thumbnail', default: 'Remove thumbnail'), class: 'ml-2 block text-sm font-medium text-gray-900' %>
           </div>
         </div>
       <% end %>
     </div>
   </div>
-  <footer class="pt-3 border-t border-gray-200 flex justify-end space-x-2">
+  <footer class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
     <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
     <%= link_to t('shared.cancel', default: 'Cancel'), admin_night_market_games_path, class: 'px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50' %>
   </footer>
