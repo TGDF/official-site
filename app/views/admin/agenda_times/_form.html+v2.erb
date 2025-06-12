@@ -11,24 +11,25 @@
     </div>
   <% end %>
   <div class="space-y-4">
-    <div>
-      <%= f.label :label, class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.text_field :label, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+    <div class="space-y-2">
+      <%= f.label :label, class: 'text-sm font-medium text-gray-900' %>
+      <%= f.text_field :label, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.label_placeholder', default: 'Enter time label') %>
     </div>
-    <div>
-      <%= f.label :agenda_day_id, t('.day'), class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.collection_select :day_id, AgendaDay.all, :id, :label, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+    <div class="space-y-2">
+      <%= f.label :agenda_day_id, t('.day'), class: 'text-sm font-medium text-gray-900' %>
+      <%= f.collection_select :day_id, AgendaDay.all, :id, :label, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
     </div>
-    <div>
-      <%= f.label :order, class: 'block text-sm font-medium text-gray-900' %>
-      <%= f.number_field :order, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+    <div class="space-y-2">
+      <%= f.label :order, class: 'text-sm font-medium text-gray-900' %>
+      <%= f.number_field :order, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.order_placeholder', default: 'Enter display order') %>
+      <p class="text-sm text-gray-500 mt-1"><%= t('.order_help', default: 'Lower numbers appear first') %></p>
     </div>
     <div class="flex items-center">
       <%= f.check_box :single, class: 'h-4 w-4 text-blue-600 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2' %>
       <%= f.label :single, t('.single'), class: 'ml-2 text-sm font-medium text-gray-900' %>
     </div>
   </div>
-  <footer class="pt-3 border-t border-gray-200 flex justify-end space-x-2">
+  <footer class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
     <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
     <%= link_to t('shared.cancel', default: 'Cancel'), admin_agenda_times_path, class: 'px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50' %>
   </footer>

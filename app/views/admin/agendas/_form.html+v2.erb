@@ -12,56 +12,57 @@
       </div>
     <% end %>
     <div class="space-y-4">
-      <div>
-        <%= f.label :subject, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.text_field :subject, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :subject, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.text_field :subject, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.subject_placeholder', default: 'Enter agenda subject') %>
       </div>
-      <div>
-        <%= f.label :description, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.text_area :description, rows: 6, data: { editor: true }, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-36 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :description, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.text_area :description, rows: 6, data: { editor: true }, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.description_placeholder', default: 'Enter agenda description') %>
       </div>
-      <div>
-        <%= f.label :speakers, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.collection_select :speaker_ids, Speaker.all, :id, :name, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', multiple: true %>
+      <div class="space-y-2">
+        <%= f.label :speakers, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.collection_select :speaker_ids, Speaker.all, :id, :name, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', multiple: true %>
       </div>
-      <div>
-        <%= f.label :language, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.select :language, Agenda.languages.keys.map { |l| [t("locale.name.#{l}"), l] }, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :language, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.select :language, Agenda.languages.keys.map { |l| [t("locale.name.#{l}"), l] }, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
-      <div>
-        <%= f.label :translated_language, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.select :translated_language, Agenda.translated_languages.keys.map { |l| [t("locale.name.#{l}"), l] }, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :translated_language, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.select :translated_language, Agenda.translated_languages.keys.map { |l| [t("locale.name.#{l}"), l] }, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
-      <div>
-        <%= f.label :translated_type, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.select :translated_type, Agenda.translated_types.keys.map { |t| [t.humanize, t] }, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :translated_type, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.select :translated_type, Agenda.translated_types.keys.map { |t| [t.humanize, t] }, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
-      <div>
-        <%= f.label :room_id, t('.room'), class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.collection_select :room_id, Room.all, :id, :name, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :room_id, t('.room'), class: 'text-sm font-medium text-gray-900' %>
+        <%= f.collection_select :room_id, Room.all, :id, :name, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
-      <div>
-        <%= f.label :agenda_time_id, t('.time'), class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.collection_select :agenda_time_id, AgendaTime.all, :id, :label, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :agenda_time_id, t('.time'), class: 'text-sm font-medium text-gray-900' %>
+        <%= f.collection_select :agenda_time_id, AgendaTime.all, :id, :label, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
-      <div>
-        <%= f.label :begin_at, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.datetime_local_field :begin_at, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :begin_at, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.datetime_local_field :begin_at, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
-      <div>
-        <%= f.label :end_at, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.datetime_local_field :end_at, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :end_at, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.datetime_local_field :end_at, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
-      <div>
-        <%= f.label :order, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.number_field :order, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+      <div class="space-y-2">
+        <%= f.label :order, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.number_field :order, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', placeholder: t('.order_placeholder', default: 'Enter display order') %>
+        <p class="text-sm text-gray-500 mt-1"><%= t('.order_help', default: 'Lower numbers appear first') %></p>
       </div>
-      <div>
-        <%= f.label :tags, class: 'block text-sm font-medium text-gray-900' %>
-        <%= f.collection_select :tag_ids, AgendaTag.all, :id, :name, {}, class: 'border border-gray-300 rounded-md px-4 py-2 w-full text-sm h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', multiple: true %>
+      <div class="space-y-2">
+        <%= f.label :tags, class: 'text-sm font-medium text-gray-900' %>
+        <%= f.collection_select :tag_ids, AgendaTag.all, :id, :name, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', multiple: true %>
       </div>
     </div>
-    <footer class="pt-3 border-t border-gray-200 flex justify-end space-x-2">
+    <footer class="pt-4 border-t border-gray-200 flex justify-end space-x-3">
       <%= f.submit class: 'bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center' %>
       <%= link_to t('shared.cancel', default: 'Cancel'), admin_agendas_path, class: 'px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50' %>
     </footer>
