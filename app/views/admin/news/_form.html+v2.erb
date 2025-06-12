@@ -37,7 +37,7 @@
             <%= image_tag @news.thumbnail_url(:thumb), class: "h-20 w-auto object-cover rounded-md" %>
             <div class="mt-1 flex items-center">
               <%= f.check_box :remove_thumbnail, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
-              <%= f.label :remove_thumbnail, class: "ml-2 block text-sm text-gray-900", t('.remove_thumbnail', default: 'Remove thumbnail') %>
+              <%= f.label :remove_thumbnail, t('.remove_thumbnail', default: 'Remove thumbnail'), class: "ml-2 block text-sm text-gray-900" %>
             </div>
           </div>
         <% end %>
