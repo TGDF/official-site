@@ -423,37 +423,35 @@ Use primary buttons (bg-blue-600) for main actions. Use outline buttons for seco
 
 ### Appearance Description
 
-Tabs organize content into different sections that can be switched between.
+Tabs organize content into different sections that can be switched between, with proper accessibility attributes for screen readers and keyboard navigation.
 
 ### Example Code
 
 ```html
-<div class="space-y-6">
-  <!-- Tab List -->
-  <div class="grid w-full grid-cols-6 bg-gray-100 p-1 rounded-md">
-    <button class="py-2 px-3 text-sm font-medium bg-white rounded-md shadow text-gray-900">Profile</button>
-    <button class="py-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-900">Password</button>
-    <button class="py-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-900">Team</button>
-    <button class="py-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-900">Notification</button>
-    <button class="py-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-900">Billing Details</button>
-    <button class="py-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-900">Integration</button>
-  </div>
+<div role="tablist" aria-orientation="horizontal" class="h-10 items-center justify-center rounded-md p-1 text-muted-foreground grid w-full grid-cols-6 bg-gray-100" tabindex="0" data-orientation="horizontal" style="outline: none;">
+  <button type="button" role="tab" aria-selected="true" aria-controls="radix-«r10»-content-profile" data-state="active" id="radix-«r10»-trigger-profile" class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" tabindex="-1" data-orientation="horizontal" data-radix-collection-item="">Profile</button>
+  <button type="button" role="tab" aria-selected="false" aria-controls="radix-«r10»-content-password" data-state="inactive" id="radix-«r10»-trigger-password" class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" tabindex="-1" data-orientation="horizontal" data-radix-collection-item="">Password</button>
+  <button type="button" role="tab" aria-selected="false" aria-controls="radix-«r10»-content-team" data-state="inactive" id="radix-«r10»-trigger-team" class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" tabindex="-1" data-orientation="horizontal" data-radix-collection-item="">Team</button>
+  <button type="button" role="tab" aria-selected="false" aria-controls="radix-«r10»-content-notification" data-state="inactive" id="radix-«r10»-trigger-notification" class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" tabindex="-1" data-orientation="horizontal" data-radix-collection-item="">Notification</button>
+  <button type="button" role="tab" aria-selected="false" aria-controls="radix-«r10»-content-billing-details" data-state="inactive" id="radix-«r10»-trigger-billing-details" class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" tabindex="-1" data-orientation="horizontal" data-radix-collection-item="">Billing Details</button>
+  <button type="button" role="tab" aria-selected="false" aria-controls="radix-«r10»-content-integration" data-state="inactive" id="radix-«r10»-trigger-integration" class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm" tabindex="-1" data-orientation="horizontal" data-radix-collection-item="">Integration</button>
+</div>
 
-  <!-- Tab Content (only the active one should be displayed) -->
-  <div class="space-y-6">
-    <!-- Content for active tab -->
-    <div class="bg-white border border-gray-200 rounded-md shadow-sm">
-      <!-- Card content -->
-    </div>
-  </div>
-  
-  <!-- Other tab contents would be hidden with 'hidden' class -->
+<!-- Tab Content (only the active one should be displayed) -->
+<div class="space-y-6">
+  <!-- Each tab panel would have role="tabpanel" and proper aria-labelledby attributes pointing to the corresponding tab button id -->
 </div>
 ```
 
 ### Usage Guidance
 
-Use tabs for organizing related content that doesn't need to be visible simultaneously. The active tab should have bg-white, text-gray-900, and shadow styling. Inactive tabs should have text-gray-500 with hover:text-gray-900. Each tab content section should maintain consistent spacing (space-y-6) for content sections. Use JavaScript to toggle the 'hidden' class on tab content based on which tab is active.
+Use tabs for organizing related content that doesn't need to be visible simultaneously. The active tab should have `aria-selected="true"` and `data-state="active"` attributes, while inactive tabs should have `aria-selected="false"` and `data-state="inactive"`. 
+
+For styling: active tabs use `data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm`, while all tabs have consistent padding (`px-3 py-1.5`) and text size (`text-sm font-medium`).
+
+Include proper accessibility attributes: `role="tablist"` for the container, `role="tab"` for each tab button, and `role="tabpanel"` for each content panel with matching `id`/`aria-controls` relationships.
+
+Use the `data-state` attribute with CSS selectors (like `data-[state=active]:bg-background`) rather than direct classes to toggle styles based on state.
 
 ## Badge
 
