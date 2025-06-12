@@ -347,9 +347,29 @@ Use consistent padding (py-3 px-4) for all cells. Use text-sm for all text. Tabl
 
 ### Appearance Description
 
-Input fields have white backgrounds, subtle border with border-gray-300, rounded corners (rounded-md), and focus states with ring-2 ring-blue-500. Search inputs often include an icon.
+Input fields have white backgrounds, subtle border with border-gray-300, rounded corners (rounded-md), and focus states with ring-2 ring-blue-500. Standard inputs include a label above the input.
 
 ### Example Code
+
+```html
+<div class="space-y-2">
+  <label for="firstName" class="text-sm font-medium text-gray-900">
+    First Name
+  </label>
+  <input
+    id="firstName"
+    type="text"
+    placeholder="Enter your first name"
+    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+  />
+</div>
+```
+
+### Usage Guidance
+
+Always use labels with inputs for accessibility. Connect labels and inputs using matching 'for' and 'id' attributes. Use sufficient padding (px-3 py-2) for touch targets and typing comfort. Include placeholder text for guidance. Define appropriate width based on context (w-full for form fields). Use focus:outline-none focus:ring-2 focus:ring-blue-500 for accessible focus states. Use text-sm for consistent text size.
+
+For search inputs that include an icon:
 
 ```html
 <div class="relative">
@@ -357,14 +377,10 @@ Input fields have white backgrounds, subtle border with border-gray-300, rounded
   <input
     type="text"
     placeholder="Type to search"
-    class="pl-9 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-72 text-sm h-9"
+    class="pl-9 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-72 text-sm"
   />
 </div>
 ```
-
-### Usage Guidance
-
-For search inputs, position the icon absolutely within the input. Use sufficient padding (py-2) for touch targets and typing comfort. Include placeholder text for guidance. Define appropriate width based on context (w-72 for search). Use focus:outline-none focus:ring-2 focus:ring-blue-500 for accessible focus states. Use text-sm for consistent text size.
 
 ---
 
