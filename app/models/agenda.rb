@@ -27,7 +27,8 @@ class Agenda < ApplicationRecord
   enum :translated_language, {
     ZH: 1,
     EN: 2,
-    JP: 3
+    JP: 3,
+    KR: 4
   }, prefix: :translated
 
   enum :translated_type, {
