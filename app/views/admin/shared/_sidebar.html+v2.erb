@@ -1,4 +1,4 @@
-<div class="flex flex-col h-full max-h-screen">
+<div class="flex flex-col h-screen overscroll-contain">
   <div class="px-4 py-3 border-b border-gray-200 h-16 flex items-center">
     <div class="flex items-center gap-2">
       <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
@@ -7,7 +7,7 @@
       <span class="text-xl font-semibold text-gray-900"><%= t('site_name') %></span>
     </div>
   </div>
-  <nav class="flex-1 overflow-y-auto px-2.5 py-6 space-y-6 max-h-full" aria-label="Sidebar">
+  <nav class="flex-1 overflow-y-auto overscroll-contain px-2.5 py-6 space-y-6" aria-label="Sidebar">
     <!-- Dashboard -->
     <ul class="space-y-0.5">
       <%= admin_v2_sidebar_item t('.dashboard'), admin_root_path, icon: 'dashboard' %>
