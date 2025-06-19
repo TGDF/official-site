@@ -9,9 +9,9 @@
   </div>
   <nav class="flex-1 overflow-y-auto px-2.5 py-6 space-y-6 max-h-full" aria-label="Sidebar">
     <!-- Dashboard -->
-    <div>
+    <ul class="space-y-0.5">
       <%= admin_v2_sidebar_item t('.dashboard'), admin_root_path, icon: 'dashboard' %>
-    </div>
+    </ul>
 
     <% unless tenant_site? %>
       <!-- Sites -->
@@ -27,13 +27,11 @@
     <!-- General -->
     <div>
       <%= admin_v2_sidebar_section t('.general') %>
-      
       <!-- News -->
       <%= admin_v2_sidebar_group t('.news') do %>
         <%= admin_v2_sidebar_item t('.list'), admin_news_index_path, icon: 'newspaper-o' %>
         <%= admin_v2_sidebar_item t('.new'), new_admin_news_path, icon: 'plus' %>
       <% end %>
-      
       <!-- Slider -->
       <%= admin_v2_sidebar_group t('.slider') do %>
         <%= admin_v2_sidebar_item t('.list'), admin_sliders_path, icon: 'picture-o' %>
@@ -50,7 +48,6 @@
       <!-- Tenant Features -->
       <div>
         <%= admin_v2_sidebar_section t('.tenant_features') %>
-        
         <!-- Menus -->
         <%= admin_v2_sidebar_group t('.menus') do %>
           <%= admin_v2_sidebar_item t('.list'), admin_menu_items_path, icon: 'bars' %>
@@ -99,17 +96,16 @@
           <%= admin_v2_sidebar_item t('.new'), new_admin_indie_space_game_path, icon: 'plus' %>
           <%= admin_v2_sidebar_item t('.options'), edit_admin_indie_space_path, icon: 'gear' %>
         <% end %>
-        
+
         <!-- Night Market -->
         <%= admin_v2_sidebar_group t('.night_market') do %>
           <%= admin_v2_sidebar_item t('.list'), admin_night_market_games_path, icon: 'list' %>
           <%= admin_v2_sidebar_item t('.new'), new_admin_night_market_game_path, icon: 'plus' %>
         <% end %>
-        
         <!-- Options -->
-        <div>
+        <ul class="space-y-0.5">
           <%= admin_v2_sidebar_item t('.options'), edit_admin_options_path, icon: 'gear' %>
-        </div>
+        </ul>
       </div>
     <% end %>
   </nav>
