@@ -675,6 +675,74 @@ For styling: active tabs use `data-[state=active]:bg-background data-[state=acti
 
 Use the `data-[state=active]` attribute selectors for applying different styles to active tabs.
 
+## Flash Message
+
+### Appearance Description
+
+Flash messages provide user feedback for actions with color-coded status indicators. They display below the header with left border styling, appropriate icons, and dismissible functionality. Messages include smooth transitions and proper ARIA attributes for accessibility.
+
+### Example Code
+
+```html
+<!-- Success Message -->
+<div class="transition-all duration-300 ease-in-out opacity-100 translate-y-0" role="alert" aria-live="polite">
+  <div class="w-full bg-green-50 border-green-500 border-l-4 p-4 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <i class="fa fa-check-circle w-5 h-5 text-green-500"></i>
+      <span class="text-green-800 font-medium">Profile updated successfully!</span>
+    </div>
+    <button class="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 rounded-md" aria-label="Dismiss message">
+      <i class="fa fa-times w-5 h-5"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Error Message -->
+<div class="transition-all duration-300 ease-in-out opacity-100 translate-y-0" role="alert" aria-live="assertive">
+  <div class="w-full bg-red-50 border-red-500 border-l-4 p-4 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <i class="fa fa-times-circle w-5 h-5 text-red-500"></i>
+      <span class="text-red-800 font-medium">Failed to save changes. Please try again.</span>
+    </div>
+    <button class="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 rounded-md" aria-label="Dismiss message">
+      <i class="fa fa-times w-5 h-5"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Warning Message -->
+<div class="transition-all duration-300 ease-in-out opacity-100 translate-y-0" role="alert" aria-live="polite">
+  <div class="w-full bg-yellow-50 border-yellow-500 border-l-4 p-4 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <i class="fa fa-exclamation-triangle w-5 h-5 text-yellow-500"></i>
+      <span class="text-yellow-800 font-medium">Your subscription will expire in 3 days.</span>
+    </div>
+    <button class="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 rounded-md" aria-label="Dismiss message">
+      <i class="fa fa-times w-5 h-5"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Info Message -->
+<div class="transition-all duration-300 ease-in-out opacity-100 translate-y-0" role="alert" aria-live="polite">
+  <div class="w-full bg-blue-50 border-blue-500 border-l-4 p-4 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <i class="fa fa-info-circle w-5 h-5 text-blue-500"></i>
+      <span class="text-blue-800 font-medium">New features have been added to your dashboard!</span>
+    </div>
+    <button class="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 rounded-md" aria-label="Dismiss message">
+      <i class="fa fa-times w-5 h-5"></i>
+    </button>
+  </div>
+</div>
+```
+
+### Usage Guidance
+
+Flash messages appear below the header and provide immediate feedback for user actions. Use appropriate color schemes: green for success, red for errors, yellow for warnings, and blue for information. Include Font Awesome icons that match the message type. Error messages should use `aria-live="assertive"` while others use `aria-live="polite"`. The dismiss button should have proper ARIA labels for accessibility. Messages display with smooth transitions using `transition-all duration-300 ease-in-out` classes. Use `border-l-4` for the left accent border and consistent padding (p-4) for content spacing.
+
+---
+
 ## Badge
 
 ### Appearance Description
