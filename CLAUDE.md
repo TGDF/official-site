@@ -80,6 +80,32 @@ This Rails application powers conference/gaming event websites with a sophistica
 **View Components**: Test components in `spec/components/` and preview with Lookbook (dev only)
 **Git Workflow**: Overcommit enforces RuboCop standards and runs Brakeman security checks
 
+### Admin Interface Implementation
+
+**Admin V2 System**: The admin interface has two variants controlled by feature flags
+- V1: Original CoreUI-based interface (`.erb` templates)
+- V2: TailwindCSS-based interface (`.html+v2.erb` templates) following `docs/ADMIN_UI_COMPONENTS.md`
+
+**Font Awesome Integration**: Uses Font Awesome 4.x via CDN (`https://use.fontawesome.com/`)
+- Use `fa fa-*` class format (not `fas fa-*`)
+- Icon compatibility: Some FA5+ icons need FA4 equivalents (e.g., `fa-tachometer-alt` → `fa-tachometer`)
+- Refer to https://fontawesome.com/v4/icons/ for available icons
+
+**Stimulus Controllers**: Interactive components use Stimulus.js
+- Register controllers in `app/javascript/admin.js`
+- Place controllers in `app/assets/javascripts/controllers/`
+- Use semantic naming (e.g., `sidebar_controller.js` for sidebar functionality)
+
+**UI Documentation**: `docs/ADMIN_UI_COMPONENTS.md` serves as the design system
+- All V2 admin components must follow documented patterns
+- Includes comprehensive examples for sidebar, cards, forms, tables, etc.
+- Updated to reflect Font Awesome 4 compatibility
+
+**Accessibility**: Admin interface includes proper ARIA attributes
+- Use `aria-expanded` and `aria-controls` for collapsible sections
+- Include `role` attributes for semantic structure
+- Ensure keyboard navigation support
+
 ### Testing Strategy
 
 **RSpec**: Model and feature tests with FactoryBot fixtures
