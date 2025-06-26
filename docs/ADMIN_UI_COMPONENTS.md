@@ -357,7 +357,7 @@ Use border-t border-gray-200 to separate footer from main navigation. Apply flex
 
 ### Appearance Description
 
-Header navigation includes search, notification icons, and user profile elements aligned horizontally with subtle spacing and interactive states.
+Header navigation includes search, language dropdown, notification icons, and user profile elements aligned horizontally with subtle spacing and interactive states. Uses Font Awesome 4.x icons for consistency with the project.
 
 ### Example Code
 
@@ -365,15 +365,38 @@ Header navigation includes search, notification icons, and user profile elements
 <header class="bg-white border-b border-gray-200 h-16 flex items-center px-6">
   <div class="flex items-center justify-between w-full">
     <div class="flex items-center gap-4">
+      <!-- Search Input -->
       <div class="relative">
         <i class="fa fa-search w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-        <input
-          type="text"
-          placeholder="Type to search"
-          class="pl-9 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-72 text-sm h-9"
-        />
+        <input placeholder="Type to search" class="pl-9 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-72 text-sm h-9" type="text">
+      </div>
+      <!-- Language Dropdown -->
+      <div class="relative">
+        <button class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" aria-haspopup="true" aria-expanded="false" id="language-button">
+          <i class="fa fa-globe w-4 h-4"></i>
+          <span>EN</span>
+          <i class="fa fa-caret-down w-4 h-4"></i>
+        </button>
+        <!-- Dropdown menu (hidden by default) -->
+        <div id="language-dropdown" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50 hidden" role="menu" aria-labelledby="language-button">
+          <div class="py-1">
+            <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100" role="menuitem">
+              <span class="mr-3">🇺🇸</span>English (US)
+            </button>
+            <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100" role="menuitem">
+              <span class="mr-3">🇪🇸</span>Español
+            </button>
+            <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100" role="menuitem">
+              <span class="mr-3">🇫🇷</span>Français
+            </button>
+            <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100" role="menuitem">
+              <span class="mr-3">🇩🇪</span>Deutsch
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+    <!-- Right Side Actions -->
     <div class="flex items-center gap-3">
       <button class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gray-100">
         <i class="fa fa-comment w-4 h-4 text-gray-500"></i>
@@ -389,7 +412,7 @@ Header navigation includes search, notification icons, and user profile elements
 
 ### Usage Guidance
 
-Position search input on the left with an icon inside. Use ghost buttons for notification icons. Keep consistent spacing (gap-3) between elements. Use rounded-full for user avatar. Header should have fixed height (h-16) for consistency.
+Position search input on the left with Font Awesome icon inside. Include language dropdown with proper ARIA attributes. Use ghost buttons for notification icons with consistent hover states. Keep consistent spacing (gap-3/gap-4) between elements. Use rounded-full for user avatar. Header should have fixed height (h-16) for consistency. Use Font Awesome 4.x icons (`fa fa-*` format) for consistency with the project.
 
 ---
 
@@ -397,14 +420,38 @@ Position search input on the left with an icon inside. Use ghost buttons for not
 
 ### Appearance Description
 
-Dropdown menus provide a clean interface for additional options with a trigger button and dropdown content.
+Dropdown menus provide a clean interface for additional options with a trigger button and dropdown content. Modern dropdowns use proper ARIA attributes for accessibility and consistent styling patterns.
 
 ### Example Code
 
 ```html
+<!-- Language/Selection Dropdown -->
+<div class="relative">
+  <button class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" aria-haspopup="true" aria-expanded="false" id="dropdown-button">
+    <i class="fa fa-globe w-4 h-4"></i>
+    <span>EN</span>
+    <i class="fa fa-caret-down w-4 h-4"></i>
+  </button>
+  <div id="dropdown-menu" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50 hidden" role="menu" aria-labelledby="dropdown-button">
+    <div class="py-1">
+      <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100" role="menuitem">
+        <span class="mr-3">🇺🇸</span>English (US)
+      </button>
+      <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100" role="menuitem">
+        <span class="mr-3">🇪🇸</span>Español
+      </button>
+      <button class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100" role="menuitem">
+        <span class="mr-3">🇫🇷</span>Français
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Simple Action Dropdown -->
 <div class="relative">
   <button class="flex items-center text-sm px-3 py-1.5 rounded hover:bg-gray-100">
-    Sort by: Recent <i class="fa fa-caret-down w-4 h-4 ml-1"></i>
+    Sort by: Recent
+    <i class="fa fa-caret-down w-4 h-4 ml-1"></i>
   </button>
   <div class="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-10 hidden">
     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Recent</a>
@@ -416,7 +463,7 @@ Dropdown menus provide a clean interface for additional options with a trigger b
 
 ### Usage Guidance
 
-Trigger elements should indicate dropdown functionality (e.g., with ChevronDown icon). Menu items should have consistent styling (px-4 py-2) and sufficient padding for clickable area. Use text-sm for all text elements. Add the 'hidden' class to hide the dropdown by default, and use JavaScript to toggle visibility.
+Use proper ARIA attributes (`aria-haspopup`, `aria-expanded`, `aria-labelledby`, `role="menu"`, `role="menuitem"`) for accessibility. Trigger elements should indicate dropdown functionality with chevron-down icon. Use `button` elements for interactive menu items and `a` elements for navigation links. Menu items should have consistent styling (px-4 py-2) and sufficient padding for clickable area. Use text-sm for all text elements. Add the 'hidden' class to hide the dropdown by default, and use JavaScript to toggle visibility. Include proper focus states with `focus:outline-none` and `focus:bg-gray-100`.
 
 ---
 
