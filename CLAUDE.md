@@ -27,18 +27,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Database
 - `bin/rails db:migrate` - Run migrations
 - `bin/rails db:seed` - Seed database
-- Multi-tenant migrations handled automatically via Apartment gem
+- Multi-tenant migrations handled via acts_as_tenant (migrating from Apartment gem)
 
 ## Architecture Overview
 
 ### Multi-Tenant SaaS Platform
 This Rails application powers conference/gaming event websites with a sophisticated multi-tenant architecture:
 
-**Tenant System (Apartment gem)**:
+**Tenant System (migrating from Apartment to acts_as_tenant)**:
 - Each `Site` model represents a tenant with isolated data
 - Tenants switch based on domain/subdomain routing
 - Global admin interface at `/admin` for tenant management
 - Tenant-specific admin at `/admin` for content management
+- **Migration in progress**: Replacing `ros-apartment` gem with `acts_as_tenant` for simpler multi-tenancy
 
 **Core Domain Models**:
 - **Event Management**: `Agenda` → `Speaker` → `Room`/`AgendaTime` with multi-language support
@@ -53,7 +54,7 @@ This Rails application powers conference/gaming event websites with a sophistica
 **File Uploads**: CarrierWave + ImageMagick (required dependency)
 **Internationalization**: Mobility gem with zh-TW/en locales
 **Authentication**: Devise for admin users
-**View Layer**: ERB templates + ViewComponent architecture
+**View Layer**: ERB templates + ViewComponent architecture (migrating from Slim)
 
 ### Key Architectural Patterns
 
@@ -66,13 +67,14 @@ This Rails application powers conference/gaming event websites with a sophistica
 ### File Structure
 
 **Components**: `app/components/` - ViewComponent-based UI components
-**Admin Interface**: Two template systems (legacy `.slim` and new `.html+v2.erb`)
+**Admin Interface**: Migrating from Slim templates to ERB with ViewComponent (use `.html+v2.erb` for new templates)
 **Multi-language Routes**: Scoped by `/:lang` parameter
 **Asset Pipeline**: esbuild + TailwindCSS with watch processes
 
 ### Development Notes
 
-**Admin UI Migration**: Currently transitioning from Slim to ERB+TailwindCSS (check for `+v2` templates)
+**Template Migration**: Actively migrating from Slim to ERB with ViewComponent architecture (prefer ERB+ViewComponent for new features)
+**Multi-tenancy Migration**: Transitioning from ros-apartment gem to acts_as_tenant for simplified tenant management
 **Tenant Context**: Always verify current tenant context when working with data
 **Translations**: Use `HasTranslation` concern for i18n-enabled models
 **View Components**: Test components in `spec/components/` and preview with Lookbook (dev only)
@@ -83,4 +85,4 @@ This Rails application powers conference/gaming event websites with a sophistica
 **RSpec**: Model and feature tests with FactoryBot fixtures
 **Cucumber**: BDD acceptance tests for user flows
 **ViewComponent**: Dedicated component testing
-**Multi-tenant Testing**: Apartment gem handles tenant switching in tests
+**Multi-tenant Testing**: acts_as_tenant handles tenant switching in tests (migrated from Apartment gem)
