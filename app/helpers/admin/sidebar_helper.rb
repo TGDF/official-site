@@ -36,9 +36,9 @@ module Admin
 
     def admin_v2_sidebar_item(name, path, icon:)
       is_active = current_admin_path_under?(path)
-      content_tag :div, class: "flex items-center gap-2.5 px-2.5 py-1.5 #{is_active ? 'text-gray-900 bg-gray-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} rounded-md cursor-pointer" do
+      link_to path, class: "flex items-center gap-2.5 px-2.5 py-1.5 #{is_active ? 'text-gray-900 bg-gray-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} rounded-md" do
         concat content_tag(:i, "", class: "fa fa-#{icon} w-4 h-4")
-        concat link_to(name, path, class: "text-sm")
+        concat content_tag(:span, name, class: "text-sm")
       end
     end
 

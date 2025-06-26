@@ -198,34 +198,34 @@ Use flex-1 for expandable navigation area. Include overflow-y-auto for scrollabl
 
 ### Appearance Description
 
-Sidebar items are vertically stacked links with icon and text. They use text-gray-900 for active and text-gray-600 for inactive states, with left padding and hover background to highlight.
+Sidebar items are vertically stacked links with icon and text. They use text-gray-900 for active and text-gray-600 for inactive states, with left padding and hover background to highlight. The entire item area should be clickable for better user experience.
 
 ### Example Code
 
 ```html
 <!-- Active Item -->
-<div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-900 bg-gray-50 rounded-md">
+<a href="/dashboard" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-900 bg-gray-50 rounded-md">
   <i class="fa fa-home w-4 h-4"></i>
   <span class="font-medium text-sm">Dashboard</span>
-</div>
+</a>
 
 <!-- Inactive Item -->
-<div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+<a href="/analytics/performance" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
   <i class="fa fa-bar-chart w-4 h-4"></i>
   <span class="text-sm">Performance</span>
-</div>
+</a>
 
 <!-- Item with Badge -->
-<div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+<a href="/analytics" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
   <i class="fa fa-bullseye w-4 h-4"></i>
   <span class="text-sm">Analytics</span>
   <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">NEW</span>
-</div>
+</a>
 ```
 
 ### Usage Guidance
 
-Use consistent padding (px-2.5 py-1.5) for click targets. Highlight active items with bg-gray-50 and text-gray-900. Inactive items should have text-gray-600 with hover:text-gray-900 and hover:bg-gray-50. Use gap-2.5 for spacing between icon and text. Text should be text-sm size. Position badges with ml-auto.
+Use `<a>` tags as the container element to make the entire item clickable. Apply all styling classes directly to the `<a>` tag. Use consistent padding (px-2.5 py-1.5) for click targets. Highlight active items with bg-gray-50 and text-gray-900. Inactive items should have text-gray-600 with hover:text-gray-900 and hover:bg-gray-50. Use gap-2.5 for spacing between icon and text. Text should be text-sm size. Position badges with ml-auto. Remove default link underlines by ensuring proper Tailwind reset styles are applied.
 
 ---
 
@@ -240,15 +240,15 @@ Sidebar sections group related navigation items with a header label in uppercase
 ```html
 <div class="space-y-0.5">
   <div class="px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide">ANALYTICS</div>
-  <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+  <a href="/analytics/performance" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
     <i class="fa fa-bar-chart w-4 h-4"></i>
     <span class="text-sm">Performance</span>
-  </div>
-  <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+  </a>
+  <a href="/analytics/hotjar" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
     <i class="fa fa-bullseye w-4 h-4"></i>
     <span class="text-sm">Hotjar</span>
     <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">NEW</span>
-  </div>
+  </a>
 </div>
 ```
 
@@ -283,17 +283,17 @@ Collapsible sections allow grouping of related navigation items with expand/coll
 
     <!-- Submenu (collapsed by default) -->
     <div id="analytics-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-      <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+      <a href="/analytics/performance" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
         <div class="w-4 h-4 flex items-center justify-center">
           <div class="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
         </div>
         <span class="text-sm">Performance</span>
-      </div>
-      <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+      </a>
+      <a href="/analytics/hotjar" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
         <i class="fa fa-bullseye w-4 h-4"></i>
         <span class="text-sm">Hotjar</span>
         <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">NEW</span>
-      </div>
+      </a>
     </div>
   </div>
 
@@ -310,11 +310,11 @@ Collapsible sections allow grouping of related navigation items with expand/coll
 
     <!-- Submenu (expanded) -->
     <div id="support-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-96 opacity-100">
-      <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+      <a href="/support/tickets" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
         <i class="fa fa-ticket w-4 h-4"></i>
         <span class="text-sm">Tickets</span>
         <span class="ml-auto bg-gray-200 text-gray-700 text-xs px-1.5 py-0.5 h-5 rounded-md">15</span>
-      </div>
+      </a>
     </div>
   </div>
 </div>
@@ -336,14 +336,14 @@ The sidebar footer contains utility navigation items like Settings and Logout, p
 
 ```html
 <div class="px-3 py-3 border-t border-gray-200 space-y-0.5 flex-shrink-0">
-  <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+  <a href="/settings" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
     <i class="fa fa-cog w-4 h-4"></i>
     <span class="text-sm">Settings</span>
-  </div>
-  <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+  </a>
+  <a href="/logout" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
     <i class="fa fa-sign-out w-4 h-4"></i>
     <span class="text-sm">Logout</span>
-  </div>
+  </a>
 </div>
 ```
 
