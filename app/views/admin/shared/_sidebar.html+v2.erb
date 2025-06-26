@@ -1,47 +1,108 @@
-<div class="flex flex-col h-screen overscroll-contain">
-  <div class="px-4 py-3 border-b border-gray-200 h-16 flex items-center">
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-        <div class="w-4 h-4 bg-white rounded-full"></div>
-      </div>
-      <span class="text-xl font-semibold text-gray-900"><%= t('site_name') %></span>
+<!-- Sidebar Header -->
+<div class="px-4 py-3 border-b border-gray-200 h-16 flex items-center">
+  <div class="flex items-center gap-2">
+    <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center">
+      <div class="w-3.5 h-3.5 bg-white rounded-full"></div>
     </div>
+    <span class="text-lg font-semibold text-gray-900"><%= t('site_name') %></span>
   </div>
-  <nav class="flex-1 overflow-y-auto overscroll-contain px-2.5 py-6 space-y-6" aria-label="Sidebar">
-    <!-- Dashboard -->
-    <ul class="space-y-0.5">
-      <%= admin_v2_sidebar_item t('.dashboard'), admin_root_path, icon: 'dashboard' %>
-    </ul>
+</div>
+
+<!-- Sidebar Body -->
+<div class="flex-1 overflow-hidden flex flex-col min-h-0">
+  <nav class="flex-1 px-3 space-y-0.5 overflow-y-auto overflow-x-hidden min-h-0" aria-label="Sidebar" data-controller="sidebar">
+    <!-- Dashboard Item -->
+    <div class="mb-3">
+      <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-900 bg-gray-50 rounded-md">
+        <i class="fa fa-tachometer w-4 h-4"></i>
+        <span class="font-medium text-sm"><%= link_to t('.dashboard'), admin_root_path, class: "text-gray-900" %></span>
+      </div>
+    </div>
 
     <% unless tenant_site? %>
-      <!-- Sites -->
-      <div>
-        <%= admin_v2_sidebar_section t('.sites') %>
-        <ul class="space-y-0.5">
-          <%= admin_v2_sidebar_item t('.list'), admin_sites_path, icon: 'sitemap' %>
-          <%= admin_v2_sidebar_item t('.new'), new_admin_site_path, icon: 'plus' %>
-        </ul>
+      <!-- Sites Section -->
+      <div class="space-y-0.5 mt-4">
+        <div class="px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide"><%= t('.sites') %></div>
+        <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+          <i class="fa fa-sitemap w-4 h-4"></i>
+          <%= link_to t('.list'), admin_sites_path, class: "text-sm" %>
+        </div>
+        <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+          <i class="fa fa-plus w-4 h-4"></i>
+          <%= link_to t('.new'), new_admin_site_path, class: "text-sm" %>
+        </div>
       </div>
     <% end %>
 
-    <!-- General -->
-    <div>
-      <%= admin_v2_sidebar_section t('.general') %>
-      <!-- News -->
-      <%= admin_v2_sidebar_group t('.news') do %>
-        <%= admin_v2_sidebar_item t('.list'), admin_news_index_path, icon: 'newspaper-o' %>
-        <%= admin_v2_sidebar_item t('.new'), new_admin_news_path, icon: 'plus' %>
-      <% end %>
-      <!-- Slider -->
-      <%= admin_v2_sidebar_group t('.slider') do %>
-        <%= admin_v2_sidebar_item t('.list'), admin_sliders_path, icon: 'picture-o' %>
-        <%= admin_v2_sidebar_item t('.new'), new_admin_slider_path, icon: 'plus' %>
-      <% end %>
-      <!-- Blocks -->
-      <%= admin_v2_sidebar_group t('.blocks') do %>
-        <%= admin_v2_sidebar_item t('.list'), admin_blocks_path, icon: 'cube' %>
-        <%= admin_v2_sidebar_item t('.new'), new_admin_block_path, icon: 'plus' %>
-      <% end %>
+    <!-- General Section -->
+    <div class="space-y-0.5 mt-4">
+      <div class="px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide"><%= t('.general') %></div>
+
+      <!-- News Collapsible Section -->
+      <div>
+        <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-expanded="false" aria-controls="news-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
+          <div class="flex items-center gap-2.5">
+            <i class="fa fa-newspaper-o w-4 h-4"></i>
+            <span class="text-sm"><%= t('.news') %></span>
+          </div>
+          <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
+        </button>
+        <div id="news-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
+          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+            <i class="fa fa-list w-4 h-4"></i>
+            <%= link_to t('.list'), admin_news_index_path, class: "text-sm" %>
+          </div>
+          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+            <i class="fa fa-plus w-4 h-4"></i>
+            <%= link_to t('.new'), new_admin_news_path, class: "text-sm" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slider Collapsible Section -->
+      <div>
+        <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-expanded="false" aria-controls="slider-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
+          <div class="flex items-center gap-2.5">
+            <i class="fa fa-picture-o w-4 h-4"></i>
+            <span class="text-sm"><%= t('.slider') %></span>
+          </div>
+          <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
+        </button>
+        <div id="slider-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
+          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+            <i class="fa fa-list w-4 h-4"></i>
+            <%= link_to t('.list'), admin_sliders_path, class: "text-sm" %>
+          </div>
+          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+            <i class="fa fa-plus w-4 h-4"></i>
+            <%= link_to t('.new'), new_admin_slider_path, class: "text-sm" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blocks Collapsible Section -->
+      <div>
+        <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-expanded="false" aria-controls="blocks-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
+          <div class="flex items-center gap-2.5">
+            <i class="fa fa-cube w-4 h-4"></i>
+            <span class="text-sm"><%= t('.blocks') %></span>
+          </div>
+          <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
+        </button>
+        <div id="blocks-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
+          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+            <i class="fa fa-list w-4 h-4"></i>
+            <%= link_to t('.list'), admin_blocks_path, class: "text-sm" %>
+          </div>
+          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+            <i class="fa fa-plus w-4 h-4"></i>
+            <%= link_to t('.new'), new_admin_block_path, class: "text-sm" %>
+          </div>
+        </div>
+      </div>
     </div>
 
     <% if tenant_site? %>
@@ -109,15 +170,17 @@
       </div>
     <% end %>
   </nav>
-  <div class="px-4 py-2 border-t border-gray-200">
+
+  <!-- Sidebar Footer -->
+  <div class="px-3 py-3 border-t border-gray-200 space-y-0.5 flex-shrink-0">
     <%= link_to admin_feature_toggle_path(feature: 'admin_v2'), method: :patch, data: { turbo_method: :patch },
-                class: "flex items-center gap-2.5 px-2.5 py-1.5 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out \
-                         #{admin_v2_enabled? ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}" do %>
-      <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> w-4 h-4 flex-shrink-0 <%= admin_v2_enabled? ? 'text-white' : 'text-gray-600' %>"></i>
-      <span class="text-sm font-medium"><%= admin_v2_enabled? ? 'Disable Admin V2' : 'Enable Admin V2' %></span>
+                class: "flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer" do %>
+      <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> w-4 h-4"></i>
+      <span class="text-sm"><%= admin_v2_enabled? ? 'Disable Admin V2' : 'Enable Admin V2' %></span>
     <% end %>
-  </div>
-  <div class="px-4 py-4 border-t border-gray-200">
-    <span class="text-xs text-gray-500">Version <%= ENV['REVISION'] || 'dev' %></span>
+    <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600">
+      <i class="fa fa-info-circle w-4 h-4"></i>
+      <span class="text-sm">Version <%= ENV['REVISION'] || 'dev' %></span>
+    </div>
   </div>
 </div>

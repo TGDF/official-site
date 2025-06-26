@@ -140,7 +140,7 @@ Sidebar header contains the branding or setup action. It uses prominent blue-600
 
 <div class="px-3 py-3">
   <button class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center">
-    <i class="fas fa-plus w-4 h-4 mr-2"></i>
+    <i class="fa fa-plus w-4 h-4 mr-2"></i>
     Connect New Account
   </button>
 </div>
@@ -165,7 +165,7 @@ The main navigation container provides scrollable navigation with proper overflo
   <!-- Dashboard Item -->
   <div class="mb-3">
     <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-900 bg-gray-50 rounded-md">
-      <i class="fas fa-home w-4 h-4"></i>
+      <i class="fa fa-tachometer w-4 h-4"></i>
       <span class="font-medium text-sm">Dashboard</span>
     </div>
   </div>
@@ -205,19 +205,19 @@ Sidebar items are vertically stacked links with icon and text. They use text-gra
 ```html
 <!-- Active Item -->
 <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-900 bg-gray-50 rounded-md">
-  <i class="fas fa-home w-4 h-4"></i>
+  <i class="fa fa-home w-4 h-4"></i>
   <span class="font-medium text-sm">Dashboard</span>
 </div>
 
 <!-- Inactive Item -->
 <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-  <i class="fas fa-chart-bar w-4 h-4"></i>
+  <i class="fa fa-bar-chart w-4 h-4"></i>
   <span class="text-sm">Performance</span>
 </div>
 
 <!-- Item with Badge -->
 <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-  <i class="fas fa-bullseye w-4 h-4"></i>
+  <i class="fa fa-bullseye w-4 h-4"></i>
   <span class="text-sm">Analytics</span>
   <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">NEW</span>
 </div>
@@ -241,11 +241,11 @@ Sidebar sections group related navigation items with a header label in uppercase
 <div class="space-y-0.5">
   <div class="px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide">ANALYTICS</div>
   <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-    <i class="fas fa-chart-bar w-4 h-4"></i>
+    <i class="fa fa-bar-chart w-4 h-4"></i>
     <span class="text-sm">Performance</span>
   </div>
   <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-    <i class="fas fa-bullseye w-4 h-4"></i>
+    <i class="fa fa-bullseye w-4 h-4"></i>
     <span class="text-sm">Hotjar</span>
     <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">NEW</span>
   </div>
@@ -275,10 +275,10 @@ Collapsible sections allow grouping of related navigation items with expand/coll
     <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-expanded="false" aria-controls="analytics-submenu">
       <div class="flex items-center gap-2.5">
-        <i class="fas fa-chart-bar w-4 h-4"></i>
+        <i class="fa fa-newspaper-o w-4 h-4"></i>
         <span class="text-sm">Analytics</span>
       </div>
-      <i class="fas fa-chevron-down w-4 h-4 transition-transform duration-200"></i>
+      <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
     </button>
 
     <!-- Submenu (collapsed by default) -->
@@ -290,7 +290,7 @@ Collapsible sections allow grouping of related navigation items with expand/coll
         <span class="text-sm">Performance</span>
       </div>
       <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-        <i class="fas fa-bullseye w-4 h-4"></i>
+        <i class="fa fa-bullseye w-4 h-4"></i>
         <span class="text-sm">Hotjar</span>
         <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">NEW</span>
       </div>
@@ -302,16 +302,16 @@ Collapsible sections allow grouping of related navigation items with expand/coll
     <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-expanded="true" aria-controls="support-submenu">
       <div class="flex items-center gap-2.5">
-        <i class="fas fa-user-check w-4 h-4"></i>
+        <i class="fa fa-user w-4 h-4"></i>
         <span class="text-sm">Support</span>
       </div>
-      <i class="fas fa-chevron-down w-4 h-4 transition-transform duration-200 rotate-180"></i>
+      <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200 rotate-180"></i>
     </button>
 
     <!-- Submenu (expanded) -->
     <div id="support-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-96 opacity-100">
       <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-        <i class="fas fa-ticket-alt w-4 h-4"></i>
+        <i class="fa fa-ticket w-4 h-4"></i>
         <span class="text-sm">Tickets</span>
         <span class="ml-auto bg-gray-200 text-gray-700 text-xs px-1.5 py-0.5 h-5 rounded-md">15</span>
       </div>
@@ -337,11 +337,11 @@ The sidebar footer contains utility navigation items like Settings and Logout, p
 ```html
 <div class="px-3 py-3 border-t border-gray-200 space-y-0.5 flex-shrink-0">
   <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-    <i class="fas fa-cog w-4 h-4"></i>
+    <i class="fa fa-cog w-4 h-4"></i>
     <span class="text-sm">Settings</span>
   </div>
   <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-    <i class="fas fa-sign-out-alt w-4 h-4"></i>
+    <i class="fa fa-sign-out w-4 h-4"></i>
     <span class="text-sm">Logout</span>
   </div>
 </div>
@@ -366,7 +366,7 @@ Header navigation includes search, notification icons, and user profile elements
   <div class="flex items-center justify-between w-full">
     <div class="flex items-center gap-4">
       <div class="relative">
-        <i class="fas fa-search w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        <i class="fa fa-search w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
         <input
           type="text"
           placeholder="Type to search"
@@ -376,10 +376,10 @@ Header navigation includes search, notification icons, and user profile elements
     </div>
     <div class="flex items-center gap-3">
       <button class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gray-100">
-        <i class="fas fa-comment w-4 h-4 text-gray-500"></i>
+        <i class="fa fa-comment w-4 h-4 text-gray-500"></i>
       </button>
       <button class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gray-100">
-        <i class="fas fa-bell w-4 h-4 text-gray-500"></i>
+        <i class="fa fa-bell w-4 h-4 text-gray-500"></i>
       </button>
       <div class="w-8 h-8 bg-gray-400 rounded-full"></div>
     </div>
@@ -404,7 +404,7 @@ Dropdown menus provide a clean interface for additional options with a trigger b
 ```html
 <div class="relative">
   <button class="flex items-center text-sm px-3 py-1.5 rounded hover:bg-gray-100">
-    Sort by: Recent <i class="fas fa-chevron-down w-4 h-4 ml-1"></i>
+    Sort by: Recent <i class="fa fa-caret-down w-4 h-4 ml-1"></i>
   </button>
   <div class="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-10 hidden">
     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Recent</a>
@@ -455,9 +455,9 @@ Icons are used throughout the UI, with different sizes depending on context, wit
 ### Example Code
 
 ```html
-<i class="fas fa-home w-4 h-4"></i>
-<i class="fas fa-plus w-4 h-4 mr-2"></i>
-<i class="fas fa-bell w-4 h-4 text-gray-500"></i>
+<i class="fa fa-home w-4 h-4"></i>
+<i class="fa fa-plus w-4 h-4 mr-2"></i>
+<i class="fa fa-bell w-4 h-4 text-gray-500"></i>
 ```
 
 ### Usage Guidance
@@ -499,7 +499,7 @@ Tables provide structured data display with headers and rows.
       <td class="py-3 px-4 text-sm">
         <div class="relative">
           <button class="p-1 rounded-md hover:bg-gray-100">
-            <i class="fas fa-ellipsis-h w-4 h-4"></i>
+            <i class="fa fa-ellipsis-h w-4 h-4"></i>
           </button>
           <!-- Dropdown menu (hidden by default) -->
           <div class="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-10 hidden">
@@ -550,7 +550,7 @@ For search inputs that include an icon:
 
 ```html
 <div class="relative">
-  <i class="fas fa-search w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+  <i class="fa fa-search w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
   <input
     type="text"
     placeholder="Type to search"
@@ -572,7 +572,7 @@ Buttons come in various styles (primary, outline, ghost) and sizes. They can inc
 ```html
 <!-- Primary Button -->
 <button class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center">
-  <i class="fas fa-plus w-4 h-4 mr-2"></i>
+  <i class="fa fa-plus w-4 h-4 mr-2"></i>
   Connect New Account
 </button>
 
@@ -583,12 +583,12 @@ Buttons come in various styles (primary, outline, ghost) and sizes. They can inc
 
 <!-- Ghost Button -->
 <button class="flex items-center text-sm px-3 py-1.5 rounded hover:bg-gray-100">
-  Sort by: Recent <i class="fas fa-chevron-down w-4 h-4 ml-1"></i>
+  Sort by: Recent <i class="fa fa-caret-down w-4 h-4 ml-1"></i>
 </button>
 
 <!-- Icon Button -->
 <button class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gray-100">
-  <i class="fas fa-comment w-4 h-4 text-gray-500"></i>
+  <i class="fa fa-comment w-4 h-4 text-gray-500"></i>
 </button>
 ```
 

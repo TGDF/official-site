@@ -3,9 +3,17 @@
  */
 import { Turbo } from "@hotwired/turbo-rails"
 
+// Stimulus
+import { Application } from "@hotwired/stimulus"
+import SidebarController from "../assets/javascripts/controllers/sidebar_controller"
+
 // Core UI
 import "@coreui/coreui/dist/css/coreui.min.css"
 import { Sidebar } from "@coreui/coreui"
+
+// Initialize Stimulus
+const application = Application.start()
+application.register("sidebar", SidebarController)
 
 // CKEditor
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic/build/ckeditor"
