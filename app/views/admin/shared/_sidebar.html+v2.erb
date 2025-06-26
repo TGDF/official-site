@@ -13,336 +13,98 @@
   <nav class="flex-1 px-3 space-y-0.5 overflow-y-auto overflow-x-hidden min-h-0" aria-label="Sidebar" data-controller="sidebar">
     <!-- Dashboard Item -->
     <div class="mb-3">
-      <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-900 bg-gray-50 rounded-md">
-        <i class="fa fa-tachometer w-4 h-4"></i>
-        <span class="font-medium text-sm"><%= link_to t('.dashboard'), admin_root_path, class: "text-gray-900" %></span>
-      </div>
+      <%= admin_v2_sidebar_item t('.dashboard'), admin_root_path, icon: 'tachometer' %>
     </div>
 
     <% unless tenant_site? %>
       <!-- Sites Section -->
       <div class="space-y-0.5 mt-4">
-        <div class="px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide"><%= t('.sites') %></div>
-        <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-          <i class="fa fa-sitemap w-4 h-4"></i>
-          <%= link_to t('.list'), admin_sites_path, class: "text-sm" %>
-        </div>
-        <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-          <i class="fa fa-plus w-4 h-4"></i>
-          <%= link_to t('.new'), new_admin_site_path, class: "text-sm" %>
-        </div>
+        <%= admin_v2_sidebar_section t('.system') %>
+        <%= admin_v2_sidebar_treeview t('.sites'), icon: 'sitemap' do %>
+          <%= admin_v2_sidebar_item t('.list'), admin_sites_path, icon: 'list' %>
+          <%= admin_v2_sidebar_item t('.new'), new_admin_site_path, icon: 'plus' %>
+        <% end %>
       </div>
     <% end %>
 
     <!-- General Section -->
     <div class="space-y-0.5 mt-4">
-      <div class="px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide"><%= t('.general') %></div>
+      <%= admin_v2_sidebar_section t('.general') %>
+      <%= admin_v2_sidebar_treeview t('.news'), icon: 'newspaper-o' do %>
+        <%= admin_v2_sidebar_item t('.list'), admin_news_index_path, icon: 'list' %>
+        <%= admin_v2_sidebar_item t('.new'), new_admin_news_path, icon: 'plus' %>
+      <% end %>
 
-      <!-- News Collapsible Section -->
-      <div>
-        <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-expanded="false" aria-controls="news-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-          <div class="flex items-center gap-2.5">
-            <i class="fa fa-newspaper-o w-4 h-4"></i>
-            <span class="text-sm"><%= t('.news') %></span>
-          </div>
-          <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-        </button>
-        <div id="news-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-            <i class="fa fa-list w-4 h-4"></i>
-            <%= link_to t('.list'), admin_news_index_path, class: "text-sm" %>
-          </div>
-          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-            <i class="fa fa-plus w-4 h-4"></i>
-            <%= link_to t('.new'), new_admin_news_path, class: "text-sm" %>
-          </div>
-        </div>
-      </div>
+      <%= admin_v2_sidebar_treeview t('.slider'), icon: 'picture-o' do %>
+        <%= admin_v2_sidebar_item t('.list'), admin_sliders_path, icon: 'list' %>
+        <%= admin_v2_sidebar_item t('.new'), new_admin_slider_path, icon: 'plus' %>
+      <% end %>
 
-      <!-- Slider Collapsible Section -->
-      <div>
-        <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-expanded="false" aria-controls="slider-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-          <div class="flex items-center gap-2.5">
-            <i class="fa fa-picture-o w-4 h-4"></i>
-            <span class="text-sm"><%= t('.slider') %></span>
-          </div>
-          <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-        </button>
-        <div id="slider-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-            <i class="fa fa-list w-4 h-4"></i>
-            <%= link_to t('.list'), admin_sliders_path, class: "text-sm" %>
-          </div>
-          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-            <i class="fa fa-plus w-4 h-4"></i>
-            <%= link_to t('.new'), new_admin_slider_path, class: "text-sm" %>
-          </div>
-        </div>
-      </div>
-
-      <!-- Blocks Collapsible Section -->
-      <div>
-        <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-expanded="false" aria-controls="blocks-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-          <div class="flex items-center gap-2.5">
-            <i class="fa fa-cube w-4 h-4"></i>
-            <span class="text-sm"><%= t('.blocks') %></span>
-          </div>
-          <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-        </button>
-        <div id="blocks-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-            <i class="fa fa-list w-4 h-4"></i>
-            <%= link_to t('.list'), admin_blocks_path, class: "text-sm" %>
-          </div>
-          <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-            <i class="fa fa-plus w-4 h-4"></i>
-            <%= link_to t('.new'), new_admin_block_path, class: "text-sm" %>
-          </div>
-        </div>
-      </div>
+      <%= admin_v2_sidebar_treeview t('.blocks'), icon: 'cube' do %>
+        <%= admin_v2_sidebar_item t('.list'), admin_blocks_path, icon: 'list' %>
+        <%= admin_v2_sidebar_item t('.new'), new_admin_block_path, icon: 'plus' %>
+      <% end %>
     </div>
 
     <% if tenant_site? %>
       <!-- Tenant Features Section -->
       <div class="space-y-0.5 mt-4">
-        <div class="px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide"><%= t('.tenant_features') %></div>
+        <%= admin_v2_sidebar_section t('.tenant_features') %>
+        <%= admin_v2_sidebar_treeview t('.menus'), icon: 'bars' do %>
+          <%= admin_v2_sidebar_item t('.list'), admin_menu_items_path, icon: 'list' %>
+          <%= admin_v2_sidebar_item t('.new'), new_admin_menu_item_path, icon: 'plus' %>
+        <% end %>
 
-        <!-- Menus Collapsible Section -->
-        <div>
-          <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  aria-expanded="false" aria-controls="menus-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-            <div class="flex items-center gap-2.5">
-              <i class="fa fa-bars w-4 h-4"></i>
-              <span class="text-sm"><%= t('.menus') %></span>
-            </div>
-            <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-          </button>
-          <div id="menus-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-list w-4 h-4"></i>
-              <%= link_to t('.list'), admin_menu_items_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new'), new_admin_menu_item_path, class: "text-sm" %>
-            </div>
-          </div>
-        </div>
+        <%= admin_v2_sidebar_treeview t('.plans'), icon: 'cube' do %>
+          <%= admin_v2_sidebar_item t('.list'), admin_plans_path, icon: 'list' %>
+          <%= admin_v2_sidebar_item t('.new'), new_admin_plan_path, icon: 'plus' %>
+        <% end %>
 
-        <!-- Plans Collapsible Section -->
-        <div>
-          <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  aria-expanded="false" aria-controls="plans-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-            <div class="flex items-center gap-2.5">
-              <i class="fa fa-cube w-4 h-4"></i>
-              <span class="text-sm"><%= t('.plans') %></span>
-            </div>
-            <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-          </button>
-          <div id="plans-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-list w-4 h-4"></i>
-              <%= link_to t('.list'), admin_plans_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new'), new_admin_plan_path, class: "text-sm" %>
-            </div>
-          </div>
-        </div>
+        <%= admin_v2_sidebar_treeview t('.partner'), icon: 'handshake-o' do %>
+          <%= admin_v2_sidebar_item t('.list'), admin_partners_path, icon: 'list' %>
+          <%= admin_v2_sidebar_item t('.new'), new_admin_partner_path, icon: 'plus' %>
+          <%= admin_v2_sidebar_item t('.types'), admin_partner_types_path, icon: 'folder-o' %>
+          <%= admin_v2_sidebar_item t('.new_type'), new_admin_partner_type_path, icon: 'plus' %>
+        <% end %>
 
-        <!-- Partners Collapsible Section -->
-        <div>
-          <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  aria-expanded="false" aria-controls="partners-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-            <div class="flex items-center gap-2.5">
-              <i class="fa fa-handshake-o w-4 h-4"></i>
-              <span class="text-sm"><%= t('.partner') %></span>
-            </div>
-            <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-          </button>
-          <div id="partners-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-list w-4 h-4"></i>
-              <%= link_to t('.list'), admin_partners_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new'), new_admin_partner_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-folder-o w-4 h-4"></i>
-              <%= link_to t('.types'), admin_partner_types_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new_type'), new_admin_partner_type_path, class: "text-sm" %>
-            </div>
-          </div>
-        </div>
+        <%= admin_v2_sidebar_treeview t('.sponsor'), icon: 'money' do %>
+          <%= admin_v2_sidebar_item t('.list'), admin_sponsors_path, icon: 'list' %>
+          <%= admin_v2_sidebar_item t('.new'), new_admin_sponsor_path, icon: 'plus' %>
+          <%= admin_v2_sidebar_item t('.levels'), admin_sponsor_levels_path, icon: 'diamond' %>
+          <%= admin_v2_sidebar_item t('.new_level'), new_admin_sponsor_level_path, icon: 'plus' %>
+        <% end %>
 
-        <!-- Sponsors Collapsible Section -->
-        <div>
-          <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  aria-expanded="false" aria-controls="sponsors-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-            <div class="flex items-center gap-2.5">
-              <i class="fa fa-money w-4 h-4"></i>
-              <span class="text-sm"><%= t('.sponsor') %></span>
-            </div>
-            <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-          </button>
-          <div id="sponsors-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-list w-4 h-4"></i>
-              <%= link_to t('.list'), admin_sponsors_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new'), new_admin_sponsor_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-diamond w-4 h-4"></i>
-              <%= link_to t('.levels'), admin_sponsor_levels_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new_level'), new_admin_sponsor_level_path, class: "text-sm" %>
-            </div>
-          </div>
-        </div>
+        <%= admin_v2_sidebar_treeview t('.speaker'), icon: 'users' do %>
+          <%= admin_v2_sidebar_item t('.list'), admin_speakers_path, icon: 'list' %>
+          <%= admin_v2_sidebar_item t('.new'), new_admin_speaker_path, icon: 'plus' %>
+        <% end %>
 
-        <!-- Speakers Collapsible Section -->
-        <div>
-          <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  aria-expanded="false" aria-controls="speakers-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-            <div class="flex items-center gap-2.5">
-              <i class="fa fa-users w-4 h-4"></i>
-              <span class="text-sm"><%= t('.speaker') %></span>
-            </div>
-            <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-          </button>
-          <div id="speakers-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-list w-4 h-4"></i>
-              <%= link_to t('.list'), admin_speakers_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new'), new_admin_speaker_path, class: "text-sm" %>
-            </div>
-          </div>
-        </div>
+        <%= admin_v2_sidebar_treeview t('.agenda'), icon: 'file-text' do %>
+          <%= admin_v2_sidebar_item t('.list'), admin_agendas_path, icon: 'list' %>
+          <%= admin_v2_sidebar_item t('.new'), new_admin_agenda_path, icon: 'plus' %>
+          <%= admin_v2_sidebar_item t('.rooms'), admin_rooms_path, icon: 'columns' %>
+          <%= admin_v2_sidebar_item t('.new_room'), new_admin_room_path, icon: 'plus' %>
+          <%= admin_v2_sidebar_item t('.days'), admin_agenda_days_path, icon: 'calendar' %>
+          <%= admin_v2_sidebar_item t('.new_day'), new_admin_agenda_day_path, icon: 'plus' %>
+          <%= admin_v2_sidebar_item t('.times'), admin_agenda_times_path, icon: 'clock-o' %>
+          <%= admin_v2_sidebar_item t('.new_time'), new_admin_agenda_time_path, icon: 'plus' %>
+          <%= admin_v2_sidebar_item t('.tags'), admin_agenda_tags_path, icon: 'tags' %>
+          <%= admin_v2_sidebar_item t('.new_tag'), new_admin_agenda_tag_path, icon: 'plus' %>
+        <% end %>
 
-        <!-- Agenda Collapsible Section -->
-        <div>
-          <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  aria-expanded="false" aria-controls="agenda-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-            <div class="flex items-center gap-2.5">
-              <i class="fa fa-file-text w-4 h-4"></i>
-              <span class="text-sm"><%= t('.agenda') %></span>
-            </div>
-            <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-          </button>
-          <div id="agenda-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-list w-4 h-4"></i>
-              <%= link_to t('.list'), admin_agendas_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new'), new_admin_agenda_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-columns w-4 h-4"></i>
-              <%= link_to t('.rooms'), admin_rooms_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new_room'), new_admin_room_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-calendar w-4 h-4"></i>
-              <%= link_to t('.days'), admin_agenda_days_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new_day'), new_admin_agenda_day_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-clock-o w-4 h-4"></i>
-              <%= link_to t('.times'), admin_agenda_times_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new_time'), new_admin_agenda_time_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-tags w-4 h-4"></i>
-              <%= link_to t('.tags'), admin_agenda_tags_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new_tag'), new_admin_agenda_tag_path, class: "text-sm" %>
-            </div>
-          </div>
-        </div>
+        <%= admin_v2_sidebar_treeview t('.indie_space'), icon: 'gamepad' do %>
+          <%= admin_v2_sidebar_item t('.list'), admin_indie_space_games_path, icon: 'list' %>
+          <%= admin_v2_sidebar_item t('.new'), new_admin_indie_space_game_path, icon: 'plus' %>
+          <%= admin_v2_sidebar_item t('.options'), edit_admin_indie_space_path, icon: 'gear' %>
+        <% end %>
 
-        <!-- Indie Space Collapsible Section -->
-        <div>
-          <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  aria-expanded="false" aria-controls="indie-space-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-            <div class="flex items-center gap-2.5">
-              <i class="fa fa-gamepad w-4 h-4"></i>
-              <span class="text-sm"><%= t('.indie_space') %></span>
-            </div>
-            <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-          </button>
-          <div id="indie-space-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-list w-4 h-4"></i>
-              <%= link_to t('.list'), admin_indie_space_games_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new'), new_admin_indie_space_game_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-gear w-4 h-4"></i>
-              <%= link_to t('.options'), edit_admin_indie_space_path, class: "text-sm" %>
-            </div>
-          </div>
-        </div>
-
-        <!-- Night Market Collapsible Section -->
-        <div>
-          <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  aria-expanded="false" aria-controls="night-market-submenu" data-sidebar-target="button" data-action="click->sidebar#toggle">
-            <div class="flex items-center gap-2.5">
-              <i class="fa fa-moon-o w-4 h-4"></i>
-              <span class="text-sm"><%= t('.night_market') %></span>
-            </div>
-            <i class="fa fa-caret-down w-4 h-4 transition-transform duration-200"></i>
-          </button>
-          <div id="night-market-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-list w-4 h-4"></i>
-              <%= link_to t('.list'), admin_night_market_games_path, class: "text-sm" %>
-            </div>
-            <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-              <i class="fa fa-plus w-4 h-4"></i>
-              <%= link_to t('.new'), new_admin_night_market_game_path, class: "text-sm" %>
-            </div>
-          </div>
-        </div>
+        <%= admin_v2_sidebar_treeview t('.night_market'), icon: 'moon-o' do %>
+          <%= admin_v2_sidebar_item t('.list'), admin_night_market_games_path, icon: 'list' %>
+          <%= admin_v2_sidebar_item t('.new'), new_admin_night_market_game_path, icon: 'plus' %>
+        <% end %>
 
         <!-- Options (Standalone Item) -->
-        <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-          <i class="fa fa-gear w-4 h-4"></i>
-          <%= link_to t('.options'), edit_admin_options_path, class: "text-sm" %>
-        </div>
+        <%= admin_v2_sidebar_item t('.options'), edit_admin_options_path, icon: 'gear' %>
       </div>
     <% end %>
   </nav>

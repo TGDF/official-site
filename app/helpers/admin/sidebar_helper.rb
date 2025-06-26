@@ -36,11 +36,36 @@ module Admin
 
     def admin_v2_sidebar_item(name, path, icon:)
       is_active = current_admin_path_under?(path)
-      content_tag :li do
-        link_to path, class: "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-150 ease-in-out #{is_active ? 'bg-gray-50 text-gray-900' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} cursor-pointer" do
-          concat content_tag(:i, "", class: "fa fa-#{icon} w-4 h-4 flex-shrink-0 #{is_active ? 'text-gray-900' : 'text-gray-600'}")
-          concat content_tag(:span, name, class: "text-sm font-medium")
+      content_tag :div, class: "flex items-center gap-2.5 px-2.5 py-1.5 #{is_active ? 'text-gray-900 bg-gray-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} rounded-md cursor-pointer" do
+        concat content_tag(:i, "", class: "fa fa-#{icon} w-4 h-4")
+        concat link_to(name, path, class: "text-sm")
+      end
+    end
+
+    def admin_v2_sidebar_treeview(name, icon:, submenu_id: nil)
+      submenu_id ||= name.to_s.downcase.gsub(/\s+/, "-").gsub(/[^a-z0-9\-]/, "")
+
+      items = capture { yield if block_given? }
+      is_expanded = items.to_str.match?(/class="[^"]*text-gray-900 bg-gray-50[^"]*"/)
+
+      content_tag :div do
+        button_content = content_tag(:div, class: "flex items-center gap-2.5") do
+          concat content_tag(:i, "", class: "fa fa-#{icon} w-4 h-4")
+          concat content_tag(:span, name, class: "text-sm")
         end
+        button_content += content_tag(:i, "", class: "fa fa-caret-down w-4 h-4 transition-transform duration-200 #{is_expanded ? 'rotate-180' : ''}")
+
+        concat content_tag(:button, button_content.html_safe,
+          class: "flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500",
+          "aria-expanded": is_expanded,
+          "aria-controls": "#{submenu_id}-submenu",
+          "data-sidebar-target": "button",
+          "data-action": "click->sidebar#toggle"
+        )
+        concat content_tag(:div, items,
+          id: "#{submenu_id}-submenu",
+          class: "ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden #{is_expanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}"
+        )
       end
     end
 
