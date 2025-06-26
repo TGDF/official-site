@@ -66,7 +66,7 @@ The card content is the main content area inside a Card with spacing that ensure
     </div>
     <button class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium">Cancel Subscription</button>
   </div>
-  
+
   <div class="flex items-center justify-between py-4 border-t border-gray-200">
     <div>
       <p class="text-gray-900 text-sm">
@@ -87,6 +87,39 @@ Use consistent padding (p-6) and add vertical spacing between child content elem
 
 ---
 
+## Sidebar Container
+
+### Appearance Description
+
+The main sidebar container provides a fixed-width navigation panel with white background, right border, and flexbox layout. It includes header, scrollable navigation, and footer sections.
+
+### Example Code
+
+```html
+<div class="w-64 min-w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+  <!-- Sidebar Header -->
+  <div class="px-4 py-3 border-b border-gray-200 h-16 flex items-center">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center">
+        <div class="w-3.5 h-3.5 bg-white rounded-full"></div>
+      </div>
+      <span class="text-lg font-semibold text-gray-900">Brand Name</span>
+    </div>
+  </div>
+
+  <!-- Sidebar Body -->
+  <div class="flex-1 overflow-hidden flex flex-col min-h-0">
+    <!-- Content goes here -->
+  </div>
+</div>
+```
+
+### Usage Guidance
+
+Use fixed width (w-64) with min-width for consistent layout. The flex-shrink-0 prevents sidebar from shrinking. Use flex-col for vertical stacking and flex-1 for expandable content area. Include overflow-hidden on scrollable sections.
+
+---
+
 ## Sidebar Header
 
 ### Appearance Description
@@ -101,13 +134,13 @@ Sidebar header contains the branding or setup action. It uses prominent blue-600
     <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center">
       <div class="w-3.5 h-3.5 bg-white rounded-full"></div>
     </div>
-    <span class="text-lg font-semibold text-gray-900">ClarityOI</span>
+    <span class="text-lg font-semibold text-gray-900">Brand Name</span>
   </div>
 </div>
 
 <div class="px-3 py-3">
   <button class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center">
-    <i class="w-4 h-4 mr-2"><!-- Plus icon --></i>
+    <i class="fas fa-plus w-4 h-4 mr-2"></i>
     Connect New Account
   </button>
 </div>
@@ -116,6 +149,48 @@ Sidebar header contains the branding or setup action. It uses prominent blue-600
 ### Usage Guidance
 
 Use sidebar header for main sidebar actions or branding. Ensure button has sufficient hit area and stands out with strong background color. The logo should be simple and recognizable. Use h-16 for consistent header height.
+
+---
+
+## Sidebar Navigation
+
+### Appearance Description
+
+The main navigation container provides scrollable navigation with proper overflow handling and spacing between different navigation sections.
+
+### Example Code
+
+```html
+<nav class="flex-1 px-3 space-y-0.5 overflow-y-auto overflow-x-hidden min-h-0">
+  <!-- Dashboard Item -->
+  <div class="mb-3">
+    <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-900 bg-gray-50 rounded-md">
+      <i class="fas fa-home w-4 h-4"></i>
+      <span class="font-medium text-sm">Dashboard</span>
+    </div>
+  </div>
+
+  <!-- Navigation Sections -->
+  <div class="flex items-center justify-between px-2.5 py-2 mb-2">
+    <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Navigation</span>
+    <div class="flex items-center gap-1">
+      <button class="text-xs text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1">
+        Expand All
+      </button>
+      <span class="text-xs text-gray-400">|</span>
+      <button class="text-xs text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1">
+        Collapse All
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation content -->
+</nav>
+```
+
+### Usage Guidance
+
+Use flex-1 for expandable navigation area. Include overflow-y-auto for scrollable content and overflow-x-hidden to prevent horizontal scrolling. Use space-y-0.5 for consistent spacing between navigation items. Add navigation controls for expand/collapse functionality.
 
 ---
 
@@ -128,20 +203,29 @@ Sidebar items are vertically stacked links with icon and text. They use text-gra
 ### Example Code
 
 ```html
+<!-- Active Item -->
 <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-900 bg-gray-50 rounded-md">
-  <i class="w-4 h-4"><!-- Home icon --></i>
+  <i class="fas fa-home w-4 h-4"></i>
   <span class="font-medium text-sm">Dashboard</span>
 </div>
 
+<!-- Inactive Item -->
 <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-  <i class="w-4 h-4"><!-- Chart icon --></i>
+  <i class="fas fa-chart-bar w-4 h-4"></i>
   <span class="text-sm">Performance</span>
+</div>
+
+<!-- Item with Badge -->
+<div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+  <i class="fas fa-bullseye w-4 h-4"></i>
+  <span class="text-sm">Analytics</span>
+  <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">NEW</span>
 </div>
 ```
 
 ### Usage Guidance
 
-Use consistent padding (px-2.5 py-1.5) for click targets. Highlight active items with bg-gray-50 and text-gray-900. Inactive items should have text-gray-600 with hover:text-gray-900 and hover:bg-gray-50. Use gap-2.5 for spacing between icon and text. Text should be text-sm size.
+Use consistent padding (px-2.5 py-1.5) for click targets. Highlight active items with bg-gray-50 and text-gray-900. Inactive items should have text-gray-600 with hover:text-gray-900 and hover:bg-gray-50. Use gap-2.5 for spacing between icon and text. Text should be text-sm size. Position badges with ml-auto.
 
 ---
 
@@ -157,15 +241,13 @@ Sidebar sections group related navigation items with a header label in uppercase
 <div class="space-y-0.5">
   <div class="px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide">ANALYTICS</div>
   <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-    <i class="w-4 h-4"><!-- Chart icon --></i>
+    <i class="fas fa-chart-bar w-4 h-4"></i>
     <span class="text-sm">Performance</span>
   </div>
   <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
-    <i class="w-4 h-4"><!-- Target icon --></i>
+    <i class="fas fa-bullseye w-4 h-4"></i>
     <span class="text-sm">Hotjar</span>
-    <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">
-      NEW
-    </span>
+    <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">NEW</span>
   </div>
 </div>
 ```
@@ -173,6 +255,101 @@ Sidebar sections group related navigation items with a header label in uppercase
 ### Usage Guidance
 
 Use uppercase text-xs font-medium text-gray-500 for section headers with tracking-wide for letter spacing. Maintain consistent spacing between sections (mt-4) and items within sections (space-y-0.5). Badge indicators should be positioned with ml-auto.
+
+---
+
+## Sidebar Collapsible Section
+
+### Appearance Description
+
+Collapsible sections allow grouping of related navigation items with expand/collapse functionality. They include a clickable header with chevron icon and expandable content area.
+
+### Example Code
+
+```html
+<div class="space-y-0.5">
+  <div class="px-2.5 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide">ANALYTICS</div>
+
+  <!-- Collapsible Section -->
+  <div>
+    <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-expanded="false" aria-controls="analytics-submenu">
+      <div class="flex items-center gap-2.5">
+        <i class="fas fa-chart-bar w-4 h-4"></i>
+        <span class="text-sm">Analytics</span>
+      </div>
+      <i class="fas fa-chevron-down w-4 h-4 transition-transform duration-200"></i>
+    </button>
+
+    <!-- Submenu (collapsed by default) -->
+    <div id="analytics-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-0 opacity-0">
+      <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+        <div class="w-4 h-4 flex items-center justify-center">
+          <div class="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
+        </div>
+        <span class="text-sm">Performance</span>
+      </div>
+      <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+        <i class="fas fa-bullseye w-4 h-4"></i>
+        <span class="text-sm">Hotjar</span>
+        <span class="ml-auto bg-blue-100 text-blue-700 text-xs px-1.5 py-0.5 h-5 rounded-md">NEW</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expanded Section -->
+  <div>
+    <button class="flex items-center justify-between w-full px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-expanded="true" aria-controls="support-submenu">
+      <div class="flex items-center gap-2.5">
+        <i class="fas fa-user-check w-4 h-4"></i>
+        <span class="text-sm">Support</span>
+      </div>
+      <i class="fas fa-chevron-down w-4 h-4 transition-transform duration-200 rotate-180"></i>
+    </button>
+
+    <!-- Submenu (expanded) -->
+    <div id="support-submenu" class="ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden max-h-96 opacity-100">
+      <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+        <i class="fas fa-ticket-alt w-4 h-4"></i>
+        <span class="text-sm">Tickets</span>
+        <span class="ml-auto bg-gray-200 text-gray-700 text-xs px-1.5 py-0.5 h-5 rounded-md">15</span>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+### Usage Guidance
+
+Use aria-expanded and aria-controls for accessibility. Implement smooth transitions with transition-all duration-200. Use rotate-180 class for expanded chevron state. Nest submenus with ml-6 indentation. Use max-h-0 opacity-0 for collapsed state and max-h-96 opacity-100 for expanded state. Add focus:ring-2 focus:ring-blue-500 for keyboard navigation.
+
+---
+
+## Sidebar Footer
+
+### Appearance Description
+
+The sidebar footer contains utility navigation items like Settings and Logout, positioned at the bottom of the sidebar with a top border separator.
+
+### Example Code
+
+```html
+<div class="px-3 py-3 border-t border-gray-200 space-y-0.5 flex-shrink-0">
+  <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+    <i class="fas fa-cog w-4 h-4"></i>
+    <span class="text-sm">Settings</span>
+  </div>
+  <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer">
+    <i class="fas fa-sign-out-alt w-4 h-4"></i>
+    <span class="text-sm">Logout</span>
+  </div>
+</div>
+```
+
+### Usage Guidance
+
+Use border-t border-gray-200 to separate footer from main navigation. Apply flex-shrink-0 to prevent footer from shrinking. Maintain consistent spacing with space-y-0.5. Include common utility actions like Settings and Logout. Use same styling as regular sidebar items for consistency.
 
 ---
 
@@ -189,7 +366,7 @@ Header navigation includes search, notification icons, and user profile elements
   <div class="flex items-center justify-between w-full">
     <div class="flex items-center gap-4">
       <div class="relative">
-        <i class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"><!-- Search icon --></i>
+        <i class="fas fa-search w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
         <input
           type="text"
           placeholder="Type to search"
@@ -199,10 +376,10 @@ Header navigation includes search, notification icons, and user profile elements
     </div>
     <div class="flex items-center gap-3">
       <button class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gray-100">
-        <i class="w-4 h-4 text-gray-500"><!-- Message icon --></i>
+        <i class="fas fa-comment w-4 h-4 text-gray-500"></i>
       </button>
       <button class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gray-100">
-        <i class="w-4 h-4 text-gray-500"><!-- Bell icon --></i>
+        <i class="fas fa-bell w-4 h-4 text-gray-500"></i>
       </button>
       <div class="w-8 h-8 bg-gray-400 rounded-full"></div>
     </div>
@@ -227,7 +404,7 @@ Dropdown menus provide a clean interface for additional options with a trigger b
 ```html
 <div class="relative">
   <button class="flex items-center text-sm px-3 py-1.5 rounded hover:bg-gray-100">
-    Sort by: Recent <i class="w-4 h-4 ml-1"><!-- ChevronDown icon --></i>
+    Sort by: Recent <i class="fas fa-chevron-down w-4 h-4 ml-1"></i>
   </button>
   <div class="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-10 hidden">
     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Recent</a>
@@ -278,9 +455,9 @@ Icons are used throughout the UI, with different sizes depending on context, wit
 ### Example Code
 
 ```html
-<i class="w-4 h-4"><!-- Home icon SVG or icon font --></i>
-<i class="w-4 h-4 mr-2"><!-- Plus icon SVG or icon font --></i>
-<i class="w-4 h-4 text-gray-500"><!-- Bell icon SVG or icon font --></i>
+<i class="fas fa-home w-4 h-4"></i>
+<i class="fas fa-plus w-4 h-4 mr-2"></i>
+<i class="fas fa-bell w-4 h-4 text-gray-500"></i>
 ```
 
 ### Usage Guidance
@@ -322,7 +499,7 @@ Tables provide structured data display with headers and rows.
       <td class="py-3 px-4 text-sm">
         <div class="relative">
           <button class="p-1 rounded-md hover:bg-gray-100">
-            <i class="w-4 h-4"><!-- MoreHorizontal icon --></i>
+            <i class="fas fa-ellipsis-h w-4 h-4"></i>
           </button>
           <!-- Dropdown menu (hidden by default) -->
           <div class="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-10 hidden">
@@ -373,7 +550,7 @@ For search inputs that include an icon:
 
 ```html
 <div class="relative">
-  <i class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"><!-- Search icon --></i>
+  <i class="fas fa-search w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
   <input
     type="text"
     placeholder="Type to search"
@@ -395,7 +572,7 @@ Buttons come in various styles (primary, outline, ghost) and sizes. They can inc
 ```html
 <!-- Primary Button -->
 <button class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 px-4 rounded-md flex items-center justify-center">
-  <i class="w-4 h-4 mr-2"><!-- Plus icon --></i>
+  <i class="fas fa-plus w-4 h-4 mr-2"></i>
   Connect New Account
 </button>
 
@@ -406,12 +583,12 @@ Buttons come in various styles (primary, outline, ghost) and sizes. They can inc
 
 <!-- Ghost Button -->
 <button class="flex items-center text-sm px-3 py-1.5 rounded hover:bg-gray-100">
-  Sort by: Recent <i class="w-4 h-4 ml-1"><!-- ChevronDown icon --></i>
+  Sort by: Recent <i class="fas fa-chevron-down w-4 h-4 ml-1"></i>
 </button>
 
 <!-- Icon Button -->
 <button class="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gray-100">
-  <i class="w-4 h-4 text-gray-500"><!-- MessageSquare icon --></i>
+  <i class="fas fa-comment w-4 h-4 text-gray-500"></i>
 </button>
 ```
 
