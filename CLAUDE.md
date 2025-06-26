@@ -21,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Code Quality and Linting
 - `bundle exec rubocop` - Ruby linting (configured via .overcommit.yml)
+- `bundle exec rubocop -A` - Auto-fix correctable Ruby style issues
 - `bundle exec brakeman` - Security analysis
 - Git hooks automatically run linting on commit/push via overcommit
 
@@ -79,6 +80,7 @@ This Rails application powers conference/gaming event websites with a sophistica
 **Translations**: Use `HasTranslation` concern for i18n-enabled models
 **View Components**: Test components in `spec/components/` and preview with Lookbook (dev only)
 **Git Workflow**: Overcommit enforces RuboCop standards and runs Brakeman security checks
+**Code Style**: Use `bundle exec rubocop -A` to auto-fix style issues before manual corrections
 
 ### Admin Interface Implementation
 
@@ -105,6 +107,12 @@ This Rails application powers conference/gaming event websites with a sophistica
 - Use `aria-expanded` and `aria-controls` for collapsible sections
 - Include `role` attributes for semantic structure
 - Ensure keyboard navigation support
+
+**Sidebar Implementation**: Both V1 and V2 sidebars support active state detection
+- V1: Uses `admin_sidebar_treeview` helper with automatic `c-show` class for expanded parents
+- V2: Uses `admin_v2_sidebar_treeview` helper that detects active children and auto-expands
+- Active detection: `current_admin_path_under?` method matches current path with menu items
+- Parent expansion: Automatically opens parent menu when any child item is active
 
 ### Testing Strategy
 
