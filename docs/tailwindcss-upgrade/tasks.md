@@ -37,66 +37,22 @@
   - [x] Verify all UI components render identically after changes
   - Satisfies user requirements: 4
 
-- [ ] 6. Validate Frontend Theme Compatibility
-  - [ ] Add tests to verify frontend pages render correctly
-  - [ ] Test responsive layouts work as expected
-  - [ ] Verify all theme-specific components display properly
-  - [ ] Test user-facing features maintain visual consistency
-  - Satisfies user requirements: 9
-
-- [ ] 7. Validate Admin Panel V1 (CoreUI) Compatibility
-  - [ ] Add tests to verify admin V1 interface remains functional
-  - [ ] Test that TailwindCSS utilities don't conflict with CoreUI
-  - [ ] Verify all admin V1 components render correctly
-  - [ ] Test administrative workflows work without style issues
-  - Satisfies user requirements: 9
-
-- [ ] 8. Validate Admin Panel V2 (TailwindCSS) Compatibility
-  - [ ] Add tests to verify admin V2 components render correctly
-  - [ ] Test sidebar, forms, and tables work as designed
-  - [ ] Verify all TailwindCSS-based admin components function properly
-  - [ ] Test administrative features maintain usability
-  - Satisfies user requirements: 9
-
-- [ ] 9. Update Build Process and NPM Commands
-  - [ ] Add tests to verify CSS builds complete without errors
+- [ ] 6. Update Build Process and NPM Commands
   - [ ] Test development CSS build with npm run build:css
   - [ ] Test production CSS build with minification
-  - [ ] Verify deployment compatibility and CI/CD integration
-  - [ ] Ensure build commands work identically in all environments
+  - [ ] Verify CSS builds complete without errors in Terminal
+  - [ ] Ensure build commands work correctly
   - Satisfies user requirements: 6, 10
 
-- [ ] 10. Verify Browser Compatibility
-  - [ ] Add tests to verify minimum browser version requirements
-  - [ ] Test application in Safari 16.4+, Chrome 111+, Firefox 128+
-  - [ ] Update browser compatibility documentation if needed
-  - [ ] Verify all features work in target browsers
-  - Satisfies user requirements: 5
-
-- [ ] 11. Fix Test Suite Failures
-  - [ ] Add tests to verify RSpec and Cucumber tests pass
-  - [ ] Identify and fix style-related RSpec test failures
-  - [ ] Update Cucumber test selectors and expectations
-  - [ ] Ensure all existing tests pass with new TailwindCSS version
-  - Satisfies user requirements: 7
-
-- [ ] 12. Clean Up Configuration Files
-  - [ ] Add tests to verify CSS builds work without tailwind.config.js
+- [ ] 7. Clean Up Configuration Files
   - [ ] Remove tailwind.config.js after successful migration
   - [ ] Clean up any unused configuration files
-  - [ ] Document new CSS-based configuration approach
+  - [ ] Verify CSS builds work without JavaScript configuration
   - Satisfies user requirements: 3
 
-- [ ] 13. Final Integration Testing
-  - [ ] Add comprehensive end-to-end tests for all user workflows
-  - [ ] Test complete application functionality with TailwindCSS 4.0
-  - [ ] Verify performance improvements and new features work
-  - [ ] Run full test suite and ensure all tests pass
-  - Satisfies user requirements: 1, 9
-
-- [ ] 14. Documentation and Deployment
+- [ ] 8. Update Documentation
   - [ ] Update development documentation with TailwindCSS 4.0 changes
   - [ ] Document new CSS configuration approach for team
-  - [ ] Create deployment checklist for TailwindCSS 4.0
-  - [ ] Prepare rollback plan in case of issues
+  - [ ] Update CLAUDE.md with new build process information
+  - [ ] Document migration steps and configuration changes
   - Satisfies user requirements: 5, 10
