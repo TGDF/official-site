@@ -1,3 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Explicit content source configuration for Rails views */
+@source "../app/views/**/*.erb";
+@source "../app/components/**/*.{erb,rb}";
+@source "../app/helpers/**/*.rb";
+@source "../app/javascript/**/*.js";
