@@ -73,6 +73,8 @@ Feature: Update deprecated utility classes
     Given the codebase uses shadow-sm classes
     When I update to TailwindCSS 4.0
     Then I should replace shadow-sm with shadow-xs
+    And replace shadow with shadow-sm
+    And replace other renamed utilities per upgrade guide
     And verify all shadow effects render correctly
 ```
 

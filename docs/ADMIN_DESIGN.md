@@ -15,13 +15,13 @@
 | color-border           | #E5E7EB          | border-gray-300                        |
 | color-border-active    | #C7D2FE          | border-indigo-300 (focus state)        |
 | color-success          | #10B981          | text-green-500                         |
-| color-shadow           | rgba(0,0,0,0.05) | shadow color (use shadow-sm or shadow) |
+| color-shadow           | rgba(0,0,0,0.05) | shadow color (use shadow-xs or shadow-sm) |
 
 ## Border Radius
 
 | Token Name                | Value  | Tailwind Class Example |
 |---------------------------|--------|------------------------|
-| radius-sm                 | 4px    | rounded                |
+| radius-sm                 | 4px    | rounded-sm             |
 | radius-md                 | 8px    | rounded-md             |
 | radius-lg                 | 12px   | rounded-lg             |
 | radius-full (for avatars) | 9999px | rounded-full           |
@@ -32,8 +32,8 @@
 
 | Token Name            | Tailwind Utility Example  | Description                           |
 |-----------------------|---------------------------|---------------------------------------|
-| shadow-sm             | shadow-sm                 | subtle card and input shadow          |
-| shadow                | shadow                    | default shadow used on cards          |
+| shadow-xs             | shadow-xs                 | subtle card and input shadow          |
+| shadow-sm             | shadow-sm                 | default shadow used on cards          |
 | shadow-outline-indigo | ring-1 ring-indigo-300/50 | focus state on input / selection card |
 
 ## Spacing & Sizing
@@ -64,8 +64,8 @@
 
 ### Example Usage in TailwindCSS
 
-- Primary Button: `bg-indigo-600 text-white rounded-md h-10 px-4 shadow-sm hover:bg-indigo-700`
-- Card Container: `bg-white rounded-md shadow p-4`
+- Primary Button: `bg-indigo-600 text-white rounded-md h-10 px-4 shadow-xs hover:bg-indigo-700`
+- Card Container: `bg-white rounded-md shadow-sm p-4`
 - Input with Focus: `border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-indigo-300`
 - Sidebar Icons: `w-5 h-5 text-gray-500`
 - Link Text: `text-indigo-600 font-semibold`

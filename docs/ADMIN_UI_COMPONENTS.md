@@ -30,7 +30,7 @@ Cards are containers with white background, medium border radius, subtle shadow 
 ### Example Code
 
 ```html
-<div class="bg-white border border-gray-200 rounded-md shadow-sm">
+<div class="bg-white border border-gray-200 rounded-md shadow-xs">
   <div class="p-6">
     <div class="mb-6">
       <h3 class="text-base font-medium text-gray-900 mb-2">Personal Information</h3>
@@ -174,11 +174,11 @@ The main navigation container provides scrollable navigation with proper overflo
   <div class="flex items-center justify-between px-2.5 py-2 mb-2">
     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Navigation</span>
     <div class="flex items-center gap-1">
-      <button class="text-xs text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1">
+      <button class="text-xs text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-sm px-1">
         Expand All
       </button>
       <span class="text-xs text-gray-400">|</span>
-      <button class="text-xs text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1">
+      <button class="text-xs text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded-sm px-1">
         Collapse All
       </button>
     </div>
@@ -449,7 +449,7 @@ Dropdown menus provide a clean interface for additional options with a trigger b
 
 <!-- Simple Action Dropdown -->
 <div class="relative">
-  <button class="flex items-center text-sm px-3 py-1.5 rounded hover:bg-gray-100">
+  <button class="flex items-center text-sm px-3 py-1.5 rounded-sm hover:bg-gray-100">
     Sort by: Recent
     <i class="fa fa-caret-down w-4 h-4 ml-1"></i>
   </button>
@@ -653,12 +653,12 @@ Tabs organize content into different sections that can be switched between, with
 
 ```html
 <div class="h-10 items-center justify-center rounded-md p-1 text-muted-foreground grid w-full grid-cols-6 bg-gray-100">
-  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Profile</button>
-  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Password</button>
-  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Team</button>
-  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Notification</button>
-  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Billing Details</button>
-  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Integration</button>
+  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-xs px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs">Profile</button>
+  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-xs px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs">Password</button>
+  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-xs px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs">Team</button>
+  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-xs px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs">Notification</button>
+  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-xs px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs">Billing Details</button>
+  <button class="inline-flex items-center justify-center whitespace-nowrap rounded-xs px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs">Integration</button>
 </div>
 
 <!-- Tab Content (only the active one should be displayed) -->
@@ -671,7 +671,7 @@ Tabs organize content into different sections that can be switched between, with
 
 Use tabs for organizing related content that doesn't need to be visible simultaneously.
 
-For styling: active tabs use `data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm`, while all tabs have consistent padding (`px-3 py-1.5`) and text size (`text-sm font-medium`).
+For styling: active tabs use `data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs`, while all tabs have consistent padding (`px-3 py-1.5`) and text size (`text-sm font-medium`).
 
 Use the `data-[state=active]` attribute selectors for applying different styles to active tabs.
 

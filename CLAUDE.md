@@ -30,6 +30,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bin/rails db:seed` - Seed database
 - Multi-tenant migrations handled via acts_as_tenant (migrating from Apartment gem)
 
+### TailwindCSS 4.0 Configuration
+- **CSS Configuration**: `app/assets/stylesheets/theme.css` - CSS-based theme configuration with @theme directive
+- **Build Command**: `yarn build:css` or `npm run build:css` - Compile TailwindCSS
+- **Watch Mode**: `yarn build:css --watch` - Auto-rebuild CSS on changes
+- **Content Detection**: Uses @source directives for Rails views, components, and JavaScript files
+- **No Config File**: TailwindCSS 4.0 uses CSS-based configuration, no tailwind.config.js needed
+
 ## Architecture Overview
 
 ### Multi-Tenant SaaS Platform
@@ -51,7 +58,7 @@ This Rails application powers conference/gaming event websites with a sophistica
 ### Technology Stack
 
 **Backend**: Rails 8.0.2 + Ruby 3.3.0 + PostgreSQL
-**Frontend**: Turbo + Stimulus + TailwindCSS + esbuild
+**Frontend**: Turbo + Stimulus + TailwindCSS 4.0 + esbuild
 **File Uploads**: CarrierWave + ImageMagick (required dependency)
 **Internationalization**: Mobility gem with zh-TW/en locales
 **Authentication**: Devise for admin users
@@ -70,7 +77,7 @@ This Rails application powers conference/gaming event websites with a sophistica
 **Components**: `app/components/` - ViewComponent-based UI components
 **Admin Interface**: Migrating from Slim templates to ERB with ViewComponent (use `.html+v2.erb` for new templates)
 **Multi-language Routes**: Scoped by `/:lang` parameter
-**Asset Pipeline**: esbuild + TailwindCSS with watch processes
+**Asset Pipeline**: esbuild + TailwindCSS 4.0 with CSS-based configuration and watch processes
 
 ### Development Notes
 
@@ -86,7 +93,7 @@ This Rails application powers conference/gaming event websites with a sophistica
 
 **Admin V2 System**: The admin interface has two variants controlled by feature flags
 - V1: Original CoreUI-based interface (`.erb` templates)
-- V2: TailwindCSS-based interface (`.html+v2.erb` templates) following `docs/ADMIN_UI_COMPONENTS.md`
+- V2: TailwindCSS 4.0-based interface (`.html+v2.erb` templates) following `docs/ADMIN_UI_COMPONENTS.md`
 
 **Font Awesome Integration**: Uses Font Awesome 4.x via CDN (`https://use.fontawesome.com/`)
 - Use `fa fa-*` class format (not `fas fa-*`)
