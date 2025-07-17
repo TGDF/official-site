@@ -28,13 +28,13 @@
   - [x] Test that all custom design tokens render correctly
   - Satisfies user requirements: 3, 9
 
-- [ ] 5. Update Deprecated Utility Classes
-  - [ ] Add tests to verify visual consistency before and after class updates
-  - [ ] Run TailwindCSS upgrade tool to identify deprecated utilities
-  - [ ] Replace bg-opacity-* with bg-{color}/{opacity} syntax
-  - [ ] Replace text-opacity-* with text-{color}/{opacity} syntax
-  - [ ] Update shadow-sm to shadow-xs and blur-sm to blur-xs
-  - [ ] Verify all UI components render identically after changes
+- [x] 5. Update Deprecated Utility Classes
+  - [x] Add tests to verify visual consistency before and after class updates
+  - [x] Run TailwindCSS upgrade tool to identify deprecated utilities
+  - [x] Replace bg-opacity-* with bg-{color}/{opacity} syntax
+  - [x] Replace text-opacity-* with text-{color}/{opacity} syntax
+  - [x] Update shadow-sm to shadow-xs and blur-sm to blur-xs
+  - [x] Verify all UI components render identically after changes
   - Satisfies user requirements: 4
 
 - [ ] 6. Validate Frontend Theme Compatibility

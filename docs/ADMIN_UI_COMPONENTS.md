@@ -96,7 +96,7 @@ The main sidebar container provides a fixed-width navigation panel with white ba
 ### Example Code
 
 ```html
-<div class="w-64 min-w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+<div class="w-64 min-w-64 bg-white border-r border-gray-200 flex flex-col shrink-0">
   <!-- Sidebar Header -->
   <div class="px-4 py-3 border-b border-gray-200 h-16 flex items-center">
     <div class="flex items-center gap-2">
@@ -116,7 +116,7 @@ The main sidebar container provides a fixed-width navigation panel with white ba
 
 ### Usage Guidance
 
-Use fixed width (w-64) with min-width for consistent layout. The flex-shrink-0 prevents sidebar from shrinking. Use flex-col for vertical stacking and flex-1 for expandable content area. Include overflow-hidden on scrollable sections.
+Use fixed width (w-64) with min-width for consistent layout. The shrink-0 prevents sidebar from shrinking. Use flex-col for vertical stacking and flex-1 for expandable content area. Include overflow-hidden on scrollable sections.
 
 ---
 
@@ -335,7 +335,7 @@ The sidebar footer contains utility navigation items like Settings and Logout, p
 ### Example Code
 
 ```html
-<div class="px-3 py-3 border-t border-gray-200 space-y-0.5 flex-shrink-0">
+<div class="px-3 py-3 border-t border-gray-200 space-y-0.5 shrink-0">
   <a href="/settings" class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
     <i class="fa fa-cog w-4 h-4"></i>
     <span class="text-sm">Settings</span>
@@ -349,7 +349,7 @@ The sidebar footer contains utility navigation items like Settings and Logout, p
 
 ### Usage Guidance
 
-Use border-t border-gray-200 to separate footer from main navigation. Apply flex-shrink-0 to prevent footer from shrinking. Maintain consistent spacing with space-y-0.5. Include common utility actions like Settings and Logout. Use same styling as regular sidebar items for consistency.
+Use border-t border-gray-200 to separate footer from main navigation. Apply shrink-0 to prevent footer from shrinking. Maintain consistent spacing with space-y-0.5. Include common utility actions like Settings and Logout. Use same styling as regular sidebar items for consistency.
 
 ---
 

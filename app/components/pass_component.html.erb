@@ -4,7 +4,7 @@
     <p class="font-semibold">NTD $<%= current_price %></p>
     <p><%= t("ticket.description.#{@plan}") %></p>
   </div>
-  <ul class="mb-6 flex-grow">
+  <ul class="mb-6 grow">
     <li><%= t("ticket.info.#{@plan}.origin_price", price: price) %></li>
     <% informations.each do |info| %>
       <li><%= info %></li>

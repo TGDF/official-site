@@ -110,7 +110,7 @@
   </nav>
 
   <!-- Sidebar Footer -->
-  <div class="px-3 py-3 border-t border-gray-200 space-y-0.5 flex-shrink-0">
+  <div class="px-3 py-3 border-t border-gray-200 space-y-0.5 shrink-0">
     <%= link_to admin_feature_toggle_path(feature: 'admin_v2'), method: :patch, data: { turbo_method: :patch },
                 class: "flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer" do %>
       <i class="fa <%= admin_v2_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> w-4 h-4"></i>
