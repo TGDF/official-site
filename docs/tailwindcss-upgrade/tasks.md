@@ -21,11 +21,11 @@
   - [x] Test CSS build process with new syntax
   - Satisfies user requirements: 2, 6
 
-- [ ] 4. Implement CSS-Based Configuration
-  - [ ] Add tests to verify custom theme variables work correctly
-  - [ ] Add @source directives for Rails view detection paths
-  - [ ] Migrate custom colors and typography from tailwind.config.js to @theme CSS
-  - [ ] Test that all custom design tokens render correctly
+- [x] 4. Implement CSS-Based Configuration
+  - [x] Add tests to verify custom theme variables work correctly
+  - [x] Add @source directives for Rails view detection paths
+  - [x] Migrate custom colors and typography from tailwind.config.js to @theme CSS
+  - [x] Test that all custom design tokens render correctly
   - Satisfies user requirements: 3, 9
 
 - [ ] 5. Update Deprecated Utility Classes

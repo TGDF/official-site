@@ -2,6 +2,46 @@
 
 /* Explicit content source configuration for Rails views */
 @source "../app/views/**/*.erb";
-@source "../app/components/**/*.{erb,rb}";
+@source "../app/views/**/*.slim";
+@source "../app/components/**/*.{erb,slim,rb}";
 @source "../app/helpers/**/*.rb";
 @source "../app/javascript/**/*.js";
+
+@theme {
+  /* Custom color palette matching current design system */
+  --color-primary: #4f46e5;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #4b5563;
+  --color-secondary-foreground: #ffffff;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-muted: #f3f4f6;
+  --color-muted-foreground: #4b5563;
+  --color-accent: #db2777;
+  --color-accent-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #111827;
+  --color-border: #e5e7eb;
+  --color-input-background: #f9fafb;
+
+  /* Typography configuration */
+  --font-family-sans: 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /* Custom prose styles for content */
+  --prose-body-white: #e5e7eb;
+  --prose-headings-white: #f3f4f6;
+  --prose-lead-white: #d1d5db;
+  --prose-links-white: #f3f4f6;
+  --prose-bold-white: #f3f4f6;
+  --prose-counters-white: #9ca3af;
+  --prose-bullets-white: #4b5563;
+  --prose-hr-white: #374151;
+  --prose-quotes-white: #f3f4f6;
+  --prose-quote-borders-white: #374151;
+  --prose-captions-white: #d1d5db;
+  --prose-code-white: #f3f4f6;
+  --prose-pre-code-white: #111827;
+  --prose-pre-bg-white: #f3f4f6;
+  --prose-th-borders-white: #374151;
+  --prose-td-borders-white: #1f2937;
+}
