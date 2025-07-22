@@ -167,6 +167,7 @@ jobs:
     - name: Upload coverage report
       if: ${{ github.ref_name == 'main' }}
       uses: paambaati/codeclimate-action@v9
+      continue-on-error: true
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
