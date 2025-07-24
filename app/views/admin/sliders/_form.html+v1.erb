@@ -1,0 +1,12 @@
+<%# CONVERTED FROM SLIM - NEEDS MANUAL ERB CONVERSION %>
+= simple_form_for [:admin, @slider] do |f|
+  = admin_box_body do
+    = f.input :image do
+      = f.input_field :image, required: @slider.image.blank?
+      - if @slider.image.present?
+        = image_tag @slider.image_url(:thumb)
+    = f.input :language, collection: Slider.languages.map { |lang, _| [t("locale.name.#{lang}"), lang] }.to_h, default: 0
+    = f.input :page, collection: Slider.pages.map { |page, _| [t("shared.nav.#{page}"), page] }.to_h, default: 0
+    = f.input :interval, hint: t('.set_interval_in_milliseconds')
+  = admin_box_footer do
+    = f.submit class: 'btn btn-primary'

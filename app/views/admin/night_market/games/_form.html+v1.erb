@@ -1,0 +1,22 @@
+<%- Mobility.with_locale(admin_current_resource_locale) do %>
+  <%= simple_form_for [:admin, @game] do |f| %>
+    <%= admin_box_body do %>
+      <%= f.input :name, as: :string %>
+      <%= f.input :description, as: :text, input_html: { data: { editor: true }, rows: 20 } %>
+      <%= f.input :team, as: :string %>
+      <%= f.input :website %>
+      <%= f.input :video %>
+      <%= f.input :order %>
+      <%= f.input :thumbnail do %>
+        <%= f.input_field :thumbnail, required: false %>
+        <%- if @game.thumbnail.present? %>
+          <%= image_tag @game.thumbnail_url(:thumb) %>
+          <%= f.input :remove_thumbnail, as: :boolean %>
+        <% end %>
+      <% end %>
+    <% end %>
+    <%= admin_box_footer do %>
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+  <% end %>
+<% end %>

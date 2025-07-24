@@ -13,8 +13,16 @@ When('I click {string} button') do |button_name|
 end
 
 When('I click {string} on row {string}') do |clickable_name, text_in_row|
-  within :xpath, "//tr[td='#{text_in_row}']" do
-    click_on clickable_name
+  # Try to find row with exact text match first (V1 style)
+  if has_xpath?("//tr[td='#{text_in_row}']")
+    within :xpath, "//tr[td='#{text_in_row}']" do
+      click_on clickable_name
+    end
+  else
+    # Try to find row containing the text (V2 style with links)
+    within :xpath, "//tr[td[contains(., '#{text_in_row}')]]" do
+      click_on clickable_name
+    end
   end
 end
 
@@ -29,8 +37,28 @@ When('I click {string} in menu') do |menu_item|
 end
 
 When('I click admin sidebar {string} in {string}') do |menu_item, menu_group|
-  within :xpath, "//aside[contains(@class, 'c-sidebar')]/ul/li[contains(., '#{menu_group}')]" do
-    click_on menu_item
+  # Try V2 structure first (default)
+  if has_css?('nav[aria-label="Sidebar"]')
+    within 'nav[aria-label="Sidebar"]' do
+      # Find the group button and get its submenu ID
+      group_button = find('button', text: menu_group)
+      submenu_id = group_button['aria-controls']
+
+      # Click the group button to expand if not already expanded
+      unless group_button['aria-expanded'] == 'true'
+        group_button.click
+      end
+
+      # Wait for submenu to be visible and click the menu item within it
+      within "##{submenu_id}" do
+        click_on menu_item
+      end
+    end
+  else
+    # Fallback to V1 structure for legacy support
+    within :xpath, "//aside[contains(@class, 'c-sidebar')]/ul/li[contains(., '#{menu_group}')]" do
+      click_on menu_item
+    end
   end
 end
 

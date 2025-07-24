@@ -1,0 +1,31 @@
+<%# CONVERTED FROM SLIM - NEEDS MANUAL ERB CONVERSION %>
+header.c-header.c-header-light.c-header-fixed
+  / TODO: Toggle Button
+  nav.mfs-auto.mr-3
+    ul.c-header-nav.dropdown
+      li.c-header-nav-item.dropdown.mx-2
+        = link_to '#', class: 'c-header-nav-link', data: { toggle: 'dropdown' } do
+          / = svg_icon('media/sprites/free.svg', 'cil-sitemap', class: 'c-icon c-icon-lg mfe-2')
+          | &nbsp;
+          span.hidden-xs = current_site.name
+        .dropdown-menu.dropdown-menu-right.pt-0
+          .dropdown-header.bg-light.py-2
+            strong = t('.all_sites')
+          = admin_navbar_site_item(t('site_name'), Settings.site.default_domain)
+          - @navbar_sites.each do |site|
+            = admin_navbar_site_item(site.name, site.domain)
+          .dropdown-divider
+          = link_to admin_sites_url(host: Settings.site.default_domain), class: 'dropdown-item' do
+            / = svg_icon('media/sprites/free.svg', 'cil-list', class: 'c-icon mfe-2')
+            = t('.view_all')
+      li.c-header-nav-item.dropdown
+        = link_to '#', class: 'c-header-nav-link', data: { toggle: 'dropdown' } do
+          .c-avatar
+            = image_tag current_admin_user.avatar(size: 36), class: 'c-avatar-img'
+        .dropdown-menu.dropdown-menu-right.pt-0
+          .dropdown-header.bg-light.py-2
+            strong = t('.account')
+          = link_to destroy_admin_user_session_path, class: 'dropdown-item' do
+            / = svg_icon('media/sprites/free.svg', 'cil-account-logout', class: 'c-icon mfe-2')
+            = t('.logout')
+

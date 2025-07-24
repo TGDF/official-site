@@ -1,0 +1,10 @@
+<%# CONVERTED FROM SLIM - NEEDS MANUAL ERB CONVERSION %>
+tr
+  td = sponsor_level.id
+  td = sponsor_level.name
+  td = sponsor_level.order
+  td
+    .d-flex.align-items-start
+      = link_to t('.edit'), edit_admin_sponsor_level_path(sponsor_level), class: 'btn btn-primary'
+      / TODO: Create helper
+      = button_to t('.destroy'), admin_sponsor_level_path(sponsor_level), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

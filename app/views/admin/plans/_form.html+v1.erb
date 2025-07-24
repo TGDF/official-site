@@ -1,0 +1,14 @@
+<% Mobility.with_locale(admin_current_resource_locale) do %>
+  <%= simple_form_for [:admin, @plan] do |f| %>
+    <%= admin_box_body do %>
+      <%= f.input :name, as: :string %>
+      <%= f.input :content, as: :text, input_html: { data: { editor: true }, rows: 20 } %>
+      <%= f.input :button_label, as: :string %>
+      <%= f.input :button_target, as: :string %>
+      <%= f.input :order, as: :integer %>
+      <%= admin_box_footer do %>
+        <%= f.submit class: 'btn btn-primary' %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

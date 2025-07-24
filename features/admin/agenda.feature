@@ -124,11 +124,7 @@ Feature: Manage Agenda
     And I fill the "agenda_day" form
       | field | value      |
       | label | Day1       |
-    And I select options in the "agenda_day" form
-      | field   | value |
-      | date_1i | 2024  |
-      | date_2i | 七月  |
-      | date_3i | 10    |
+      | date  | 2024-07-10 |
     And I click "新增Agenda day"
     Then I can see these items in table
       | text       |
@@ -146,11 +142,7 @@ Feature: Manage Agenda
     And I fill the "agenda_day" form
       | field | value      |
       | label | Day3       |
-    And I select options in the "agenda_day" form
-      | field   | value |
-      | date_1i | 2024  |
-      | date_2i | 七月  |
-      | date_3i | 12    |
+      | date  | 2024-07-12 |
     And I click "更新Agenda day"
     Then I can see these items in table
       | text       |
@@ -181,10 +173,10 @@ Feature: Manage Agenda
     When I visit "/admin"
     And I click admin sidebar "Times" in "Agenda"
     Then I can see these items in table
-      | text              |
-      | 08:00-09:00       |
-      | 09:00-10:00       |
-      | Day1 (2024-07-10) |
+      | text        |
+      | 08:00-09:00 |
+      | 09:00-10:00 |
+      | Day1        |
 
   Scenario: Admin User can create a new agenda time
     Given there are some agenda days
@@ -200,9 +192,9 @@ Feature: Manage Agenda
       | day_id | Day1 (2024-07-10) |
     And I click "新增Agenda time"
     Then I can see these items in table
-      | text              |
-      | 08:00-09:00       |
-      | Day1 (2024-07-10) |
+      | text        |
+      | 08:00-09:00 |
+      | Day1        |
 
   Scenario: Admin User can edit an agenda time
     Given there are some agenda days
@@ -223,9 +215,9 @@ Feature: Manage Agenda
       | day_id | Day1 (2024-07-10) |
     And I click "更新Agenda time"
     Then I can see these items in table
-      | text              |
-      | 10:00-11:00       |
-      | Day1 (2024-07-10) |
+      | text        |
+      | 10:00-11:00 |
+      | Day1        |
 
   Scenario: Admin User can delete an agenda time
     Given there are some agenda days

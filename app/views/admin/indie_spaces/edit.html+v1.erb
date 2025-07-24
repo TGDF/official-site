@@ -1,0 +1,10 @@
+<%# CONVERTED FROM SLIM - NEEDS MANUAL ERB CONVERSION %>
+= admin_page_header t('.update'), t('.edit_indie_space')
+.container-fluid
+  .row
+    .col-md-12
+      = admin_box do
+        = admin_box_header t('.edit_indie_space')
+        = admin_box_body
+          = admin_locale_navtab
+          = render 'form'

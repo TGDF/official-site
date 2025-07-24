@@ -1,14 +1,14 @@
-<%= admin_page_header t('.edit'), t('.edit_plan') %>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-12">
-      <%= admin_box do %>
-        <%= admin_box_header title t('.edit_plan') %>
-        <%= admin_box_body do %>
-          <%= admin_locale_navtab %>
-          <%= render 'form' %>
-        <% end %>
-      <% end %>
+<%# Admin Plans Edit - TailwindCSS v2 variant %>
+<div class="space-y-6">
+  <%= admin_v2_locale_navtab %>
+
+  <div class="bg-white border border-gray-200 rounded-md shadow-xs overflow-hidden">
+    <div class="p-6 space-y-6">
+      <div class="mb-6">
+        <h3 class="text-base font-medium text-gray-900"><%= t('.edit') %></h3>
+        <p class="text-gray-600 text-sm"><%= t('.description', default: 'Edit plan details') %></p>
+      </div>
+      <%= render 'form' %>
     </div>
   </div>
 </div>

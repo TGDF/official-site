@@ -1,0 +1,13 @@
+<% Mobility.with_locale(admin_current_resource_locale) do %>
+  <%= simple_form_for [:admin, @menu_item] do |f| %>
+    <%= admin_box_body do %>
+      <%= f.input :name, as: :string %>
+      <%= f.input :link, as: :string %>
+      <%= f.input :visible, as: :boolean%>
+      <%= f.input :menu_id, as: :hidden, input_html: { value: :secondary } %>
+      <%= admin_box_footer do %>
+        <%= f.submit class: 'btn btn-primary' %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

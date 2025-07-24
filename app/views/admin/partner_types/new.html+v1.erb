@@ -1,0 +1,8 @@
+<%# CONVERTED FROM SLIM - NEEDS MANUAL ERB CONVERSION %>
+= admin_page_header t('.create'), t('.add_partner_type')
+.container-fluid
+  .row
+    .col-md-12
+      = admin_box do
+        = admin_box_header t('.create'), class: 'with-border'
+        = render 'form'

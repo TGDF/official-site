@@ -1,0 +1,7 @@
+<%# CONVERTED FROM SLIM - NEEDS MANUAL ERB CONVERSION %>
+- Mobility.with_locale(admin_current_resource_locale) do
+  = simple_form_for [:admin, @agenda_tag] do |f|
+    = admin_box_body do
+      = f.input :name, as: :string
+    = admin_box_footer do
+      = f.submit class: 'btn btn-primary'

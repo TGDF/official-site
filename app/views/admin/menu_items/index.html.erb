@@ -1,28 +1,26 @@
-<%= admin_page_header t('.menus'), t('.manage_menus') %>
-<div class="container-fluid">
-  <div class="fade-in">
-    <div class="row">
-      <div class="col-md-12">
-        <%= admin_box do %>
-          <%= admin_box_header title t('.menus') %>
-          <%= admin_box_body do %>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th class="table__id-column">#</th>
-                  <th><%= t('.name') %></th>
-                  <th><%= t('.link') %></th>
-                  <th><%= t('.visible') %></th>
-                  <th><%= t('.actions') %></th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render @menu_items %>
-              </tbody>
-            </table>
-          <% end %>
-        <% end %>
+<%# Admin Menu Items Index - TailwindCSS v2 variant %>
+<div class="space-y-6">
+
+  <div class="bg-white border border-gray-200 rounded-md shadow-xs overflow-hidden">
+    <div class="p-6">
+      <div class="mb-6">
+        <h3 class="text-base font-medium text-gray-900"><%= t('.menus') %></h3>
+        <p class="text-gray-600 text-sm"><%= t('.description', default: 'Manage all menu items') %></p>
       </div>
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="border-b border-gray-200">
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">#</th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.name') %></th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.link') %></th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.visible') %></th>
+            <th class="text-left py-3 px-4 text-sm font-medium text-gray-500"><%= t('.actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render @menu_items %>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

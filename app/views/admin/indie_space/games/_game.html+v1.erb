@@ -1,0 +1,9 @@
+<%# CONVERTED FROM SLIM - NEEDS MANUAL ERB CONVERSION %>
+tr
+  td = game.id
+  td = link_to game.name, edit_admin_indie_space_game_path(game)
+  td = game.team
+  td = game.order
+  td
+    .d-flex.align-items-start
+      = button_to t('.destroy'), admin_indie_space_game_path(game), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

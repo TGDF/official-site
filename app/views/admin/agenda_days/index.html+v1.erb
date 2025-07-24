@@ -1,0 +1,17 @@
+<%# CONVERTED FROM SLIM - NEEDS MANUAL ERB CONVERSION %>
+= admin_page_header t('.days'), t('.manager_days')
+.container-fluid
+  .fade-in
+    .row
+      .col-md-12
+        = admin_box do
+          = admin_box_body class: 'no-padding' do
+            table.table.table-striped
+              thead
+                tr
+                  th.table__id-column #
+                  th = t('.label')
+                  th = t('.date')
+                  th.col-md-3 = t('.actions')
+              tbody
+                = render @agenda_days

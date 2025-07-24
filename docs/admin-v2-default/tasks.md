@@ -1,6 +1,6 @@
 # Admin V2 Default Interface Migration Tasks
 
-- [ ] 1. Create and execute batch template migration with verification
+- [x] 1. Create and execute batch template migration with verification
   - Create lib/tasks/admin_migration.rake task
   - Rename current .erb templates to +v1.erb (legacy)
   - Rename current +v2.erb templates to .erb (default)

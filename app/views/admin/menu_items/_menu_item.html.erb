@@ -1,11 +1,20 @@
-<tr>
-  <td><%= menu_item.id %></td>
-  <td><%= menu_item.name %></td>
-  <td><%= menu_item.link %></td>
-  <td><%= menu_item.visible? %></td>
-  <td>
-    <div class="d-flex align-items-start">
-      <%= link_to t('.edit'), edit_admin_menu_item_path(menu_item), class: 'btn btn-primary' %>
-      <%= button_to t('.destroy'), admin_menu_item_path(menu_item), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') } %>
+<tr class="border-b border-gray-200">
+  <td class="py-3 px-4 text-sm font-medium"><%= menu_item.id %></td>
+  <td class="py-3 px-4 text-sm font-medium"><%= menu_item.name %></td>
+  <td class="py-3 px-4 text-sm">
+    <%= link_to menu_item.link, menu_item.link, target: '_blank', class: 'text-blue-600 hover:underline' %>
+  </td>
+  <td class="py-3 px-4 text-sm"><%= menu_item.visible? %></td>
+  <td class="py-3 px-4 text-sm">
+    <div class="flex items-center gap-2.5">
+      <%= link_to edit_admin_menu_item_path(menu_item), class: 'flex items-center text-sm px-3 py-1.5 rounded-md text-gray-600 hover:bg-gray-100' do %>
+        <i class="fa fa-edit w-4 h-4 mr-1"></i>
+        <span><%= t('.edit') %></span>
+      <% end %>
+      <%= button_to admin_menu_item_path(menu_item), method: :delete, data: { turbo_confirm: t('shared.destroy_confirm') }, class: 'flex items-center text-sm px-3 py-1.5 rounded-md text-red-600 hover:bg-red-50', form_class: 'inline-block' do %>
+        <i class="fa fa-trash w-4 h-4 mr-1"></i>
+        <span><%= t('.destroy') %></span>
+      <% end %>
     </div>
+  </td>
 </tr>
