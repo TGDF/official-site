@@ -2,7 +2,7 @@
   <div class="swiper-wrapper">
     <%- unless @sliders.exists? %>
       <div class="swiper-slide">
-        <%= image_tag 'sliders/slide_1.jpg', class: 'd-block w-100 swiper-lazy' %>
+        <%= image_tag 'sliders/slide_1.jpg', class: 'd-block w-full swiper-lazy' %>
       </div>
     <% end %>
     <%= render SliderItemComponent.with_collection(@sliders) %>
