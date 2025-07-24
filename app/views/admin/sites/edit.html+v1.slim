@@ -1,0 +1,9 @@
+= admin_page_header t('.update'), t('.edit_exists_site')
+.container-fluid
+  .row
+    .col-md-12
+      = admin_box do
+        = admin_box_header t('.edit_site')
+        = admin_box_body
+          = admin_locale_navtab
+          = render 'form'

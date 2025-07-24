@@ -1,9 +1,0 @@
-<%# CONVERTED FROM SLIM - NEEDS MANUAL ERB CONVERSION %>
-tr
-  td = agenda_tag.id
-  td = agenda_tag.name
-  td
-    .d-flex.align-items-start
-      = link_to t('.edit'), edit_admin_agenda_tag_path(agenda_tag), class: 'btn btn-primary'
-      / TODO: Create helper
-      = button_to t('.destroy'), admin_agenda_tag_path(agenda_tag), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

@@ -1,0 +1,15 @@
+= admin_page_header t('.agendas'), t('.manager_agendas')
+.container-fluid
+  .fade-in
+    .row
+      .col-md-12
+        = admin_box do
+          = admin_box_body class: 'no-padding' do
+            table.table.table-striped
+              thead
+                tr
+                  th.table__id-column #
+                  th = t('.subject')
+                  th.col-md-3 = t('.actions')
+              tbody
+                = render @agendas

@@ -1,0 +1,15 @@
+- Mobility.with_locale(admin_current_resource_locale) do
+  = simple_form_for [:admin, @partner] do |f|
+    = admin_box_body do
+      = f.input :name, as: :string
+      = f.input :url
+      = f.association :type
+      = f.input :description, as: :text
+      = f.input :order
+      = f.input :logo do
+        = f.input_field :logo, required: @partner.new_record?
+        -if @partner.logo.present?
+          = image_tag @partner.logo.url
+          = f.input :remove_logo, as: :boolean
+    = admin_box_footer do
+      = f.submit class: 'btn btn-primary'

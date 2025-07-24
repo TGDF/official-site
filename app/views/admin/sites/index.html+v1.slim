@@ -1,0 +1,16 @@
+.container-fluid
+  .fade-in
+    .row
+      .col-md-12
+        = admin_box do
+          = admin_box_header t('.sites')
+          = admin_box_body do
+            table.table.table-striped.table-responsive-sm
+              thead
+                tr
+                  th.table__id-column #
+                  th = t('.name')
+                  th = t('.domain')
+                  th = t('.actions')
+              tbody
+                = render @sites

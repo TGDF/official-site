@@ -1,0 +1,9 @@
+tr
+  td = speaker.id
+  td = speaker.name
+  td = speaker.order
+  td
+    .d-flex.align-items-start
+      = link_to t('.edit'), edit_admin_speaker_path(speaker), class: 'btn btn-primary'
+      / TODO: Create helper
+      = button_to t('.destroy'), admin_speaker_path(speaker), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') }

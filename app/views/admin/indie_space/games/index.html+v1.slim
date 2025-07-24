@@ -1,0 +1,18 @@
+= admin_page_header t('.indie_space'), t('.list_games')
+.container-fluid
+  .fade-in
+    .row
+      .col-md-12
+        = admin_box do
+          = admin_box_body class: 'no-padding' do
+            table.table.table-striped
+              thead
+                tr
+                  th.table__id-column #
+                  th = t('.name')
+                  th = t('.team')
+                  th = t('.order')
+                  th.col-md-3 = t('.actions')
+              tbody
+                = render partial: 'game', collection: @games
+
