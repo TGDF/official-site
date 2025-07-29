@@ -3,48 +3,47 @@
     {
       "warning_type": "Cross-Site Scripting",
       "warning_code": 4,
-      "fingerprint": "4b0ee747046a70f3f1af9d738d34fff397eb10cd9763debb67aa70c99cd6e5fa",
+      "fingerprint": "f0012fb4e82db4fe60047ed6cc9e2d005d85d40eb28b0258ab3e450e3fa10940",
       "check_name": "LinkToHref",
       "message": "Potentially unsafe model attribute in `link_to` href",
-      "file": "app/views/pages/index/_partner.html.slim",
-      "line": 10,
+      "file": "app/views/admin/partners/_partner.html.erb",
+      "line": 6,
       "link": "https://brakemanscanner.org/docs/warning_types/link_to_href",
-      "code": "link_to(image_tag((Unresolved Model).new.logo_url(:v1)), (Unresolved Model).new.url, :target => \"_blank\")",
+      "code": "link_to(Partner.new.url, Partner.new.url, :target => \"_blank\", :class => \"text-blue-600 hover:underline\")",
       "render_path": [
         {
           "type": "controller",
-          "class": "PagesController",
+          "class": "Admin::PartnersController",
           "method": "index",
           "line": 9,
-          "file": "app/controllers/pages_controller.rb",
+          "file": "app/controllers/admin/partners_controller.rb",
           "rendered": {
-            "name": "pages/index",
-            "file": "app/views/pages/index.html.erb"
+            "name": "admin/partners/index",
+            "file": "app/views/admin/partners/index.html.erb"
           }
         },
         {
           "type": "template",
-          "name": "pages/index",
-          "line": 12,
-          "file": "app/views/pages/index.html.erb",
+          "name": "admin/partners/index",
+          "line": 20,
+          "file": "app/views/admin/partners/index.html.erb",
           "rendered": {
-            "name": "pages/index/_partner",
-            "file": "app/views/pages/index/_partner.html.slim"
+            "name": "admin/partners/_partner",
+            "file": "app/views/admin/partners/_partner.html.erb"
           }
         }
       ],
       "location": {
         "type": "template",
-        "template": "pages/index/_partner"
+        "template": "admin/partners/_partner"
       },
-      "user_input": "(Unresolved Model).new.url",
+      "user_input": "Partner.new.url",
       "confidence": "Weak",
       "cwe_id": [
         79
       ],
-      "note": ""
+      "note": "Rails validates URL format to only allow HTTP/HTTPS. Rails 8 escapes HTML by default. Admin-only interface."
     }
   ],
-  "updated": "2022-08-25 19:56:55 +0800",
-  "brakeman_version": "5.3.1"
+  "brakeman_version": "7.1.0"
 }
