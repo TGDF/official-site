@@ -6,7 +6,7 @@ class BlockComponent < ViewComponent::Base
   delegate_missing_to :@block
 
   def initialize(block:)
-    super
+    super()
     @block = block
   end
 end

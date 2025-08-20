@@ -6,7 +6,7 @@ class GameComponent < ViewComponent::Base
   delegate :name, :description, :website, :video, to: :@game
 
   def initialize(game:)
-    super
+    super()
     @game = game
   end
 

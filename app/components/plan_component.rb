@@ -5,7 +5,7 @@ class PlanComponent < ViewComponent::Base
   delegate_missing_to :@plan
 
   def initialize(plan:)
-    super
+    super()
     @plan = plan
   end
 

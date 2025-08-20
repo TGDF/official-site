@@ -2,7 +2,7 @@
 
 class ProposalFormComponent < ViewComponent::Base
   def initialize(src:, description: nil)
-    super
+    super()
     @src = src
     @description = description
   end

@@ -4,7 +4,7 @@ class NewsListItemComponent < ViewComponent::Base
   with_collection_parameter :news
 
   def initialize(news:)
-    super
+    super()
     @news = news
   end
 end

@@ -4,7 +4,7 @@ class BreadcrumbComponent < ViewComponent::Base
   delegate_missing_to :@breadcrumbs
 
   def initialize(breadcrumbs:)
-    super
+    super()
     @breadcrumbs = breadcrumbs
   end
 

@@ -2,7 +2,7 @@
 
 class LanguageSwitchButtonComponent < ViewComponent::Base
   def initialize(current_locale:)
-    super
+    super()
     @current_locale = current_locale || :'zh-TW'
   end
 

@@ -4,7 +4,7 @@ class PassComponent < ViewComponent::Base
   with_collection_parameter :plan
 
   def initialize(plan:, site:)
-    super
+    super()
     @plan = plan
     @site = site
   end

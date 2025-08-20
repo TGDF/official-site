@@ -7,7 +7,7 @@ class NavigationComponent < ViewComponent::Base
   attr_reader :current_site, :current_locale
 
   def initialize(current_site:, current_locale:)
-    super
+    super()
 
     @current_site = current_site
     @current_locale = current_locale

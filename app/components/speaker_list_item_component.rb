@@ -6,7 +6,7 @@ class SpeakerListItemComponent < ViewComponent::Base
   delegate_missing_to :@speaker
 
   def initialize(speaker:)
-    super
+    super()
     @speaker = speaker
   end
 end

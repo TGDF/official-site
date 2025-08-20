@@ -4,7 +4,7 @@ class NewsThumbnailComponent < ViewComponent::Base
   delegate_missing_to :@news
 
   def initialize(news:, classes: "", size: :medium)
-    super
+    super()
     @news = news
     @size = size
     @classes = classes

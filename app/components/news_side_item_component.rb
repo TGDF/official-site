@@ -6,7 +6,7 @@ class NewsSideItemComponent < ViewComponent::Base
   delegate_missing_to :@news
 
   def initialize(news:)
-    super
+    super()
     @news = news
   end
 end

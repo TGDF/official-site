@@ -2,7 +2,7 @@
 
 class PlanListComponent < ViewComponent::Base
   def initialize(site:)
-    super
+    super()
     @site = site
   end
 

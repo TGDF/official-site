@@ -6,7 +6,7 @@ class PartnerLogoComponent < ViewComponent::Base
   delegate_missing_to :@partner
 
   def initialize(partner:)
-    super
+    super()
     @partner = partner
   end
 end

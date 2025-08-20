@@ -6,7 +6,7 @@ class PartnerGroupComponent < ViewComponent::Base
   delegate_missing_to :@group
 
   def initialize(group:)
-    super
+    super()
     @group = group
   end
 end

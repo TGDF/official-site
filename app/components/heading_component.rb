@@ -2,7 +2,7 @@
 
 class HeadingComponent < ViewComponent::Base
   def initialize(text:)
-    super
+    super()
     @text = text
   end
 end

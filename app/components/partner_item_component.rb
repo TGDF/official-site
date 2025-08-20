@@ -6,7 +6,7 @@ class PartnerItemComponent < ViewComponent::Base
   delegate_missing_to :@item
 
   def initialize(item:)
-    super
+    super()
     @item = item
   end
 end

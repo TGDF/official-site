@@ -2,7 +2,7 @@
 
 class SliderComponent < ViewComponent::Base
   def initialize(id:, sliders:)
-    super
+    super()
     @id = id
     @sliders = sliders
   end
