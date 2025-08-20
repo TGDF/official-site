@@ -1,0 +1,26 @@
+name: migrate_rspec_features
+model: gpt-5-mini
+exit_on_error: true
+
+tools:
+  - Roast::Tools::ReadFile
+  - Roast::Tools::WriteFile
+  - Roast::Tools::Grep
+  - Roast::Tools::Cmd
+  - Roast::Tools::CodingAgent
+
+steps:
+  - analyze_spec
+  - create_feature
+  - run_and_improve
+  - $(bundle exec rubocop -A)
+  - Summarize the changes made to the codebase.
+
+analyze_spec:
+  print_response: false
+
+create_feature:
+  print_response: true
+
+run_and_improve:
+  print_response: true
