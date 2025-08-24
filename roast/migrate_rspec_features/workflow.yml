@@ -24,3 +24,7 @@ create_feature:
 
 run_and_improve:
   print_response: true
+
+functions:
+  grep:
+    cache: true
