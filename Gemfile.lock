@@ -264,9 +264,9 @@ GEM
     event_stream_parser (1.0.0)
     excon (1.2.8)
       logger
-    factory_bot (6.5.4)
+    factory_bot (6.5.5)
       activesupport (>= 6.1.0)
-    factory_bot_rails (6.5.0)
+    factory_bot_rails (6.5.1)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
     faker (3.5.2)
@@ -404,10 +404,10 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.18.9)
+    nokogiri (1.18.10)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    nokogiri (1.18.9-x86_64-linux-gnu)
+    nokogiri (1.18.10-x86_64-linux-gnu)
       racc (~> 1.4)
     oj (3.16.11)
       bigdecimal (>= 3.0)
@@ -714,7 +714,7 @@ DEPENDENCIES
   dry-monads
   dry-rails
   dry-transaction
-  factory_bot_rails (~> 6.5.0)
+  factory_bot_rails (~> 6.5.1)
   faker
   flipper-active_record
   flipper-active_support_cache_store
