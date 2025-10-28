@@ -374,8 +374,8 @@ GEM
     marcel (1.0.4)
     matrix (0.4.3)
     memoist3 (1.0.0)
-    meta-tags (2.22.1)
-      actionpack (>= 6.0.0, < 8.1)
+    meta-tags (2.22.2)
+      actionpack (>= 6.0.0, < 8.2)
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
