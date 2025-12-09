@@ -319,7 +319,7 @@ GEM
       nokogiri (>= 1.5.11, < 2.0.0)
     formatador (1.2.2)
       reline
-    friendly_id (5.5.1)
+    friendly_id (5.6.0)
       activerecord (>= 4.0.0)
     fuubar (2.5.1)
       rspec-core (~> 3.0)
@@ -675,7 +675,7 @@ GEM
     temple (0.10.3)
     thor (1.4.0)
     tilt (2.6.0)
-    timeout (0.4.4)
+    timeout (0.5.0)
     tsort (0.2.0)
     turbo-rails (2.0.20)
       actionpack (>= 7.1.0)
@@ -743,7 +743,7 @@ DEPENDENCIES
   flipper-active_support_cache_store
   flipper-ui
   fog-aws
-  friendly_id (~> 5.5.1)
+  friendly_id (~> 5.6.0)
   fuubar
   gretel
   irb
