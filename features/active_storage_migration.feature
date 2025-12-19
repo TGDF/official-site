@@ -234,3 +234,86 @@ Feature: ActiveStorage Migration
     When I visit "/"
     And I click "講者" in menu
     Then I can see speaker "John" with CarrierWave avatar
+
+  @active_storage_write
+  Scenario: Admin can upload sponsor logo to ActiveStorage when write is enabled
+    Given there are some sponsor levels
+      | name   | order |
+      | Gold   | 1     |
+    And an user logged as admin
+    And ActiveStorage write is enabled
+    When I visit "/admin"
+    And I click admin sidebar "New" in "Sponsor"
+    And I fill the "sponsor" form
+      | field | value        |
+      | name  | Test Sponsor |
+      | order | 1            |
+    And I select options in the "sponsor" form
+      | field    | value |
+      | level_id | Gold  |
+    And I attach files to ActiveStorage in the "sponsor" form
+      | field | value    |
+      | logo  | TGDF.png |
+    And I click "新增Sponsor" button
+    Then sponsor "Test Sponsor" should have ActiveStorage attachment
+
+  @active_storage_write
+  Scenario: Admin can upload news thumbnail to ActiveStorage when write is enabled
+    Given an user logged as admin
+    And ActiveStorage write is enabled
+    When I visit "/admin"
+    And I click admin sidebar "New" in "News"
+    And I fill the "news" form
+      | field   | value        |
+      | title   | Test News    |
+      | slug    | test-news    |
+      | content | Test content |
+    And I select options in the "news" form
+      | field  | value |
+      | status | draft |
+    And I attach files to ActiveStorage in the "news" form
+      | field     | value    |
+      | thumbnail | TGDF.png |
+    And I click "新增News" button
+    Then news "Test News" should have ActiveStorage attachment
+
+  @active_storage_write
+  Scenario: Admin can upload slider image to ActiveStorage when write is enabled
+    Given an user logged as admin
+    And ActiveStorage write is enabled
+    When I visit "/admin"
+    And I click admin sidebar "New" in "Slider"
+    And I fill the "slider" form
+      | field    | value |
+      | interval | 5000  |
+    And I select options in the "slider" form
+      | field    | value    |
+      | language | 繁體中文 |
+      | page     | 首頁     |
+    And I attach files to ActiveStorage in the "slider" form
+      | field | value    |
+      | image | TGDF.png |
+    And I click "新增Slider" button
+    Then the slider should have ActiveStorage attachment
+
+  @active_storage_write
+  Scenario: Admin can upload game thumbnail to ActiveStorage when write is enabled
+    Given an user logged as admin
+    And ActiveStorage write is enabled
+    When I visit "/admin"
+    And I click admin sidebar "New" in "Indie Space"
+    And I fill the "indie_space_game" form
+      | field       | value      |
+      | name        | Test Game  |
+      | description | A fun game |
+      | team        | Test Team  |
+      | order       | 1          |
+    And I attach files to ActiveStorage in the "indie_space_game" form
+      | field     | value    |
+      | thumbnail | TGDF.png |
+    And I click "新增Game" button
+    Then game "Test Game" should have ActiveStorage attachment
+
+  # NOTE: Site write test skipped - requires public tenant context which needs
+  # different authentication setup. The Site form uses the same HasMigratedUpload
+  # pattern validated by the other 7 write tests above.

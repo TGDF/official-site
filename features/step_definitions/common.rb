@@ -30,6 +30,10 @@ When('I click link {string}') do |link_name|
   click_on link_name
 end
 
+When('I click first {string} link') do |link_text|
+  first(:link, link_text).click
+end
+
 When('I click {string} in menu') do |menu_item|
   within :xpath, "//nav[contains(@id, 'main-menu')]" do
     click_on menu_item

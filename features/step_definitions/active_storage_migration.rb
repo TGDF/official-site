@@ -211,3 +211,28 @@ When('I attach files to ActiveStorage in the {string} form') do |form, table|
     )
   end
 end
+
+Then('sponsor {string} should have ActiveStorage attachment') do |name|
+  sponsor = Sponsor.i18n.find_by!(name: name)
+  expect(sponsor.logo_attachment).to be_attached
+end
+
+Then('news {string} should have ActiveStorage attachment') do |title|
+  news = News.i18n.find_by!(title: title)
+  expect(news.thumbnail_attachment).to be_attached
+end
+
+Then('the slider should have ActiveStorage attachment') do
+  slider = Slider.last
+  expect(slider.image_attachment).to be_attached
+end
+
+Then('game {string} should have ActiveStorage attachment') do |name|
+  game = Game.i18n.find_by!(name: name)
+  expect(game.thumbnail_attachment).to be_attached
+end
+
+Then('the site should have ActiveStorage logo attachment') do
+  site = Site.first
+  expect(site.logo_attachment).to be_attached
+end

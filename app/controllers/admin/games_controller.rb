@@ -45,7 +45,7 @@ module Admin
       params
         .require(resource_name)
         .permit(:name, :description, :team, :video, :order,
-                :thumbnail, :website, :remove_thumbnail)
+                :thumbnail, :thumbnail_attachment, :website, :remove_thumbnail)
     end
 
     def find_game

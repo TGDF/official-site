@@ -37,7 +37,7 @@ module Admin
 
     def partner_params
       params.require(:partner).permit(
-        :name, :logo, :remove_logo, :type_id, :url, :order, :description
+        :name, :logo, :logo_attachment, :remove_logo, :type_id, :url, :order, :description
       )
     end
   end

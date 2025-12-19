@@ -36,10 +36,14 @@
       </div>
       <div class="space-y-2">
         <%= f.label :logo, class: 'text-sm font-medium text-gray-900' %>
-        <%= f.file_field :logo, class: 'block w-full text-sm text-gray-900 mt-1' %>
-        <% if @sponsor.logo.present? %>
+        <% if Flipper.enabled?(:active_storage_write) %>
+          <%= f.file_field :logo_attachment, class: 'block w-full text-sm text-gray-900 mt-1' %>
+        <% else %>
+          <%= f.file_field :logo, class: 'block w-full text-sm text-gray-900 mt-1' %>
+        <% end %>
+        <% if @sponsor.logo_present? %>
           <div class="mt-2">
-            <%= image_tag @sponsor.logo.url, class: 'h-16 w-auto rounded-md' %>
+            <%= image_tag @sponsor.logo_url, class: 'h-16 w-auto rounded-md' %>
             <div class="flex items-center mt-2">
               <%= f.check_box :remove_logo, class: 'h-4 w-4 text-blue-600 border border-gray-300 rounded focus:ring-blue-500 focus:ring-2' %>
               <%= f.label :remove_logo, t('.remove_logo', default: 'Remove logo'), class: 'ml-2 block text-sm font-medium text-gray-900' %>

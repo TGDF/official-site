@@ -53,7 +53,7 @@ module Admin
       params
         .require(:news)
         .permit(
-          :title, :slug, :status, :thumbnail, :remove_thumbnail,
+          :title, :slug, :status, :thumbnail, :thumbnail_attachment, :remove_thumbnail,
           :content
         )
     end

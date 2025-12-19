@@ -81,6 +81,8 @@ This ensures all tenants share the same ActiveStorage tables in the public Postg
 3. The `{field}_url` method checks the `active_storage_read` feature flag:
    - **Disabled (default)**: Returns CarrierWave URL (or default_url if no file)
    - **Enabled**: Returns ActiveStorage URL if attached, otherwise falls back to CarrierWave
+4. The `{field}_present?` method checks both CarrierWave and ActiveStorage for presence
+5. Model validations use `{field}_present?` to accept uploads from either system
 
 ### Feature Flags
 
@@ -190,13 +192,13 @@ Files will now be served from ActiveStorage. Monitor for:
 
 ### Phase 6: (Optional) Enable ActiveStorage Write
 
-To have new uploads go directly to ActiveStorage, you need to:
+To have new uploads go directly to ActiveStorage:
 
-1. Update admin forms to use `{field}_attachment` instead of `{field}`
-2. Enable the feature flag:
-   ```bash
-   bin/rails active_storage_migration:enable_write
-   ```
+```bash
+bin/rails active_storage_migration:enable_write
+```
+
+All admin forms are already configured to conditionally use `{field}_attachment` when this flag is enabled. Model validations use the `{field}_present?` method which accepts uploads from either CarrierWave or ActiveStorage.
 
 ### Phase 7: Cleanup (After 1 Year)
 

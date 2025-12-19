@@ -19,5 +19,6 @@ class Slider < ApplicationRecord
     night_market: 2
   }
 
-  validates :image, :language, presence: true
+  validates :language, presence: true
+  validate { errors.add(:image, :blank) unless image_present? }
 end

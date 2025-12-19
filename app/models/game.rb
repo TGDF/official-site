@@ -12,7 +12,9 @@ class Game < ApplicationRecord
   has_migrated_upload :thumbnail, variants: ImageVariants::GAME_THUMBNAIL
 
   validates :name, :description, :team, presence: true
-  validates :thumbnail, presence: true, on: :create
+  validate on: :create do
+    errors.add(:thumbnail, :blank) unless thumbnail_present?
+  end
 
   default_scope -> { order(order: :asc) }
 end

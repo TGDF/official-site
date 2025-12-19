@@ -40,8 +40,12 @@
     </div>
     <div class="space-y-2">
       <%= f.label :thumbnail, class: 'text-sm font-medium text-gray-900' %>
-      <%= f.file_field :thumbnail, class: 'block w-full text-sm text-gray-900 mt-1' %>
-      <% if @game.thumbnail.present? %>
+      <% if Flipper.enabled?(:active_storage_write) %>
+        <%= f.file_field :thumbnail_attachment, class: 'block w-full text-sm text-gray-900 mt-1' %>
+      <% else %>
+        <%= f.file_field :thumbnail, class: 'block w-full text-sm text-gray-900 mt-1' %>
+      <% end %>
+      <% if @game.thumbnail_present? %>
         <div class="mt-2">
           <%= image_tag @game.thumbnail_url(:thumb), class: 'h-20 w-auto rounded-md' %>
           <div class="mt-2 flex items-center">

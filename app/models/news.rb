@@ -19,7 +19,8 @@ class News < ApplicationRecord
     deleted: 2
   }
 
-  validates :title, :content, :slug, :thumbnail, presence: true
+  validates :title, :content, :slug, presence: true
+  validate { errors.add(:thumbnail, :blank) unless thumbnail_present? }
   validates :slug, uniqueness: { scope: :site_id }
 
   scope :latest, -> { order(created_at: :desc) }

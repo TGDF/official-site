@@ -25,7 +25,11 @@
 
       <div class="space-y-2">
         <%= f.label :logo, class: 'text-sm font-medium text-gray-900' %>
-        <%= f.file_field :logo, class: 'mt-1 block w-full text-sm text-gray-900' %>
+        <% if Flipper.enabled?(:active_storage_write) %>
+          <%= f.file_field :logo_attachment, class: 'mt-1 block w-full text-sm text-gray-900' %>
+        <% else %>
+          <%= f.file_field :logo, class: 'mt-1 block w-full text-sm text-gray-900' %>
+        <% end %>
       </div>
 
       <% if @site.new_record? %>
@@ -46,7 +50,11 @@
 
       <div class="space-y-2">
         <%= f.label :figure, class: 'text-sm font-medium text-gray-900' %>
-        <%= f.file_field :figure, class: 'mt-1 block w-full text-sm text-gray-900' %>
+        <% if Flipper.enabled?(:active_storage_write) %>
+          <%= f.file_field :figure_attachment, class: 'mt-1 block w-full text-sm text-gray-900' %>
+        <% else %>
+          <%= f.file_field :figure, class: 'mt-1 block w-full text-sm text-gray-900' %>
+        <% end %>
       </div>
     </div>
 
