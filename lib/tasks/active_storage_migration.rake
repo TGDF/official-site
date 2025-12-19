@@ -225,31 +225,39 @@ namespace :active_storage_migration do
   end
 
   def verify_tenant_model(model:, field:, attachment:)
-    total = 0
-    with_carrierwave = 0
-    with_active_storage = 0
+    puts ""
+    puts "#{model.name}##{field}:"
+
+    grand_total = 0
+    grand_carrierwave = 0
+    grand_active_storage = 0
 
     Site.find_each do |site|
       Apartment::Tenant.switch(site.tenant_name) do
-        total += model.unscoped.count
-        with_carrierwave += model.unscoped.where.not(field => [ nil, "" ]).count
-        with_active_storage += count_active_storage_attachments(model, attachment)
+        total = model.unscoped.count
+        with_carrierwave = model.unscoped.where.not(field => [ nil, "" ]).count
+        with_active_storage = count_active_storage_attachments(model, attachment)
 
-        # Also count global records in this schema
-        total += model.unscoped.where(site_id: nil).count
-        with_carrierwave += model.unscoped.where(site_id: nil).where.not(field => [ nil, "" ]).count
+        next if total.zero?
+
+        grand_total += total
+        grand_carrierwave += with_carrierwave
+        grand_active_storage += with_active_storage
+
+        missing = with_carrierwave - with_active_storage
+        status = missing.zero? ? "OK" : "INCOMPLETE"
+
+        puts "  [#{site.tenant_name}] #{status} - Total: #{total}, CW: #{with_carrierwave}, AS: #{with_active_storage}" +
+             (missing.positive? ? ", Missing: #{missing}" : "")
       end
     end
 
-    missing = with_carrierwave - with_active_storage
-    status = missing.zero? ? "OK" : "INCOMPLETE"
+    grand_missing = grand_carrierwave - grand_active_storage
+    grand_status = grand_missing.zero? ? "OK" : "INCOMPLETE"
 
-    puts ""
-    puts "#{model.name}##{field}: #{status}"
-    puts "  Total records:      #{total}"
-    puts "  With CarrierWave:   #{with_carrierwave}"
-    puts "  With ActiveStorage: #{with_active_storage}"
-    puts "  Missing:            #{missing}" if missing.positive?
+    puts "  " + ("-" * 50)
+    puts "  TOTAL: #{grand_status} - Total: #{grand_total}, CW: #{grand_carrierwave}, AS: #{grand_active_storage}" +
+         (grand_missing.positive? ? ", Missing: #{grand_missing}" : "")
   end
 
   def verify_non_tenant_model(model:, field:, attachment:)
@@ -269,9 +277,9 @@ namespace :active_storage_migration do
   end
 
   def count_active_storage_attachments(model, attachment)
-    model.unscoped.joins("INNER JOIN active_storage_attachments ON " \
-      "active_storage_attachments.record_type = '#{model.name}' AND " \
-      "active_storage_attachments.record_id = #{model.table_name}.id AND " \
-      "active_storage_attachments.name = '#{attachment}'").count
+    model.unscoped.joins("INNER JOIN public.active_storage_attachments ON " \
+      "public.active_storage_attachments.record_type = '#{model.name}' AND " \
+      "public.active_storage_attachments.record_id = #{model.table_name}.id AND " \
+      "public.active_storage_attachments.name = '#{attachment}'").count
   end
 end
