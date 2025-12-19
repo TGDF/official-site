@@ -236,7 +236,7 @@ namespace :active_storage_migration do
       Apartment::Tenant.switch(site.tenant_name) do
         total = model.unscoped.count
         with_carrierwave = model.unscoped.where.not(field => [ nil, "" ]).count
-        with_active_storage = count_active_storage_attachments(model, attachment)
+        with_active_storage = count_migrated_attachments(model, field, attachment)
 
         next if total.zero?
 
@@ -263,7 +263,7 @@ namespace :active_storage_migration do
   def verify_non_tenant_model(model:, field:, attachment:)
     total = model.unscoped.count
     with_carrierwave = model.unscoped.where.not(field => [ nil, "" ]).count
-    with_active_storage = count_active_storage_attachments(model, attachment)
+    with_active_storage = count_migrated_attachments(model, field, attachment)
 
     missing = with_carrierwave - with_active_storage
     status = missing.zero? ? "OK" : "INCOMPLETE"
@@ -276,10 +276,21 @@ namespace :active_storage_migration do
     puts "  Missing:            #{missing}" if missing.positive?
   end
 
-  def count_active_storage_attachments(model, attachment)
-    model.unscoped.joins("INNER JOIN public.active_storage_attachments ON " \
-      "public.active_storage_attachments.record_type = '#{model.name}' AND " \
-      "public.active_storage_attachments.record_id = #{model.table_name}.id AND " \
-      "public.active_storage_attachments.name = '#{attachment}'").count
+  # Count attachments by verifying CarrierWave filename matches ActiveStorage blob
+  # This is necessary because ActiveStorage attachments in public schema can't
+  # distinguish between records with the same ID in different tenant schemas
+  def count_migrated_attachments(model, field, attachment)
+    count = 0
+    model.unscoped.where.not(field => [ nil, "" ]).find_each do |record|
+      next unless record.public_send(attachment).attached?
+
+      # Verify this attachment belongs to this record by comparing filenames
+      uploader = record.public_send(field)
+      cw_filename = File.basename(uploader.url.to_s).split("?").first rescue nil
+      as_filename = record.public_send(attachment).filename.to_s rescue nil
+
+      count += 1 if cw_filename.present? && cw_filename == as_filename
+    end
+    count
   end
 end
