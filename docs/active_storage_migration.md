@@ -66,6 +66,45 @@ config.excluded_models = %w[
 
 This ensures all tenants share the same ActiveStorage tables in the public PostgreSQL schema, making assets globally accessible while maintaining tenant association through the linked models.
 
+## Infrastructure Requirements
+
+### Image Processing: MiniMagick to vips
+
+CarrierWave uses **MiniMagick** (ImageMagick wrapper) for image processing. ActiveStorage in Rails 7+ defaults to **vips** for better performance and lower memory usage.
+
+| Library | Used By | Package (Alpine) |
+|---------|---------|------------------|
+| ImageMagick | CarrierWave (MiniMagick) | `imagemagick` |
+| libvips | ActiveStorage (ruby-vips) | `vips` |
+
+**Dockerfile changes required:**
+
+```dockerfile
+# Before (CarrierWave only)
+RUN apk add --no-cache ... imagemagick imagemagick-jpeg ...
+
+# After (both systems during migration)
+RUN apk add --no-cache ... imagemagick imagemagick-jpeg ... vips
+
+# Final (ActiveStorage only)
+RUN apk add --no-cache ... vips
+```
+
+**Why vips over MiniMagick?**
+- 4-8x faster for common operations
+- Uses less memory (streaming vs loading entire image)
+- Better quality for resizing operations
+- Native Rails 7+ default
+
+**Alternative (not recommended):** If you cannot install vips, you can configure ActiveStorage to use MiniMagick:
+
+```ruby
+# config/initializers/active_storage.rb
+Rails.application.config.active_storage.variant_processor = :mini_magick
+```
+
+This is only recommended as a temporary workaround, not a long-term solution.
+
 ## Implementation
 
 ### New Files
@@ -205,9 +244,10 @@ All admin forms are already configured to conditionally use `{field}_attachment`
 After the retention period:
 
 1. Remove CarrierWave uploaders and `mount_uploader` calls
-2. Remove `fog-aws` gem (keep `aws-sdk-s3`)
-3. Simplify `HasMigratedUpload` to remove fallback logic
-4. Delete old CarrierWave files from S3
+2. Remove gems: `carrierwave`, `fog-aws`, `mini_magick` (keep `aws-sdk-s3`)
+3. Remove ImageMagick from Dockerfile (keep only `vips`)
+4. Simplify `HasMigratedUpload` to remove fallback logic
+5. Delete old CarrierWave files from S3
 
 ## Rollback
 
@@ -285,3 +325,29 @@ If you see `Could not find feature "active_storage_read"`, run:
 ```bash
 bin/rails active_storage_migration:setup_flags
 ```
+
+### Vips Library Not Found
+
+If you see `LoadError: Could not open library 'vips.so.42'` or `Skipping image analysis because the ruby-vips isn't installed`:
+
+1. **Verify libvips is installed** in your Docker image or server:
+   ```bash
+   # Alpine Linux
+   apk add vips
+
+   # Debian/Ubuntu
+   apt-get install libvips42
+
+   # macOS
+   brew install vips
+   ```
+
+2. **Rebuild and redeploy** the Docker image after adding vips.
+
+3. **Temporary workaround** (not recommended for production):
+   ```ruby
+   # config/initializers/active_storage.rb
+   Rails.application.config.active_storage.variant_processor = :mini_magick
+   ```
+
+This error occurs because ActiveStorage uses vips by default for image variant processing, but the library isn't installed on the server.
