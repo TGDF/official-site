@@ -141,13 +141,13 @@ namespace :active_storage_migration do
     failed = 0
 
     scope.find_each do |record|
-      if record.public_send(attachment).attached?
+      uploader = record.public_send(field)
+      if uploader.blank? || uploader.url.blank?
         skipped += 1
         next
       end
 
-      uploader = record.public_send(field)
-      if uploader.blank? || uploader.url.blank?
+      if already_migrated?(record, field, attachment)
         skipped += 1
         next
       end
@@ -182,13 +182,13 @@ namespace :active_storage_migration do
     failed = 0
 
     scope.find_each do |record|
-      if record.public_send(attachment).attached?
+      uploader = record.public_send(field)
+      if uploader.blank? || uploader.url.blank?
         skipped += 1
         next
       end
 
-      uploader = record.public_send(field)
-      if uploader.blank? || uploader.url.blank?
+      if already_migrated?(record, field, attachment)
         skipped += 1
         next
       end
@@ -276,20 +276,24 @@ namespace :active_storage_migration do
     puts "  Missing:            #{missing}" if missing.positive?
   end
 
-  # Count attachments by verifying CarrierWave filename matches ActiveStorage blob
+  # Check if this specific record was already migrated by comparing filenames
   # This is necessary because ActiveStorage attachments in public schema can't
   # distinguish between records with the same ID in different tenant schemas
+  def already_migrated?(record, field, attachment)
+    return false unless record.public_send(attachment).attached?
+
+    uploader = record.public_send(field)
+    cw_filename = File.basename(uploader.url.to_s).split("?").first rescue nil
+    as_filename = record.public_send(attachment).filename.to_s rescue nil
+
+    cw_filename.present? && cw_filename == as_filename
+  end
+
+  # Count attachments by verifying CarrierWave filename matches ActiveStorage blob
   def count_migrated_attachments(model, field, attachment)
     count = 0
     model.unscoped.where.not(field => [ nil, "" ]).find_each do |record|
-      next unless record.public_send(attachment).attached?
-
-      # Verify this attachment belongs to this record by comparing filenames
-      uploader = record.public_send(field)
-      cw_filename = File.basename(uploader.url.to_s).split("?").first rescue nil
-      as_filename = record.public_send(attachment).filename.to_s rescue nil
-
-      count += 1 if cw_filename.present? && cw_filename == as_filename
+      count += 1 if already_migrated?(record, field, attachment)
     end
     count
   end
