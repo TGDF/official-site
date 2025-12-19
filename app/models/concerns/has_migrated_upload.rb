@@ -27,7 +27,7 @@ module HasMigratedUpload
 
       define_method(:"#{field}_present?") do
         attachment = public_send(attachment_name)
-        attachment.attached? || read_attribute(field).present?
+        attachment.attached? || public_send(field).identifier.present?
       end
     end
   end
@@ -47,7 +47,7 @@ module HasMigratedUpload
   def carrierwave_url_for(field, version)
     uploader = public_send(field)
 
-    if version && read_attribute(field).present?
+    if version && uploader.identifier.present?
       uploader.public_send(version).url
     else
       uploader.url
