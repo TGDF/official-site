@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+    <title>TGDF Admin</title>
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag 'https://use.fontawesome.com/b2e3e84e95.css', media: 'all' %>
+    <%= stylesheet_link_tag 'theme', media: 'all', 'data-turbo-track': 'reload' %>
+    <%= javascript_include_tag 'admin', 'data-turbo-track': 'reload', defer: true %>
+  </head>
+  <body class="min-h-screen flex items-center justify-center bg-gray-50 font-sans text-gray-900 antialiased">
+    <!-- Flash Messages -->
+    <% flash.each do |type, msg| %>
+      <%
+        case type.to_s
+        when 'alert'
+          bg_class = 'bg-red-50'
+          border_class = 'border-red-500'
+          text_class = 'text-red-800'
+          icon_class = 'text-red-500'
+          icon = 'fa-times-circle'
+        when 'notice'
+          bg_class = 'bg-green-50'
+          border_class = 'border-green-500'
+          text_class = 'text-green-800'
+          icon_class = 'text-green-500'
+          icon = 'fa-check-circle'
+        else
+          bg_class = 'bg-blue-50'
+          border_class = 'border-blue-500'
+          text_class = 'text-blue-800'
+          icon_class = 'text-blue-500'
+          icon = 'fa-info-circle'
+        end
+      %>
+      <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md" role="alert">
+        <div class="<%= bg_class %> <%= border_class %> border-l-4 p-4 flex items-center justify-between rounded-r-md shadow-md">
+          <div class="flex items-center space-x-3">
+            <i class="fa <%= icon %> w-5 h-5 <%= icon_class %>"></i>
+            <span class="<%= text_class %> font-medium text-sm"><%= msg %></span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <%= yield %>
+  </body>
+</html>

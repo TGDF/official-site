@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   include Previewable
   include NavigationItem
 
-  before_action :ensure_site_created!
+  before_action :ensure_site_created!, unless: :devise_controller?
   after_action :track_current_site
 
   protect_from_forgery
@@ -35,6 +35,12 @@ class ApplicationController < ActionController::Base
     return if current_site.domain == request.host
 
     redirect_to root_url(host: Settings.site.default_domain), allow_other_host: true
+  end
+
+  protected
+
+  def after_sign_in_path_for(resource)
+    stored_location_for(resource) || admin_root_path
   end
 
   private
