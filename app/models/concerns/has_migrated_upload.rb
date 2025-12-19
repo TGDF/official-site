@@ -29,6 +29,21 @@ module HasMigratedUpload
         attachment = public_send(attachment_name)
         attachment.attached? || read_attribute(field).present?
       end
+
+      # Override CarrierWave's store callback to skip S3 requests when file hasn't changed
+      define_method(:"store_#{field}!") do
+        attachment = public_send(attachment_name)
+
+        # Skip CarrierWave if ActiveStorage is managing this file
+        return if attachment.attached? && Flipper.enabled?(:active_storage_write)
+
+        # Skip if file wasn't changed (no new upload, no removal)
+        return unless previous_changes.key?(field.to_s) ||
+                      previous_changes.key?("#{field}_cache") ||
+                      send(:"remove_#{field}?")
+
+        super()
+      end
     end
   end
 
