@@ -107,19 +107,71 @@ namespace :active_storage_migration do
   def migrate_model(model:, field:, attachment:)
     puts "\nMigrating #{model.name}##{field}..."
 
-    if model.column_names.include?("site_id") || model.respond_to?(:acts_as_tenant?)
+    if model.column_names.include?("site_id") || model.respond_to?(:scoped_by_tenant?)
+      # Scenario 1: Tenant-scoped records (per-tenant data)
       Site.find_each do |site|
-        ActsAsTenant.with_tenant(site) do
-          migrate_records(model, field, attachment, tenant: site.tenant_name)
+        Apartment::Tenant.switch(site.tenant_name) do
+          ActsAsTenant.with_tenant(site) do
+            migrate_records(model, field, attachment, tenant: site.tenant_name)
+          end
         end
       end
 
-      ActsAsTenant.without_tenant do
-        migrate_records(model, field, attachment, tenant: "global")
+      # Scenario 2: Global records (site_id IS NULL, but exist in tenant schemas)
+      Site.find_each do |site|
+        Apartment::Tenant.switch(site.tenant_name) do
+          ActsAsTenant.without_tenant do
+            migrate_global_records(model, field, attachment, tenant: "#{site.tenant_name}/global")
+          end
+        end
       end
     else
+      # Scenario 3: Non-tenant models (Site itself - in public schema)
       migrate_records(model, field, attachment, tenant: nil)
     end
+  end
+
+  def migrate_global_records(model, field, attachment, tenant:)
+    scope = model.unscoped.where(site_id: nil)
+    total = scope.count
+    return if total.zero?
+
+    migrated = 0
+    skipped = 0
+    failed = 0
+
+    scope.find_each do |record|
+      if record.public_send(attachment).attached?
+        skipped += 1
+        next
+      end
+
+      uploader = record.public_send(field)
+      if uploader.blank? || uploader.url.blank?
+        skipped += 1
+        next
+      end
+
+      begin
+        url = uploader.url
+        filename = File.basename(url).split("?").first
+        content_type = Marcel::MimeType.for(name: filename)
+
+        record.public_send(attachment).attach(
+          io: URI.open(url),
+          filename: filename,
+          content_type: content_type
+        )
+
+        migrated += 1
+        print "."
+      rescue StandardError => e
+        failed += 1
+        puts "\n  ERROR: #{model.name}##{record.id}: #{e.message}"
+      end
+    end
+
+    puts "\n  #{model.name} (#{tenant}): #{migrated} migrated, #{skipped} skipped, #{failed} failed" if migrated.positive? || failed.positive?
   end
 
   def migrate_records(model, field, attachment, tenant:)
@@ -165,12 +217,29 @@ namespace :active_storage_migration do
   end
 
   def verify_model(model:, field:, attachment:)
-    total = model.unscoped.count
-    with_carrierwave = model.unscoped.where.not(field => [ nil, "" ]).count
-    with_active_storage = model.unscoped.joins("INNER JOIN active_storage_attachments ON " \
-      "active_storage_attachments.record_type = '#{model.name}' AND " \
-      "active_storage_attachments.record_id = #{model.table_name}.id AND " \
-      "active_storage_attachments.name = '#{attachment}'").count
+    if model.column_names.include?("site_id") || model.respond_to?(:scoped_by_tenant?)
+      verify_tenant_model(model: model, field: field, attachment: attachment)
+    else
+      verify_non_tenant_model(model: model, field: field, attachment: attachment)
+    end
+  end
+
+  def verify_tenant_model(model:, field:, attachment:)
+    total = 0
+    with_carrierwave = 0
+    with_active_storage = 0
+
+    Site.find_each do |site|
+      Apartment::Tenant.switch(site.tenant_name) do
+        total += model.unscoped.count
+        with_carrierwave += model.unscoped.where.not(field => [ nil, "" ]).count
+        with_active_storage += count_active_storage_attachments(model, attachment)
+
+        # Also count global records in this schema
+        total += model.unscoped.where(site_id: nil).count
+        with_carrierwave += model.unscoped.where(site_id: nil).where.not(field => [ nil, "" ]).count
+      end
+    end
 
     missing = with_carrierwave - with_active_storage
     status = missing.zero? ? "OK" : "INCOMPLETE"
@@ -181,5 +250,28 @@ namespace :active_storage_migration do
     puts "  With CarrierWave:   #{with_carrierwave}"
     puts "  With ActiveStorage: #{with_active_storage}"
     puts "  Missing:            #{missing}" if missing.positive?
+  end
+
+  def verify_non_tenant_model(model:, field:, attachment:)
+    total = model.unscoped.count
+    with_carrierwave = model.unscoped.where.not(field => [ nil, "" ]).count
+    with_active_storage = count_active_storage_attachments(model, attachment)
+
+    missing = with_carrierwave - with_active_storage
+    status = missing.zero? ? "OK" : "INCOMPLETE"
+
+    puts ""
+    puts "#{model.name}##{field}: #{status}"
+    puts "  Total records:      #{total}"
+    puts "  With CarrierWave:   #{with_carrierwave}"
+    puts "  With ActiveStorage: #{with_active_storage}"
+    puts "  Missing:            #{missing}" if missing.positive?
+  end
+
+  def count_active_storage_attachments(model, attachment)
+    model.unscoped.joins("INNER JOIN active_storage_attachments ON " \
+      "active_storage_attachments.record_type = '#{model.name}' AND " \
+      "active_storage_attachments.record_id = #{model.table_name}.id AND " \
+      "active_storage_attachments.name = '#{attachment}'").count
   end
 end

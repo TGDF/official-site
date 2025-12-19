@@ -189,6 +189,11 @@ The migration:
 - Attaches it to ActiveStorage
 - Logs progress and errors
 
+**Multi-Tenancy Support:** The migration properly handles both Apartment (schema-based) and ActsAsTenant (column-based) multi-tenancy:
+- **Tenant-scoped models** (News, Speaker, etc.): Iterates through all tenant schemas
+- **Global records** (`site_id = NULL`): Processed in each tenant schema separately
+- **Non-tenant models** (Site): Processed in public schema
+
 **Safe to re-run:** You can run the migration multiple times. It will only process records that haven't been migrated yet.
 
 ### Phase 4: Verify Migration
