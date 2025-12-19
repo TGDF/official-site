@@ -2,6 +2,7 @@
 
 class News < ApplicationRecord
   extend FriendlyId
+  include HasMigratedUpload
 
   acts_as_tenant :site, optional: true, has_global_records: true
   belongs_to :author, polymorphic: true
@@ -10,6 +11,7 @@ class News < ApplicationRecord
   friendly_id :title, use: :slugged
 
   mount_uploader :thumbnail, ThumbnailUploader
+  has_migrated_upload :thumbnail, variants: ImageVariants::NEWS_THUMBNAIL
 
   enum :status, {
     draft: 0,

@@ -2,9 +2,11 @@
 
 class Slider < ApplicationRecord
   include HasTranslation
+  include HasMigratedUpload
 
   acts_as_tenant :site, optional: true, has_global_records: true
   mount_uploader :image, SliderUploader
+  has_migrated_upload :image, variants: ImageVariants::SLIDER
 
   enum :language, {
     'zh-TW': 0,

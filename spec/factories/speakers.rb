@@ -10,5 +10,13 @@ FactoryBot.define do
         'image/jpeg'
       )
     end
+
+    trait :without_avatar do
+      avatar { nil }
+
+      to_create do |instance|
+        instance.save(validate: false)
+      end
+    end
   end
 end

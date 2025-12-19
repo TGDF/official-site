@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Partner < ApplicationRecord
+  include HasMigratedUpload
+
   acts_as_tenant :site, optional: true, has_global_records: true
 
   belongs_to :type, class_name: "PartnerType", inverse_of: nil
@@ -9,6 +11,7 @@ class Partner < ApplicationRecord
   translates :description
 
   mount_uploader :logo, LogoUploader
+  has_migrated_upload :logo, variants: ImageVariants::LOGO
 
   validates :name, :logo, presence: true
 

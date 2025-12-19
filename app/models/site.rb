@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
 class Site < ApplicationRecord
+  include HasMigratedUpload
+
   translates :name, :description, :indie_space_description
 
   mount_uploader :logo, SiteLogoUploader
   mount_uploader :figure, SiteFigureUploader
+
+  has_migrated_upload :logo, variants: ImageVariants::SITE_LOGO
+  has_migrated_upload :figure, variants: ImageVariants::SITE_FIGURE
 
   SiteOption.each do |option|
     store_attribute :options, option[:name], option[:type]
