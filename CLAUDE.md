@@ -58,7 +58,7 @@ This Rails 8.1.1 application powers conference/gaming event websites (TGDF - Tai
 - **File Uploads**: CarrierWave + ImageMagick
 - **Internationalization**: Mobility gem with zh-TW/en locales
 - **Authentication**: Devise for admin users
-- **View Layer**: ERB templates + ViewComponent (migrating from Slim)
+- **View Layer**: ERB templates + ViewComponent
 - **Functional patterns**: dry-monads, dry-transaction for business logic
 
 ### Key Patterns
@@ -82,15 +82,13 @@ end
 
 **STI Pattern**: Game models use Single Table Inheritance (`IndieSpace::Game`, `NightMarket::Game`)
 
-**Feature Flags**: Flipper for admin UI variants and feature toggles
+**Feature Flags**: Flipper for feature toggles
 
 ### Admin Interface
 
-**Dual Admin System** (controlled by Flipper feature flags):
-- **V1**: CoreUI-based interface (`.erb` or `.html+v1.slim` templates)
-- **V2**: TailwindCSS 4.0-based interface (`.html+v2.erb` templates)
+The admin interface uses TailwindCSS 4.0 with ERB templates.
 
-Use `docs/ADMIN_UI_COMPONENTS.md` as the design system for V2 admin components.
+Use `docs/ADMIN_UI_COMPONENTS.md` as the design system for admin components.
 
 **Font Awesome 4.x**: Use `fa fa-*` class format (not `fas fa-*`). Reference https://fontawesome.com/v4/icons/
 
@@ -109,12 +107,11 @@ Use `docs/ADMIN_UI_COMPONENTS.md` as the design system for V2 admin components.
 - `app/components/` - ViewComponent-based UI components (test in `spec/components/`, preview at `/lookbook` in dev)
 - `app/uploaders/` - CarrierWave file upload configurations
 - `lib/middleware/full_host_elevators.rb` - Domain-to-tenant routing
-- `docs/ADMIN_UI_COMPONENTS.md` - Admin V2 design system
+- `docs/ADMIN_UI_COMPONENTS.md` - Admin design system
 
 ### Development Notes
 
-- **Template preference**: Use ERB + ViewComponent for new features (migrating from Slim)
-- **Admin V2 templates**: Use `.html+v2.erb` extension
+- **Template preference**: Use ERB + ViewComponent for new features
 - **Translations**: Use Mobility for content models, `HasTranslation` concern for language-scoped models
 - **Testing multi-tenancy**: `spec/support/apartment.rb` handles tenant switching in tests
 - **Code style**: Run `bundle exec rubocop -A` to auto-fix before manual corrections

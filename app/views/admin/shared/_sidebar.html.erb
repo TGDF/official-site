@@ -111,11 +111,6 @@
 
   <!-- Sidebar Footer -->
   <div class="px-3 py-3 border-t border-gray-200 space-y-0.5 shrink-0">
-    <%= link_to admin_feature_toggle_path(feature: 'admin_v1_legacy'), method: :patch, data: { turbo_method: :patch },
-                class: "flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md cursor-pointer" do %>
-      <i class="fa <%= admin_v1_legacy_enabled? ? 'fa-toggle-on' : 'fa-toggle-off' %> w-4 h-4"></i>
-      <span class="text-sm"><%= admin_v1_legacy_enabled? ? 'Disable Legacy UI' : 'Enable Legacy UI' %></span>
-    <% end %>
     <div class="flex items-center gap-2.5 px-2.5 py-1.5 text-gray-600">
       <i class="fa fa-info-circle w-4 h-4"></i>
       <span class="text-sm">Version <%= ENV['REVISION'] || 'dev' %></span>
