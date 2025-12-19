@@ -1,9 +1,0 @@
-<tr>
-  <td><%= plan.id %></td>
-  <td><%= plan.name %></td>
-  <td>
-    <div class="d-flex align-items-start">
-      <%= link_to t('.edit'), edit_admin_plan_path(plan), class: 'btn btn-primary' %>
-      <%= button_to t('.destroy'), admin_plan_path(plan), class: 'btn btn-danger', method: :delete, data: { confirm: t('shared.destroy_confirm') } %>
-    </div>
-</tr>

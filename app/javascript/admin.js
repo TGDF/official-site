@@ -8,10 +8,6 @@ import { Application } from "@hotwired/stimulus"
 import SidebarController from "../assets/javascripts/controllers/sidebar_controller"
 import FlashMessageController from "../assets/javascripts/controllers/flash_message_controller"
 
-// Core UI
-import "@coreui/coreui/dist/css/coreui.min.css"
-import { Sidebar } from "@coreui/coreui"
-
 // Initialize Stimulus
 const application = Application.start()
 application.register("sidebar", SidebarController)
@@ -41,14 +37,4 @@ const destroyCKEditors = () => {
 
 document.addEventListener("turbo:load", () => {
   setupCKEditors();
-  Array.from(document.querySelectorAll(".c-sidebar")).forEach(element => {
-    Sidebar._sidebarInterface(element);
-  });
-});
-
-document.addEventListener("turbo:before-cache", () => {
-  // destroyCKEditors();
-  Array.from(document.querySelectorAll(".c-sidebar")).forEach(element => {
-    Sidebar._sidebarInterface(element);
-  });
 });
