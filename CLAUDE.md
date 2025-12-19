@@ -8,19 +8,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `./bin/setup` - Complete setup script for development environment
 - `yarn install` - Install JavaScript dependencies
 - `bundle exec overcommit --install` - Setup git hooks for code quality
+- **Requires**: ImageMagick installed for CarrierWave image processing
 
 ### Development Server
 - `./bin/dev` - Start all development processes (Rails server, CSS/JS builders)
 - Individual processes: `bin/rails server`, `yarn build:css --watch`, `yarn build --watch`
 
 ### Testing
-- `bundle exec rspec` - Run RSpec test suite
+- `bundle exec rspec` - Run full RSpec test suite
+- `bundle exec rspec spec/path/to/file_spec.rb` - Run single spec file
+- `bundle exec rspec spec/path/to/file_spec.rb:42` - Run specific test at line 42
 - `bundle exec cucumber` - Run Cucumber feature tests (BDD)
 - `bundle exec rspec spec/components/` - Run ViewComponent tests
 - `bundle exec rake coverage` - Generate test coverage report
 
 ### Code Quality and Linting
-- `bundle exec rubocop` - Ruby linting (configured via .overcommit.yml)
+- `bundle exec rubocop` - Ruby linting
 - `bundle exec rubocop -A` - Auto-fix correctable Ruby style issues
 - `bundle exec brakeman` - Security analysis
 - Git hooks automatically run linting on commit/push via overcommit
@@ -28,102 +31,90 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Database
 - `bin/rails db:migrate` - Run migrations
 - `bin/rails db:seed` - Seed database
-- Multi-tenant migrations handled via acts_as_tenant (migrating from Apartment gem)
-
-### TailwindCSS 4.0 Configuration
-- **CSS Configuration**: `app/assets/stylesheets/theme.css` - CSS-based theme configuration with @theme directive
-- **Build Command**: `yarn build:css` or `npm run build:css` - Compile TailwindCSS
-- **Watch Mode**: `yarn build:css --watch` - Auto-rebuild CSS on changes
-- **Content Detection**: Uses @source directives for Rails views, components, and JavaScript files
-- **No Config File**: TailwindCSS 4.0 uses CSS-based configuration, no tailwind.config.js needed
 
 ## Architecture Overview
 
 ### Multi-Tenant SaaS Platform
-This Rails application powers conference/gaming event websites with a sophisticated multi-tenant architecture:
+This Rails 8.1.1 application powers conference/gaming event websites (TGDF - Taipei Game Developer Forum) with multi-tenant architecture:
 
-**Tenant System (migrating from Apartment to acts_as_tenant)**:
+**Tenant System (dual implementation during migration)**:
+- **Apartment gem**: PostgreSQL schema-based isolation (original implementation)
+- **acts_as_tenant gem**: Column-based isolation (migration target)
 - Each `Site` model represents a tenant with isolated data
-- Tenants switch based on domain/subdomain routing
-- Global admin interface at `/admin` for tenant management
-- Tenant-specific admin at `/admin` for content management
-- **Migration in progress**: Replacing `ros-apartment` gem with `acts_as_tenant` for simpler multi-tenancy
+- Tenants switch based on domain via `Middleware::FullHostElevators`
+- Models use `acts_as_tenant :site, optional: true, has_global_records: true`
 
 **Core Domain Models**:
 - **Event Management**: `Agenda` → `Speaker` → `Room`/`AgendaTime` with multi-language support
 - **Gaming Content**: `Game` with STI variants (`IndieSpace::Game`, `NightMarket::Game`)
 - **Partnerships**: `Partner`/`PartnerType` and `Sponsor`/`SponsorLevel` hierarchies
 - **CMS**: `News`, `Block`, `Slider`, `Plan` for dynamic content
+- **Configuration**: `Site` with `SiteOption` for dynamic settings via `store_attribute`
 
 ### Technology Stack
 
-**Backend**: Rails 8.0.2 + Ruby 3.3.0 + PostgreSQL
-**Frontend**: Turbo + Stimulus + TailwindCSS 4.0 + esbuild
-**File Uploads**: CarrierWave + ImageMagick (required dependency)
-**Internationalization**: Mobility gem with zh-TW/en locales
-**Authentication**: Devise for admin users
-**View Layer**: ERB templates + ViewComponent architecture (migrating from Slim)
+- **Backend**: Rails 8.1.1 + Ruby 3.3.0 + PostgreSQL
+- **Frontend**: Turbo + Stimulus + TailwindCSS 4.0 + esbuild
+- **File Uploads**: CarrierWave + ImageMagick
+- **Internationalization**: Mobility gem with zh-TW/en locales
+- **Authentication**: Devise for admin users
+- **View Layer**: ERB templates + ViewComponent (migrating from Slim)
+- **Functional patterns**: dry-monads, dry-transaction for business logic
 
-### Key Architectural Patterns
+### Key Patterns
 
-**Multi-tenancy**: Most models use `acts_as_tenant :site` with global record support
-**i18n**: Mobility-powered translations in most content models
-**ViewComponents**: Reusable UI components in `app/components/`
-**STI Pattern**: Game models use Single Table Inheritance
-**Feature Flags**: Flipper integration for admin UI variants
+**Multi-tenancy**: Models use `acts_as_tenant :site` - always verify tenant context when working with data
+
+**i18n with Mobility**:
+```ruby
+class News < ApplicationRecord
+  translates :title, :content  # Creates translation records per locale
+end
+```
+
+**HasTranslation concern**: For models with language enum instead of Mobility:
+```ruby
+class Block < ApplicationRecord
+  include HasTranslation
+  enum :language, { 'zh-TW': "zh-TW", en: "en" }
+end
+```
+
+**STI Pattern**: Game models use Single Table Inheritance (`IndieSpace::Game`, `NightMarket::Game`)
+
+**Feature Flags**: Flipper for admin UI variants and feature toggles
+
+### Admin Interface
+
+**Dual Admin System** (controlled by Flipper feature flags):
+- **V1**: CoreUI-based interface (`.erb` or `.html+v1.slim` templates)
+- **V2**: TailwindCSS 4.0-based interface (`.html+v2.erb` templates)
+
+Use `docs/ADMIN_UI_COMPONENTS.md` as the design system for V2 admin components.
+
+**Font Awesome 4.x**: Use `fa fa-*` class format (not `fas fa-*`). Reference https://fontawesome.com/v4/icons/
+
+**Stimulus Controllers**: Register in `app/javascript/admin.js`, place in `app/assets/javascripts/controllers/`
+
+**Sidebar Active State**: `admin_v2_sidebar_treeview` helper auto-expands parent menus when child items are active
+
+### TailwindCSS 4.0
+
+- **Configuration**: `app/assets/stylesheets/theme.css` (CSS-based with `@theme` directive)
+- **Build**: `yarn build:css` or watch with `yarn build:css --watch`
+- **No tailwind.config.js**: TailwindCSS 4.0 uses CSS-based configuration
 
 ### File Structure
 
-**Components**: `app/components/` - ViewComponent-based UI components
-**Admin Interface**: Migrating from Slim templates to ERB with ViewComponent (use `.html+v2.erb` for new templates)
-**Multi-language Routes**: Scoped by `/:lang` parameter
-**Asset Pipeline**: esbuild + TailwindCSS 4.0 with CSS-based configuration and watch processes
+- `app/components/` - ViewComponent-based UI components (test in `spec/components/`, preview at `/lookbook` in dev)
+- `app/uploaders/` - CarrierWave file upload configurations
+- `lib/middleware/full_host_elevators.rb` - Domain-to-tenant routing
+- `docs/ADMIN_UI_COMPONENTS.md` - Admin V2 design system
 
 ### Development Notes
 
-**Template Migration**: Actively migrating from Slim to ERB with ViewComponent architecture (prefer ERB+ViewComponent for new features)
-**Multi-tenancy Migration**: Transitioning from ros-apartment gem to acts_as_tenant for simplified tenant management
-**Tenant Context**: Always verify current tenant context when working with data
-**Translations**: Use `HasTranslation` concern for i18n-enabled models
-**View Components**: Test components in `spec/components/` and preview with Lookbook (dev only)
-**Git Workflow**: Overcommit enforces RuboCop standards and runs Brakeman security checks
-**Code Style**: Use `bundle exec rubocop -A` to auto-fix style issues before manual corrections
-
-### Admin Interface Implementation
-
-**Admin V2 System**: The admin interface has two variants controlled by feature flags
-- V1: Original CoreUI-based interface (`.erb` templates)
-- V2: TailwindCSS 4.0-based interface (`.html+v2.erb` templates) following `docs/ADMIN_UI_COMPONENTS.md`
-
-**Font Awesome Integration**: Uses Font Awesome 4.x via CDN (`https://use.fontawesome.com/`)
-- Use `fa fa-*` class format (not `fas fa-*`)
-- Icon compatibility: Some FA5+ icons need FA4 equivalents (e.g., `fa-tachometer-alt` → `fa-tachometer`)
-- Refer to https://fontawesome.com/v4/icons/ for available icons
-
-**Stimulus Controllers**: Interactive components use Stimulus.js
-- Register controllers in `app/javascript/admin.js`
-- Place controllers in `app/assets/javascripts/controllers/`
-- Use semantic naming (e.g., `sidebar_controller.js` for sidebar functionality)
-
-**UI Documentation**: `docs/ADMIN_UI_COMPONENTS.md` serves as the design system
-- All V2 admin components must follow documented patterns
-- Includes comprehensive examples for sidebar, cards, forms, tables, etc.
-- Updated to reflect Font Awesome 4 compatibility
-
-**Accessibility**: Admin interface includes proper ARIA attributes
-- Use `aria-expanded` and `aria-controls` for collapsible sections
-- Include `role` attributes for semantic structure
-- Ensure keyboard navigation support
-
-**Sidebar Implementation**: Both V1 and V2 sidebars support active state detection
-- V1: Uses `admin_sidebar_treeview` helper with automatic `c-show` class for expanded parents
-- V2: Uses `admin_v2_sidebar_treeview` helper that detects active children and auto-expands
-- Active detection: `current_admin_path_under?` method matches current path with menu items
-- Parent expansion: Automatically opens parent menu when any child item is active
-
-### Testing Strategy
-
-**RSpec**: Model and feature tests with FactoryBot fixtures
-**Cucumber**: BDD acceptance tests for user flows
-**ViewComponent**: Dedicated component testing
-**Multi-tenant Testing**: acts_as_tenant handles tenant switching in tests (migrated from Apartment gem)
+- **Template preference**: Use ERB + ViewComponent for new features (migrating from Slim)
+- **Admin V2 templates**: Use `.html+v2.erb` extension
+- **Translations**: Use Mobility for content models, `HasTranslation` concern for language-scoped models
+- **Testing multi-tenancy**: `spec/support/apartment.rb` handles tenant switching in tests
+- **Code style**: Run `bundle exec rubocop -A` to auto-fix before manual corrections
