@@ -50,6 +50,55 @@ jobs:
         container-name: web
         image: ${{ inputs.image }}
 
+    - name: Register task definition for migration
+      id: register-task-def
+      run: |
+        jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
+          ${{ steps.task-def.outputs.task-definition }} > migration-task-def.json
+        TASK_DEF_ARN=$(aws ecs register-task-definition \
+          --cli-input-json file://migration-task-def.json \
+          --query 'taskDefinition.taskDefinitionArn' --output text)
+        echo "task-definition-arn=$TASK_DEF_ARN" >> $GITHUB_OUTPUT
+
+    - name: Get network configuration from service
+      id: network-config
+      run: |
+        NETWORK_CONFIG=$(aws ecs describe-services \
+          --cluster ${{ secrets.DEPLOY_CLUSTER }} \
+          --services ${{ secrets.DEPLOY_SERVICE }} \
+          --query 'services[0].networkConfiguration' \
+          --output json)
+        echo "network-config=$NETWORK_CONFIG" >> $GITHUB_OUTPUT
+
+    - name: Run database migrations
+      timeout-minutes: 10
+      run: |
+        TASK_ARN=$(aws ecs run-task \
+          --cluster ${{ secrets.DEPLOY_CLUSTER }} \
+          --task-definition ${{ steps.register-task-def.outputs.task-definition-arn }} \
+          --launch-type FARGATE \
+          --network-configuration '${{ steps.network-config.outputs.network-config }}' \
+          --overrides '{
+            "containerOverrides": [{
+              "name": "web",
+              "command": ["migrate"],
+              "environment": [{"name": "AUTO_MIGRATION", "value": "no"}]
+            }]
+          }' \
+          --query 'tasks[0].taskArn' --output text)
+
+        echo "Migration task: $TASK_ARN"
+        aws ecs wait tasks-stopped --cluster ${{ secrets.DEPLOY_CLUSTER }} --tasks $TASK_ARN
+
+        EXIT_CODE=$(aws ecs describe-tasks \
+          --cluster ${{ secrets.DEPLOY_CLUSTER }} --tasks $TASK_ARN \
+          --query 'tasks[0].containers[0].exitCode' --output text)
+
+        if [ "$EXIT_CODE" != "0" ]; then
+          echo "::error::Migration failed with exit code $EXIT_CODE"
+          exit 1
+        fi
+
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v2
       with:
