@@ -135,15 +135,67 @@ This is only recommended as a temporary workaround, not a long-term solution.
 
 **Note:** CarrierWave URL generation delegates directly to the uploader without file existence checks, matching CarrierWave's native `_url` method behavior.
 
-### Test Plan
+### Test Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| CarrierWave file exists, flags disabled | Shows CarrierWave image |
-| CarrierWave file missing, flags disabled | Shows broken image or default |
-| ActiveStorage attached, `read` enabled | Shows ActiveStorage image |
-| ActiveStorage not attached, `read` enabled | Falls back to CarrierWave |
-| New upload with `write` enabled | Saves to ActiveStorage, serves from ActiveStorage |
+#### URL Generation Tests
+
+| ID | Input | Expected Output | Status |
+|----|-------|-----------------|--------|
+| TC-001 | CarrierWave file exists, both flags disabled | CarrierWave URL | ✅ Covered |
+| TC-002 | CarrierWave file exists, version requested, flags disabled | CarrierWave version URL | ✅ Covered |
+| TC-003 | ActiveStorage attached, read flag enabled | ActiveStorage URL | ✅ Covered |
+| TC-004 | ActiveStorage attached, version requested, read flag enabled | ActiveStorage variant URL | ✅ Covered |
+| TC-005 | No ActiveStorage, read flag enabled | CarrierWave URL (fallback) | ✅ Covered |
+| TC-006 | ActiveStorage attached, write flag enabled | ActiveStorage URL | ✅ Covered |
+| TC-007 | No ActiveStorage, write flag enabled | CarrierWave URL (fallback) | ✅ Covered |
+
+#### Presence Check Tests
+
+| ID | Input | Expected Output | Status |
+|----|-------|-----------------|--------|
+| TC-008 | CarrierWave file only | true | ✅ Covered |
+| TC-009 | ActiveStorage attachment only | true | ✅ Covered |
+| TC-010 | Neither file exists | false | ✅ Covered |
+| TC-011 | Both files exist | true | ✅ Covered |
+
+#### Read Scenarios (Feature Tests)
+
+| ID | Input | Expected Output | Status |
+|----|-------|-----------------|--------|
+| TC-012 | Speaker avatar, read disabled | CarrierWave URL served | ✅ Covered |
+| TC-013 | Speaker avatar, read enabled | ActiveStorage URL served | ✅ Covered |
+| TC-014 | Site logo, no file | Default URL | ✅ Covered |
+| TC-015 | News thumbnail, read disabled | CarrierWave URL served | ✅ Covered |
+| TC-016 | News thumbnail, read enabled | ActiveStorage URL served | ✅ Covered |
+| TC-017 | Sponsor logo, read disabled | CarrierWave URL served | ✅ Covered |
+| TC-018 | Sponsor logo, read enabled | ActiveStorage URL served | ✅ Covered |
+| TC-019 | Partner logo, read disabled | CarrierWave URL served | ✅ Covered |
+| TC-020 | Partner logo, read enabled | ActiveStorage URL served | ✅ Covered |
+| TC-021 | Slider image, read disabled | CarrierWave URL served | ✅ Covered |
+| TC-022 | Slider image, read enabled | ActiveStorage URL served | ✅ Covered |
+| TC-023 | Game thumbnail, read disabled | CarrierWave URL served | ✅ Covered |
+| TC-024 | Game thumbnail, read enabled | ActiveStorage URL served | ✅ Covered |
+
+#### Write Scenarios (Feature Tests)
+
+| ID | Input | Expected Output | Status |
+|----|-------|-----------------|--------|
+| TC-025 | Admin uploads Speaker avatar, write enabled | Saved to ActiveStorage | ✅ Covered |
+| TC-026 | ActiveStorage file exists, read disabled | ActiveStorage URL served | ✅ Covered |
+| TC-027 | CarrierWave file only, write enabled | CarrierWave URL served | ✅ Covered |
+| TC-028 | Admin uploads Sponsor logo, write enabled | Saved to ActiveStorage | ✅ Covered |
+| TC-029 | Admin uploads News thumbnail, write enabled | Saved to ActiveStorage | ✅ Covered |
+| TC-030 | Admin uploads Slider image, write enabled | Saved to ActiveStorage | ✅ Covered |
+| TC-031 | Admin uploads Game thumbnail, write enabled | Saved to ActiveStorage | ✅ Covered |
+| TC-032 | Admin uploads Site logo, write enabled | Saved to ActiveStorage | ❌ Skipped (public tenant) |
+
+#### Not Covered
+
+| ID | Input | Expected Output | Status |
+|----|-------|-----------------|--------|
+| TC-033 | Image variant generation | Processed variant returned | ❌ Not Covered |
+| TC-034 | Migration task verification | Files copied correctly | ❌ Not Covered |
+| TC-035 | Filename collision detection | No duplicate attachments | ❌ Not Covered |
 
 ### Feature Flags
 
@@ -310,120 +362,3 @@ bin/rails active_storage_migration:migrate        # Copy all files
 bin/rails active_storage_migration:migrate MODEL=Speaker  # Copy specific model
 bin/rails active_storage_migration:verify         # Check migration completeness
 ```
-
-## Troubleshooting
-
-### "Nil location provided" Error
-
-If you see `ArgumentError: Nil location provided. Can't build URI.` in views, it means:
-- A `_url` method returned something `image_tag` can't handle
-- Check if the uploader has a `default_url` method
-- Verify the `HasMigratedUpload` concern is correctly falling back
-
-### Missing Variants
-
-ActiveStorage generates variants on-demand. First request for a variant may be slow.
-
-To pre-generate variants:
-```ruby
-News.find_each do |news|
-  next unless news.thumbnail_attachment.attached?
-  ImageVariants::NEWS_THUMBNAIL.each do |name, options|
-    news.thumbnail_attachment.variant(options).processed
-  end
-end
-```
-
-### N+1 Queries
-
-When loading multiple records with attachments, use eager loading to prevent N+1 queries.
-
-**Attachment Naming Pattern:**
-`has_migrated_upload :field` creates `has_one_attached :{field}_attachment`
-
-| Model | Field | Eager Loading Scope |
-|-------|-------|---------------------|
-| News | thumbnail | `with_attached_thumbnail_attachment` |
-| Speaker | avatar | `with_attached_avatar_attachment` |
-| Partner | logo | `with_attached_logo_attachment` |
-| Sponsor | logo | `with_attached_logo_attachment` |
-| Slider | image | `with_attached_image_attachment` |
-| Game | thumbnail | `with_attached_thumbnail_attachment` |
-| Site | logo, figure | `with_attached_logo_attachment`, `with_attached_figure_attachment` |
-| Attachment | file | N/A (uses permalinks in content) |
-
-**Note:** `Attachment` files are embedded as permalinks in content and not rendered directly, so eager loading is not needed.
-
-**Controllers with eager loading applied:**
-
-| Controller | Action | Models |
-|------------|--------|--------|
-| `PagesController` | index | News, Slider, Partner, Sponsor |
-| `NewsController` | index, show | News |
-| `SpeakersController` | index | Speaker |
-| `SponsorsController` | index | Sponsor, Partner (nested) |
-| `IndieSpacesController` | index | Slider, Game |
-| `NightMarketController` | index | Slider, Game |
-| `Admin::SlidersController` | index | Slider |
-
-**Basic usage:**
-```ruby
-# Before
-Speaker.all
-
-# After
-Speaker.with_attached_avatar_attachment
-```
-
-**Chaining with scopes:**
-```ruby
-# Before
-News.published.latest.limit(10)
-
-# After
-News.published.latest.with_attached_thumbnail_attachment.limit(10)
-```
-
-**Nested eager loading (for associations):**
-```ruby
-# Before
-SponsorLevel.includes(:sponsors)
-
-# After - include attachment through nested hash
-SponsorLevel.includes(sponsors: { logo_attachment_attachment: :blob })
-```
-
-**Note:** The nested include uses `{attachment}_attachment` (double suffix) because ActiveStorage creates an association named `{name}_attachment` for `has_one_attached :name`.
-
-### Feature Flag Not Found
-
-If you see `Could not find feature "active_storage_read"`, run:
-```bash
-bin/rails active_storage_migration:setup_flags
-```
-
-### Vips Library Not Found
-
-If you see `LoadError: Could not open library 'vips.so.42'` or `Skipping image analysis because the ruby-vips isn't installed`:
-
-1. **Verify libvips is installed** in your Docker image or server:
-   ```bash
-   # Alpine Linux
-   apk add vips
-
-   # Debian/Ubuntu
-   apt-get install libvips42
-
-   # macOS
-   brew install vips
-   ```
-
-2. **Rebuild and redeploy** the Docker image after adding vips.
-
-3. **Temporary workaround** (not recommended for production):
-   ```ruby
-   # config/initializers/active_storage.rb
-   Rails.application.config.active_storage.variant_processor = :mini_magick
-   ```
-
-This error occurs because ActiveStorage uses vips by default for image variant processing, but the library isn't installed on the server.
