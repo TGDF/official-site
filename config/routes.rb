@@ -73,6 +73,4 @@ Rails.application.routes.draw do
       resources :sites, except: :show
     end
   end
-
-  get("*path", to: proc { |env| ApplicationController.action("not_found").call(env) }) if Rails.env.production?
 end
