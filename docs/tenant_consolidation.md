@@ -40,7 +40,7 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 |-------|-------|--------|---------|--------|
 | 1 | slider | Slider | image | ⏳ Pending |
 | 2 | block | Block | - | ⏳ Pending |
-| 3 | plan | Plan | - | ⏳ Pending |
+| 3 | plan | Plan | - | ✅ Complete |
 | 4 | menu_item | MenuItem | - | ✅ Complete |
 | 5 | sponsor | SponsorLevel, Sponsor | logo | ⏳ Pending |
 | 6 | **partner** | **→ Merge to Sponsor** | **logo** | ⏳ Pending |

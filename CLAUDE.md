@@ -35,9 +35,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Tenant Consolidation (Migration in Progress)
 ```bash
 bin/rails tenant_consolidation:status                          # Check migration status
-bin/rails tenant_consolidation:consolidate MODEL=Slider        # Migrate model to public schema
-bin/rails tenant_consolidation:consolidate MODEL=Slider DRY_RUN=true  # Dry run
-bin/rails tenant_consolidation:verify MODEL=Slider             # Verify migration
+bin/rails "tenant_consolidation:consolidate[slider]"           # Migrate group to public schema
+bin/rails "tenant_consolidation:consolidate[slider,true]"      # Dry run
+bin/rails "tenant_consolidation:verify[slider]"                # Verify migration
 ```
 See `docs/tenant_consolidation.md` for full migration guide.
 

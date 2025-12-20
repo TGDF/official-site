@@ -14,6 +14,7 @@ Apartment.configure do |config|
     Site
     AdminUser
     MenuItem
+    Plan
     ActiveStorage::Blob
     ActiveStorage::Attachment
     ActiveStorage::VariantRecord
