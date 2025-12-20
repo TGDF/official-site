@@ -65,16 +65,16 @@ aws rds wait db-snapshot-available \
 
 ```bash
 # Dry run first
-bin/rails tenant_consolidation:consolidate MODEL=<Model> DRY_RUN=true
+bin/rails "tenant_consolidation:consolidate[<Model>,true]"
 
 # Execute
-bin/rails tenant_consolidation:consolidate MODEL=<Model>
+bin/rails "tenant_consolidation:consolidate[<Model>]"
 ```
 
 ### 4. Verify
 
 ```bash
-bin/rails tenant_consolidation:verify MODEL=<Model>
+bin/rails "tenant_consolidation:verify[<Model>]"
 ```
 
 ### 5. Update Configuration
@@ -108,20 +108,30 @@ config.excluded_models = %w[
 bin/rails tenant_consolidation:status
 
 # Consolidation (tenant → public schema)
-bin/rails tenant_consolidation:consolidate MODEL=Slider
-bin/rails tenant_consolidation:consolidate MODEL=Slider DRY_RUN=true
+bin/rails "tenant_consolidation:consolidate[Slider]"
+bin/rails "tenant_consolidation:consolidate[Slider,true]"  # dry run
 
-# Storage migration (for models already in public schema)
-bin/rails tenant_consolidation:migrate_storage MODEL=Site
+# Storage migration (for models already in public schema or without site_id)
+bin/rails "tenant_consolidation:migrate_storage[Site]"
 
 # Verification
-bin/rails tenant_consolidation:verify MODEL=Slider
+bin/rails "tenant_consolidation:verify[Slider]"
 
 # Rollback
-bin/rails tenant_consolidation:rollback MODEL=Slider
+bin/rails "tenant_consolidation:rollback[Slider]"
 
 # Cleanup incorrect attachments
 bin/rails tenant_consolidation:cleanup_attachments
+```
+
+## Running on ECS
+
+For `aws ecs execute-command` (interactive shell):
+
+```bash
+aws ecs execute-command --cluster <cluster> --task <task-id> \
+  --container web --interactive \
+  --command '/bin/sh -c "bin/rails tenant_consolidation:migrate_storage[Site]"'
 ```
 
 ## Rollback Strategy
@@ -129,7 +139,7 @@ bin/rails tenant_consolidation:cleanup_attachments
 ### Level 1: Before Configuration Update
 
 ```bash
-bin/rails tenant_consolidation:rollback MODEL=<Model>
+bin/rails "tenant_consolidation:rollback[<Model>]"
 ```
 
 Deletes public schema records. Tenant data remains intact.
@@ -165,6 +175,36 @@ If IDs are remapped during consolidation, asset migration will fail:
 | After remap | 100 | Looks for `.../100/photo.jpg` | ✗ 404 |
 
 **Solution:** The consolidation task gets CarrierWave URL before copying data, then attaches via ActiveStorage after.
+
+## Why Two Tasks?
+
+There are two separate rake tasks because of the ID remapping problem above:
+
+### consolidate (for tenant-schema models)
+
+For models still in tenant schemas that have `site_id` column:
+
+```
+1. Switch to tenant schema
+2. Get CW URL (uses original record.id) ← Must do FIRST
+3. Switch to public schema
+4. Create new record (gets new ID)
+5. Attach file via ActiveStorage
+```
+
+### migrate_storage (for public-schema models)
+
+For models already in public schema OR models without `site_id` (like Site itself):
+
+```
+1. Record already in public, ID unchanged
+2. Get CW URL (still valid)
+3. Attach file via ActiveStorage
+```
+
+**Safe for migrate_storage:**
+- Models already in `Apartment.excluded_models`
+- Models without `site_id` column (like Site itself - inherently safe, no ID remapping)
 
 ## Technical Reference
 

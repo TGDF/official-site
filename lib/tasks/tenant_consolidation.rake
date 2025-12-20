@@ -37,19 +37,20 @@ namespace :tenant_consolidation do
 
     puts ""
     puts "Commands:"
-    puts "  tenant_consolidation:consolidate MODEL=X  - Migrate tenant data to public schema"
-    puts "  tenant_consolidation:migrate_storage MODEL=X  - Migrate CarrierWave to ActiveStorage (public schema only)"
-    puts "  tenant_consolidation:verify MODEL=X  - Verify migration status"
+    puts "  bin/rails 'tenant_consolidation:consolidate[Model]'       - Migrate tenant data to public schema"
+    puts "  bin/rails 'tenant_consolidation:migrate_storage[Model]'   - Migrate CarrierWave to ActiveStorage"
+    puts "  bin/rails 'tenant_consolidation:verify[Model]'            - Verify migration status"
   end
 
   desc "Consolidate tenant data to public schema with asset migration"
-  task consolidate: :environment do
-    model_name = ENV.fetch("MODEL", nil)
-    dry_run = ENV["DRY_RUN"] == "true"
+  task :consolidate, [ :model, :dry_run ] => :environment do |_t, args|
+    model_name = args[:model]
+    dry_run = args[:dry_run] == "true"
 
     if model_name.blank?
-      puts "ERROR: MODEL environment variable required"
-      puts "Usage: bin/rails tenant_consolidation:consolidate MODEL=Slider"
+      puts "ERROR: model argument required"
+      puts "Usage: bin/rails 'tenant_consolidation:consolidate[Slider]'"
+      puts "       bin/rails 'tenant_consolidation:consolidate[Slider,true]'  # dry run"
       exit 1
     end
 
@@ -57,7 +58,7 @@ namespace :tenant_consolidation do
     if config.nil?
       if model_name == "Site"
         puts "ERROR: Site is already in public schema"
-        puts "Use 'tenant_consolidation:migrate_storage MODEL=Site' for storage-only migration."
+        puts "Use 'bin/rails tenant_consolidation:migrate_storage[Site]' for storage-only migration."
       else
         puts "ERROR: Unknown model '#{model_name}'"
         puts "Available models: #{CONSOLIDATION_MODELS.map { |c| c[:model] }.join(', ')}"
@@ -69,7 +70,7 @@ namespace :tenant_consolidation do
 
     if model_already_in_public?(model_class)
       puts "#{model_name} is already in public schema (in Apartment.excluded_models)"
-      puts "Use 'tenant_consolidation:migrate_storage MODEL=#{model_name}' for storage-only migration."
+      puts "Use 'bin/rails tenant_consolidation:migrate_storage[#{model_name}]' for storage-only migration."
       exit 1
     end
 
@@ -81,20 +82,21 @@ namespace :tenant_consolidation do
   end
 
   desc "Migrate CarrierWave uploads to ActiveStorage (for models already in public schema)"
-  task migrate_storage: :environment do
-    model_name = ENV.fetch("MODEL", nil)
+  task :migrate_storage, [ :model ] => :environment do |_t, args|
+    model_name = args[:model]
 
     if model_name.blank?
-      puts "ERROR: MODEL environment variable required"
-      puts "Usage: bin/rails tenant_consolidation:migrate_storage MODEL=Site"
+      puts "ERROR: model argument required"
+      puts "Usage: bin/rails 'tenant_consolidation:migrate_storage[Site]'"
       exit 1
     end
 
     model_class = model_name.constantize
 
-    unless model_already_in_public?(model_class)
+    # Allow if model is in public schema OR model has no site_id (like Site itself)
+    unless model_already_in_public?(model_class) || !model_has_site_id?(model_class)
       puts "ERROR: #{model_name} is still in tenant schema"
-      puts "Use 'tenant_consolidation:consolidate MODEL=#{model_name}' first."
+      puts "Use 'bin/rails tenant_consolidation:consolidate[#{model_name}]' first."
       exit 1
     end
 
@@ -110,12 +112,12 @@ namespace :tenant_consolidation do
   end
 
   desc "Verify migration status for a model"
-  task verify: :environment do
-    model_name = ENV.fetch("MODEL", nil)
+  task :verify, [ :model ] => :environment do |_t, args|
+    model_name = args[:model]
 
     if model_name.blank?
-      puts "ERROR: MODEL environment variable required"
-      puts "Usage: bin/rails tenant_consolidation:verify MODEL=Slider"
+      puts "ERROR: model argument required"
+      puts "Usage: bin/rails 'tenant_consolidation:verify[Slider]'"
       exit 1
     end
 
@@ -138,12 +140,12 @@ namespace :tenant_consolidation do
   end
 
   desc "Rollback consolidated records (delete from public schema)"
-  task rollback: :environment do
-    model_name = ENV.fetch("MODEL", nil)
+  task :rollback, [ :model ] => :environment do |_t, args|
+    model_name = args[:model]
 
     if model_name.blank?
-      puts "ERROR: MODEL environment variable required"
-      puts "Usage: bin/rails tenant_consolidation:rollback MODEL=Slider"
+      puts "ERROR: model argument required"
+      puts "Usage: bin/rails 'tenant_consolidation:rollback[Slider]'"
       exit 1
     end
 
@@ -203,6 +205,10 @@ namespace :tenant_consolidation do
 
   def model_already_in_public?(model_class)
     Apartment.excluded_models.map(&:to_s).include?(model_class.name)
+  end
+
+  def model_has_site_id?(model_class)
+    model_class.column_names.include?("site_id")
   end
 
   # ============================================================
@@ -287,7 +293,7 @@ namespace :tenant_consolidation do
     if stats[:failed].zero? && !dry_run
       puts ""
       puts "Next steps:"
-      puts "  1. Run 'bin/rails tenant_consolidation:verify MODEL=#{model_class.name}'"
+      puts "  1. Run 'bin/rails tenant_consolidation:verify[#{model_class.name}]'"
       puts "  2. Add '#{model_class.name}' to Apartment.excluded_models"
       puts "  3. Deploy and verify admin forms work correctly"
     end
