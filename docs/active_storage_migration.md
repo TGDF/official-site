@@ -123,6 +123,28 @@ This is only recommended as a temporary workaround, not a long-term solution.
 4. The `{field}_present?` method checks both CarrierWave and ActiveStorage for presence
 5. Model validations use `{field}_present?` to accept uploads from either system
 
+### URL Generation Decision Table
+
+| ActiveStorage Attached | Flag Enabled | Result |
+|------------------------|--------------|--------|
+| No | `read` disabled | CarrierWave URL |
+| No | `read` enabled | CarrierWave URL (fallback) |
+| Yes | `read` disabled | CarrierWave URL |
+| Yes | `read` enabled | ActiveStorage URL |
+| Yes | `write` enabled | ActiveStorage URL |
+
+**Note:** CarrierWave URL generation delegates directly to the uploader without file existence checks, matching CarrierWave's native `_url` method behavior.
+
+### Test Plan
+
+| Scenario | Expected Behavior |
+|----------|-------------------|
+| CarrierWave file exists, flags disabled | Shows CarrierWave image |
+| CarrierWave file missing, flags disabled | Shows broken image or default |
+| ActiveStorage attached, `read` enabled | Shows ActiveStorage image |
+| ActiveStorage not attached, `read` enabled | Falls back to CarrierWave |
+| New upload with `write` enabled | Saves to ActiveStorage, serves from ActiveStorage |
+
 ### Feature Flags
 
 | Flag | Default | Purpose |

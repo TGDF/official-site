@@ -47,7 +47,7 @@ module HasMigratedUpload
   def carrierwave_url_for(field, version)
     uploader = public_send(field)
 
-    if version && uploader.present?
+    if version
       uploader.public_send(version).url
     else
       uploader.url
