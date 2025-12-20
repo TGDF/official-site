@@ -1,58 +1,6 @@
 # frozen_string_literal: true
 
 namespace :active_storage_migration do
-  desc "Setup feature flags for ActiveStorage migration"
-  task setup_flags: :environment do
-    puts "Setting up ActiveStorage migration feature flags..."
-
-    Flipper.add(:active_storage_read)
-    Flipper.add(:active_storage_write)
-
-    puts "Feature flags created:"
-    puts "  - active_storage_read: #{Flipper.enabled?(:active_storage_read) ? 'enabled' : 'disabled'}"
-    puts "  - active_storage_write: #{Flipper.enabled?(:active_storage_write) ? 'enabled' : 'disabled'}"
-    puts ""
-    puts "To enable reading from ActiveStorage:"
-    puts "  Flipper.enable(:active_storage_read)"
-    puts ""
-    puts "To enable writing to ActiveStorage:"
-    puts "  Flipper.enable(:active_storage_write)"
-  end
-
-  desc "Enable ActiveStorage read (serve files from ActiveStorage if available)"
-  task enable_read: :environment do
-    Flipper.enable(:active_storage_read)
-    puts "ActiveStorage read enabled - files will be served from ActiveStorage when available"
-  end
-
-  desc "Enable ActiveStorage write (new uploads go to ActiveStorage)"
-  task enable_write: :environment do
-    Flipper.enable(:active_storage_write)
-    puts "ActiveStorage write enabled - new uploads will go to ActiveStorage"
-  end
-
-  desc "Disable ActiveStorage read (fallback to CarrierWave)"
-  task disable_read: :environment do
-    Flipper.disable(:active_storage_read)
-    puts "ActiveStorage read disabled - falling back to CarrierWave"
-  end
-
-  desc "Disable ActiveStorage write (new uploads go to CarrierWave)"
-  task disable_write: :environment do
-    Flipper.disable(:active_storage_write)
-    puts "ActiveStorage write disabled - new uploads go to CarrierWave"
-  end
-
-  desc "Show current migration status"
-  task status: :environment do
-    puts "ActiveStorage Migration Status"
-    puts "=" * 40
-    puts "Feature Flags:"
-    puts "  active_storage_read:  #{Flipper.enabled?(:active_storage_read) ? 'ENABLED' : 'disabled'}"
-    puts "  active_storage_write: #{Flipper.enabled?(:active_storage_write) ? 'ENABLED' : 'disabled'}"
-    puts ""
-  end
-
   desc "Show ActiveStorage migration readiness status"
   task migration_status: :environment do
     puts "ActiveStorage Migration Readiness"

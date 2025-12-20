@@ -148,11 +148,7 @@ This is only recommended as a temporary workaround, not a long-term solution.
 
 CarrierWave URL generation delegates directly to the uploader without file existence checks, matching CarrierWave's native `_url` method behavior.
 
-### Feature Flags (Deprecated)
-
-> **Note:** Feature flags are no longer used for storage routing. The system now uses schema-based routing: public schema models use ActiveStorage, tenant schema models use CarrierWave.
-
-#### Current Implementation
+### URL Generation Implementation
 
 ```ruby
 # HasMigratedUpload#field_url
@@ -170,7 +166,7 @@ def #{field}_url(version = nil)
 end
 ```
 
-#### Admin Form Helper
+### Admin Form Helper
 
 ```ruby
 # app/helpers/admin/upload_helper.rb
@@ -182,13 +178,6 @@ def upload_field_for(model, field)
   end
 end
 ```
-
-#### Legacy Flag Tasks (Still Available)
-
-The following rake tasks still exist for backwards compatibility but are not required:
-- `setup_flags`, `enable_read`, `disable_read`, `enable_write`, `disable_write`
-
-These can be removed in a future cleanup.
 
 ## Migration Playbook
 
@@ -281,12 +270,9 @@ This purges all ActiveStorage attachments for tenant-schema models, allowing Car
 
 ## Rake Tasks Reference
 
-### Current Tasks
-
 ```bash
 # Status
 bin/rails active_storage_migration:migration_status   # Show schema-based readiness
-bin/rails active_storage_migration:status             # Show feature flag status (legacy)
 
 # Migration (only for public-schema models)
 bin/rails active_storage_migration:migrate            # Copy files (skips tenant-schema models)
@@ -295,18 +281,6 @@ bin/rails active_storage_migration:verify             # Check migration complete
 
 # Cleanup
 bin/rails active_storage_migration:cleanup_attachments  # Purge attachments for tenant-schema models
-```
-
-### Legacy Tasks (Deprecated)
-
-These tasks exist for backwards compatibility but are no longer required:
-
-```bash
-bin/rails active_storage_migration:setup_flags    # Create feature flags
-bin/rails active_storage_migration:enable_read    # (no effect - routing is schema-based)
-bin/rails active_storage_migration:disable_read   # (no effect - routing is schema-based)
-bin/rails active_storage_migration:enable_write   # (no effect - routing is schema-based)
-bin/rails active_storage_migration:disable_write  # (no effect - routing is schema-based)
 ```
 
 ### Migration Readiness
@@ -418,8 +392,7 @@ end
 
 After all models are consolidated to public schema:
 
-1. Remove legacy flag tasks (`setup_flags`, `enable_*`, `disable_*`)
-2. Remove `model_in_tenant_schema?` checks (all models in public)
-3. Remove `upload_field_for` helper (always use `{field}_attachment`)
-4. Remove CarrierWave fallback logic
-5. Remove CarrierWave uploaders and gems
+1. Remove `model_in_tenant_schema?` checks (all models in public)
+2. Remove `upload_field_for` helper (always use `{field}_attachment`)
+3. Remove CarrierWave fallback logic
+4. Remove CarrierWave uploaders and gems
