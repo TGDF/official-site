@@ -318,6 +318,27 @@ If IDs are remapped during consolidation, asset migration will fail:
 
 **Solution:** The consolidation task gets CarrierWave URL before copying data, then attaches via ActiveStorage after.
 
+## Mobility JSONB Translation Handling
+
+Models with `translates` declarations use Mobility's JSONB backend to store translations:
+
+```ruby
+# Column stores all locales in JSONB
+name: {"en"=>"In-Person Passes", "zh-TW"=>"實體議程購票"}
+```
+
+**Important:** Mobility's `attribute_methods` plugin modifies `record.attributes` to return only the current locale's value. The consolidation task uses raw column access (`record[column]`) to preserve all locales:
+
+```ruby
+# WRONG - loses non-current locales
+record.attributes  # => {"name"=>"實體議程購票"}
+
+# CORRECT - preserves all locales
+record[:name]      # => {"en"=>"...", "zh-TW"=>"..."}
+```
+
+The task verifies translations are preserved after each record migration and rolls back the transaction if any locales are lost.
+
 ## How Consolidation Works
 
 The consolidation handles the ID remapping problem by migrating data and assets together:

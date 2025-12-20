@@ -21,6 +21,22 @@ namespace :tenant_consolidation do
   # Models that need tenant consolidation (not Site, which is already in public)
   CONSOLIDATION_MODELS = MODEL_CONFIGS.reject { |c| c[:model] == "Site" }.uniq { |c| c[:model] }
 
+  # Translated attributes per model (for verification during migration)
+  # These use Mobility JSONB backend and need raw column access to preserve all locales
+  TRANSLATED_ATTRS = {
+    "Plan" => %w[name content button_label button_target],
+    "Sponsor" => %w[name description],
+    "SponsorLevel" => %w[name],
+    "Partner" => %w[name description],
+    "PartnerType" => %w[name],
+    "Game" => %w[name description team],
+    "News" => %w[title content],
+    "Speaker" => %w[name title description],
+    "Agenda" => %w[subject description],
+    "AgendaTag" => %w[name],
+    "MenuItem" => %w[name link]
+  }.freeze
+
   # Migration groups - ALL models are organized into groups for consistent migration
   # Single-model groups have no FK dependencies; multi-model groups must migrate together
   # Order determines migration sequence within group (parents before children)
@@ -242,14 +258,15 @@ namespace :tenant_consolidation do
       Apartment::Tenant.switch(site.tenant_name) do
         ActsAsTenant.with_tenant(site) do
           PartnerType.unscoped.find_each do |pt|
-            type_data << { id: pt.id, name: pt.name, order: pt.order }
+            type_data << { id: pt.id, name: pt[:name], order: pt.order }
           end
 
           Partner.unscoped.find_each do |p|
             partner_data << {
-              attributes: p.attributes.except("id", "logo", "type_id"),
+              attributes: extract_raw_attributes(p, "logo", "type_id"),
               type_id: p.type_id,
-              logo_url: p.logo.present? ? p.logo.url : nil
+              logo_url: p.logo.present? ? p.logo.url : nil,
+              source_translations: capture_source_translations(p, "Partner")
             }
           end
         end
@@ -260,59 +277,68 @@ namespace :tenant_consolidation do
       # Create in public schema
       Apartment::Tenant.switch("public") do
         ActsAsTenant.with_tenant(site) do
-          # Map PartnerType -> SponsorLevel (by name)
-          type_to_level = {}
-          type_data.each do |td|
-            existing = SponsorLevel.find_by(site_id: site.id, name: td[:name])
-            if existing
-              type_to_level[td[:id]] = existing
-              stats[:types_matched] += 1
-              puts "  SponsorLevel '#{td[:name]}' already exists"
-            else
-              if dry_run
-                type_to_level[td[:id]] = OpenStruct.new(id: td[:id], name: td[:name])
-                stats[:types_created] += 1
+          ActiveRecord::Base.transaction do
+            # Map PartnerType -> SponsorLevel (by name)
+            type_to_level = {}
+            type_data.each do |td|
+              existing = SponsorLevel.find_by(site_id: site.id, name: td[:name])
+              if existing
+                type_to_level[td[:id]] = existing
+                stats[:types_matched] += 1
+                puts "  SponsorLevel '#{td[:name]}' already exists"
               else
-                level = SponsorLevel.create!(site_id: site.id, name: td[:name], order: td[:order])
-                type_to_level[td[:id]] = level
-                stats[:types_created] += 1
+                if dry_run
+                  type_to_level[td[:id]] = OpenStruct.new(id: td[:id], name: td[:name])
+                  stats[:types_created] += 1
+                else
+                  level = SponsorLevel.create!(site_id: site.id, name: td[:name], order: td[:order])
+                  type_to_level[td[:id]] = level
+                  stats[:types_created] += 1
+                end
+                puts "  Created SponsorLevel '#{td[:name]}'"
               end
-              puts "  Created SponsorLevel '#{td[:name]}'"
-            end
-          end
-
-          # Merge Partners -> Sponsors
-          partner_data.each do |pd|
-            level = type_to_level[pd[:type_id]]
-
-            # Check for duplicate by name
-            if Sponsor.exists?(site_id: site.id, name: pd[:attributes]["name"])
-              puts "  SKIP: Sponsor '#{pd[:attributes]["name"]}' already exists (manual review needed)"
-              stats[:skipped] += 1
-              next
             end
 
-            if dry_run
-              stats[:partners_merged] += 1
-              print "."
-              next
-            end
+            # Merge Partners -> Sponsors
+            partner_data.each do |pd|
+              level = type_to_level[pd[:type_id]]
 
-            begin
-              sponsor = Sponsor.new(pd[:attributes])
-              sponsor.site_id = site.id
-              sponsor.level = level
-              sponsor.save!(validate: false)
-
-              if pd[:logo_url].present?
-                attach_asset(sponsor, :logo_attachment, pd[:logo_url])
+              # Check for duplicate by name
+              if Sponsor.exists?(site_id: site.id, name: pd[:attributes]["name"])
+                puts "  SKIP: Sponsor '#{pd[:attributes]["name"]}' already exists (manual review needed)"
+                stats[:skipped] += 1
+                next
               end
 
-              stats[:partners_merged] += 1
-              print "."
-            rescue StandardError => e
-              stats[:failed] += 1
-              puts "\n  ERROR: #{e.message}"
+              if dry_run
+                stats[:partners_merged] += 1
+                print "."
+                next
+              end
+
+              begin
+                sponsor = Sponsor.new(pd[:attributes])
+                sponsor.site_id = site.id
+                sponsor.level = level
+                sponsor.save!(validate: false)
+
+                if pd[:logo_url].present?
+                  attach_asset(sponsor, :logo_attachment, pd[:logo_url])
+                end
+
+                # Post-migration verification
+                verify_translations_preserved(pd[:source_translations], sponsor, "Sponsor")
+                if pd[:logo_url].present?
+                  verify_attachment_migrated(sponsor, { attachment: :logo_attachment }, pd[:logo_url])
+                end
+
+                stats[:partners_merged] += 1
+                print "."
+              rescue StandardError => e
+                stats[:failed] += 1
+                puts "\n  ERROR: #{e.message}"
+                raise # Re-raise to rollback transaction
+              end
             end
           end
         end
@@ -336,6 +362,46 @@ namespace :tenant_consolidation do
 
   def model_has_site_id?(model_class)
     model_class.column_names.include?("site_id")
+  end
+
+  # Extract raw attributes bypassing Mobility's attribute_methods plugin
+  # This preserves full JSONB content with all locales instead of current locale only
+  def extract_raw_attributes(record, *excluded_fields)
+    excluded = [ "id" ] + excluded_fields.compact.map(&:to_s)
+    record.attribute_names
+          .reject { |name| excluded.include?(name) }
+          .to_h { |name| [ name, record[name] ] }
+          .compact
+  end
+
+  # Capture translated attribute values while in tenant schema for later verification
+  def capture_source_translations(record, model_name)
+    translated_attrs = TRANSLATED_ATTRS[model_name] || []
+    translated_attrs.to_h { |attr| [ attr, record[attr] ] }
+  end
+
+  # Verify that all locale keys are preserved after migration
+  def verify_translations_preserved(source_translations, new_record, model_name)
+    translated_attrs = TRANSLATED_ATTRS[model_name] || []
+    translated_attrs.each do |attr|
+      source_locales = (source_translations[attr] || {}).keys.sort
+      new_locales = (new_record[attr] || {}).keys.sort
+      if source_locales != new_locales
+        raise "Translation loss detected for #{model_name}##{new_record.id}.#{attr}: " \
+              "expected #{source_locales}, got #{new_locales}"
+      end
+    end
+  end
+
+  # Verify that attachment was successfully migrated
+  def verify_attachment_migrated(new_record, config, source_url)
+    return true unless source_url.present? && config
+
+    attachment = new_record.public_send(config[:attachment])
+    unless attachment.attached?
+      raise "Attachment not migrated for #{new_record.class.name}##{new_record.id}"
+    end
+    true
   end
 
   # ============================================================
@@ -375,9 +441,10 @@ namespace :tenant_consolidation do
               end
 
               all_tenant_data[model_name] << {
-                attributes: record.attributes.except("id", config&.dig(:field).to_s).compact,
+                attributes: extract_raw_attributes(record, config&.dig(:field).to_s),
                 file_url: file_url,
-                original_id: record.id
+                original_id: record.id,
+                source_translations: capture_source_translations(record, model_name)
               }
             end
           end
@@ -387,63 +454,72 @@ namespace :tenant_consolidation do
       # Step 2: Create records in public schema in order, remapping FKs
       Apartment::Tenant.switch("public") do
         ActsAsTenant.with_tenant(site) do
-          models.each do |model_name|
-            model_class = model_name.constantize
-            config = MODEL_CONFIGS.find { |c| c[:model] == model_name }
-            model_fk_mappings = fk_mappings[model_name] || {}
-            records_data = all_tenant_data[model_name] || []
+          ActiveRecord::Base.transaction do
+            models.each do |model_name|
+              model_class = model_name.constantize
+              config = MODEL_CONFIGS.find { |c| c[:model] == model_name }
+              model_fk_mappings = fk_mappings[model_name] || {}
+              records_data = all_tenant_data[model_name] || []
 
-            puts "\n  Migrating #{model_name} (#{records_data.size} records)..."
+              puts "\n  Migrating #{model_name} (#{records_data.size} records)..."
 
-            records_data.each do |data|
-              attrs = data[:attributes].dup
+              records_data.each do |data|
+                attrs = data[:attributes].dup
 
-              # Remap FK columns using id_maps from previously migrated models
-              model_fk_mappings.each do |fk_column, parent_model|
-                old_fk_value = attrs[fk_column.to_s]
-                next unless old_fk_value
+                # Remap FK columns using id_maps from previously migrated models
+                model_fk_mappings.each do |fk_column, parent_model|
+                  old_fk_value = attrs[fk_column.to_s]
+                  next unless old_fk_value
 
-                new_fk_value = id_maps[parent_model][old_fk_value]
-                if new_fk_value.nil?
-                  puts "\n    WARNING: Cannot remap #{fk_column}=#{old_fk_value} (#{parent_model} not found in id_maps)"
+                  new_fk_value = id_maps[parent_model][old_fk_value]
+                  if new_fk_value.nil?
+                    puts "\n    WARNING: Cannot remap #{fk_column}=#{old_fk_value} (#{parent_model} not found in id_maps)"
+                    next
+                  end
+                  attrs[fk_column.to_s] = new_fk_value
+                end
+
+                # Check for duplicates
+                if record_exists?(model_class, site.id, attrs["created_at"])
+                  stats[model_name][:skipped] += 1
+                  print "s"
                   next
                 end
-                attrs[fk_column.to_s] = new_fk_value
-              end
 
-              # Check for duplicates
-              if record_exists?(model_class, site.id, attrs["created_at"])
-                stats[model_name][:skipped] += 1
-                print "s"
-                next
-              end
-
-              if dry_run
-                # In dry run, still track hypothetical IDs for FK remapping simulation
-                id_maps[model_name][data[:original_id]] = data[:original_id]
-                stats[model_name][:migrated] += 1
-                print "."
-                next
-              end
-
-              begin
-                new_record = model_class.new(attrs)
-                new_record.site_id = site.id
-                new_record.save!(validate: false)
-
-                # Track ID mapping for dependent models
-                id_maps[model_name][data[:original_id]] = new_record.id
-
-                # Attach asset if present
-                if data[:file_url].present? && config
-                  attach_asset(new_record, config[:attachment], data[:file_url])
+                if dry_run
+                  # In dry run, still track hypothetical IDs for FK remapping simulation
+                  id_maps[model_name][data[:original_id]] = data[:original_id]
+                  stats[model_name][:migrated] += 1
+                  print "."
+                  next
                 end
 
-                stats[model_name][:migrated] += 1
-                print "."
-              rescue StandardError => e
-                stats[model_name][:failed] += 1
-                puts "\n    ERROR (#{model_name}##{data[:original_id]}): #{e.message}"
+                begin
+                  new_record = model_class.new(attrs)
+                  new_record.site_id = site.id
+                  new_record.save!(validate: false)
+
+                  # Track ID mapping for dependent models
+                  id_maps[model_name][data[:original_id]] = new_record.id
+
+                  # Attach asset if present
+                  if data[:file_url].present? && config
+                    attach_asset(new_record, config[:attachment], data[:file_url])
+                  end
+
+                  # Post-migration verification
+                  verify_translations_preserved(data[:source_translations], new_record, model_name)
+                  if data[:file_url].present? && config
+                    verify_attachment_migrated(new_record, config, data[:file_url])
+                  end
+
+                  stats[model_name][:migrated] += 1
+                  print "."
+                rescue StandardError => e
+                  stats[model_name][:failed] += 1
+                  puts "\n    ERROR (#{model_name}##{data[:original_id]}): #{e.message}"
+                  raise # Re-raise to rollback transaction
+                end
               end
             end
           end
