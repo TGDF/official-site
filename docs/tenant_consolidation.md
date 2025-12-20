@@ -24,22 +24,50 @@ The migration consolidates tenant data from PostgreSQL schemas to a single publi
 
 ## Migration Path
 
-Recommended order for consolidating models (easy → hard):
+### Model Inventory
 
-| Order | Model | Complexity | Reason | Doc |
-|-------|-------|------------|--------|-----|
-| 1 | Slider | Easy | Zero associations, 2 variants | [tenant/slider_migration.md](tenant/slider_migration.md) |
-| 2 | Partner | Easy | 1 variant, simple `belongs_to :type` | Pending |
-| 3 | Sponsor | Easy | 1 variant, simple `belongs_to :level` | Pending |
-| 4 | Speaker | Medium | 2 variants, `has_many :agendas` | Pending |
-| 5 | Attachment | Medium | No variants, polymorphic | Pending |
-| 6 | Game | Medium | 2 variants, STI inheritance | Pending |
-| 7 | News | Hard | 4 variants, polymorphic author | Pending |
+- **Total models in tenant schemas:** 21
+- **Models with file uploads:** 8 (Slider, Partner, Sponsor, Speaker, Game, News, Attachment/Image)
+- **Models already in public schema:** Site, AdminUser, MenuItem, ActiveStorage::*
 
-**Notes:**
-- Each model requires a dedicated migration document in `docs/tenant/`
-- Models with associations may require migrating related models first
-- Site is already in public schema (only needs storage migration)
+### Recommended Migration Order
+
+Each row is a single migration unit. Dependencies listed must be migrated together as a group.
+
+| Order | Model | Includes | Uploads | Complexity | Doc |
+|-------|-------|----------|---------|------------|-----|
+| 1 | Slider | - | image | Easy | [tenant/slider_migration.md](tenant/slider_migration.md) |
+| 2 | Block | - | - | Easy | Pending |
+| 3 | Plan | - | - | Easy | Pending |
+| 4 | Partner | PartnerType | logo | Easy | Pending |
+| 5 | Sponsor | SponsorLevel | logo | Easy | Pending |
+| 6 | Game | IndieSpace::Game, NightMarket::Game (STI) | thumbnail | Medium | Pending |
+| 7 | Room | - | - | Easy | Pending |
+| 8 | AgendaDay | AgendaTime | - | Easy | Pending |
+| 9 | AgendaTag | - | - | Easy | Pending |
+| 10 | Speaker | - | avatar | Medium | Pending |
+| 11 | Agenda | AgendasSpeaker, AgendasTagging | - | Hard | Pending |
+| 12 | News | - | thumbnail | Hard | Pending |
+| 13 | Attachment | Image (STI) | file | Medium | Pending |
+
+### Migration Dependencies
+
+```
+Partner ────────── requires: PartnerType
+Sponsor ─────────── requires: SponsorLevel
+AgendaDay ───────── includes: AgendaTime
+Agenda ──────────── requires: Room, AgendaDay, AgendaTag, Speaker
+                    includes: AgendasSpeaker, AgendasTagging
+News ────────────── references: AdminUser (polymorphic, already public)
+Attachment ──────── references: any model (polymorphic)
+```
+
+### Critical Constraints
+
+1. **Migrate dependencies together** - Parent model (e.g., SponsorLevel) must be migrated with child (e.g., Sponsor)
+2. **Order matters for Agenda** - Room, AgendaDay, AgendaTag, Speaker must complete before Agenda
+3. **Join table ID remapping** - AgendasSpeaker/AgendasTagging foreign keys require special handling
+4. **Polymorphic safety** - News.author references AdminUser (already public); Attachment.record may reference any model
 
 ## How to Migrate a Model
 
