@@ -392,7 +392,7 @@ After all models are consolidated to public schema, remove the Apartment gem.
 ```ruby
 # Before (dual-system)
 class Speaker < ApplicationRecord
-  acts_as_tenant :site, optional: true, has_global_records: true
+  acts_as_tenant :site, optional: true
 end
 
 # After (acts_as_tenant only)
@@ -401,7 +401,7 @@ class Speaker < ApplicationRecord
 end
 ```
 
-Remove `optional: true` and `has_global_records: true` if no longer needed.
+Remove `optional: true` after all models are consolidated and verified.
 
 ### 4.3 Update Tenant Switching
 

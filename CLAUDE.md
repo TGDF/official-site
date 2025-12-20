@@ -51,7 +51,7 @@ Rails 8.1.1 application for conference/gaming event websites (TGDF - Taipei Game
 - **acts_as_tenant gem**: Column-based isolation (migration target)
 - Each `Site` model represents a tenant with isolated data
 - Tenants switch based on domain via `Middleware::FullHostElevators`
-- Models use `acts_as_tenant :site, optional: true, has_global_records: true`
+- Models use `acts_as_tenant :site, optional: true`
 
 **File Uploads (dual system during migration)**:
 - **CarrierWave**: Original system for tenant-schema models

@@ -4,7 +4,7 @@ class Slider < ApplicationRecord
   include HasTranslation
   include HasMigratedUpload
 
-  acts_as_tenant :site, optional: true, has_global_records: true
+  acts_as_tenant :site, optional: true
   mount_uploader :image, SliderUploader
   has_migrated_upload :image, variants: ImageVariants::SLIDER
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AgendaTime < ApplicationRecord
-  acts_as_tenant :site, optional: true, has_global_records: true
+  acts_as_tenant :site, optional: true
 
   has_many :agendas, foreign_key: :time_id, dependent: :nullify,
                      inverse_of: :time

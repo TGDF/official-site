@@ -3,7 +3,7 @@
 class Attachment < ApplicationRecord
   include HasMigratedUpload
 
-  acts_as_tenant :site, optional: true, has_global_records: true
+  acts_as_tenant :site, optional: true
 
   belongs_to :record, polymorphic: true, optional: true
 
