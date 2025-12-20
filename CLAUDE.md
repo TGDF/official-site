@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `./bin/setup` - Complete setup script for development environment
 - `yarn install` - Install JavaScript dependencies
 - `bundle exec overcommit --install` - Setup git hooks for code quality
-- **Requires**: ImageMagick installed for CarrierWave image processing
+- **Requires**: ImageMagick (CarrierWave) and libvips (ActiveStorage) for image processing
 
 ### Development Server
 - `./bin/dev` - Start all development processes (Rails server, CSS/JS builders)
@@ -22,27 +22,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bundle exec rspec spec/components/` - Run ViewComponent tests
 - `bundle exec rake coverage` - Generate test coverage report
 
-### Code Quality and Linting
-- `bundle exec rubocop` - Ruby linting
-- `bundle exec rubocop -A` - Auto-fix correctable Ruby style issues
+### Code Quality
+- `bundle exec rubocop -A` - Auto-fix Ruby style issues (run this first)
+- `bundle exec rubocop` - Check Ruby style without fixing
 - `bundle exec brakeman` - Security analysis
-- Git hooks automatically run linting on commit/push via overcommit
+- Git hooks run linting on commit/push via overcommit
 
 ### Database
 - `bin/rails db:migrate` - Run migrations
 - `bin/rails db:seed` - Seed database
 
+### Tenant Consolidation (Migration in Progress)
+```bash
+bin/rails tenant_consolidation:status                          # Check migration status
+bin/rails tenant_consolidation:consolidate MODEL=Slider        # Migrate model to public schema
+bin/rails tenant_consolidation:consolidate MODEL=Slider DRY_RUN=true  # Dry run
+bin/rails tenant_consolidation:verify MODEL=Slider             # Verify migration
+```
+See `docs/tenant_consolidation.md` for full migration guide.
+
 ## Architecture Overview
 
 ### Multi-Tenant SaaS Platform
-This Rails 8.1.1 application powers conference/gaming event websites (TGDF - Taipei Game Developer Forum) with multi-tenant architecture:
+Rails 8.1.1 application for conference/gaming event websites (TGDF - Taipei Game Developer Forum).
 
 **Tenant System (dual implementation during migration)**:
-- **Apartment gem**: PostgreSQL schema-based isolation (original implementation)
+- **Apartment gem**: PostgreSQL schema-based isolation (being migrated away)
 - **acts_as_tenant gem**: Column-based isolation (migration target)
 - Each `Site` model represents a tenant with isolated data
 - Tenants switch based on domain via `Middleware::FullHostElevators`
 - Models use `acts_as_tenant :site, optional: true, has_global_records: true`
+
+**File Uploads (dual system during migration)**:
+- **CarrierWave**: Original system for tenant-schema models
+- **ActiveStorage**: Target system for public-schema models
+- `HasMigratedUpload` concern handles URL routing based on model schema location
+- See `docs/tenant/dual_system.md` for implementation details
 
 **Core Domain Models**:
 - **Event Management**: `Agenda` → `Speaker` → `Room`/`AgendaTime` with multi-language support
@@ -55,11 +70,12 @@ This Rails 8.1.1 application powers conference/gaming event websites (TGDF - Tai
 
 - **Backend**: Rails 8.1.1 + Ruby 3.3.0 + PostgreSQL
 - **Frontend**: Turbo + Stimulus + TailwindCSS 4.0 + esbuild
-- **File Uploads**: CarrierWave + ImageMagick
+- **File Uploads**: CarrierWave (legacy) + ActiveStorage (target)
 - **Internationalization**: Mobility gem with zh-TW/en locales
 - **Authentication**: Devise for admin users
 - **View Layer**: ERB templates + ViewComponent
 - **Functional patterns**: dry-monads, dry-transaction for business logic
+- **Feature Flags**: Flipper for feature toggles
 
 ### Key Patterns
 
@@ -82,13 +98,9 @@ end
 
 **STI Pattern**: Game models use Single Table Inheritance (`IndieSpace::Game`, `NightMarket::Game`)
 
-**Feature Flags**: Flipper for feature toggles
-
 ### Admin Interface
 
-The admin interface uses TailwindCSS 4.0 with ERB templates.
-
-Use `docs/ADMIN_UI_COMPONENTS.md` as the design system for admin components.
+Uses TailwindCSS 4.0 with ERB templates. See `docs/ADMIN_UI_COMPONENTS.md` for design system.
 
 **Font Awesome 4.x**: Use `fa fa-*` class format (not `fas fa-*`). Reference https://fontawesome.com/v4/icons/
 
@@ -102,16 +114,18 @@ Use `docs/ADMIN_UI_COMPONENTS.md` as the design system for admin components.
 - **Build**: `yarn build:css` or watch with `yarn build:css --watch`
 - **No tailwind.config.js**: TailwindCSS 4.0 uses CSS-based configuration
 
-### File Structure
+### Key Files
 
 - `app/components/` - ViewComponent-based UI components (test in `spec/components/`, preview at `/lookbook` in dev)
-- `app/uploaders/` - CarrierWave file upload configurations
+- `app/uploaders/` - CarrierWave file upload configurations (legacy)
+- `app/models/concerns/has_migrated_upload.rb` - Dual storage system routing
 - `lib/middleware/full_host_elevators.rb` - Domain-to-tenant routing
 - `docs/ADMIN_UI_COMPONENTS.md` - Admin design system
+- `docs/tenant_consolidation.md` - Tenant migration guide
 
 ### Development Notes
 
 - **Template preference**: Use ERB + ViewComponent for new features
 - **Translations**: Use Mobility for content models, `HasTranslation` concern for language-scoped models
-- **Testing multi-tenancy**: `spec/support/apartment.rb` handles tenant switching in tests
+- **Testing multi-tenancy**: `spec/support/apartment.rb` handles tenant switching in tests (creates 'main' tenant)
 - **Code style**: Run `bundle exec rubocop -A` to auto-fix before manual corrections
