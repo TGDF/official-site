@@ -314,8 +314,37 @@ end
 
 ### N+1 Queries
 
-When loading multiple records with attachments, use eager loading:
+When loading multiple records with attachments, use eager loading to prevent N+1 queries.
 
+**Attachment Naming Pattern:**
+`has_migrated_upload :field` creates `has_one_attached :{field}_attachment`
+
+| Model | Field | Eager Loading Scope |
+|-------|-------|---------------------|
+| News | thumbnail | `with_attached_thumbnail_attachment` |
+| Speaker | avatar | `with_attached_avatar_attachment` |
+| Partner | logo | `with_attached_logo_attachment` |
+| Sponsor | logo | `with_attached_logo_attachment` |
+| Slider | image | `with_attached_image_attachment` |
+| Game | thumbnail | `with_attached_thumbnail_attachment` |
+| Site | logo, figure | `with_attached_logo_attachment`, `with_attached_figure_attachment` |
+| Attachment | file | N/A (uses permalinks in content) |
+
+**Note:** `Attachment` files are embedded as permalinks in content and not rendered directly, so eager loading is not needed.
+
+**Controllers with eager loading applied:**
+
+| Controller | Action | Models |
+|------------|--------|--------|
+| `PagesController` | index | News, Slider, Partner, Sponsor |
+| `NewsController` | index, show | News |
+| `SpeakersController` | index | Speaker |
+| `SponsorsController` | index | Sponsor, Partner (nested) |
+| `IndieSpacesController` | index | Slider, Game |
+| `NightMarketController` | index | Slider, Game |
+| `Admin::SlidersController` | index | Slider |
+
+**Basic usage:**
 ```ruby
 # Before
 Speaker.all
@@ -323,6 +352,26 @@ Speaker.all
 # After
 Speaker.with_attached_avatar_attachment
 ```
+
+**Chaining with scopes:**
+```ruby
+# Before
+News.published.latest.limit(10)
+
+# After
+News.published.latest.with_attached_thumbnail_attachment.limit(10)
+```
+
+**Nested eager loading (for associations):**
+```ruby
+# Before
+SponsorLevel.includes(:sponsors)
+
+# After - include attachment through nested hash
+SponsorLevel.includes(sponsors: { logo_attachment_attachment: :blob })
+```
+
+**Note:** The nested include uses `{attachment}_attachment` (double suffix) because ActiveStorage creates an association named `{name}_attachment` for `has_one_attached :name`.
 
 ### Feature Flag Not Found
 
