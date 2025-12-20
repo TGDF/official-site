@@ -4,7 +4,7 @@ class Speaker < ApplicationRecord
   extend FriendlyId
   include HasMigratedUpload
 
-  acts_as_tenant :site, optional: true
+  acts_as_tenant :site, optional: true, has_global_records: true
   translates :name, :title, :description
   friendly_id :name, use: :slugged
 

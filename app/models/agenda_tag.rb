@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AgendaTag < ApplicationRecord
-  acts_as_tenant :site, optional: true
+  acts_as_tenant :site, optional: true, has_global_records: true
 
   translates :name
 

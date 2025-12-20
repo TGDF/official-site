@@ -4,7 +4,7 @@ class News < ApplicationRecord
   extend FriendlyId
   include HasMigratedUpload
 
-  acts_as_tenant :site, optional: true
+  acts_as_tenant :site, optional: true, has_global_records: true
   belongs_to :author, polymorphic: true
 
   translates :title, :content

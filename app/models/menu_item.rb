@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MenuItem < ApplicationRecord
-  acts_as_tenant :site, optional: true
+  acts_as_tenant :site
 
   translates :name
   translates :link
