@@ -53,6 +53,74 @@ namespace :active_storage_migration do
     puts ""
   end
 
+  desc "Show ActiveStorage migration readiness status"
+  task migration_status: :environment do
+    puts "ActiveStorage Migration Readiness"
+    puts "=" * 60
+
+    excluded = Apartment.excluded_models.map(&:to_s)
+
+    migrations = [
+      { model: Site, field: :logo },
+      { model: Site, field: :figure },
+      { model: Attachment, field: :file },
+      { model: Speaker, field: :avatar },
+      { model: Partner, field: :logo },
+      { model: Sponsor, field: :logo },
+      { model: Slider, field: :image },
+      { model: Game, field: :thumbnail },
+      { model: News, field: :thumbnail }
+    ]
+
+    migrations.each do |config|
+      model_name = config[:model].name
+      ready = excluded.include?(model_name)
+      status = ready ? "READY" : "WAITING (in tenant schema)"
+      puts "#{model_name}##{config[:field]}: #{status}"
+    end
+
+    puts ""
+    puts "Models marked WAITING need acts_as_tenant migration first."
+    puts "Add model to Apartment.excluded_models after data consolidation."
+  end
+
+  desc "Cleanup all ActiveStorage attachments for tenant-schema models"
+  task cleanup_attachments: :environment do
+    puts "Cleaning up attachments for models still in tenant schemas..."
+
+    models = [
+      { model: Speaker, field: :avatar, attachment: :avatar_attachment },
+      { model: News, field: :thumbnail, attachment: :thumbnail_attachment },
+      { model: Partner, field: :logo, attachment: :logo_attachment },
+      { model: Sponsor, field: :logo, attachment: :logo_attachment },
+      { model: Slider, field: :image, attachment: :image_attachment },
+      { model: Game, field: :thumbnail, attachment: :thumbnail_attachment },
+      { model: Attachment, field: :file, attachment: :file_attachment }
+    ]
+
+    Site.find_each do |site|
+      puts "\nProcessing tenant: #{site.tenant_name}"
+
+      Apartment::Tenant.switch(site.tenant_name) do
+        ActsAsTenant.with_tenant(site) do
+          models.each do |config|
+            purged = 0
+            config[:model].unscoped.find_each do |record|
+              attachment = record.public_send(config[:attachment])
+              next unless attachment.attached?
+
+              attachment.purge
+              purged += 1
+            end
+            puts "  #{config[:model].name}##{config[:field]}: purged #{purged}" if purged.positive?
+          end
+        end
+      end
+    end
+
+    puts "\nDone. Orphaned blobs will be cleaned by ActiveStorage GC."
+  end
+
   desc "Migrate CarrierWave uploads to ActiveStorage"
   task migrate: :environment do
     require "open-uri"
@@ -104,7 +172,18 @@ namespace :active_storage_migration do
     end
   end
 
+  def model_in_tenant_schema?(model)
+    excluded = Apartment.excluded_models.map(&:to_s)
+    !excluded.include?(model.name)
+  end
+
   def migrate_model(model:, field:, attachment:)
+    if model_in_tenant_schema?(model)
+      puts "\n#{model.name}##{field}: SKIPPED (still in Apartment tenant schema)"
+      puts "  → Complete acts_as_tenant migration first"
+      return
+    end
+
     puts "\nMigrating #{model.name}##{field}..."
 
     if model.column_names.include?("site_id") || model.respond_to?(:scoped_by_tenant?)
@@ -217,6 +296,11 @@ namespace :active_storage_migration do
   end
 
   def verify_model(model:, field:, attachment:)
+    if model_in_tenant_schema?(model)
+      puts "\n#{model.name}##{field}: SKIPPED (still in Apartment tenant schema)"
+      return
+    end
+
     if model.column_names.include?("site_id") || model.respond_to?(:scoped_by_tenant?)
       verify_tenant_model(model: model, field: field, attachment: attachment)
     else

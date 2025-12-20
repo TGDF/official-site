@@ -4,13 +4,13 @@ This document describes the migration plan from CarrierWave to ActiveStorage for
 
 ## Overview
 
-The migration uses a **dual-system approach** that allows both CarrierWave and ActiveStorage to coexist during the transition period. ActiveStorage is used by default for all new uploads, with automatic fallback to CarrierWave for existing files.
+The migration uses a **dual-system approach** that allows both CarrierWave and ActiveStorage to coexist during the transition period. The storage system is chosen based on the model's schema location to avoid cross-tenant collisions.
 
 ### Key Decisions
 
-- **ActiveStorage by default** - New uploads always go to ActiveStorage
+- **Schema-based routing** - Models in public schema use ActiveStorage, models in tenant schema use CarrierWave
 - **Automatic fallback** - If no ActiveStorage attachment exists, serve from CarrierWave
-- **Optional bulk migration** - Existing files can be copied to ActiveStorage in the background
+- **Combined data + asset migration** - Assets must be migrated together with data consolidation (ID remap breaks separate migration)
 - **Rails proxy URLs** for serving files (simpler setup)
 - **Backward-compatible** `_url` methods with automatic fallback
 - **Shared assets** - ActiveStorage uses flat structure without tenant-scoping (simpler than CarrierWave's tenant-specific paths)
@@ -19,10 +19,10 @@ The migration uses a **dual-system approach** that allows both CarrierWave and A
 
 | Phase | Status | Description |
 |-------|--------|-------------|
-| 1. Dual-system with feature flags | ✅ Complete | Both systems coexist, flags control behavior |
+| 1. Dual-system setup | ✅ Complete | Both systems coexist, schema-based routing |
 | 2. Verify fallback works correctly | ✅ Complete | Tested AS → CW fallback logic |
-| 3. Remove feature flags | 🔄 Current | Simplify to always-AS with auto-fallback |
-| 4. Bulk migrate existing files | ⏳ Pending | Copy CarrierWave files to ActiveStorage |
+| 3. Schema-based routing | ✅ Complete | Public schema → AS, tenant schema → CW |
+| 4. Consolidate data + assets | ⏳ Pending | Migrate tenant data to public with assets |
 | 5. Remove CarrierWave | ⏳ Pending | Delete uploaders and legacy code |
 
 ## Current State
@@ -128,177 +128,98 @@ This is only recommended as a temporary workaround, not a long-term solution.
 
 1. Each model includes `HasMigratedUpload` and declares `has_migrated_upload :field`
 2. This adds a `{field}_attachment` ActiveStorage attachment alongside the CarrierWave uploader
-3. The `{field}_url` method uses simple fallback logic:
-   - **ActiveStorage attached?** → Return ActiveStorage URL (or variant)
-   - **No ActiveStorage attachment?** → Fall back to CarrierWave URL
+3. The `{field}_url` method checks model schema location:
+   - **Model in tenant schema?** → Always use CarrierWave URL (avoid cross-tenant collision)
+   - **Model in public schema + ActiveStorage attached?** → Return ActiveStorage URL
+   - **Model in public schema + No attachment?** → Fall back to CarrierWave URL
 4. The `{field}_present?` method checks both CarrierWave and ActiveStorage for presence
 5. Model validations use `{field}_present?` to accept uploads from either system
-6. Admin forms always use `{field}_attachment` (ActiveStorage) for new uploads
+6. Admin forms use `upload_field_for` helper to select correct field based on model schema
 
 ### URL Generation Decision Table
 
-| ActiveStorage Attached | Result |
-|------------------------|--------|
-| Yes | ActiveStorage URL |
-| No | CarrierWave URL (fallback) |
+| Model Schema | ActiveStorage Attached | Result |
+|--------------|------------------------|--------|
+| Tenant schema (Apartment) | Any | CarrierWave URL (forced fallback) |
+| Public schema | Yes | ActiveStorage URL |
+| Public schema | No | CarrierWave URL (fallback) |
 
-**Note:** CarrierWave URL generation delegates directly to the uploader without file existence checks, matching CarrierWave's native `_url` method behavior.
+**Note:** Models still in Apartment tenant schemas always use CarrierWave to avoid cross-tenant attachment collisions. Only models migrated to public schema (added to `Apartment.excluded_models`) can use ActiveStorage.
 
-### Feature Flags (To Be Removed)
+CarrierWave URL generation delegates directly to the uploader without file existence checks, matching CarrierWave's native `_url` method behavior.
 
-> **Note:** Feature flags were used during initial development to safely test the dual-system behavior. Now that fallback logic is verified working, feature flags add unnecessary complexity and will be removed.
+### Feature Flags (Deprecated)
 
-#### Current State (With Flags)
+> **Note:** Feature flags are no longer used for storage routing. The system now uses schema-based routing: public schema models use ActiveStorage, tenant schema models use CarrierWave.
 
-| Flag | Default | Purpose |
-|------|---------|---------|
-| `active_storage_read` | Disabled | Serve files from ActiveStorage when available |
-| `active_storage_write` | Enabled | New uploads go to ActiveStorage |
-
-**Current behavior with `active_storage_write` enabled:**
-```ruby
-# HasMigratedUpload#field_url (current implementation)
-use_active_storage = attachment.attached? &&
-                     (Flipper.enabled?(:active_storage_read) ||
-                      Flipper.enabled?(:active_storage_write))
-```
-
-#### Target State (Without Flags)
-
-After removing feature flags, the logic simplifies to:
+#### Current Implementation
 
 ```ruby
-# HasMigratedUpload#field_url (target implementation)
-if attachment.attached?
-  active_storage_url_for(attachment, version, variants)
-else
-  carrierwave_url_for(field, version)
+# HasMigratedUpload#field_url
+def #{field}_url(version = nil)
+  # Models in tenant schema always use CarrierWave
+  return carrierwave_url_for(field, version) if model_in_tenant_schema?
+
+  # Models in public schema use ActiveStorage with CW fallback
+  attachment = public_send(attachment_name)
+  if attachment.attached?
+    active_storage_url_for(attachment, version, variants)
+  else
+    carrierwave_url_for(field, version)
+  end
 end
 ```
 
-**Benefits of removing feature flags:**
-- Simpler code - no Flipper dependency for this feature
-- Simpler mental model - always AS with CW fallback
-- Less configuration to manage
-- Predictable behavior without hidden state
+#### Admin Form Helper
 
-#### Migration Tasks for Flag Removal
+```ruby
+# app/helpers/admin/upload_helper.rb
+def upload_field_for(model, field)
+  if model_ready_for_active_storage?(model)
+    :"#{field}_attachment"  # ActiveStorage
+  else
+    field                   # CarrierWave
+  end
+end
+```
 
-1. Update `HasMigratedUpload` to remove Flipper checks
-2. Remove flag-related rake tasks (`setup_flags`, `enable_*`, `disable_*`)
-3. Update admin forms to always use ActiveStorage fields (remove conditional)
-4. Update/remove feature tests that depend on flag states
-5. Clean up Flipper flags from database
+#### Legacy Flag Tasks (Still Available)
 
-### Test Cases
+The following rake tasks still exist for backwards compatibility but are not required:
+- `setup_flags`, `enable_read`, `disable_read`, `enable_write`, `disable_write`
 
-#### URL Generation Tests
-
-| ID | Input | Expected Output | Status |
-|----|-------|-----------------|--------|
-| TC-001 | ActiveStorage attached | ActiveStorage URL | ⏳ Pending |
-| TC-002 | ActiveStorage attached, version requested | ActiveStorage variant URL | ⏳ Pending |
-| TC-003 | No ActiveStorage, CarrierWave exists | CarrierWave URL (fallback) | ⏳ Pending |
-| TC-004 | No ActiveStorage, CarrierWave version requested | CarrierWave version URL (fallback) | ⏳ Pending |
-
-#### Presence Check Tests
-
-| ID | Input | Expected Output | Status |
-|----|-------|-----------------|--------|
-| TC-005 | CarrierWave file only | true | ⏳ Pending |
-| TC-006 | ActiveStorage attachment only | true | ⏳ Pending |
-| TC-007 | Neither file exists | false | ⏳ Pending |
-| TC-008 | Both files exist | true | ⏳ Pending |
-
-#### Fallback Scenarios (Feature Tests)
-
-| ID | Input | Expected Output | Status |
-|----|-------|-----------------|--------|
-| TC-009 | Speaker with ActiveStorage avatar | ActiveStorage URL served | ⏳ Pending |
-| TC-010 | Speaker with only CarrierWave avatar | CarrierWave URL served (fallback) | ⏳ Pending |
-| TC-011 | Site logo, no file | Default URL | ⏳ Pending |
-| TC-012 | News with ActiveStorage thumbnail | ActiveStorage URL served | ⏳ Pending |
-| TC-013 | News with only CarrierWave thumbnail | CarrierWave URL served (fallback) | ⏳ Pending |
-| TC-014 | Sponsor with ActiveStorage logo | ActiveStorage URL served | ⏳ Pending |
-| TC-015 | Partner with ActiveStorage logo | ActiveStorage URL served | ⏳ Pending |
-| TC-016 | Slider with ActiveStorage image | ActiveStorage URL served | ⏳ Pending |
-| TC-017 | Game with ActiveStorage thumbnail | ActiveStorage URL served | ⏳ Pending |
-
-#### Admin Upload Scenarios (Feature Tests)
-
-| ID | Input | Expected Output | Status |
-|----|-------|-----------------|--------|
-| TC-018 | Admin uploads Speaker avatar | Saved to ActiveStorage | ⏳ Pending |
-| TC-019 | Admin uploads Sponsor logo | Saved to ActiveStorage | ⏳ Pending |
-| TC-020 | Admin uploads News thumbnail | Saved to ActiveStorage | ⏳ Pending |
-| TC-021 | Admin uploads Slider image | Saved to ActiveStorage | ⏳ Pending |
-| TC-022 | Admin uploads Game thumbnail | Saved to ActiveStorage | ⏳ Pending |
-| TC-023 | Admin uploads Site logo | Saved to ActiveStorage | ⏳ Pending (public tenant) |
-
-#### Not Covered
-
-| ID | Input | Expected Output | Status |
-|----|-------|-----------------|--------|
-| TC-024 | Image variant generation | Processed variant returned | ❌ Not Covered |
-| TC-025 | Migration task verification | Files copied correctly | ❌ Not Covered |
-| TC-026 | Filename collision detection | No duplicate attachments | ❌ Not Covered |
+These can be removed in a future cleanup.
 
 ## Migration Playbook
 
-### Phase 1: Deploy Code
+### Phase 1: Current State (Schema-Based Routing)
 
-Deploy the migration code to production:
+The system currently uses schema-based routing:
 
+| Model Location | Upload Field | URL Method | Storage |
+|----------------|--------------|------------|---------|
+| Public schema (Site) | `{field}_attachment` | ActiveStorage | S3 via AS |
+| Tenant schema (others) | `{field}` | CarrierWave | S3 via CW |
+
+**Verify current state:**
 ```bash
-# Verify deployment
-bin/rails runner "puts 'HasMigratedUpload loaded' if defined?(HasMigratedUpload)"
+bin/rails active_storage_migration:migration_status
 ```
 
-At this point:
-- New uploads automatically go to ActiveStorage
-- Existing CarrierWave files continue to work via fallback
-- Admin forms use ActiveStorage file inputs
-- No configuration required
+### Phase 2: Consolidate Data + Assets
 
-### Phase 2: Monitor
-
-After deployment, monitor for:
-- New uploads working correctly in admin
-- Existing images displaying properly (via CarrierWave fallback)
-- No 404 errors on image URLs
-
-### Phase 3: (Optional) Bulk Migrate Existing Files
-
-If you want to migrate existing CarrierWave files to ActiveStorage (recommended for consistency and eventual CarrierWave removal):
+When consolidating tenant data to public schema, migrate assets at the same time:
 
 ```bash
-# Migrate all models
-bin/rails active_storage_migration:migrate
-
-# Or migrate one model at a time
-bin/rails active_storage_migration:migrate MODEL=Speaker
-bin/rails active_storage_migration:migrate MODEL=Site
-bin/rails active_storage_migration:migrate MODEL=News
-# ... etc
+# This is pseudocode - actual implementation depends on your data migration script
+# Key: Get CW URL before import, attach AS after import
 ```
 
-The migration:
-- **Skips records already migrated** (checks `attachment.attached?` first)
-- **Skips records without CarrierWave files** (checks `uploader.url.blank?`)
-- Downloads each file from CarrierWave URL
-- Attaches it to ActiveStorage
-- Logs progress and errors
+See "Data & Asset Migration Decision Table" section for detailed strategy.
 
-**Multi-Tenancy Support:** The migration properly handles both Apartment (schema-based) and ActsAsTenant (column-based) multi-tenancy:
-- **Tenant-scoped models** (News, Speaker, etc.): Iterates through all tenant schemas
-- **Global records** (`site_id = NULL`): Processed in each tenant schema separately
-- **Non-tenant models** (Site): Processed in public schema
+### Phase 3: Verify Migration
 
-**Safe to re-run:** You can run the migration multiple times. It will only process records that haven't been migrated yet.
-
-### Phase 4: (Optional) Verify Migration
-
-If you ran bulk migration, verify completeness:
+After data consolidation, verify all assets migrated:
 
 ```bash
 bin/rails active_storage_migration:verify
@@ -313,85 +234,192 @@ Speaker#avatar: OK
   Total records:      25
   With CarrierWave:   25
   With ActiveStorage: 25
-
-News#thumbnail: INCOMPLETE
-  Total records:      100
-  With CarrierWave:   98
-  With ActiveStorage: 95
-  Missing:            3
 ```
 
-Re-run migration for incomplete models until all show "OK".
+### Phase 4: Cleanup Staging
 
-### Phase 5: Cleanup (After 1 Year)
+For staging environment, cleanup incorrect attachments:
 
-After the retention period:
+```bash
+bin/rails active_storage_migration:cleanup_attachments
+```
+
+### Phase 5: Final Cleanup (After All Models Consolidated)
+
+After all tenant models are in public schema:
 
 1. Remove CarrierWave uploaders and `mount_uploader` calls
 2. Remove gems: `carrierwave`, `fog-aws`, `mini_magick` (keep `aws-sdk-s3`)
 3. Remove ImageMagick from Dockerfile (keep only `vips`)
 4. Simplify `HasMigratedUpload` to remove fallback logic
-5. Delete old CarrierWave files from S3
+5. Remove `upload_field_for` helper (always use `{field}_attachment`)
+6. Delete old CarrierWave files from S3
 
 ## Rollback
 
 The dual-system design means CarrierWave files remain intact as fallback.
 
-### Current Rollback (With Feature Flags)
+### Schema-Based Rollback
 
-While feature flags exist, rollback is simple:
+Since routing is based on model schema location:
+
+| Issue | Solution |
+|-------|----------|
+| New uploads failing (public schema) | Check ActiveStorage/S3 config |
+| Existing files not showing | CarrierWave fallback handles this automatically |
+| Need to force CarrierWave | Move model back to tenant schema (revert consolidation) |
+
+### Cleanup Incorrect Attachments
+
+If cross-tenant collisions occurred on staging:
 
 ```bash
-# Disable ActiveStorage write (new uploads go to CarrierWave)
-bin/rails active_storage_migration:disable_write
-
-# Disable ActiveStorage read (always use CarrierWave)
-bin/rails active_storage_migration:disable_read
+bin/rails active_storage_migration:cleanup_attachments
 ```
 
-**Note:** Files already uploaded to ActiveStorage will still be served (fallback logic checks AS first when flags are enabled).
-
-### Future Rollback (After Flag Removal)
-
-After feature flags are removed, rollback requires code changes:
-
-1. **New uploads failing?** - Check ActiveStorage configuration and S3 credentials
-2. **Existing files not showing?** - Verify CarrierWave URLs are still accessible
-3. **Need to revert completely?** - Restore CarrierWave form fields in admin views
-
-The simplified design trades rollback convenience for code simplicity. Since the fallback logic is well-tested, this is an acceptable tradeoff.
+This purges all ActiveStorage attachments for tenant-schema models, allowing CarrierWave fallback to serve files correctly.
 
 ## Rake Tasks Reference
 
-### Current Tasks (With Feature Flags)
+### Current Tasks
 
 ```bash
-# Setup
-bin/rails active_storage_migration:setup_flags    # Create feature flags (enables write by default)
-
-# Control
-bin/rails active_storage_migration:enable_read    # Serve from ActiveStorage
-bin/rails active_storage_migration:disable_read   # Serve from CarrierWave
-bin/rails active_storage_migration:enable_write   # New uploads to ActiveStorage
-bin/rails active_storage_migration:disable_write  # New uploads to CarrierWave
-
 # Status
-bin/rails active_storage_migration:status         # Show current flag status
+bin/rails active_storage_migration:migration_status   # Show schema-based readiness
+bin/rails active_storage_migration:status             # Show feature flag status (legacy)
 
-# Bulk Migration
-bin/rails active_storage_migration:migrate                 # Copy all existing files
-bin/rails active_storage_migration:migrate MODEL=Speaker   # Copy specific model
-bin/rails active_storage_migration:verify                  # Check migration completeness
+# Migration (only for public-schema models)
+bin/rails active_storage_migration:migrate            # Copy files (skips tenant-schema models)
+bin/rails active_storage_migration:migrate MODEL=Site # Copy specific model
+bin/rails active_storage_migration:verify             # Check migration completeness
+
+# Cleanup
+bin/rails active_storage_migration:cleanup_attachments  # Purge attachments for tenant-schema models
 ```
 
-### Future Tasks (After Flag Removal)
+### Legacy Tasks (Deprecated)
+
+These tasks exist for backwards compatibility but are no longer required:
 
 ```bash
-# Bulk Migration (optional)
-bin/rails active_storage_migration:migrate                 # Copy all existing files
-bin/rails active_storage_migration:migrate MODEL=Speaker   # Copy specific model
-bin/rails active_storage_migration:verify                  # Check migration completeness
-bin/rails active_storage_migration:status                  # Show migration statistics
+bin/rails active_storage_migration:setup_flags    # Create feature flags
+bin/rails active_storage_migration:enable_read    # (no effect - routing is schema-based)
+bin/rails active_storage_migration:disable_read   # (no effect - routing is schema-based)
+bin/rails active_storage_migration:enable_write   # (no effect - routing is schema-based)
+bin/rails active_storage_migration:disable_write  # (no effect - routing is schema-based)
 ```
 
-Tasks to be removed: `setup_flags`, `enable_read`, `disable_read`, `enable_write`, `disable_write`
+### Migration Readiness
+
+Models must be migrated to `acts_as_tenant` (in public schema) before ActiveStorage migration:
+
+| Model | Status |
+|-------|--------|
+| Site | ✅ Ready (in public schema) |
+| Attachment, Speaker, Partner, Sponsor, Slider, Game, News | ❌ Waiting (in tenant schema) |
+
+Use `migration_status` task to check current readiness:
+```bash
+bin/rails active_storage_migration:migration_status
+```
+
+### Data & Asset Migration Decision Table
+
+When consolidating tenant data to public schema, both database records AND file assets must be handled correctly.
+
+#### CarrierWave Path Structure
+
+| Model Location | CarrierWave Path |
+|----------------|------------------|
+| Tenant schema | `uploads/{tenant_name}/{model}/{field}/{id}/{filename}` |
+| Public schema (Site) | `uploads/site/{field}/{id}/{filename}` |
+
+#### Critical Constraint: Data and Assets Must Migrate Together
+
+**CarrierWave path depends on `model.id`:**
+```
+uploads/{tenant_name}/{model}/{field}/{model.id}/{filename}
+```
+
+**If IDs are remapped during data consolidation, asset migration will fail:**
+
+| Step | Record | CarrierWave File | Migration Result |
+|------|--------|------------------|------------------|
+| Before | Speaker ID=5 in tgdf2018 | `uploads/tgdf2018/speaker/avatar/5/photo.jpg` | ✓ |
+| After data migration | Speaker ID=100 (remapped) | File still at `.../5/photo.jpg` | - |
+| Run AS migration | `uploader.url` uses ID=100 | Looks for `.../100/photo.jpg` | ✗ 404 |
+
+**Conclusion: Two-step migration is NOT possible with ID remapping.**
+
+#### Migration Strategy
+
+Since IDs will be remapped during data consolidation, **get CarrierWave URL before importing data to public schema**.
+
+```ruby
+# Pseudocode for combined migration
+Site.find_each do |site|
+  Apartment::Tenant.switch(site.tenant_name) do
+    ActsAsTenant.with_tenant(site) do
+      Speaker.find_each do |speaker|
+        # 1. Get CarrierWave URL while in tenant schema (original ID valid)
+        file_url = speaker.avatar.url
+
+        # 2. Import record to public schema (ID may be remapped)
+        new_speaker = import_to_public_schema(speaker, site)
+
+        # 3. Attach asset using the URL we got before import
+        if file_url.present?
+          new_speaker.avatar_attachment.attach(
+            io: URI.open(file_url),
+            filename: File.basename(file_url).split("?").first
+          )
+        end
+      end
+    end
+  end
+end
+```
+
+**Key:** Get URL → Import data → Attach asset (in that order)
+
+#### CarrierWave Path Resolution
+
+The `HasUploaderTenant` concern determines tenant name for path:
+
+```ruby
+# app/uploaders/concerns/has_uploader_tenant.rb
+def tenant_name
+  ActsAsTenant.current_tenant&.tenant_name || Apartment::Tenant.current
+end
+```
+
+**This works correctly when:**
+- Migration runs within `ActsAsTenant.with_tenant(site)` block
+- Record still has original ID (before remapping)
+
+#### Migration Phases
+
+| Phase | Model Location | ActiveStorage | CarrierWave | Action |
+|-------|---------------|---------------|-------------|--------|
+| 1 | Tenant schema | Skip (collision risk) | Primary | Use CW, forms use CW field |
+| 2 | Consolidating | Attach during copy | Download before ID remap | Migrate data + assets together |
+| 3 | Public schema | Primary | Fallback only | Use AS, forms use AS field |
+| 4 | Cleanup | Primary | Remove files | Delete CW files from S3 |
+
+#### Summary
+
+| Approach | Works? | Notes |
+|----------|--------|-------|
+| Migrate data first, assets later | ❌ No | ID remap breaks CarrierWave path |
+| Migrate assets first, data later | ❌ No | Tenant schema has AS collision risk |
+| Migrate data + assets together | ✅ Yes | Download file before ID remap, attach after |
+
+### Future Cleanup
+
+After all models are consolidated to public schema:
+
+1. Remove legacy flag tasks (`setup_flags`, `enable_*`, `disable_*`)
+2. Remove `model_in_tenant_schema?` checks (all models in public)
+3. Remove `upload_field_for` helper (always use `{field}_attachment`)
+4. Remove CarrierWave fallback logic
+5. Remove CarrierWave uploaders and gems

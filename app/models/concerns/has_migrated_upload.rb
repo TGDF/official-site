@@ -10,15 +10,14 @@ module HasMigratedUpload
       has_one_attached attachment_name
 
       define_method(:"#{field}_url") do |version = nil|
+        # Models still in Apartment tenant schema must use CarrierWave
+        # to avoid cross-tenant attachment collisions
+        return carrierwave_url_for(field, version) if model_in_tenant_schema?
+
+        # Models in public schema: use ActiveStorage if attached, otherwise fallback to CarrierWave
         attachment = public_send(attachment_name)
 
-        # Use ActiveStorage if:
-        # 1. active_storage_read is enabled and attachment exists, OR
-        # 2. active_storage_write is enabled and attachment exists (so we can read what we wrote)
-        use_active_storage = attachment.attached? &&
-                             (Flipper.enabled?(:active_storage_read) || Flipper.enabled?(:active_storage_write))
-
-        if use_active_storage
+        if attachment.attached?
           active_storage_url_for(attachment, version, variants)
         else
           carrierwave_url_for(field, version)
@@ -33,6 +32,11 @@ module HasMigratedUpload
   end
 
   private
+
+  def model_in_tenant_schema?
+    excluded = Apartment.excluded_models.map(&:to_s)
+    !excluded.include?(self.class.name)
+  end
 
   def active_storage_url_for(attachment, version, variants)
     return unless attachment.attached?

@@ -36,11 +36,7 @@
       </div>
       <div class="space-y-2">
         <%= f.label :avatar, class: 'text-sm font-medium text-gray-900' %>
-        <% if Flipper.enabled?(:active_storage_write) %>
-          <%= f.file_field :avatar_attachment, class: 'block w-full text-sm text-gray-900 mt-1' %>
-        <% else %>
-          <%= f.file_field :avatar, class: 'block w-full text-sm text-gray-900 mt-1' %>
-        <% end %>
+        <%= f.file_field upload_field_for(@speaker, :avatar), class: 'block w-full text-sm text-gray-900 mt-1' %>
         <% if @speaker.avatar_present? %>
           <div class="mt-2">
             <%= image_tag @speaker.avatar_url, class: 'h-16 w-auto rounded-md' %>
