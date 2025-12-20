@@ -34,15 +34,17 @@ The migration consolidates tenant data from PostgreSQL schemas to a single publi
 
 ALL migrations use groups for consistent behavior. Multi-model groups must be migrated together due to FK constraints.
 
+**Priority note:** Partner and Sponsor are prioritized for upcoming feature development.
+
 | Order | Group | Models | Uploads | Complexity |
 |-------|-------|--------|---------|------------|
 | 1 | slider | Slider | image | Easy |
 | 2 | block | Block | - | Easy |
 | 3 | plan | Plan | - | Easy |
 | 4 | menu_item | MenuItem | - | Easy |
-| 5 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | Medium |
-| 6 | partner | PartnerType, Partner | logo | Medium |
-| 7 | sponsor | SponsorLevel, Sponsor | logo | Medium |
+| 5 | partner | PartnerType, Partner | logo | Medium |
+| 6 | sponsor | SponsorLevel, Sponsor | logo | Medium |
+| 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | Medium |
 | 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | Hard |
 | 9 | news | News | thumbnail | Medium |
 | 10 | attachment | Attachment (+Image STI) | file | Hard |
