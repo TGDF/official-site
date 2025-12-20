@@ -7,8 +7,9 @@ Before do |_scenario|
     nil
   end
 
-  Site.create!(name: 'Main Site', domain: 'www.example.com', tenant_name: 'main')
+  site = Site.create!(name: 'Main Site', domain: 'www.example.com', tenant_name: 'main')
   Apartment::Tenant.switch!('main')
+  ActsAsTenant.current_tenant = site
 end
 
 # Ensure run after the main tenant is created
@@ -29,5 +30,6 @@ end
 
 After do
   Apartment::Tenant.reset
+  ActsAsTenant.current_tenant = nil
   DatabaseRewinder.clean_all
 end

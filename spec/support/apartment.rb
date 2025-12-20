@@ -17,11 +17,13 @@ RSpec.configure do |config|
   config.before do
     # Switch into the default tenant
     Apartment::Tenant.switch! 'main'
+    ActsAsTenant.current_tenant = Site.find_by(tenant_name: 'main')
   end
 
   config.after do
     DatabaseRewinder.clean
     # Reset tentant back to `public`
     Apartment::Tenant.reset
+    ActsAsTenant.current_tenant = nil
   end
 end
