@@ -21,64 +21,109 @@ namespace :tenant_consolidation do
   # Models that need tenant consolidation (not Site, which is already in public)
   CONSOLIDATION_MODELS = MODEL_CONFIGS.reject { |c| c[:model] == "Site" }.uniq { |c| c[:model] }
 
-  desc "Show tenant consolidation status for all models"
+  # Migration groups - ALL models are organized into groups for consistent migration
+  # Single-model groups have no FK dependencies; multi-model groups must migrate together
+  # Order determines migration sequence within group (parents before children)
+  # fk_mappings: { "ChildModel" => { fk_column: "ParentModel" } }
+  MIGRATION_GROUPS = {
+    # Single-model groups (no FK dependencies)
+    "slider"     => { order: %w[Slider] },
+    "block"      => { order: %w[Block] },
+    "plan"       => { order: %w[Plan] },
+    "menu_item"  => { order: %w[MenuItem] },
+    "game"       => { order: %w[Game] },
+    "news"       => { order: %w[News] },
+    "attachment" => { order: %w[Attachment] },
+
+    # Multi-model groups (FK dependencies - must migrate together)
+    "partner" => {
+      order: %w[PartnerType Partner],
+      fk_mappings: { "Partner" => { type_id: "PartnerType" } }
+    },
+    "sponsor" => {
+      order: %w[SponsorLevel Sponsor],
+      fk_mappings: { "Sponsor" => { level_id: "SponsorLevel" } }
+    },
+    "agenda" => {
+      order: %w[AgendaDay AgendaTime Room AgendaTag Speaker Agenda AgendasSpeaker AgendasTagging],
+      fk_mappings: {
+        "AgendaTime" => { day_id: "AgendaDay" },
+        "Agenda" => { time_id: "AgendaTime", room_id: "Room" },
+        "AgendasSpeaker" => { agenda_id: "Agenda", speaker_id: "Speaker" },
+        "AgendasTagging" => { agenda_id: "Agenda", agenda_tag_id: "AgendaTag" }
+      }
+    }
+  }.freeze
+
+  desc "Show tenant consolidation status for all groups"
   task status: :environment do
     puts "Tenant Consolidation Status"
     puts "=" * 60
 
     excluded = Apartment.excluded_models.map(&:to_s)
 
-    MODEL_CONFIGS.uniq { |c| c[:model] }.each do |config|
-      model_name = config[:model]
-      in_public = excluded.include?(model_name)
-      status = in_public ? "READY (in public schema)" : "WAITING (in tenant schema)"
-      puts "#{model_name}: #{status}"
+    MIGRATION_GROUPS.each do |group_name, config|
+      models = config[:order]
+      migrated_count = models.count { |m| excluded.include?(m) }
+
+      status = case
+      when migrated_count == models.size then "✓ COMPLETE"
+      when migrated_count.positive? then "⚠ PARTIAL (#{migrated_count}/#{models.size})"
+      else "○ PENDING"
+      end
+
+      puts "\n#{group_name}: #{status}"
+      puts "  Models: #{models.join(', ')}"
     end
 
     puts ""
     puts "Commands:"
-    puts "  bin/rails 'tenant_consolidation:consolidate[Model]'       - Migrate tenant data to public schema"
+    puts "  bin/rails 'tenant_consolidation:consolidate[group]'       - Migrate group to public schema"
+    puts "  bin/rails 'tenant_consolidation:consolidate[group,true]'  - Dry run"
     puts "  bin/rails 'tenant_consolidation:migrate_storage[Model]'   - Migrate CarrierWave to ActiveStorage"
     puts "  bin/rails 'tenant_consolidation:verify[Model]'            - Verify migration status"
   end
 
-  desc "Consolidate tenant data to public schema with asset migration"
-  task :consolidate, [ :model, :dry_run ] => :environment do |_t, args|
-    model_name = args[:model]
+  desc "Consolidate a group of models to public schema with FK remapping"
+  task :consolidate, [ :group, :dry_run ] => :environment do |_t, args|
+    group_name = args[:group]
     dry_run = args[:dry_run] == "true"
 
-    if model_name.blank?
-      puts "ERROR: model argument required"
-      puts "Usage: bin/rails 'tenant_consolidation:consolidate[Slider]'"
-      puts "       bin/rails 'tenant_consolidation:consolidate[Slider,true]'  # dry run"
-      exit 1
-    end
-
-    config = CONSOLIDATION_MODELS.find { |c| c[:model] == model_name }
-    if config.nil?
-      if model_name == "Site"
-        puts "ERROR: Site is already in public schema"
-        puts "Use 'bin/rails tenant_consolidation:migrate_storage[Site]' for storage-only migration."
-      else
-        puts "ERROR: Unknown model '#{model_name}'"
-        puts "Available models: #{CONSOLIDATION_MODELS.map { |c| c[:model] }.join(', ')}"
+    if group_name.blank?
+      puts "ERROR: group argument required"
+      puts "Usage: bin/rails 'tenant_consolidation:consolidate[slider]'"
+      puts "       bin/rails 'tenant_consolidation:consolidate[agenda,true]'  # dry run"
+      puts ""
+      puts "Available groups:"
+      MIGRATION_GROUPS.each do |name, config|
+        puts "  #{name}: #{config[:order].join(', ')}"
       end
       exit 1
     end
 
-    model_class = model_name.constantize
-
-    if model_already_in_public?(model_class)
-      puts "#{model_name} is already in public schema (in Apartment.excluded_models)"
-      puts "Use 'bin/rails tenant_consolidation:migrate_storage[#{model_name}]' for storage-only migration."
+    group_config = MIGRATION_GROUPS[group_name]
+    if group_config.nil?
+      puts "ERROR: Unknown group '#{group_name}'"
+      puts "Available groups: #{MIGRATION_GROUPS.keys.join(', ')}"
       exit 1
     end
 
-    puts "Consolidating #{model_name} from tenant schemas to public..."
+    # Check if any model in group is already in public
+    group_config[:order].each do |model_name|
+      model_class = model_name.constantize
+      if model_already_in_public?(model_class)
+        puts "ERROR: #{model_name} is already in public schema"
+        puts "Cannot migrate group partially. All models must be migrated together."
+        exit 1
+      end
+    end
+
+    puts "Consolidating '#{group_name}' from tenant schemas to public..."
+    puts "Models: #{group_config[:order].join(' → ')}"
     puts "(DRY RUN - no changes will be made)" if dry_run
     puts "=" * 60
 
-    consolidate_model(model_class, config[:field], config[:attachment], dry_run: dry_run)
+    consolidate_group(group_config, dry_run: dry_run)
   end
 
   desc "Migrate CarrierWave uploads to ActiveStorage (for models already in public schema)"
@@ -96,7 +141,7 @@ namespace :tenant_consolidation do
     # Allow if model is in public schema OR model has no site_id (like Site itself)
     unless model_already_in_public?(model_class) || !model_has_site_id?(model_class)
       puts "ERROR: #{model_name} is still in tenant schema"
-      puts "Use 'bin/rails tenant_consolidation:consolidate[#{model_name}]' first."
+      puts "Use 'bin/rails tenant_consolidation:consolidate[group_name]' first."
       exit 1
     end
 
@@ -212,89 +257,140 @@ namespace :tenant_consolidation do
   end
 
   # ============================================================
-  # Tenant Consolidation (for models in tenant schema)
+  # Group Consolidation (for models with FK dependencies)
   # ============================================================
 
-  def consolidate_model(model_class, field, attachment, dry_run: false)
-    stats = { total: 0, migrated: 0, skipped: 0, failed: 0 }
+  def consolidate_group(group_config, dry_run: false)
+    models = group_config[:order]
+    fk_mappings = group_config[:fk_mappings] || {}
+    stats = Hash.new { |h, k| h[k] = { total: 0, migrated: 0, skipped: 0, failed: 0 } }
 
     Site.find_each do |site|
       puts "\nProcessing tenant: #{site.tenant_name}"
 
-      tenant_records = []
+      # ID mapping: { "ModelName" => { old_id => new_id } }
+      id_maps = Hash.new { |h, k| h[k] = {} }
 
-      # Step 1: Collect records and their asset URLs while in tenant context
+      # Step 1: Collect all records from tenant schema with their CW URLs
+      all_tenant_data = {}
+
       Apartment::Tenant.switch(site.tenant_name) do
         ActsAsTenant.with_tenant(site) do
-          model_class.unscoped.find_each do |record|
-            stats[:total] += 1
+          models.each do |model_name|
+            model_class = model_name.constantize
+            config = MODEL_CONFIGS.find { |c| c[:model] == model_name }
 
-            # Get CarrierWave URL while original ID is valid
-            uploader = record.public_send(field)
-            file_url = uploader.present? ? uploader.url : nil
+            all_tenant_data[model_name] = []
 
-            tenant_records << {
-              attributes: record.attributes.except("id", field.to_s),
-              file_url: file_url,
-              original_id: record.id
-            }
+            model_class.unscoped.find_each do |record|
+              stats[model_name][:total] += 1
+
+              # Get CarrierWave URL if model has uploads
+              file_url = nil
+              if config
+                uploader = record.public_send(config[:field])
+                file_url = uploader.present? ? uploader.url : nil
+              end
+
+              all_tenant_data[model_name] << {
+                attributes: record.attributes.except("id", config&.dig(:field).to_s).compact,
+                file_url: file_url,
+                original_id: record.id
+              }
+            end
           end
         end
       end
 
-      next if tenant_records.empty?
-
-      # Step 2: Create records in public schema with new IDs
+      # Step 2: Create records in public schema in order, remapping FKs
       Apartment::Tenant.switch("public") do
         ActsAsTenant.with_tenant(site) do
-          tenant_records.each do |data|
-            # Check for duplicates (simple check based on site_id + created_at)
-            if record_exists?(model_class, site.id, data[:attributes]["created_at"])
-              stats[:skipped] += 1
-              print "s"
-              next
-            end
+          models.each do |model_name|
+            model_class = model_name.constantize
+            config = MODEL_CONFIGS.find { |c| c[:model] == model_name }
+            model_fk_mappings = fk_mappings[model_name] || {}
+            records_data = all_tenant_data[model_name] || []
 
-            if dry_run
-              stats[:migrated] += 1
-              print "."
-              next
-            end
+            puts "\n  Migrating #{model_name} (#{records_data.size} records)..."
 
-            begin
-              new_record = model_class.new(data[:attributes])
-              new_record.site_id = site.id
-              new_record.save!(validate: false)
+            records_data.each do |data|
+              attrs = data[:attributes].dup
 
-              # Attach asset if present
-              if data[:file_url].present?
-                attach_asset(new_record, attachment, data[:file_url])
+              # Remap FK columns using id_maps from previously migrated models
+              model_fk_mappings.each do |fk_column, parent_model|
+                old_fk_value = attrs[fk_column.to_s]
+                next unless old_fk_value
+
+                new_fk_value = id_maps[parent_model][old_fk_value]
+                if new_fk_value.nil?
+                  puts "\n    WARNING: Cannot remap #{fk_column}=#{old_fk_value} (#{parent_model} not found in id_maps)"
+                  next
+                end
+                attrs[fk_column.to_s] = new_fk_value
               end
 
-              stats[:migrated] += 1
-              print "."
-            rescue StandardError => e
-              stats[:failed] += 1
-              puts "\n  ERROR (original_id=#{data[:original_id]}): #{e.message}"
+              # Check for duplicates
+              if record_exists?(model_class, site.id, attrs["created_at"])
+                stats[model_name][:skipped] += 1
+                print "s"
+                next
+              end
+
+              if dry_run
+                # In dry run, still track hypothetical IDs for FK remapping simulation
+                id_maps[model_name][data[:original_id]] = data[:original_id]
+                stats[model_name][:migrated] += 1
+                print "."
+                next
+              end
+
+              begin
+                new_record = model_class.new(attrs)
+                new_record.site_id = site.id
+                new_record.save!(validate: false)
+
+                # Track ID mapping for dependent models
+                id_maps[model_name][data[:original_id]] = new_record.id
+
+                # Attach asset if present
+                if data[:file_url].present? && config
+                  attach_asset(new_record, config[:attachment], data[:file_url])
+                end
+
+                stats[model_name][:migrated] += 1
+                print "."
+              rescue StandardError => e
+                stats[model_name][:failed] += 1
+                puts "\n    ERROR (#{model_name}##{data[:original_id]}): #{e.message}"
+              end
             end
           end
         end
       end
     end
 
+    # Print summary
     puts "\n"
     puts "=" * 60
-    puts "Consolidation Complete"
-    puts "  Total tenant records: #{stats[:total]}"
-    puts "  Migrated:             #{stats[:migrated]}"
-    puts "  Skipped (duplicates): #{stats[:skipped]}"
-    puts "  Failed:               #{stats[:failed]}"
+    puts "Group Consolidation Complete"
+    puts ""
 
-    if stats[:failed].zero? && !dry_run
+    total_failed = 0
+    models.each do |model_name|
+      s = stats[model_name]
+      total_failed += s[:failed]
+      puts "  #{model_name}:"
+      puts "    Total: #{s[:total]}, Migrated: #{s[:migrated]}, Skipped: #{s[:skipped]}, Failed: #{s[:failed]}"
+    end
+
+    if total_failed.zero? && !dry_run
       puts ""
       puts "Next steps:"
-      puts "  1. Run 'bin/rails tenant_consolidation:verify[#{model_class.name}]'"
-      puts "  2. Add '#{model_class.name}' to Apartment.excluded_models"
+      puts "  1. Verify each model: bin/rails 'tenant_consolidation:verify[ModelName]'"
+      puts "  2. Add ALL models to Apartment.excluded_models together:"
+      models.each do |model_name|
+        puts "     - #{model_name}"
+      end
       puts "  3. Deploy and verify admin forms work correctly"
     end
   end

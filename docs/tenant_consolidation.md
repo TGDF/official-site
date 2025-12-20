@@ -26,56 +26,75 @@ The migration consolidates tenant data from PostgreSQL schemas to a single publi
 
 ### Model Inventory
 
-- **Total models in tenant schemas:** 21
+- **Total models in tenant schemas:** 19 (not counting STI subclasses)
 - **Models with file uploads:** 8 (Slider, Partner, Sponsor, Speaker, Game, News, Attachment/Image)
-- **Models already in public schema:** Site, AdminUser, MenuItem, ActiveStorage::*
+- **Models already in public schema:** Site, AdminUser, ActiveStorage::*
 
 ### Recommended Migration Order
 
-Each row is a single migration unit. Dependencies listed must be migrated together as a group.
+ALL migrations use groups for consistent behavior. Multi-model groups must be migrated together due to FK constraints.
 
-| Order | Model | Includes | Uploads | Complexity | Doc |
-|-------|-------|----------|---------|------------|-----|
-| 1 | Slider | - | image | Easy | [tenant/slider_migration.md](tenant/slider_migration.md) |
-| 2 | Block | - | - | Easy | Pending |
-| 3 | Plan | - | - | Easy | Pending |
-| 4 | Partner | PartnerType | logo | Easy | Pending |
-| 5 | Sponsor | SponsorLevel | logo | Easy | Pending |
-| 6 | Game | IndieSpace::Game, NightMarket::Game (STI) | thumbnail | Medium | Pending |
-| 7 | Room | - | - | Easy | Pending |
-| 8 | AgendaDay | AgendaTime | - | Easy | Pending |
-| 9 | AgendaTag | - | - | Easy | Pending |
-| 10 | Speaker | - | avatar | Medium | Pending |
-| 11 | Agenda | AgendasSpeaker, AgendasTagging | - | Hard | Pending |
-| 12 | News | - | thumbnail | Hard | Pending |
-| 13 | Attachment | Image (STI) | file | Medium | Pending |
+| Order | Group | Models | Uploads | Complexity |
+|-------|-------|--------|---------|------------|
+| 1 | slider | Slider | image | Easy |
+| 2 | block | Block | - | Easy |
+| 3 | plan | Plan | - | Easy |
+| 4 | menu_item | MenuItem | - | Easy |
+| 5 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | Medium |
+| 6 | partner | PartnerType, Partner | logo | Medium |
+| 7 | sponsor | SponsorLevel, Sponsor | logo | Medium |
+| 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | Hard |
+| 9 | news | News | thumbnail | Medium |
+| 10 | attachment | Attachment (+Image STI) | file | Hard |
 
 ### Migration Dependencies
 
+**Why groups must migrate together:** When records move from tenant to public schema, they get NEW auto-generated IDs. Foreign keys pointing to old IDs will break.
+
 ```
-Partner ────────── requires: PartnerType
-Sponsor ─────────── requires: SponsorLevel
-AgendaDay ───────── includes: AgendaTime
-Agenda ──────────── requires: Room, AgendaDay, AgendaTag, Speaker
-                    includes: AgendasSpeaker, AgendasTagging
-News ────────────── references: AdminUser (polymorphic, already public)
-Attachment ──────── references: any model (polymorphic)
+FK Constraints (db/schema.rb):
+  agenda_times.day_id        → agenda_days.id
+  agendas.time_id            → agenda_times.id
+  agendas.room_id            → rooms.id
+  agendas_speakers.agenda_id → agendas.id
+  agendas_speakers.speaker_id → speakers.id  ← MANY-TO-MANY
+  partners.type_id           → partner_types.id
+  sponsors.level_id          → sponsor_levels.id
+```
+
+**Group Dependencies:**
+
+```
+Partner Group ──── PartnerType → Partner (FK: type_id)
+
+Sponsor Group ──── SponsorLevel → Sponsor (FK: level_id)
+
+Agenda Group ───── AgendaDay → AgendaTime ─┐
+                                           ├→ Agenda ←── Room
+                   Speaker ←── AgendasSpeaker ──┘ │
+                   AgendaTag ←── AgendasTagging ──┘
+```
+
+**Polymorphic References (safe to migrate independently):**
+```
+News ────────────── references: AdminUser (already in public schema)
+Attachment ──────── references: any model (migrate LAST after all others)
 ```
 
 ### Critical Constraints
 
-1. **Migrate dependencies together** - Parent model (e.g., SponsorLevel) must be migrated with child (e.g., Sponsor)
-2. **Order matters for Agenda** - Room, AgendaDay, AgendaTag, Speaker must complete before Agenda
-3. **Join table ID remapping** - AgendasSpeaker/AgendasTagging foreign keys require special handling
-4. **Polymorphic safety** - News.author references AdminUser (already public); Attachment.record may reference any model
+1. **All migrations use groups** - Even single models are migrated as groups for consistency
+2. **Multi-model groups are atomic** - Models with FK relationships are migrated together with automatic ID remapping
+3. **Attachment migrates last** - Polymorphic `record` can reference any model; all other models must be in public first
+4. **Polymorphic safety** - News.author references AdminUser (already public); no FK constraint
 
-## How to Migrate a Model
+## How to Migrate a Group
 
 ### 1. Pre-Migration Checklist
 
-- [ ] Model has `site_id` column
-- [ ] Model has `acts_as_tenant :site` configured
-- [ ] Model has `has_migrated_upload` configured
+- [ ] All models in group have `site_id` column
+- [ ] All models in group have `acts_as_tenant :site` configured
+- [ ] Models with uploads have `has_migrated_upload` configured
 - [ ] RDS snapshot created
 
 ### 2. Create RDS Snapshot
@@ -91,12 +110,17 @@ aws rds wait db-snapshot-available \
 
 ### 3. Run Consolidation
 
+All migrations use the same command with group name:
+
 ```bash
 # Dry run first
-bin/rails "tenant_consolidation:consolidate[<Model>,true]"
+bin/rails "tenant_consolidation:consolidate[<group>,true]"
 
 # Execute
-bin/rails "tenant_consolidation:consolidate[<Model>]"
+bin/rails "tenant_consolidation:consolidate[slider]"      # Single model
+bin/rails "tenant_consolidation:consolidate[partner]"     # PartnerType + Partner
+bin/rails "tenant_consolidation:consolidate[sponsor]"     # SponsorLevel + Sponsor
+bin/rails "tenant_consolidation:consolidate[agenda]"      # 8 models together
 ```
 
 ### 4. Verify
@@ -107,20 +131,40 @@ bin/rails "tenant_consolidation:verify[<Model>]"
 
 ### 5. Update Configuration
 
-Add model to `Apartment.excluded_models`:
+Add migrated models to `Apartment.excluded_models`:
 
 ```ruby
 # config/initializers/apartment.rb
 config.excluded_models = %w[
   Site
   AdminUser
-  MenuItem
   ActiveStorage::Blob
   ActiveStorage::Attachment
   ActiveStorage::VariantRecord
-  <Model>  # Add after verification
+  # Add after verification:
+  Slider         # independent
+  Block          # independent
+  Plan           # independent
+  MenuItem       # independent
+  Game           # independent (includes STI variants)
+  PartnerType    # partner group - add together
+  Partner        # partner group - add together
+  SponsorLevel   # sponsor group - add together
+  Sponsor        # sponsor group - add together
+  AgendaDay      # agenda group - add all 8 together
+  AgendaTime     # agenda group
+  Room           # agenda group
+  AgendaTag      # agenda group
+  Speaker        # agenda group
+  Agenda         # agenda group
+  AgendasSpeaker # agenda group
+  AgendasTagging # agenda group
+  News           # independent
+  Attachment     # independent (migrate last)
 ]
 ```
+
+**Important:** When migrating a group, add ALL models from that group to `excluded_models` together.
 
 ### 6. Deploy and Verify
 
@@ -132,12 +176,14 @@ config.excluded_models = %w[
 ## Rake Tasks
 
 ```bash
-# Status
+# Status - shows all groups and their migration status
 bin/rails tenant_consolidation:status
 
-# Consolidation (tenant → public schema)
-bin/rails "tenant_consolidation:consolidate[Slider]"
-bin/rails "tenant_consolidation:consolidate[Slider,true]"  # dry run
+# Consolidation - all migrations use group names
+bin/rails "tenant_consolidation:consolidate[slider]"        # Single model group
+bin/rails "tenant_consolidation:consolidate[partner]"       # PartnerType + Partner
+bin/rails "tenant_consolidation:consolidate[agenda]"        # All 8 agenda models
+bin/rails "tenant_consolidation:consolidate[slider,true]"   # Dry run
 
 # Storage migration (for models already in public schema or without site_id)
 bin/rails "tenant_consolidation:migrate_storage[Site]"
@@ -151,6 +197,21 @@ bin/rails "tenant_consolidation:rollback[Slider]"
 # Cleanup incorrect attachments
 bin/rails tenant_consolidation:cleanup_attachments
 ```
+
+### Available Groups
+
+| Group | Models |
+|-------|--------|
+| slider | Slider |
+| block | Block |
+| plan | Plan |
+| menu_item | MenuItem |
+| game | Game |
+| partner | PartnerType, Partner |
+| sponsor | SponsorLevel, Sponsor |
+| agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging |
+| news | News |
+| attachment | Attachment |
 
 ## Running on ECS
 
