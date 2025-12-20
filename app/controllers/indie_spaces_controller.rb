@@ -4,8 +4,8 @@ class IndieSpacesController < ApplicationController
   before_action :check_is_opened
 
   def index
-    @sliders = Slider.localized.indie_spaces
-    @games = IndieSpace::Game.all
+    @sliders = Slider.localized.indie_spaces.with_attached_image_attachment
+    @games = IndieSpace::Game.with_attached_thumbnail_attachment
   end
 
   private

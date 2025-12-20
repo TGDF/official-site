@@ -5,7 +5,7 @@ module Admin
     before_action :find_slider, except: %i[index new create]
 
     def index
-      @sliders = Slider.all
+      @sliders = Slider.with_attached_image_attachment
     end
 
     def new

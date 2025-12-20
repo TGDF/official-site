@@ -2,7 +2,7 @@
 
 class SpeakersController < ApplicationController
   def index
-    @speakers = Speaker.all
+    @speakers = Speaker.with_attached_avatar_attachment
   end
 
   def show
