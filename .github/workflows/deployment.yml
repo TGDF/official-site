@@ -67,7 +67,7 @@ jobs:
           --cluster ${{ secrets.DEPLOY_CLUSTER }} \
           --services ${{ secrets.DEPLOY_SERVICE }} \
           --query 'services[0].networkConfiguration' \
-          --output json)
+          --output json | jq -c .)
         echo "network-config=$NETWORK_CONFIG" >> $GITHUB_OUTPUT
 
     - name: Run database migrations
