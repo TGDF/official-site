@@ -327,17 +327,19 @@ Models with `translates` declarations use Mobility's JSONB backend to store tran
 name: {"en"=>"In-Person Passes", "zh-TW"=>"實體議程購票"}
 ```
 
-**Important:** Mobility's `attribute_methods` plugin modifies `record.attributes` to return only the current locale's value. The consolidation task uses raw column access (`record[column]`) to preserve all locales:
+**Important:** Mobility's plugins intercept both reading AND writing:
 
 ```ruby
-# WRONG - loses non-current locales
-record.attributes  # => {"name"=>"實體議程購票"}
+# READING - attribute_methods plugin
+record.attributes  # => {"name"=>"實體議程購票"} (current locale only)
+record[:name]      # => {"en"=>"...", "zh-TW"=>"..."} (all locales)
 
-# CORRECT - preserves all locales
-record[:name]      # => {"en"=>"...", "zh-TW"=>"..."}
+# WRITING - writer plugin
+Plan.new(name: {"en"=>"...", "zh-TW"=>"..."})  # Only stores current locale
+record[:name] = {"en"=>"...", "zh-TW"=>"..."}  # Stores all locales
 ```
 
-The task verifies translations are preserved after each record migration and rolls back the transaction if any locales are lost.
+The consolidation task uses raw column access (`record[column]`) for both reading and writing to preserve all locales. It verifies translations are preserved after each record migration and rolls back the transaction if any locales are lost.
 
 ## How Consolidation Works
 

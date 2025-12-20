@@ -317,7 +317,8 @@ namespace :tenant_consolidation do
               end
 
               begin
-                sponsor = Sponsor.new(pd[:attributes])
+                sponsor = Sponsor.new
+                assign_raw_attributes(sponsor, pd[:attributes])
                 sponsor.site_id = site.id
                 sponsor.level = level
                 sponsor.save!(validate: false)
@@ -402,6 +403,14 @@ namespace :tenant_consolidation do
       raise "Attachment not migrated for #{new_record.class.name}##{new_record.id}"
     end
     true
+  end
+
+  # Assign attributes bypassing Mobility's writer plugin
+  # This preserves full JSONB content with all locales
+  def assign_raw_attributes(record, attrs)
+    attrs.each do |attr, value|
+      record[attr] = value
+    end
   end
 
   # ============================================================
@@ -495,7 +504,8 @@ namespace :tenant_consolidation do
                 end
 
                 begin
-                  new_record = model_class.new(attrs)
+                  new_record = model_class.new
+                  assign_raw_attributes(new_record, attrs)
                   new_record.site_id = site.id
                   new_record.save!(validate: false)
 
