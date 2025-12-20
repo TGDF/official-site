@@ -32,9 +32,9 @@ class ApplicationController < ActionController::Base
   end
 
   def ensure_site_created!
-    return if current_site.domain == request.host
+    return if current_site&.domain == request.host
 
-    redirect_to root_url(host: Settings.site.default_domain), allow_other_host: true
+    raise ActiveRecord::RecordNotFound
   end
 
   protected

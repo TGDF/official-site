@@ -14,11 +14,7 @@ module Admin
        I18n.default_locale).to_s
     end
 
-    def ensure_site_created!
-      return if current_site.domain == request.host
-
-      redirect_to admin_root_url(host: Settings.site.default_domain), allow_other_host: true
-    end
+    def ensure_site_created!; end
 
     private
 
