@@ -4,15 +4,26 @@ This document describes the migration plan from CarrierWave to ActiveStorage for
 
 ## Overview
 
-The migration uses a **phased dual-system approach** that allows both CarrierWave and ActiveStorage to coexist during the transition period. This ensures zero downtime and easy rollback.
+The migration uses a **dual-system approach** that allows both CarrierWave and ActiveStorage to coexist during the transition period. ActiveStorage is used by default for all new uploads, with automatic fallback to CarrierWave for existing files.
 
 ### Key Decisions
 
-- **Copy files** to new ActiveStorage paths (originals kept for 1 year)
+- **ActiveStorage by default** - New uploads always go to ActiveStorage
+- **Automatic fallback** - If no ActiveStorage attachment exists, serve from CarrierWave
+- **Optional bulk migration** - Existing files can be copied to ActiveStorage in the background
 - **Rails proxy URLs** for serving files (simpler setup)
-- **Feature flags** control read/write behavior (disabled by default)
 - **Backward-compatible** `_url` methods with automatic fallback
 - **Shared assets** - ActiveStorage uses flat structure without tenant-scoping (simpler than CarrierWave's tenant-specific paths)
+
+### Migration Phases
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| 1. Dual-system with feature flags | ✅ Complete | Both systems coexist, flags control behavior |
+| 2. Verify fallback works correctly | ✅ Complete | Tested AS → CW fallback logic |
+| 3. Remove feature flags | 🔄 Current | Simplify to always-AS with auto-fallback |
+| 4. Bulk migrate existing files | ⏳ Pending | Copy CarrierWave files to ActiveStorage |
+| 5. Remove CarrierWave | ⏳ Pending | Delete uploaders and legacy code |
 
 ## Current State
 
@@ -117,23 +128,67 @@ This is only recommended as a temporary workaround, not a long-term solution.
 
 1. Each model includes `HasMigratedUpload` and declares `has_migrated_upload :field`
 2. This adds a `{field}_attachment` ActiveStorage attachment alongside the CarrierWave uploader
-3. The `{field}_url` method checks the `active_storage_read` feature flag:
-   - **Disabled (default)**: Returns CarrierWave URL (or default_url if no file)
-   - **Enabled**: Returns ActiveStorage URL if attached, otherwise falls back to CarrierWave
+3. The `{field}_url` method uses simple fallback logic:
+   - **ActiveStorage attached?** → Return ActiveStorage URL (or variant)
+   - **No ActiveStorage attachment?** → Fall back to CarrierWave URL
 4. The `{field}_present?` method checks both CarrierWave and ActiveStorage for presence
 5. Model validations use `{field}_present?` to accept uploads from either system
+6. Admin forms always use `{field}_attachment` (ActiveStorage) for new uploads
 
 ### URL Generation Decision Table
 
-| ActiveStorage Attached | Flag Enabled | Result |
-|------------------------|--------------|--------|
-| No | `read` disabled | CarrierWave URL |
-| No | `read` enabled | CarrierWave URL (fallback) |
-| Yes | `read` disabled | CarrierWave URL |
-| Yes | `read` enabled | ActiveStorage URL |
-| Yes | `write` enabled | ActiveStorage URL |
+| ActiveStorage Attached | Result |
+|------------------------|--------|
+| Yes | ActiveStorage URL |
+| No | CarrierWave URL (fallback) |
 
 **Note:** CarrierWave URL generation delegates directly to the uploader without file existence checks, matching CarrierWave's native `_url` method behavior.
+
+### Feature Flags (To Be Removed)
+
+> **Note:** Feature flags were used during initial development to safely test the dual-system behavior. Now that fallback logic is verified working, feature flags add unnecessary complexity and will be removed.
+
+#### Current State (With Flags)
+
+| Flag | Default | Purpose |
+|------|---------|---------|
+| `active_storage_read` | Disabled | Serve files from ActiveStorage when available |
+| `active_storage_write` | Enabled | New uploads go to ActiveStorage |
+
+**Current behavior with `active_storage_write` enabled:**
+```ruby
+# HasMigratedUpload#field_url (current implementation)
+use_active_storage = attachment.attached? &&
+                     (Flipper.enabled?(:active_storage_read) ||
+                      Flipper.enabled?(:active_storage_write))
+```
+
+#### Target State (Without Flags)
+
+After removing feature flags, the logic simplifies to:
+
+```ruby
+# HasMigratedUpload#field_url (target implementation)
+if attachment.attached?
+  active_storage_url_for(attachment, version, variants)
+else
+  carrierwave_url_for(field, version)
+end
+```
+
+**Benefits of removing feature flags:**
+- Simpler code - no Flipper dependency for this feature
+- Simpler mental model - always AS with CW fallback
+- Less configuration to manage
+- Predictable behavior without hidden state
+
+#### Migration Tasks for Flag Removal
+
+1. Update `HasMigratedUpload` to remove Flipper checks
+2. Remove flag-related rake tasks (`setup_flags`, `enable_*`, `disable_*`)
+3. Update admin forms to always use ActiveStorage fields (remove conditional)
+4. Update/remove feature tests that depend on flag states
+5. Clean up Flipper flags from database
 
 ### Test Cases
 
@@ -141,109 +196,80 @@ This is only recommended as a temporary workaround, not a long-term solution.
 
 | ID | Input | Expected Output | Status |
 |----|-------|-----------------|--------|
-| TC-001 | CarrierWave file exists, both flags disabled | CarrierWave URL | ✅ Covered |
-| TC-002 | CarrierWave file exists, version requested, flags disabled | CarrierWave version URL | ✅ Covered |
-| TC-003 | ActiveStorage attached, read flag enabled | ActiveStorage URL | ✅ Covered |
-| TC-004 | ActiveStorage attached, version requested, read flag enabled | ActiveStorage variant URL | ✅ Covered |
-| TC-005 | No ActiveStorage, read flag enabled | CarrierWave URL (fallback) | ✅ Covered |
-| TC-006 | ActiveStorage attached, write flag enabled | ActiveStorage URL | ✅ Covered |
-| TC-007 | No ActiveStorage, write flag enabled | CarrierWave URL (fallback) | ✅ Covered |
+| TC-001 | ActiveStorage attached | ActiveStorage URL | ⏳ Pending |
+| TC-002 | ActiveStorage attached, version requested | ActiveStorage variant URL | ⏳ Pending |
+| TC-003 | No ActiveStorage, CarrierWave exists | CarrierWave URL (fallback) | ⏳ Pending |
+| TC-004 | No ActiveStorage, CarrierWave version requested | CarrierWave version URL (fallback) | ⏳ Pending |
 
 #### Presence Check Tests
 
 | ID | Input | Expected Output | Status |
 |----|-------|-----------------|--------|
-| TC-008 | CarrierWave file only | true | ✅ Covered |
-| TC-009 | ActiveStorage attachment only | true | ✅ Covered |
-| TC-010 | Neither file exists | false | ✅ Covered |
-| TC-011 | Both files exist | true | ✅ Covered |
+| TC-005 | CarrierWave file only | true | ⏳ Pending |
+| TC-006 | ActiveStorage attachment only | true | ⏳ Pending |
+| TC-007 | Neither file exists | false | ⏳ Pending |
+| TC-008 | Both files exist | true | ⏳ Pending |
 
-#### Read Scenarios (Feature Tests)
-
-| ID | Input | Expected Output | Status |
-|----|-------|-----------------|--------|
-| TC-012 | Speaker avatar, read disabled | CarrierWave URL served | ✅ Covered |
-| TC-013 | Speaker avatar, read enabled | ActiveStorage URL served | ✅ Covered |
-| TC-014 | Site logo, no file | Default URL | ✅ Covered |
-| TC-015 | News thumbnail, read disabled | CarrierWave URL served | ✅ Covered |
-| TC-016 | News thumbnail, read enabled | ActiveStorage URL served | ✅ Covered |
-| TC-017 | Sponsor logo, read disabled | CarrierWave URL served | ✅ Covered |
-| TC-018 | Sponsor logo, read enabled | ActiveStorage URL served | ✅ Covered |
-| TC-019 | Partner logo, read disabled | CarrierWave URL served | ✅ Covered |
-| TC-020 | Partner logo, read enabled | ActiveStorage URL served | ✅ Covered |
-| TC-021 | Slider image, read disabled | CarrierWave URL served | ✅ Covered |
-| TC-022 | Slider image, read enabled | ActiveStorage URL served | ✅ Covered |
-| TC-023 | Game thumbnail, read disabled | CarrierWave URL served | ✅ Covered |
-| TC-024 | Game thumbnail, read enabled | ActiveStorage URL served | ✅ Covered |
-
-#### Write Scenarios (Feature Tests)
+#### Fallback Scenarios (Feature Tests)
 
 | ID | Input | Expected Output | Status |
 |----|-------|-----------------|--------|
-| TC-025 | Admin uploads Speaker avatar, write enabled | Saved to ActiveStorage | ✅ Covered |
-| TC-026 | ActiveStorage file exists, read disabled | ActiveStorage URL served | ✅ Covered |
-| TC-027 | CarrierWave file only, write enabled | CarrierWave URL served | ✅ Covered |
-| TC-028 | Admin uploads Sponsor logo, write enabled | Saved to ActiveStorage | ✅ Covered |
-| TC-029 | Admin uploads News thumbnail, write enabled | Saved to ActiveStorage | ✅ Covered |
-| TC-030 | Admin uploads Slider image, write enabled | Saved to ActiveStorage | ✅ Covered |
-| TC-031 | Admin uploads Game thumbnail, write enabled | Saved to ActiveStorage | ✅ Covered |
-| TC-032 | Admin uploads Site logo, write enabled | Saved to ActiveStorage | ❌ Skipped (public tenant) |
+| TC-009 | Speaker with ActiveStorage avatar | ActiveStorage URL served | ⏳ Pending |
+| TC-010 | Speaker with only CarrierWave avatar | CarrierWave URL served (fallback) | ⏳ Pending |
+| TC-011 | Site logo, no file | Default URL | ⏳ Pending |
+| TC-012 | News with ActiveStorage thumbnail | ActiveStorage URL served | ⏳ Pending |
+| TC-013 | News with only CarrierWave thumbnail | CarrierWave URL served (fallback) | ⏳ Pending |
+| TC-014 | Sponsor with ActiveStorage logo | ActiveStorage URL served | ⏳ Pending |
+| TC-015 | Partner with ActiveStorage logo | ActiveStorage URL served | ⏳ Pending |
+| TC-016 | Slider with ActiveStorage image | ActiveStorage URL served | ⏳ Pending |
+| TC-017 | Game with ActiveStorage thumbnail | ActiveStorage URL served | ⏳ Pending |
+
+#### Admin Upload Scenarios (Feature Tests)
+
+| ID | Input | Expected Output | Status |
+|----|-------|-----------------|--------|
+| TC-018 | Admin uploads Speaker avatar | Saved to ActiveStorage | ⏳ Pending |
+| TC-019 | Admin uploads Sponsor logo | Saved to ActiveStorage | ⏳ Pending |
+| TC-020 | Admin uploads News thumbnail | Saved to ActiveStorage | ⏳ Pending |
+| TC-021 | Admin uploads Slider image | Saved to ActiveStorage | ⏳ Pending |
+| TC-022 | Admin uploads Game thumbnail | Saved to ActiveStorage | ⏳ Pending |
+| TC-023 | Admin uploads Site logo | Saved to ActiveStorage | ⏳ Pending (public tenant) |
 
 #### Not Covered
 
 | ID | Input | Expected Output | Status |
 |----|-------|-----------------|--------|
-| TC-033 | Image variant generation | Processed variant returned | ❌ Not Covered |
-| TC-034 | Migration task verification | Files copied correctly | ❌ Not Covered |
-| TC-035 | Filename collision detection | No duplicate attachments | ❌ Not Covered |
-
-### Feature Flags
-
-| Flag | Default | Purpose |
-|------|---------|---------|
-| `active_storage_read` | **Disabled** | Serve files from ActiveStorage when available |
-| `active_storage_write` | **Disabled** | New uploads go to ActiveStorage, forms use `{field}_attachment` |
-
-**Important:** Both flags are disabled by default after setup. This means CarrierWave continues to serve all files until you explicitly enable a flag.
-
-**Flag Behavior:**
-- When `active_storage_read` is enabled: Serve from ActiveStorage if attached, else fallback to CarrierWave
-- When `active_storage_write` is enabled:
-  - Admin forms show `{field}_attachment` file input instead of CarrierWave field
-  - Files uploaded via ActiveStorage are also served from ActiveStorage (even if `active_storage_read` is disabled)
-  - This ensures you can see what you just uploaded
-
-**Recommended migration order:**
-1. Deploy code with flags disabled
-2. Run migration tasks to copy existing files
-3. Enable `active_storage_read` to serve migrated files from ActiveStorage
-4. Enable `active_storage_write` to start accepting new uploads via ActiveStorage
+| TC-024 | Image variant generation | Processed variant returned | ❌ Not Covered |
+| TC-025 | Migration task verification | Files copied correctly | ❌ Not Covered |
+| TC-026 | Filename collision detection | No duplicate attachments | ❌ Not Covered |
 
 ## Migration Playbook
 
 ### Phase 1: Deploy Code
 
-Deploy the migration code to production. At this point:
-- Feature flags are disabled
-- CarrierWave continues to work exactly as before
-- No user-facing changes
+Deploy the migration code to production:
 
 ```bash
 # Verify deployment
 bin/rails runner "puts 'HasMigratedUpload loaded' if defined?(HasMigratedUpload)"
 ```
 
-### Phase 2: Setup Feature Flags
+At this point:
+- New uploads automatically go to ActiveStorage
+- Existing CarrierWave files continue to work via fallback
+- Admin forms use ActiveStorage file inputs
+- No configuration required
 
-```bash
-bin/rails active_storage_migration:setup_flags
-```
+### Phase 2: Monitor
 
-This creates the Flipper feature flags (disabled by default).
+After deployment, monitor for:
+- New uploads working correctly in admin
+- Existing images displaying properly (via CarrierWave fallback)
+- No 404 errors on image URLs
 
-### Phase 3: Migrate Files
+### Phase 3: (Optional) Bulk Migrate Existing Files
 
-Run the migration to copy files from CarrierWave to ActiveStorage:
+If you want to migrate existing CarrierWave files to ActiveStorage (recommended for consistency and eventual CarrierWave removal):
 
 ```bash
 # Migrate all models
@@ -270,7 +296,9 @@ The migration:
 
 **Safe to re-run:** You can run the migration multiple times. It will only process records that haven't been migrated yet.
 
-### Phase 4: Verify Migration
+### Phase 4: (Optional) Verify Migration
+
+If you ran bulk migration, verify completeness:
 
 ```bash
 bin/rails active_storage_migration:verify
@@ -295,30 +323,7 @@ News#thumbnail: INCOMPLETE
 
 Re-run migration for incomplete models until all show "OK".
 
-### Phase 5: Enable ActiveStorage Read
-
-Once all files are migrated and verified:
-
-```bash
-bin/rails active_storage_migration:enable_read
-```
-
-Files will now be served from ActiveStorage. Monitor for:
-- 404 errors on image URLs
-- Slow response times (variant generation)
-- Error logs
-
-### Phase 6: (Optional) Enable ActiveStorage Write
-
-To have new uploads go directly to ActiveStorage:
-
-```bash
-bin/rails active_storage_migration:enable_write
-```
-
-All admin forms are already configured to conditionally use `{field}_attachment` when this flag is enabled. Model validations use the `{field}_present?` method which accepts uploads from either CarrierWave or ActiveStorage.
-
-### Phase 7: Cleanup (After 1 Year)
+### Phase 5: Cleanup (After 1 Year)
 
 After the retention period:
 
@@ -330,23 +335,39 @@ After the retention period:
 
 ## Rollback
 
-At any point, rollback by disabling feature flags:
+The dual-system design means CarrierWave files remain intact as fallback.
+
+### Current Rollback (With Feature Flags)
+
+While feature flags exist, rollback is simple:
 
 ```bash
-# Disable ActiveStorage read (fall back to CarrierWave)
-bin/rails active_storage_migration:disable_read
-
-# Disable ActiveStorage write
+# Disable ActiveStorage write (new uploads go to CarrierWave)
 bin/rails active_storage_migration:disable_write
+
+# Disable ActiveStorage read (always use CarrierWave)
+bin/rails active_storage_migration:disable_read
 ```
 
-CarrierWave files remain intact and will be served immediately.
+**Note:** Files already uploaded to ActiveStorage will still be served (fallback logic checks AS first when flags are enabled).
+
+### Future Rollback (After Flag Removal)
+
+After feature flags are removed, rollback requires code changes:
+
+1. **New uploads failing?** - Check ActiveStorage configuration and S3 credentials
+2. **Existing files not showing?** - Verify CarrierWave URLs are still accessible
+3. **Need to revert completely?** - Restore CarrierWave form fields in admin views
+
+The simplified design trades rollback convenience for code simplicity. Since the fallback logic is well-tested, this is an acceptable tradeoff.
 
 ## Rake Tasks Reference
 
+### Current Tasks (With Feature Flags)
+
 ```bash
 # Setup
-bin/rails active_storage_migration:setup_flags    # Create feature flags
+bin/rails active_storage_migration:setup_flags    # Create feature flags (enables write by default)
 
 # Control
 bin/rails active_storage_migration:enable_read    # Serve from ActiveStorage
@@ -357,8 +378,20 @@ bin/rails active_storage_migration:disable_write  # New uploads to CarrierWave
 # Status
 bin/rails active_storage_migration:status         # Show current flag status
 
-# Migration
-bin/rails active_storage_migration:migrate        # Copy all files
-bin/rails active_storage_migration:migrate MODEL=Speaker  # Copy specific model
-bin/rails active_storage_migration:verify         # Check migration completeness
+# Bulk Migration
+bin/rails active_storage_migration:migrate                 # Copy all existing files
+bin/rails active_storage_migration:migrate MODEL=Speaker   # Copy specific model
+bin/rails active_storage_migration:verify                  # Check migration completeness
 ```
+
+### Future Tasks (After Flag Removal)
+
+```bash
+# Bulk Migration (optional)
+bin/rails active_storage_migration:migrate                 # Copy all existing files
+bin/rails active_storage_migration:migrate MODEL=Speaker   # Copy specific model
+bin/rails active_storage_migration:verify                  # Check migration completeness
+bin/rails active_storage_migration:status                  # Show migration statistics
+```
+
+Tasks to be removed: `setup_flags`, `enable_read`, `disable_read`, `enable_write`, `disable_write`
