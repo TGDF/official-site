@@ -34,7 +34,7 @@ The migration consolidates tenant data from PostgreSQL schemas to a single publi
 
 ALL migrations use groups for consistent behavior. Multi-model groups must be migrated together due to FK constraints.
 
-**Priority note:** Partner and Sponsor are prioritized for upcoming feature development.
+**Priority note:** Sponsor is prioritized for upcoming feature development. Partner is deprecated and merges into Sponsor.
 
 | Order | Group | Models | Uploads | Complexity |
 |-------|-------|--------|---------|------------|
@@ -42,8 +42,8 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 | 2 | block | Block | - | Easy |
 | 3 | plan | Plan | - | Easy |
 | 4 | menu_item | MenuItem | - | Easy |
-| 5 | partner | PartnerType, Partner | logo | Medium |
-| 6 | sponsor | SponsorLevel, Sponsor | logo | Medium |
+| 5 | sponsor | SponsorLevel, Sponsor | logo | Medium |
+| 6 | **partner** | **→ Merge to Sponsor** | **logo** | **Medium** |
 | 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | Medium |
 | 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | Hard |
 | 9 | news | News | thumbnail | Medium |
@@ -175,6 +175,58 @@ config.excluded_models = %w[
 3. Verify URLs return ActiveStorage paths
 4. Monitor for errors
 
+## Partner Merge to Sponsor
+
+Since Partner is deprecated and only Sponsor is actively used, Partners are merged into Sponsors during consolidation.
+
+### Production Data Status (2025-12-20)
+
+| Tenant | Partners | Sponsors |
+|--------|----------|----------|
+| 2018-2022 | 0 | ✓ (26-33 each) |
+| 2023tgdf | 27 (8 types) | 0 |
+| 2024tgdf | 21 (6 types) | 0 |
+| 2025tgdf | 0 | 23 (8 levels) |
+
+- **No duplicates** - No organization exists in both Partner and Sponsor
+- **Total to migrate**: 48 Partners from 2 tenants
+
+### Prerequisites
+
+1. Run Sponsor group consolidation first:
+   ```bash
+   bin/rails "tenant_consolidation:consolidate[sponsor]"
+   ```
+2. Add SponsorLevel and Sponsor to `Apartment.excluded_models`
+
+### Check Production Data
+
+Run assessment scripts in Rails console to check Partner usage (see status above):
+- [x] Count Partners vs Sponsors per tenant
+- [x] Identify duplicate names (same org in both) → None found
+- [ ] Export Partner data for backup (optional)
+
+### Run Merge
+
+```bash
+# Dry run
+bin/rails "tenant_consolidation:merge_partner_to_sponsor[true]"
+
+# Execute
+bin/rails "tenant_consolidation:merge_partner_to_sponsor"
+```
+
+### Merge Behavior
+
+- Each `PartnerType` becomes a `SponsorLevel` (using same name)
+- If `SponsorLevel` with same name exists, Partners are added to it
+- Partners with duplicate names (already exists in Sponsor) are SKIPPED for manual review
+- CarrierWave logos are migrated to ActiveStorage
+
+### Post-Merge
+
+After verification, Partner code can be removed (Phase 5 cleanup).
+
 ## Rake Tasks
 
 ```bash
@@ -209,8 +261,8 @@ bin/rails tenant_consolidation:cleanup_attachments
 | plan | Plan |
 | menu_item | MenuItem |
 | game | Game |
-| partner | PartnerType, Partner |
 | sponsor | SponsorLevel, Sponsor |
+| partner | ~~PartnerType, Partner~~ → Use `merge_partner_to_sponsor` task |
 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging |
 | news | News |
 | attachment | Attachment |
