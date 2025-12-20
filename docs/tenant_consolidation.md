@@ -36,18 +36,18 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 
 **Priority note:** Sponsor is prioritized for upcoming feature development. Partner is deprecated and merges into Sponsor.
 
-| Order | Group | Models | Uploads | Complexity |
-|-------|-------|--------|---------|------------|
-| 1 | slider | Slider | image | Easy |
-| 2 | block | Block | - | Easy |
-| 3 | plan | Plan | - | Easy |
-| 4 | menu_item | MenuItem | - | Easy |
-| 5 | sponsor | SponsorLevel, Sponsor | logo | Medium |
-| 6 | **partner** | **→ Merge to Sponsor** | **logo** | **Medium** |
-| 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | Medium |
-| 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | Hard |
-| 9 | news | News | thumbnail | Medium |
-| 10 | attachment | Attachment (+Image STI) | file | Hard |
+| Order | Group | Models | Uploads | Status |
+|-------|-------|--------|---------|--------|
+| 1 | slider | Slider | image | ⏳ Pending |
+| 2 | block | Block | - | ⏳ Pending |
+| 3 | plan | Plan | - | ⏳ Pending |
+| 4 | menu_item | MenuItem | - | ✅ Complete |
+| 5 | sponsor | SponsorLevel, Sponsor | logo | ⏳ Pending |
+| 6 | **partner** | **→ Merge to Sponsor** | **logo** | ⏳ Pending |
+| 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | ⏳ Pending |
+| 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | ⏳ Pending |
+| 9 | news | News | thumbnail | ⏳ Pending |
+| 10 | attachment | Attachment (+Image STI) | file | ⏳ Pending |
 
 ### Migration Dependencies
 
@@ -128,7 +128,7 @@ bin/rails "tenant_consolidation:consolidate[agenda]"      # 8 models together
 ### 4. Verify
 
 ```bash
-bin/rails "tenant_consolidation:verify[<Model>]"
+bin/rails "tenant_consolidation:verify[<group>]"
 ```
 
 ### 5. Update Configuration
@@ -239,14 +239,13 @@ bin/rails "tenant_consolidation:consolidate[partner]"       # PartnerType + Part
 bin/rails "tenant_consolidation:consolidate[agenda]"        # All 8 agenda models
 bin/rails "tenant_consolidation:consolidate[slider,true]"   # Dry run
 
-# Storage migration (for models already in public schema or without site_id)
-bin/rails "tenant_consolidation:migrate_storage[Site]"
+# Verification - all verifications use group names
+bin/rails "tenant_consolidation:verify[slider]"             # Verify single model group
+bin/rails "tenant_consolidation:verify[agenda]"             # Verify all 8 agenda models
 
-# Verification
-bin/rails "tenant_consolidation:verify[Slider]"
-
-# Rollback
-bin/rails "tenant_consolidation:rollback[Slider]"
+# Rollback - all rollbacks use group names
+bin/rails "tenant_consolidation:rollback[slider]"           # Rollback single model group
+bin/rails "tenant_consolidation:rollback[agenda]"           # Rollback all 8 agenda models
 
 # Cleanup incorrect attachments
 bin/rails tenant_consolidation:cleanup_attachments
@@ -274,7 +273,7 @@ For `aws ecs execute-command` (interactive shell):
 ```bash
 aws ecs execute-command --cluster <cluster> --task <task-id> \
   --container web --interactive \
-  --command '/bin/sh -c "bin/rails tenant_consolidation:migrate_storage[Site]"'
+  --command '/bin/sh -c "bin/rails tenant_consolidation:consolidate[slider]"'
 ```
 
 ## Rollback Strategy
@@ -282,14 +281,14 @@ aws ecs execute-command --cluster <cluster> --task <task-id> \
 ### Level 1: Before Configuration Update
 
 ```bash
-bin/rails "tenant_consolidation:rollback[<Model>]"
+bin/rails "tenant_consolidation:rollback[<group>]"
 ```
 
-Deletes public schema records. Tenant data remains intact.
+Deletes public schema records for all models in the group (in reverse order for FK safety). Tenant data remains intact.
 
 ### Level 2: After Configuration Update
 
-1. Remove model from `Apartment.excluded_models`
+1. Remove all group models from `Apartment.excluded_models`
 2. Deploy configuration change
 3. Run rollback task
 
@@ -319,9 +318,9 @@ If IDs are remapped during consolidation, asset migration will fail:
 
 **Solution:** The consolidation task gets CarrierWave URL before copying data, then attaches via ActiveStorage after.
 
-## Why Two Tasks?
+## How Consolidation Works
 
-There are two separate rake tasks because of the ID remapping problem above:
+The consolidation handles the ID remapping problem by migrating data and assets together:
 
 ### consolidate (for tenant-schema models)
 
@@ -335,19 +334,7 @@ For models still in tenant schemas that have `site_id` column:
 5. Attach file via ActiveStorage
 ```
 
-### migrate_storage (for public-schema models)
-
-For models already in public schema OR models without `site_id` (like Site itself):
-
-```
-1. Record already in public, ID unchanged
-2. Get CW URL (still valid)
-3. Attach file via ActiveStorage
-```
-
-**Safe for migrate_storage:**
-- Models already in `Apartment.excluded_models`
-- Models without `site_id` column (like Site itself - inherently safe, no ID remapping)
+This ensures CarrierWave URLs are captured before IDs are remapped.
 
 ## Technical Reference
 

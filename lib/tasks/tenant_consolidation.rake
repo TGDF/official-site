@@ -80,8 +80,8 @@ namespace :tenant_consolidation do
     puts "Commands:"
     puts "  bin/rails 'tenant_consolidation:consolidate[group]'       - Migrate group to public schema"
     puts "  bin/rails 'tenant_consolidation:consolidate[group,true]'  - Dry run"
-    puts "  bin/rails 'tenant_consolidation:migrate_storage[Model]'   - Migrate CarrierWave to ActiveStorage"
-    puts "  bin/rails 'tenant_consolidation:verify[Model]'            - Verify migration status"
+    puts "  bin/rails 'tenant_consolidation:verify[group]'            - Verify migration status"
+    puts "  bin/rails 'tenant_consolidation:rollback[group]'          - Rollback group (delete from public)"
   end
 
   desc "Consolidate a group of models to public schema with FK remapping"
@@ -123,97 +123,75 @@ namespace :tenant_consolidation do
     puts "(DRY RUN - no changes will be made)" if dry_run
     puts "=" * 60
 
-    consolidate_group(group_config, dry_run: dry_run)
+    consolidate_group(group_name, group_config, dry_run: dry_run)
   end
 
-  desc "Migrate CarrierWave uploads to ActiveStorage (for models already in public schema)"
-  task :migrate_storage, [ :model ] => :environment do |_t, args|
-    model_name = args[:model]
+  desc "Verify migration status for a group"
+  task :verify, [ :group ] => :environment do |_t, args|
+    group_name = args[:group]
 
-    if model_name.blank?
-      puts "ERROR: model argument required"
-      puts "Usage: bin/rails 'tenant_consolidation:migrate_storage[Site]'"
+    if group_name.blank?
+      puts "ERROR: group argument required"
+      puts "Usage: bin/rails 'tenant_consolidation:verify[slider]'"
+      puts ""
+      puts "Available groups:"
+      MIGRATION_GROUPS.each do |name, config|
+        puts "  #{name}: #{config[:order].join(', ')}"
+      end
       exit 1
     end
 
-    model_class = model_name.constantize
-
-    # Allow if model is in public schema OR model has no site_id (like Site itself)
-    unless model_already_in_public?(model_class) || !model_has_site_id?(model_class)
-      puts "ERROR: #{model_name} is still in tenant schema"
-      puts "Use 'bin/rails tenant_consolidation:consolidate[group_name]' first."
+    group_config = MIGRATION_GROUPS[group_name]
+    if group_config.nil?
+      puts "ERROR: Unknown group '#{group_name}'"
+      puts "Available groups: #{MIGRATION_GROUPS.keys.join(', ')}"
       exit 1
     end
 
-    configs = MODEL_CONFIGS.select { |c| c[:model] == model_name }
-    if configs.empty?
-      puts "ERROR: No upload configuration found for '#{model_name}'"
-      exit 1
-    end
-
-    configs.each do |config|
-      migrate_storage_for_model(model_class, config[:field], config[:attachment])
-    end
-  end
-
-  desc "Verify migration status for a model"
-  task :verify, [ :model ] => :environment do |_t, args|
-    model_name = args[:model]
-
-    if model_name.blank?
-      puts "ERROR: model argument required"
-      puts "Usage: bin/rails 'tenant_consolidation:verify[Slider]'"
-      exit 1
-    end
-
-    model_class = model_name.constantize
-    configs = MODEL_CONFIGS.select { |c| c[:model] == model_name }
-
-    if configs.empty?
-      puts "ERROR: No configuration found for '#{model_name}'"
-      exit 1
-    end
-
-    puts "#{model_name} Migration Verification"
+    puts "#{group_name.titleize} Group Verification"
     puts "=" * 60
 
-    if model_already_in_public?(model_class)
-      verify_storage_migration(model_class, configs)
-    else
-      verify_consolidation(model_class, configs.first[:field], configs.first[:attachment])
-    end
+    verify_group(group_config)
   end
 
-  desc "Rollback consolidated records (delete from public schema)"
-  task :rollback, [ :model ] => :environment do |_t, args|
-    model_name = args[:model]
+  desc "Rollback consolidated records for a group (delete from public schema)"
+  task :rollback, [ :group ] => :environment do |_t, args|
+    group_name = args[:group]
 
-    if model_name.blank?
-      puts "ERROR: model argument required"
-      puts "Usage: bin/rails 'tenant_consolidation:rollback[Slider]'"
+    if group_name.blank?
+      puts "ERROR: group argument required"
+      puts "Usage: bin/rails 'tenant_consolidation:rollback[slider]'"
+      puts ""
+      puts "Available groups:"
+      MIGRATION_GROUPS.each do |name, config|
+        puts "  #{name}: #{config[:order].join(', ')}"
+      end
       exit 1
     end
 
-    if model_name == "Site"
-      puts "ERROR: Cannot rollback Site - it was never in tenant schemas"
+    group_config = MIGRATION_GROUPS[group_name]
+    if group_config.nil?
+      puts "ERROR: Unknown group '#{group_name}'"
+      puts "Available groups: #{MIGRATION_GROUPS.keys.join(', ')}"
       exit 1
     end
 
-    config = CONSOLIDATION_MODELS.find { |c| c[:model] == model_name }
-    if config.nil?
-      puts "ERROR: Unknown model '#{model_name}'"
-      exit 1
+    # Check if any model in group is still in excluded_models
+    group_config[:order].each do |model_name|
+      model_class = model_name.constantize
+      if model_already_in_public?(model_class)
+        puts "WARNING: #{model_name} is in Apartment.excluded_models"
+        puts "Remove all group models from excluded_models first before rollback."
+        exit 1
+      end
     end
 
-    model_class = model_name.constantize
+    puts "Rolling back '#{group_name}' group from public schema..."
+    puts "Models: #{group_config[:order].reverse.join(' → ')} (reverse order)"
+    puts "This will DELETE all records from public schema."
+    puts "=" * 60
 
-    if model_already_in_public?(model_class)
-      puts "WARNING: #{model_name} is in Apartment.excluded_models"
-      puts "Remove it from excluded_models first before rollback."
-      exit 1
-    end
-
-    rollback_consolidation(model_class, config[:attachment])
+    rollback_group(group_config)
   end
 
   desc "Cleanup ActiveStorage attachments for models still in tenant schemas"
@@ -364,7 +342,7 @@ namespace :tenant_consolidation do
   # Group Consolidation (for models with FK dependencies)
   # ============================================================
 
-  def consolidate_group(group_config, dry_run: false)
+  def consolidate_group(group_name, group_config, dry_run: false)
     models = group_config[:order]
     fk_mappings = group_config[:fk_mappings] || {}
     stats = Hash.new { |h, k| h[k] = { total: 0, migrated: 0, skipped: 0, failed: 0 } }
@@ -490,7 +468,7 @@ namespace :tenant_consolidation do
     if total_failed.zero? && !dry_run
       puts ""
       puts "Next steps:"
-      puts "  1. Verify each model: bin/rails 'tenant_consolidation:verify[ModelName]'"
+      puts "  1. Verify group: bin/rails 'tenant_consolidation:verify[#{group_name}]'"
       puts "  2. Add ALL models to Apartment.excluded_models together:"
       models.each do |model_name|
         puts "     - #{model_name}"
@@ -505,12 +483,41 @@ namespace :tenant_consolidation do
     model_class.unscoped.exists?(site_id: site_id, created_at: created_at)
   end
 
-  def verify_consolidation(model_class, field, attachment)
+  def verify_group(group_config)
+    models = group_config[:order]
+    all_ok = true
+
+    models.each do |model_name|
+      model_class = model_name.constantize
+      config = MODEL_CONFIGS.find { |c| c[:model] == model_name }
+
+      puts "\n#{model_name}:"
+
+      if model_already_in_public?(model_class)
+        ok = verify_public_records(model_class)
+        ok &&= verify_attachments(model_class, config) if config
+      else
+        ok = verify_consolidation_records(model_class)
+        ok &&= verify_consolidation_attachments(model_class, config) if config
+      end
+
+      all_ok &&= ok
+    end
+
+    puts "\n" + "=" * 60
+    puts all_ok ? "Group Status: ✓ OK" : "Group Status: ✗ INCOMPLETE"
+  end
+
+  def verify_public_records(model_class)
+    count = model_class.unscoped.count
+    puts "  Records in public: #{count}"
+    true
+  end
+
+  def verify_consolidation_records(model_class)
     tenant_count = 0
     public_count = 0
-    with_attachment = 0
 
-    # Count records in tenant schemas
     Site.find_each do |site|
       Apartment::Tenant.switch(site.tenant_name) do
         ActsAsTenant.with_tenant(site) do
@@ -519,41 +526,81 @@ namespace :tenant_consolidation do
       end
     end
 
-    # Count records in public schema
     Apartment::Tenant.switch("public") do
       public_count = model_class.unscoped.count
+    end
+
+    ok = public_count >= tenant_count
+    puts "  Tenant: #{tenant_count}, Public: #{public_count} #{ok ? '✓' : '✗'}"
+    ok
+  end
+
+  def verify_attachments(model_class, config)
+    return true unless config
+
+    field = config[:field]
+    attachment = config[:attachment]
+    with_cw = model_class.unscoped.where.not(field => [ nil, "" ]).count
+    with_as = count_migrated_attachments(model_class, field, attachment)
+
+    ok = with_as >= with_cw
+    puts "  #{field}: CW=#{with_cw}, AS=#{with_as} #{ok ? '✓' : '✗'}"
+    ok
+  end
+
+  def verify_consolidation_attachments(model_class, config)
+    return true unless config
+
+    attachment = config[:attachment]
+    with_as = 0
+
+    Apartment::Tenant.switch("public") do
       model_class.unscoped.find_each do |record|
-        with_attachment += 1 if record.public_send(attachment).attached?
+        with_as += 1 if record.public_send(attachment).attached?
       end
     end
 
-    status = public_count >= tenant_count ? "OK" : "INCOMPLETE"
-
-    puts ""
-    puts "Tenant schema records:  #{tenant_count}"
-    puts "Public schema records:  #{public_count}"
-    puts "With ActiveStorage:     #{with_attachment}"
-    puts ""
-    puts "Status: #{status}"
-
-    if public_count < tenant_count
-      puts ""
-      puts "WARNING: Public schema has fewer records than tenant schemas."
-      puts "Run consolidation again or check for errors."
-    end
+    puts "  With ActiveStorage: #{with_as}"
+    true
   end
 
-  def rollback_consolidation(model_class, attachment)
-    puts "Rolling back #{model_class.name} consolidation..."
-    puts "This will DELETE all records from public schema."
+  def rollback_group(group_config)
+    # Rollback in reverse order (children before parents for FK safety)
+    models = group_config[:order].reverse
+    stats = Hash.new { |h, k| h[k] = { deleted: 0, attachments_purged: 0 } }
+
+    models.each do |model_name|
+      model_class = model_name.constantize
+      config = MODEL_CONFIGS.find { |c| c[:model] == model_name }
+      attachment = config&.dig(:attachment)
+
+      puts "\n  Rolling back #{model_name}..."
+      model_stats = rollback_model(model_class, attachment)
+      stats[model_name] = model_stats
+    end
+
+    # Print summary
+    puts "\n"
+    puts "=" * 60
+    puts "Rollback Complete"
     puts ""
 
+    models.each do |model_name|
+      s = stats[model_name]
+      puts "  #{model_name}: #{s[:deleted]} deleted, #{s[:attachments_purged]} attachments purged"
+    end
+
+    puts ""
+    puts "Tenant schema data remains intact."
+  end
+
+  def rollback_model(model_class, attachment)
     count = 0
     attachments_purged = 0
 
     Apartment::Tenant.switch("public") do
       model_class.unscoped.find_each do |record|
-        if record.public_send(attachment).attached?
+        if attachment && record.public_send(attachment).attached?
           record.public_send(attachment).purge
           attachments_purged += 1
         end
@@ -563,109 +610,7 @@ namespace :tenant_consolidation do
       end
     end
 
-    puts "\n"
-    puts "Rollback complete:"
-    puts "  Records deleted:      #{count}"
-    puts "  Attachments purged:   #{attachments_purged}"
-    puts ""
-    puts "Tenant schema data remains intact."
-  end
-
-  # ============================================================
-  # Storage Migration (for models already in public schema)
-  # ============================================================
-
-  def migrate_storage_for_model(model_class, field, attachment)
-    puts "\nMigrating #{model_class.name}##{field}..."
-
-    if model_class.column_names.include?("site_id")
-      # Tenant-scoped model in public schema
-      migrate_tenant_scoped_storage(model_class, field, attachment)
-    else
-      # Non-tenant model (like Site itself)
-      migrate_non_tenant_storage(model_class, field, attachment)
-    end
-  end
-
-  def migrate_tenant_scoped_storage(model_class, field, attachment)
-    migrated = 0
-    skipped = 0
-    failed = 0
-
-    model_class.unscoped.find_each do |record|
-      uploader = record.public_send(field)
-      if uploader.blank? || uploader.url.blank?
-        skipped += 1
-        next
-      end
-
-      if already_migrated?(record, field, attachment)
-        skipped += 1
-        next
-      end
-
-      begin
-        attach_asset(record, attachment, uploader.url)
-        migrated += 1
-        print "."
-      rescue StandardError => e
-        failed += 1
-        puts "\n  ERROR: #{model_class.name}##{record.id}: #{e.message}"
-      end
-    end
-
-    puts "\n  #{model_class.name}##{field}: #{migrated} migrated, #{skipped} skipped, #{failed} failed"
-  end
-
-  def migrate_non_tenant_storage(model_class, field, attachment)
-    migrated = 0
-    skipped = 0
-    failed = 0
-
-    model_class.unscoped.find_each do |record|
-      uploader = record.public_send(field)
-      if uploader.blank? || uploader.url.blank?
-        skipped += 1
-        next
-      end
-
-      if already_migrated?(record, field, attachment)
-        skipped += 1
-        next
-      end
-
-      begin
-        attach_asset(record, attachment, uploader.url)
-        migrated += 1
-        print "."
-      rescue StandardError => e
-        failed += 1
-        puts "\n  ERROR: #{model_class.name}##{record.id}: #{e.message}"
-      end
-    end
-
-    puts "\n  #{model_class.name}##{field}: #{migrated} migrated, #{skipped} skipped, #{failed} failed"
-  end
-
-  def verify_storage_migration(model_class, configs)
-    configs.each do |config|
-      field = config[:field]
-      attachment = config[:attachment]
-
-      total = model_class.unscoped.count
-      with_carrierwave = model_class.unscoped.where.not(field => [ nil, "" ]).count
-      with_active_storage = count_migrated_attachments(model_class, field, attachment)
-
-      missing = with_carrierwave - with_active_storage
-      status = missing.zero? ? "OK" : "INCOMPLETE"
-
-      puts ""
-      puts "#{model_class.name}##{field}: #{status}"
-      puts "  Total records:      #{total}"
-      puts "  With CarrierWave:   #{with_carrierwave}"
-      puts "  With ActiveStorage: #{with_active_storage}"
-      puts "  Missing:            #{missing}" if missing.positive?
-    end
+    { deleted: count, attachments_purged: attachments_purged }
   end
 
   # ============================================================
