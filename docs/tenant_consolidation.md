@@ -83,6 +83,16 @@ News ────────────── references: AdminUser (already i
 Attachment ──────── references: any model (migrate LAST after all others)
 ```
 
+**CKEditor Embedded URL References (no migration order impact):**
+```
+Block.content ────── embeds: <img src="/uploads/image/file/{id}/...">
+News.content  ────── embeds: <img src="/uploads/image/file/{id}/...">
+```
+
+These embedded URLs point to Image (Attachment) records but are NOT FK relationships - they're inline HTML in content fields. The URLs continue working until Phase 5 when S3 files are deleted. URL rewriting is handled in Phase 5.0 before S3 cleanup.
+
+**Production data (2025-12-21):** 11 records with embedded images across tgdf_2021, 2022_TGDF, 2023tgdf tenants.
+
 ### Critical Constraints
 
 1. **All migrations use groups** - Even single models are migrated as groups for consistency
@@ -487,6 +497,34 @@ Files to remove:
 ## Phase 5: Remove CarrierWave
 
 After Apartment removal, clean up CarrierWave.
+
+### 5.0 Rewrite CKEditor Embedded URLs (BEFORE deleting S3 files)
+
+CKEditor content fields (Block, News) contain embedded image URLs like `/uploads/image/file/{id}/...`. These must be rewritten to ActiveStorage URLs before deleting S3 uploads.
+
+**Production data (2025-12-21):** 11 records with embedded images
+- tgdf_2021/News: 7 records
+- 2022_TGDF/Block: 2 records
+- 2022_TGDF/News: 1 record
+- 2023tgdf/News: 1 record
+
+**Why this is safe to defer to Phase 5:**
+- CarrierWave URLs continue working after Attachment migration (S3 files still exist)
+- New uploads still use CarrierWave until Phase 5 (`mount_uploader` is still active)
+- URL rewriting can be done as a batch operation before S3 deletion
+
+**URL Matching Strategy:**
+```ruby
+# Extract from embedded URL: /uploads/image/file/5/photo.jpg
+# The CarrierWave `file` column is preserved after migration
+image = Image.find_by(file: filename, site_id: site.id)
+new_url = rails_blob_url(image.file_attachment)
+```
+
+**Run rewriting task:**
+```bash
+bin/rails tenant_consolidation:rewrite_ckeditor_urls
+```
 
 ### 5.1 Remove Uploaders
 
