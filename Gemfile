@@ -118,6 +118,7 @@ end
 
 group :development do
   gem "debug"
+  gem "ruby-lsp"
 
   gem "lookbook"
   gem "web-console", ">= 3.3.0"
