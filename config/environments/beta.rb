@@ -39,9 +39,6 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :amazon
 
-  # Disable automatic blob analysis to avoid CPU contention on low-resource Fargate tasks
-  config.active_storage.analyzers = []
-
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
   # config.action_cable.url = "wss://example.com/cable"
