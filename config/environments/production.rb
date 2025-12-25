@@ -27,6 +27,9 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :amazon
 
+  # Disable automatic blob analysis to avoid CPU contention on low-resource Fargate tasks
+  config.active_storage.analyzers = []
+
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 
