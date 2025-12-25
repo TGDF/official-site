@@ -201,6 +201,22 @@ config.excluded_models = %w[
 3. Verify URLs return ActiveStorage paths
 4. Monitor for errors
 
+### 8. Update Cucumber Tests (if model has file uploads)
+
+After migration, form fields change from `{field}` to `{field}_attachment`. Update cucumber feature files:
+
+```gherkin
+# Before (CarrierWave)
+And I attach files in the "slider" form
+  | field | value    |
+  | image | TGDF.png |
+
+# After (ActiveStorage)
+And I attach files in the "slider" form
+  | field            | value    |
+  | image_attachment | TGDF.png |
+```
+
 ## Partner Merge to Sponsor
 
 Since Partner is deprecated and only Sponsor is actively used, Partners are merged into Sponsors during consolidation.

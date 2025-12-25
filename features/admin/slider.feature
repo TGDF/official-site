@@ -17,8 +17,8 @@ Feature: Manage Sliders
     When I visit "/admin"
     And I click admin sidebar "New" in "Slider"
     And I attach files in the "slider" form
-      | field | value    |
-      | image | TGDF.png |
+      | field            | value    |
+      | image_attachment | TGDF.png |
     And I select options in the "slider" form
       | field    | value    |
       | language | 繁體中文 |
