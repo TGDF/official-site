@@ -16,6 +16,7 @@ Apartment.configure do |config|
     MenuItem
     Plan
     Block
+    Slider
     ActiveStorage::Blob
     ActiveStorage::Attachment
     ActiveStorage::VariantRecord

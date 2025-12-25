@@ -38,7 +38,7 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 
 | Order | Group | Models | Uploads | Status |
 |-------|-------|--------|---------|--------|
-| 1 | slider | Slider | image | ⏳ Pending |
+| 1 | slider | Slider | image | ✅ Complete |
 | 2 | block | Block | - | ✅ Complete |
 | 3 | plan | Plan | - | ✅ Complete |
 | 4 | menu_item | MenuItem | - | ✅ Complete |
@@ -141,7 +141,23 @@ bin/rails "tenant_consolidation:consolidate[agenda]"      # 8 models together
 bin/rails "tenant_consolidation:verify[<group>]"
 ```
 
-### 5. Update Configuration
+### 5. Update Model
+
+Remove `optional: true` and `has_global_records: true` from migrated models:
+
+```ruby
+# Before (during migration)
+class Slider < ApplicationRecord
+  acts_as_tenant :site, optional: true, has_global_records: true
+end
+
+# After (migration complete)
+class Slider < ApplicationRecord
+  acts_as_tenant :site
+end
+```
+
+### 6. Update Configuration
 
 Add migrated models to `Apartment.excluded_models`:
 
@@ -178,7 +194,7 @@ config.excluded_models = %w[
 
 **Important:** When migrating a group, add ALL models from that group to `excluded_models` together.
 
-### 6. Deploy and Verify
+### 7. Deploy and Verify
 
 1. Deploy configuration change
 2. Verify admin forms use `{field}_attachment`
