@@ -666,8 +666,8 @@ GEM
     sqlite3 (2.7.4-x86_64-linux-musl)
     ssrf_filter (1.2.0)
     stackprof (0.2.27)
-    store_attribute (2.0.1)
-      activerecord (>= 6.1)
+    store_attribute (2.1.1)
+      activerecord (>= 7.2)
     stringio (3.2.0)
     sys-uname (1.4.1)
       ffi (~> 1.1)
@@ -779,7 +779,7 @@ DEPENDENCIES
   sitemap_generator
   sprockets-rails
   stackprof
-  store_attribute (~> 2.0)
+  store_attribute (~> 2.1)
   turbo-rails
   tzinfo-data
   view_component
