@@ -1,10 +1,22 @@
 <!-- Sidebar Header -->
 <div class="px-4 py-3 border-b border-gray-200 h-16 flex items-center">
-  <div class="flex items-center gap-2">
-    <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center">
-      <div class="w-3.5 h-3.5 bg-white rounded-full"></div>
+  <div class="relative w-full" data-controller="dropdown">
+    <button type="button" class="flex items-center gap-2 w-full cursor-pointer" data-action="click->dropdown#toggle">
+      <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center shrink-0">
+        <div class="w-3.5 h-3.5 bg-white rounded-full"></div>
+      </div>
+      <span class="text-lg font-semibold text-gray-900 truncate"><%= tenant_site? ? current_site.name : t('site_name') %></span>
+      <i class="fa fa-caret-down text-gray-400 ml-auto shrink-0"></i>
+    </button>
+
+    <div class="hidden absolute left-0 top-full mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1" data-dropdown-target="menu">
+      <% @navbar_sites.each do |site| %>
+        <%= admin_navbar_site_item(site, current: site == current_site) %>
+      <% end %>
+      <div class="border-t border-gray-200 mt-1 pt-1">
+        <%= admin_navbar_view_all_sites_link %>
+      </div>
     </div>
-    <span class="text-lg font-semibold text-gray-900"><%= t('site_name') %></span>
   </div>
 </div>
 

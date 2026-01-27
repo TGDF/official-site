@@ -101,6 +101,9 @@ en:
       new:
         hint: "Sign in to start your session"
   admin:
+    shared:
+      sidebar:
+        view_all_sites: View all sites
     partners:
       deprecated: This feature is deprecated, please use Sponsor instead.
     partner_types:

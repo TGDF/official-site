@@ -102,6 +102,9 @@ zh-TW:
         hint: 輸入信箱及密碼進入管理後台
         login: 登入
   admin:
+    shared:
+      sidebar:
+        view_all_sites: 查看全部網站
     partners:
       deprecated: This feature is deprecated, please use Sponsor instead.
     partner_types:

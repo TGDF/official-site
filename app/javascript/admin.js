@@ -7,11 +7,13 @@ import { Turbo } from "@hotwired/turbo-rails"
 import { Application } from "@hotwired/stimulus"
 import SidebarController from "../assets/javascripts/controllers/sidebar_controller"
 import FlashMessageController from "../assets/javascripts/controllers/flash_message_controller"
+import DropdownController from "../assets/javascripts/controllers/dropdown_controller"
 
 // Initialize Stimulus
 const application = Application.start()
 application.register("sidebar", SidebarController)
 application.register("flash-message", FlashMessageController)
+application.register("dropdown", DropdownController)
 
 // CKEditor
 import {
