@@ -14,7 +14,27 @@ application.register("sidebar", SidebarController)
 application.register("flash-message", FlashMessageController)
 
 // CKEditor
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic/build/ckeditor"
+import {
+  ClassicEditor,
+  Essentials,
+  Bold,
+  Italic,
+  Heading,
+  Link,
+  List,
+  Paragraph,
+  BlockQuote,
+  Image,
+  ImageUpload,
+  ImageInsert,
+  Table,
+  TableToolbar,
+  MediaEmbed,
+  Autoformat,
+  PasteFromOffice,
+  SimpleUploadAdapter
+} from 'ckeditor5';
+import 'ckeditor5/ckeditor5.css';
 
 const editors = [];
 
@@ -23,9 +43,47 @@ const setupCKEditors = () => {
     $el.required = false;
     ClassicEditor.create($el, {
       licenseKey: 'GPL',
-      ckfinder: {
-        // Upload the images to the server using the CKFinder QuickUpload command.
+      plugins: [
+        Essentials,
+        Bold,
+        Italic,
+        Heading,
+        Link,
+        List,
+        Paragraph,
+        BlockQuote,
+        Image,
+        ImageUpload,
+        ImageInsert,
+        Table,
+        TableToolbar,
+        MediaEmbed,
+        Autoformat,
+        PasteFromOffice,
+        SimpleUploadAdapter
+      ],
+      toolbar: [
+        'heading',
+        '|',
+        'bold',
+        'italic',
+        'link',
+        'bulletedList',
+        'numberedList',
+        '|',
+        'insertImage',
+        'blockQuote',
+        'insertTable',
+        'mediaEmbed',
+        '|',
+        'undo',
+        'redo'
+      ],
+      simpleUpload: {
         uploadUrl: "/admin/images"
+      },
+      table: {
+        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
       }
     }).then(editor => editors.push(editor));
   });
