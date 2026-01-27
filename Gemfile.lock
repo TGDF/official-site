@@ -509,7 +509,7 @@ GEM
       ostruct
       ruby-openai (~> 8.1)
     rake (13.3.1)
-    rbs (3.9.5)
+    rbs (3.10.2)
       logger
     rdoc (7.1.0)
       erb
@@ -598,7 +598,7 @@ GEM
       rubocop (~> 1.81)
     ruby-graphviz (1.2.5)
       rexml
-    ruby-lsp (0.26.4)
+    ruby-lsp (0.26.5)
       language_server-protocol (~> 3.17.0)
       prism (>= 1.2, < 2.0)
       rbs (>= 3, < 5)
