@@ -2,6 +2,7 @@
 
 module Admin
   class SitesController < Admin::BaseController
+    skip_before_action :require_tenant_site!
     before_action :find_site, only: %i[edit update destroy]
 
     def index

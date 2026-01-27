@@ -27,6 +27,7 @@
       </div>
     <% end %>
 
+    <% if tenant_site? %>
     <!-- General Section -->
     <div class="space-y-0.5 mt-4">
       <%= admin_v2_sidebar_section t('.general') %>
@@ -46,7 +47,6 @@
       <% end %>
     </div>
 
-    <% if tenant_site? %>
       <!-- Tenant Features Section -->
       <div class="space-y-0.5 mt-4">
         <%= admin_v2_sidebar_section t('.tenant_features') %>

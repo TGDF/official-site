@@ -3,6 +3,7 @@
 module Admin
   class BaseController < ::ApplicationController
     before_action :authenticate_admin_user!
+    before_action :require_tenant_site!
     before_action -> { @navbar_sites = Site.recent.limit(5) }
 
     helper_method :admin_current_resource_locale
@@ -17,6 +18,12 @@ module Admin
     def ensure_site_created!; end
 
     private
+
+    def require_tenant_site!
+      return if tenant_site?
+
+      redirect_to admin_root_path, alert: t("admin.errors.tenant_only")
+    end
 
     def save_admin_resource_locale
       return if params[:resource_locale].blank?

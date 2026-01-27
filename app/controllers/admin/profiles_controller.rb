@@ -2,6 +2,8 @@
 
 module Admin
   class ProfilesController < Admin::BaseController
+    skip_before_action :require_tenant_site!
+
     def edit; end
 
     def update
