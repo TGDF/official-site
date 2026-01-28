@@ -210,6 +210,38 @@ namespace :tenant_consolidation do
     rollback_group(group_config)
   end
 
+  desc "Reset PostgreSQL sequences for migrated models"
+  task :reset_sequences, [ :group ] => :environment do |_t, args|
+    group_name = args[:group]
+
+    if group_name.blank?
+      puts "ERROR: group argument required"
+      puts "Usage: bin/rails 'tenant_consolidation:reset_sequences[slider]'"
+      puts ""
+      puts "Available groups:"
+      MIGRATION_GROUPS.each do |name, config|
+        puts "  #{name}: #{config[:order].join(', ')}"
+      end
+      exit 1
+    end
+
+    group_config = MIGRATION_GROUPS[group_name]
+    if group_config.nil?
+      puts "ERROR: Unknown group '#{group_name}'"
+      puts "Available groups: #{MIGRATION_GROUPS.keys.join(', ')}"
+      exit 1
+    end
+
+    puts "Resetting sequences for '#{group_name}' group..."
+    puts "Models: #{group_config[:order].join(', ')}"
+    puts "=" * 60
+
+    reset_sequences_for_models(group_config[:order])
+
+    puts ""
+    puts "Done. Sequences have been reset to max_id + 1."
+  end
+
   desc "Cleanup ActiveStorage attachments for models still in tenant schemas"
   task cleanup_attachments: :environment do
     puts "Cleaning up attachments for models still in tenant schemas..."
@@ -552,6 +584,11 @@ namespace :tenant_consolidation do
     end
 
     if total_failed.zero? && !dry_run
+      # Reset PostgreSQL sequences to prevent duplicate key errors
+      puts ""
+      puts "Resetting sequences..."
+      reset_sequences_for_models(models)
+
       puts ""
       puts "Next steps:"
       puts "  1. Verify group: bin/rails 'tenant_consolidation:verify[#{group_name}]'"
@@ -702,6 +739,20 @@ namespace :tenant_consolidation do
   # ============================================================
   # Shared Helpers
   # ============================================================
+
+  def reset_sequences_for_models(model_names)
+    model_names.each do |model_name|
+      model_class = model_name.constantize
+
+      # Use ActiveRecord's built-in method for PostgreSQL
+      ActiveRecord::Base.connection.reset_pk_sequence!(model_class.table_name)
+
+      max_id = model_class.unscoped.maximum(:id) || 0
+      puts "  #{model_name}: sequence reset (max_id=#{max_id})"
+    rescue StandardError => e
+      puts "  #{model_name}: WARNING - Failed to reset sequence: #{e.message}"
+    end
+  end
 
   def attach_asset(record, attachment, url)
     filename = File.basename(url).split("?").first

@@ -289,6 +289,9 @@ bin/rails "tenant_consolidation:verify[agenda]"             # Verify all 8 agend
 bin/rails "tenant_consolidation:rollback[slider]"           # Rollback single model group
 bin/rails "tenant_consolidation:rollback[agenda]"           # Rollback all 8 agenda models
 
+# Reset sequences (for fixing already-migrated models)
+bin/rails "tenant_consolidation:reset_sequences[slider]"    # Reset sequences for group
+
 # Cleanup incorrect attachments
 bin/rails tenant_consolidation:cleanup_attachments
 ```
@@ -342,9 +345,9 @@ aws rds restore-db-instance-from-db-snapshot \
   --db-snapshot-identifier <model>-migration-*
 ```
 
-## Critical Constraint
+## Critical Constraints
 
-**Data and assets must migrate together.**
+### 1. Data and assets must migrate together
 
 CarrierWave path includes `model.id`:
 ```
@@ -359,6 +362,24 @@ If IDs are remapped during consolidation, asset migration will fail:
 | After remap | 100 | Looks for `.../100/photo.jpg` | ✗ 404 |
 
 **Solution:** The consolidation task gets CarrierWave URL before copying data, then attaches via ActiveStorage after.
+
+### 2. PostgreSQL sequences must be reset after consolidation
+
+When records are inserted into the public schema, PostgreSQL auto-generates new IDs using sequences. After consolidation completes, the sequence must be reset to `max(id) + 1` to prevent duplicate key errors on next insert.
+
+**Problem scenario:**
+```
+1. Consolidation migrates records with IDs 1-10
+2. Sequence stops at 5 (last INSERT operation)
+3. Next manual INSERT tries to use ID=6 → ERROR: duplicate key
+```
+
+**Solution:** The consolidation task now automatically resets sequences after migration completes.
+
+**Manual fix for already-migrated models:**
+```bash
+bin/rails "tenant_consolidation:reset_sequences[group_name]"
+```
 
 ## Mobility JSONB Translation Handling
 
