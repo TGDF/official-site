@@ -111,7 +111,7 @@ GEM
     boxing (0.11.0)
       bundler (~> 2.0)
       zeitwerk (~> 2.6)
-    brakeman (7.1.2)
+    brakeman (8.0.1)
       racc
     builder (3.3.0)
     byebug (13.0.0)
