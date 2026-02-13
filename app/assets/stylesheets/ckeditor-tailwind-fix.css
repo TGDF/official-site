@@ -1,0 +1,30 @@
+/*
+ * CKEditor + TailwindCSS 4.0 Preflight compatibility
+ *
+ * Preflight resets browser defaults (heading sizes, list styles, etc.)
+ * that CKEditor's content area depends on.
+ */
+
+/* Restore heading styles in editor content area */
+.ck-content h1 { font-size: 2em; font-weight: bold; margin: 0.67em 0; }
+.ck-content h2 { font-size: 1.5em; font-weight: bold; margin: 0.83em 0; }
+.ck-content h3 { font-size: 1.17em; font-weight: bold; margin: 1em 0; }
+.ck-content h4 { font-size: 1em; font-weight: bold; margin: 1.33em 0; }
+.ck-content h5 { font-size: 0.83em; font-weight: bold; margin: 1.67em 0; }
+.ck-content h6 { font-size: 0.67em; font-weight: bold; margin: 2.33em 0; }
+
+/* Restore list styles */
+.ck-content ul { list-style-type: disc; padding-left: 40px; margin: 1em 0; }
+.ck-content ol { list-style-type: decimal; padding-left: 40px; margin: 1em 0; }
+
+/* Restore paragraph spacing */
+.ck-content p { margin: 1em 0; }
+
+/* Restore blockquote */
+.ck-content blockquote { margin: 1em 40px; }
+
+/* Restore link styles */
+.ck-content a { color: revert; text-decoration: revert; }
+
+/* Restore image display */
+.ck-content img { display: inline; }

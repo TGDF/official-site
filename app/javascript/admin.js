@@ -37,6 +37,7 @@ import {
   SimpleUploadAdapter
 } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
+import '../assets/stylesheets/ckeditor-tailwind-fix.css';
 
 const editors = [];
 
