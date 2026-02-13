@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Explicit content source configuration for Rails views */
 @source "../app/views/**/*.erb";
