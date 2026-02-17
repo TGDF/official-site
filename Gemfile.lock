@@ -582,7 +582,7 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.5)
-    rubocop (1.84.1)
+    rubocop (1.84.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -785,7 +785,7 @@ DEPENDENCIES
   roast-ai
   ros-apartment
   rspec-rails
-  rubocop (~> 1.84.1)
+  rubocop (~> 1.84.2)
   rubocop-capybara
   rubocop-performance
   rubocop-rails-omakase
