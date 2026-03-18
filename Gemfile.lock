@@ -372,7 +372,7 @@ GEM
     liveness (0.3.2)
       rack (>= 1.0)
     logger (1.7.0)
-    loofah (2.25.0)
+    loofah (2.25.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     lookbook (2.3.14)
