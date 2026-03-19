@@ -4,7 +4,8 @@ ARG RUBY_VERSION=3.3
 FROM ruby:${RUBY_VERSION}-alpine AS base
 ARG APP_ROOT
 
-RUN apk add --no-cache build-base postgresql-dev yaml-dev libffi-dev
+RUN apk upgrade --no-cache && \
+    apk add --no-cache build-base postgresql-dev yaml-dev libffi-dev
 
 RUN mkdir -p ${APP_ROOT}
 COPY Gemfile Gemfile.lock ${APP_ROOT}/
@@ -26,7 +27,8 @@ RUN bundle exec bootsnap precompile --gemfile app/ lib/
 FROM ruby:${RUBY_VERSION}-alpine
 ARG APP_ROOT
 
-RUN apk add --no-cache curl shared-mime-info tzdata postgresql-libs imagemagick imagemagick-jpeg libexpat vips
+RUN apk upgrade --no-cache && \
+    apk add --no-cache curl shared-mime-info tzdata postgresql-libs imagemagick imagemagick-jpeg libexpat vips
 
 COPY --from=base /usr/local/bundle/config /usr/local/bundle/config
 COPY --from=base /usr/local/bundle /usr/local/bundle
