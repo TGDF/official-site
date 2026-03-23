@@ -18,9 +18,9 @@ jobs:
   rubocop:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
     - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
@@ -30,9 +30,9 @@ jobs:
   brakeman:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
     - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
@@ -55,14 +55,14 @@ jobs:
           ports:
             - 5432:5432
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
     - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
     - name: Set up Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'yarn'
@@ -73,13 +73,6 @@ jobs:
         bundle exec rake db:migrate
     - name: Run RSpec
       run: bundle exec rspec
-    - name: Archive RSpec coverage report
-      uses: actions/upload-artifact@v4
-      with:
-        name: simplecov-resultset-rspec
-        path: coverage/.resultset.json
-        include-hidden-files: true
-        retention-days: 1
 
   cucumber:
     runs-on: ubuntu-latest
@@ -100,14 +93,14 @@ jobs:
           ports:
             - 5432:5432
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
     - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
     - name: Set up Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: '20'
         cache: 'yarn'
@@ -118,57 +111,7 @@ jobs:
         bundle exec rake db:migrate
     - name: Run Cucumber
       run: bundle exec cucumber -f json -o tmp/cucumber-report.json
-    - name: Archive Cucumber coverage report
-      uses: actions/upload-artifact@v4
-      with:
-        name: simplecov-resultset-cucumber
-        path: coverage/.resultset.json
-        include-hidden-files: true
-        retention-days: 1
-    - uses: deblockt/cucumber-report-annotations-action@v1.16
+    - uses: deblockt/cucumber-report-annotations-action@6752fe2c8e2640f9c98687d7b1782e3755fbe434 # v1.16
       with:
         access-token: ${{ secrets.GITHUB_TOKEN }}
         path: "tmp/cucumber-report.json"
-  report-coverage:
-    runs-on: ubuntu-latest
-    services:
-        postgres:
-          image: postgres
-          env:
-            POSTGRES_USER: tgdf
-            POSTGRES_PASSWORD: tgdf
-          options: >-
-            --health-cmd pg_isready
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
-          ports:
-            - 5432:5432
-    needs:
-      - rspec
-      - cucumber
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ env.RUBY_VERSION }}
-        bundler-cache: true
-    - name: Download RSpec coverage report
-      uses: actions/download-artifact@v4
-      with:
-        name: simplecov-resultset-rspec
-        path: simplecov-resultset-rspec/
-    - name: Download Cucumber coverage report
-      uses: actions/download-artifact@v4
-      with:
-        name: simplecov-resultset-cucumber
-        path: simplecov-resultset-cucumber/
-    - name: Upload coverage report
-      if: ${{ github.ref_name == 'main' }}
-      uses: paambaati/codeclimate-action@v9
-      continue-on-error: true
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      with:
-        coverageCommand: bundle exec rake coverage:report

@@ -1,6 +1,6 @@
 Taipei Game Developer Forum Official Site
 ===
-[![Rails](https://github.com/TGDF/official-site/actions/workflows/main.yml/badge.svg)](https://github.com/TGDF/official-site/actions/workflows/main.yml) [![Test Coverage](https://api.codeclimate.com/v1/badges/d73d789d1d5f95957421/test_coverage)](https://codeclimate.com/github/TGDF/official-site/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/d73d789d1d5f95957421/maintainability)](https://codeclimate.com/github/TGDF/official-site/maintainability)
+[![Rails](https://github.com/TGDF/official-site/actions/workflows/main.yml/badge.svg)](https://github.com/TGDF/official-site/actions/workflows/main.yml)
 
 This is a Rails application for [Taipei Game Developer Forum](https://tgdf.tw) to building a website for their annual event site.
 

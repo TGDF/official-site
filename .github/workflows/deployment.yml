@@ -33,7 +33,7 @@ jobs:
       cancel-in-progress: true
     steps:
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@ff717079ee2060e4bcee96c4779b553acc87447c # v4
       with:
         role-to-assume: ${{ secrets.DEPLOY_IAM_ROLE }}
         aws-region: ap-northeast-1
@@ -44,7 +44,7 @@ jobs:
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      uses: aws-actions/amazon-ecs-render-task-definition@77954e213ba1f9f9cb016b86a1d4f6fcdea0d57e # v1
       with:
         task-definition: task-definition.json
         container-name: web
@@ -100,7 +100,7 @@ jobs:
         fi
 
     - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+      uses: aws-actions/amazon-ecs-deploy-task-definition@cbf54ec46642b86ff78c2f5793da6746954cf8ff # v2
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ secrets.DEPLOY_SERVICE }}
@@ -108,14 +108,14 @@ jobs:
         wait-for-service-stability: true
     # Release to Sentry
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       with:
         fetch-depth: 0
     - name: Add short SHA information
       id: commit
       run: echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
     - name: Create Sentry release
-      uses: getsentry/action-release@v1
+      uses: getsentry/action-release@a74facf8a080ecbdf1cb355f16743530d712abb7 # v1
       continue-on-error: true
       env:
         SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
