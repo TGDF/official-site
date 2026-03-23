@@ -115,7 +115,7 @@ jobs:
       id: commit
       run: echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
     - name: Create Sentry release
-      uses: getsentry/action-release@a74facf8a080ecbdf1cb355f16743530d712abb7 # v1
+      uses: getsentry/action-release@dab6548b3c03c4717878099e43782cf5be654289 # v3.5.0
       continue-on-error: true
       env:
         SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
