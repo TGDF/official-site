@@ -4,10 +4,15 @@ module HasMigratedUpload
   extend ActiveSupport::Concern
 
   class_methods do
-    def has_migrated_upload(field, variants: {}, attachment_name: nil)
+    def has_migrated_upload(field, variants: {}, attachment_name: nil, validates_presence: false)
       attachment_name ||= :"#{field}_attachment"
 
       has_one_attached attachment_name
+
+      if validates_presence
+        options = validates_presence.is_a?(Hash) ? validates_presence : {}
+        validate(**options) { errors.add(field, :blank) unless public_send(:"#{field}_present?") }
+      end
 
       define_method(:"#{field}_url") do |version = nil|
         # Models still in Apartment tenant schema must use CarrierWave
@@ -34,8 +39,11 @@ module HasMigratedUpload
   private
 
   def model_in_tenant_schema?
-    excluded = Apartment.excluded_models.map(&:to_s)
-    !excluded.include?(self.class.name)
+    !apartment_excluded_model?
+  end
+
+  def apartment_excluded_model?
+    Apartment.excluded_models.map(&:to_s).include?(self.class.name)
   end
 
   def active_storage_url_for(attachment, version, variants)

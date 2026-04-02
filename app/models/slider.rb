@@ -6,7 +6,7 @@ class Slider < ApplicationRecord
 
   acts_as_tenant :site
   mount_uploader :image, SliderUploader
-  has_migrated_upload :image, variants: ImageVariants::SLIDER
+  has_migrated_upload :image, variants: ImageVariants::SLIDER, validates_presence: true
 
   enum :language, {
     'zh-TW': 0,
@@ -20,5 +20,4 @@ class Slider < ApplicationRecord
   }
 
   validates :language, presence: true
-  validate { errors.add(:image, :blank) unless image_present? }
 end

@@ -83,7 +83,10 @@ const setupCKEditors = () => {
         'redo'
       ],
       simpleUpload: {
-        uploadUrl: "/admin/images"
+        uploadUrl: "/admin/images",
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content
+        }
       },
       table: {
         contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']

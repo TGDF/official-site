@@ -33,9 +33,9 @@ class Agenda < ApplicationRecord
 
   enum :translated_type, {
     sentence: 1,
-    synchornize: 2,
+    synchronize: 2,
     subtitle: 3
-  }
+  }, prefix: :translated
 
   validates :subject, :description, presence: true
   validate :begin_and_end_are_presence
@@ -45,7 +45,7 @@ class Agenda < ApplicationRecord
   def begin_and_end_are_presence
     return unless begin_at.present? || end_at.present?
 
-    errors.add(:begin_at, :blank) if begin_at.empty?
-    errors.add(:end_at, :blank) if end_at.empty?
+    errors.add(:begin_at, :blank) if begin_at.blank?
+    errors.add(:end_at, :blank) if end_at.blank?
   end
 end

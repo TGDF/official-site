@@ -36,7 +36,7 @@ Rails.application.routes.draw do
 
     resource :profile, only: %i[edit update]
 
-    resources :menu_items, expect: :show
+    resources :menu_items, except: :show
     resources :sliders, except: :show
     resources :blocks, except: :show
     resources :plans, except: :show
@@ -56,11 +56,11 @@ Rails.application.routes.draw do
 
     resource :indie_space, only: %i[edit update]
     namespace :indie_space do
-      resources :games, expect: :show
+      resources :games, except: :show
     end
 
     namespace :night_market do
-      resources :games, expect: :show
+      resources :games, except: :show
     end
 
     resources :images, only: %i[create]

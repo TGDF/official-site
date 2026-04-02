@@ -75,7 +75,7 @@ en:
       speakers: Speakers
     show:
       sessions_by: "Sessions by %{speaker}"
-      synchornize: " (simultaneously interpreted into %{to})"
+      synchronize: " (simultaneously interpreted into %{to})"
       sentence: " (consecutively interpreted into %{to})"
       subtitle: " (accompanied with %{to} subtitles.)"
       language: "Language: "

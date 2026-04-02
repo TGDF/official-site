@@ -75,7 +75,7 @@ zh-TW:
       speakers: '<span class="text-red-500">講者</span>列表'
     show:
       sessions_by: "%{speaker}的議程"
-      synchornize: 同步翻譯為%{to}
+      synchronize: 同步翻譯為%{to}
       sentence: 逐句翻譯為%{to}
       subtitle: 演講附帶%{to}字幕
       language: 語言：

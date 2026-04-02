@@ -15,6 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Individual processes: `bin/rails server`, `yarn build:css --watch`, `yarn build --watch`
 
 ### Testing
+- **Always run both RSpec and Cucumber** after code changes to verify behavior
 - `bundle exec rspec` - Run full RSpec test suite
 - `bundle exec rspec spec/path/to/file_spec.rb` - Run single spec file
 - `bundle exec rspec spec/path/to/file_spec.rb:42` - Run specific test at line 42

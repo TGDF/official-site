@@ -23,5 +23,13 @@ class Site < ApplicationRecord
   default_scope -> { order(created_at: :desc) }
 
   after_create -> { Apartment::Tenant.create(tenant_name) }
-  before_destroy -> { Apartment::Tenant.drop(tenant_name) }
+  before_destroy :drop_tenant_schema
+
+  private
+
+  def drop_tenant_schema
+    Apartment::Tenant.drop(tenant_name)
+  rescue Apartment::TenantNotFound => e
+    Rails.logger.warn("Tenant schema not found during destroy: #{e.message}")
+  end
 end

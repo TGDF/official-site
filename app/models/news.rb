@@ -11,7 +11,7 @@ class News < ApplicationRecord
   friendly_id :title, use: :slugged
 
   mount_uploader :thumbnail, ThumbnailUploader
-  has_migrated_upload :thumbnail, variants: ImageVariants::NEWS_THUMBNAIL
+  has_migrated_upload :thumbnail, variants: ImageVariants::NEWS_THUMBNAIL, validates_presence: true
 
   enum :status, {
     draft: 0,
@@ -20,7 +20,6 @@ class News < ApplicationRecord
   }
 
   validates :title, :content, :slug, presence: true
-  validate { errors.add(:thumbnail, :blank) unless thumbnail_present? }
   validates :slug, uniqueness: { scope: :site_id }
 
   scope :latest, -> { order(created_at: :desc) }

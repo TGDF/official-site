@@ -11,10 +11,9 @@ class Sponsor < ApplicationRecord
   translates :description
 
   mount_uploader :logo, LogoUploader
-  has_migrated_upload :logo, variants: ImageVariants::LOGO
+  has_migrated_upload :logo, variants: ImageVariants::LOGO, validates_presence: true
 
   validates :name, presence: true
-  validate { errors.add(:logo, :blank) unless logo_present? }
 
   default_scope -> { order(order: :asc) }
 end
