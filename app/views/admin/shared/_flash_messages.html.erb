@@ -1,0 +1,20 @@
+<% flash.each do |type, msg| %>
+  <% style = admin_flash_style(type) %>
+  <div class="transition-all duration-300 ease-in-out opacity-100 translate-y-0"
+       role="alert"
+       aria-live="<%= style[:aria_live] %>"
+       data-controller="flash-message"
+       data-auto-dismiss="<%= type.to_s == 'notice' %>">
+    <div class="w-full <%= style[:bg] %> <%= style[:border] %> border-l-4 p-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <i class="fa <%= style[:icon] %> w-5 h-5 <%= style[:icon_color] %>"></i>
+        <span class="<%= style[:text] %> font-medium"><%= msg %></span>
+      </div>
+      <button class="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 rounded-md"
+              aria-label="Dismiss message"
+              data-action="click->flash-message#dismiss">
+        <i class="fa fa-times w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+<% end %>
