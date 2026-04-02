@@ -27,7 +27,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bundle exec rubocop -A` - Auto-fix Ruby style issues (run this first)
 - `bundle exec rubocop` - Check Ruby style without fixing
 - `bundle exec brakeman` - Security analysis
-- Git hooks run linting on commit/push via overcommit
+- **Overcommit hooks**: PreCommit runs RuboCop (warnings are failures), PrePush runs Brakeman
 
 ### Database
 - `bin/rails db:migrate` - Run migrations
@@ -45,7 +45,7 @@ See `docs/tenant_consolidation.md` for full migration guide.
 ## Architecture Overview
 
 ### Multi-Tenant SaaS Platform
-Rails 8.1.1 application for conference/gaming event websites (TGDF - Taipei Game Developer Forum).
+Rails 8.1.2 application for conference/gaming event websites (TGDF - Taipei Game Developer Forum).
 
 **Tenant System (dual implementation during migration)**:
 - **Apartment gem**: PostgreSQL schema-based isolation (being migrated away)
@@ -69,13 +69,13 @@ Rails 8.1.1 application for conference/gaming event websites (TGDF - Taipei Game
 
 ### Technology Stack
 
-- **Backend**: Rails 8.1.1 + Ruby 3.3.0 + PostgreSQL
+- **Backend**: Rails 8.1.2 + Ruby 3.3.2 + PostgreSQL
 - **Frontend**: Turbo + Stimulus + TailwindCSS 4.0 + esbuild
 - **File Uploads**: CarrierWave (legacy) + ActiveStorage (target)
-- **Internationalization**: Mobility gem with zh-TW/en locales
+- **Internationalization**: Mobility gem with zh-TW (default)/en locales, fallbacks enabled
 - **Authentication**: Devise for admin users
 - **View Layer**: ERB templates + ViewComponent
-- **Functional patterns**: dry-monads, dry-transaction for business logic
+- **Functional patterns**: dry-monads, dry-rails for business logic
 - **Feature Flags**: Flipper for feature toggles
 
 ### Key Patterns
