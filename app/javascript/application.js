@@ -15,6 +15,11 @@ window.handleIFrameMessage = function(e) {
     if (typeof e.data === 'object') {
         return;
     }
+
+    // Validate origin before processing any commands
+    var isJotForm = (e.origin.indexOf("jotform") > -1);
+    if (!isJotForm) { return; }
+
     var args = e.data.split(":");
     let iframe = null;
     if (args.length > 2) {
@@ -56,8 +61,7 @@ window.handleIFrameMessage = function(e) {
             else if (window.document.msExitFullscreen) window.document.msExitFullscreen();
             break;
     }
-    var isJotForm = (e.origin.indexOf("jotform") > -1) ? true : false;
-    if (isJotForm && "contentWindow" in iframe && "postMessage" in iframe.contentWindow) {
+    if ("contentWindow" in iframe && "postMessage" in iframe.contentWindow) {
         var urls = {
             "docurl": encodeURIComponent(document.URL),
             "referrer": encodeURIComponent(document.referrer)
@@ -65,7 +69,7 @@ window.handleIFrameMessage = function(e) {
         iframe.contentWindow.postMessage(JSON.stringify({
             "type": "urls",
             "value": urls
-        }), "*");
+        }), e.origin);
     }
 };
 if (window.addEventListener) {
