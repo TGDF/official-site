@@ -56,3 +56,5 @@ yarn-debug.log*
 /config/master.key
 /config/credentials/*.key
 .aider*
+
+*.local.md
