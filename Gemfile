@@ -17,7 +17,7 @@ gem "sprockets-rails"
 # Use postgresql as the database for Active Record
 gem "pg", ">= 0.18", "< 2.0"
 # Use Puma as the app server
-gem "puma", "~> 7.2"
+gem "puma", "~> 8.0"
 # Use SCSS for stylesheets
 # gem 'sassc-rails'
 # See https://github.com/rails/execjs#readme for more supported runtimes

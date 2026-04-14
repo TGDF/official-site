@@ -456,7 +456,7 @@ GEM
       date
       stringio
     public_suffix (6.0.2)
-    puma (7.2.0)
+    puma (8.0.0)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.6)
@@ -747,7 +747,7 @@ DEPENDENCIES
   openbox
   overcommit
   pg (>= 0.18, < 2.0)
-  puma (~> 7.2)
+  puma (~> 8.0)
   rack-attack
   rack-utf8_sanitizer
   rails (~> 8.1.3)
