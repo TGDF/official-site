@@ -6,7 +6,7 @@
     <hr class="my-4">
     <div class="space-y-4">
       <div class="prose max-w-none">
-        <%= truncate(sanitize(@news.content), length: 150) %>
+        <%= truncate(sanitize(@news.content), length: 150, escape: false) %>
       </div>
       <p class="pt-2">
         <%= link_to t('.read_more'),@news, class: 'px-4 py-2 bg-red-500 text-white hover:bg-red-600' %>

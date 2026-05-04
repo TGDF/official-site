@@ -3,11 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe NewsListItemComponent, type: :component do
-  let(:news) { create(:news, title: '報名即將開始') }
+  let(:news) { create(:news, title: '報名即將開始', content: '<p>歡迎報名</p>') }
 
   given_a_component { described_class.new(news:) }
   when_rendered
 
   it { is_expected.to have_link('報名即將開始') }
   it { is_expected.to have_link('了解更多') }
+  it { is_expected.to have_css('p', text: '歡迎報名') }
+  it { is_expected.to have_no_text('<p>歡迎報名</p>') }
 end
