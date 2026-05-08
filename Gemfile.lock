@@ -153,7 +153,7 @@ GEM
       fiber-local (~> 1.1)
       json
     crass (1.0.6)
-    css_parser (2.0.0)
+    css_parser (2.1.0)
       addressable
     cssbundling-rails (1.4.3)
       railties (>= 6.0.0)
