@@ -13,7 +13,7 @@ RSpec.describe('Admin::Agendas') do
 
     it 'can see all agenda' do
       visit admin_agendas_path
-      agendas.each { |agenda| expect(page).to(have_content(agenda.subject)) }
+      agendas.each { |agenda| expect(page).to(have_text(agenda.subject)) }
     end
   end
 
@@ -23,7 +23,7 @@ RSpec.describe('Admin::Agendas') do
       fill_in 'agenda_subject', with: 'Example'
       fill_in 'agenda_description', with: 'Example Content'
       click_on '新增Agenda'
-      expect(page).to(have_content('Example'))
+      expect(page).to(have_text('Example'))
     end
   end
 
@@ -32,7 +32,7 @@ RSpec.describe('Admin::Agendas') do
       visit edit_admin_agenda_path(agenda)
       fill_in 'agenda_subject', with: 'New agenda Name'
       click_on '更新Agenda'
-      expect(page).to(have_content('New agenda Name'))
+      expect(page).to(have_text('New agenda Name'))
     end
   end
 
@@ -46,7 +46,7 @@ RSpec.describe('Admin::Agendas') do
         click_on 'Destroy'
       end
 
-      expect(page).to(have_no_content(agenda.subject))
+      expect(page).to(have_no_text(agenda.subject))
     end
   end
 end

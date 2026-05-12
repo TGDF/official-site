@@ -13,7 +13,7 @@ RSpec.describe('Admin::News') do
 
     it 'can see all news' do
       visit admin_news_index_path
-      news.each { |news| expect(page).to(have_content(news.title)) }
+      news.each { |news| expect(page).to(have_text(news.title)) }
     end
   end
 
@@ -30,7 +30,7 @@ RSpec.describe('Admin::News') do
       click_on '新增News'
     end
 
-    it { expect(page).to(have_content('Example')) }
+    it { expect(page).to(have_text('Example')) }
   end
 
   describe '#edit' do
@@ -38,7 +38,7 @@ RSpec.describe('Admin::News') do
       visit edit_admin_news_path(news)
       fill_in 'news_title', with: 'New News Name'
       click_on '更新News'
-      expect(page).to(have_content('New News Name'))
+      expect(page).to(have_text('New News Name'))
     end
   end
 
@@ -52,14 +52,14 @@ RSpec.describe('Admin::News') do
         click_on 'Destroy'
       end
 
-      expect(page).to(have_no_content(news.title))
+      expect(page).to(have_no_text(news.title))
     end
   end
 
   describe '#preview' do
     it 'can see news in preview mode' do
       visit preview_admin_news_path(news)
-      expect(page).to(have_content(news.title))
+      expect(page).to(have_text(news.title))
     end
   end
 end

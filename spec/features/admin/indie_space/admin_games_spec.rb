@@ -13,7 +13,7 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
 
     it 'can see all game' do
       visit admin_indie_space_games_path
-      games.each { |game| expect(page).to(have_content(game.name)) }
+      games.each { |game| expect(page).to(have_text(game.name)) }
     end
   end
 
@@ -30,7 +30,7 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
       click_on '新增Game'
     end
 
-    it { expect(page).to(have_content('Example')) }
+    it { expect(page).to(have_text('Example')) }
   end
 
   describe '#edit' do
@@ -42,7 +42,7 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       click_on '更新Game'
-      expect(page).to(have_content('New Game Name'))
+      expect(page).to(have_text('New Game Name'))
     end
   end
 
@@ -56,7 +56,7 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
         click_on 'Destroy'
       end
 
-      expect(page).to(have_no_content(game.name))
+      expect(page).to(have_no_text(game.name))
     end
   end
 end

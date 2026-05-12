@@ -13,7 +13,7 @@ RSpec.describe('Admin::Profiles') do
       fill_in 'admin_user_password', with: 'new_password'
       fill_in 'admin_user_password_confirmation', with: 'new_password'
       click_on '更新Admin user'
-      expect(page).to(have_content('Dashboard'))
+      expect(page).to(have_text('Dashboard'))
     end
   end
 end

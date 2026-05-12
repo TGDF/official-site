@@ -22,7 +22,7 @@ RSpec.describe('Admin::Options', level: :feature) do
       click_on '更新Site', match: :first
       # TODO: Improve check to ensure correct field is shown
       visit root_path
-      expect(page).to(have_content('1500'))
+      expect(page).to(have_text('1500'))
     end
   end
 end

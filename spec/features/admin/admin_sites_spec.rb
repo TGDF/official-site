@@ -16,7 +16,7 @@ RSpec.describe('Admin::Sites') do
 
     it 'can see all sites', pending: 'root tentant not resloved' do
       visit admin_sites_path
-      sites.each { |site| expect(page).to(have_content(site.name)) }
+      sites.each { |site| expect(page).to(have_text(site.name)) }
     end
   end
 
@@ -30,7 +30,7 @@ RSpec.describe('Admin::Sites') do
     end
 
     it 'is expected to create a new site', pending: 'root tentant not resloved' do
-      expect(page).to(have_content('Example'))
+      expect(page).to(have_text('Example'))
     end
   end
 
@@ -39,7 +39,7 @@ RSpec.describe('Admin::Sites') do
       visit edit_admin_site_path(site)
       fill_in 'site_name', with: 'New Site Name'
       click_on '更新Site'
-      expect(page).to(have_content('New Site Name'))
+      expect(page).to(have_text('New Site Name'))
     end
   end
 
@@ -53,7 +53,7 @@ RSpec.describe('Admin::Sites') do
         click_on 'Destroy'
       end
 
-      expect(page).to(have_no_content(site.name))
+      expect(page).to(have_no_text(site.name))
     end
   end
 end
