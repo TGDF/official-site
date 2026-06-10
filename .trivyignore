@@ -1,0 +1,12 @@
+# Trivy 漏洞忽略清單
+#
+# 這些 CVE 來自 base image `ruby:3.3-alpine` 內建的 net-imap default gem
+# (net-imap-0.4.21.gemspec)，並非應用程式實際載入的版本——bundle 已鎖定
+# net-imap >= 0.6.4.1（已含修復），執行期不會用到有漏洞的 default gem。
+#
+# 移除條件：當上游 ruby:3.3-alpine 重建並更新內建 net-imap default gem 後，
+# 重新掃描確認 0.4.21 不再出現，即可刪除本檔。
+
+# net-imap: Net::IMAP 任意 IMAP 指令注入（fixed in >= 0.6.4）
+CVE-2026-42257
+CVE-2026-42258
