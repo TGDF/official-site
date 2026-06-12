@@ -6,6 +6,28 @@ RSpec.describe(Agenda) do
   it { is_expected.to(validate_presence_of(:subject)) }
   it { is_expected.to(validate_presence_of(:description)) }
 
+  describe '#translated?' do
+    subject { agenda.translated? }
+
+    context 'when the translated language differs from the original language' do
+      let(:agenda) { build(:agenda, language: 'ZH', translated_language: 'EN') }
+
+      it { is_expected.to(be(true)) }
+    end
+
+    context 'when the translated language matches the original language' do
+      let(:agenda) { build(:agenda, language: 'ZH', translated_language: 'ZH') }
+
+      it { is_expected.to(be(false)) }
+    end
+
+    context 'when no translated language is set' do
+      let(:agenda) { build(:agenda, language: 'ZH', translated_language: nil) }
+
+      it { is_expected.to(be(false)) }
+    end
+  end
+
   describe '#destroy' do
     subject(:destroy) { agenda.destroy }
 

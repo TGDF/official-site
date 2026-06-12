@@ -30,11 +30,11 @@
       </div>
       <div class="space-y-2">
         <%= f.label :translated_language, class: 'text-sm font-medium text-gray-900' %>
-        <%= f.select :translated_language, Agenda.translated_languages.keys.map { |l| [t("locale.name.#{l}"), l] }, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+        <%= f.select :translated_language, Agenda.translated_languages.keys.map { |l| [t("locale.name.#{l}"), l] }, { include_blank: true }, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
       <div class="space-y-2">
         <%= f.label :translated_type, class: 'text-sm font-medium text-gray-900' %>
-        <%= f.select :translated_type, Agenda.translated_types.keys.map { |t| [t.humanize, t] }, {}, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
+        <%= f.select :translated_type, Agenda.translated_types.keys.map { |t| [t.humanize, t] }, { include_blank: true }, class: 'w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' %>
       </div>
       <div class="space-y-2">
         <%= f.label :room_id, t('.room'), class: 'text-sm font-medium text-gray-900' %>

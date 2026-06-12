@@ -18,3 +18,11 @@ Feature: Speaker
     Then I can see "John"
     And I can see "Sr. Game Engineer"
     And I can see "Awesome Engineer"
+
+  Scenario: I do not see translation info when a talk is not translated
+    Given "John" has a talk "Solo Chinese Talk" translated from "ZH" to "ZH"
+    When I visit "/"
+    And I click "講者" in menu
+    And I click "John"
+    Then I can see "Solo Chinese Talk"
+    And I can not see "逐句翻譯為中文"

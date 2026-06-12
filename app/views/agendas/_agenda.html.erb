@@ -3,7 +3,7 @@
   <p><%= agenda_speaker_links(agenda.speakers) %></p>
   <p>
     <% if agenda.language.present? %>
-      <% if agenda.translated_language.present? %>
+      <% if agenda.translated? %>
         <span class="rounded px-1 text-sm bg-blue-500 text-white">
           <%= agenda.language %> → <%= agenda.translated_language %>
         </span>

@@ -25,6 +25,14 @@ RSpec.describe('Admin::Agendas') do
       click_on '新增Agenda'
       expect(page).to(have_text('Example'))
     end
+
+    it 'does not assign a translation when none is selected' do
+      visit new_admin_agenda_path
+      fill_in 'agenda_subject', with: 'Example'
+      fill_in 'agenda_description', with: 'Example Content'
+      click_on '新增Agenda'
+      expect(Agenda.last.translated?).to(be(false))
+    end
   end
 
   describe '#edit' do

@@ -70,6 +70,10 @@ Then('I can see {string}') do |text|
   expect(page).to have_text(text)
 end
 
+Then('I can not see {string}') do |text|
+  expect(page).to have_no_text(text)
+end
+
 Then('I can see {string} in menu') do |text|
   within :xpath, "//nav[contains(@id, 'main-menu')]" do
     expect(page).to have_text(text)

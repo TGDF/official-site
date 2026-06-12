@@ -40,6 +40,13 @@ class Agenda < ApplicationRecord
   validates :subject, :description, presence: true
   validate :begin_and_end_are_presence
 
+  # A session counts as translated only when its translation targets a
+  # different language than the original; same-language entries (e.g. a
+  # Chinese talk marked as translated to Chinese) are treated as untranslated.
+  def translated?
+    translated_language.present? && translated_language != language
+  end
+
   private
 
   def begin_and_end_are_presence

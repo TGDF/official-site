@@ -36,10 +36,10 @@
             <span><%= t('.language') %>
             <span><%= t(".lang.#{agenda.language.downcase}") %>
           <% end %>
-          <% if agenda.translated_type.present? && agenda.translated_language.present? %>
-            <span><%= t(".#{agenda.translated_type}", to: t(".lang.#{agenda.translated_language.downcase}")) %>
-          <% else %>
-            <% if agenda.translated_language.present? %>
+          <% if agenda.translated? %>
+            <% if agenda.translated_type.present? %>
+              <span><%= t(".#{agenda.translated_type}", to: t(".lang.#{agenda.translated_language.downcase}")) %>
+            <% else %>
               <span>to <%= t(".lang.#{agenda.translated_language.downcase}") %>
             <% end %>
           <% end %>
