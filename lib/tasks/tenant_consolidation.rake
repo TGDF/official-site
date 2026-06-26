@@ -428,21 +428,13 @@ namespace :tenant_consolidation do
       model_class = config[:model].constantize
       next unless model_already_in_public?(model_class)
 
-      # Excluded models pin their table name to the public schema, so
-      # Apartment::Tenant.switch is a no-op for them — read the physical tenant
-      # schema with raw SQL instead, or the "tenant" count would just re-read public.
       bare_table = model_class.table_name.split(".").last
-      field_col = conn.quote_column_name(config[:field])
+      tenant_cw = tenant_marker_count(conn, bare_table, config[:field])
 
-      tenant_cw = 0
-      Site.find_each do |site|
-        qualified = "#{conn.quote_table_name(site.tenant_name)}.#{conn.quote_table_name(bare_table)}"
-        tenant_cw += conn.select_value(
-          "SELECT COUNT(*) FROM #{qualified} WHERE #{field_col} IS NOT NULL AND #{field_col} <> ''"
-        ).to_i
-      rescue ActiveRecord::StatementInvalid
-        next # tenant schema/table absent for this site
-      end
+      # Partners merge into Sponsor, so their logos become public Sponsor attachments.
+      # Count them on the tenant side too, or public_as carries a permanent +N margin
+      # (the merged partners) that could mask a genuinely missing Sponsor attachment.
+      tenant_cw += tenant_marker_count(conn, "partners", "logo") if config[:model] == "Sponsor"
 
       public_as = 0
       model_class.unscoped.find_each do |record|
@@ -1013,6 +1005,25 @@ namespace :tenant_consolidation do
     rescue StandardError => e
       puts "  #{model_name}: WARNING - Failed to reset sequence: #{e.message}"
     end
+  end
+
+  # Count rows in <tenant>.<table> with a non-blank marker column, summed across all
+  # sites, reading the physical tenant schema directly (excluded models pin their table
+  # name to public, so Apartment::Tenant.switch is a no-op for them).
+  def tenant_marker_count(conn, bare_table, field)
+    column = conn.quote_column_name(field)
+    total = 0
+    Site.find_each do |site|
+      qualified = "#{conn.quote_table_name(site.tenant_name)}.#{conn.quote_table_name(bare_table)}"
+      total += conn.select_value(
+        "SELECT COUNT(*) FROM #{qualified} WHERE #{column} IS NOT NULL AND #{column} <> ''"
+      ).to_i
+    rescue ActiveRecord::StatementInvalid => e
+      raise unless e.cause.is_a?(PG::UndefinedTable) # absent tenant table is fine; re-raise anything else
+
+      next
+    end
+    total
   end
 
   # Authoritative source size via fog (direct S3), used to verify the download.
