@@ -88,7 +88,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 - **News.author → AdminUser** — `author` is polymorphic; AdminUser is public with stable ids so no remap is needed. This is now **code-guarded**: `consolidate[news]` aborts if any `author_type` is a model other than `AdminUser` (a null author is fine) — the same fail-loud guard as Attachment, so a tenant-model author can no longer migrate with a stale id.
 - **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` now **aborts** if any `record_id` is set. In practice `Image` rows set only `file` (record_id null), so this rarely triggers; when it does, migrate attachments via the dump/transform/import path (see "Strategy for High-Risk Groups").
 
-**CKEditor embedded URLs** — every rich-text field (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site, the `RICH_TEXT_FIELDS` set) can embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files) and gated by `verify_uploads_unreferenced`.
+**CKEditor embedded URLs** — every rich-text field (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus URL inputs (MenuItem.link, Plan.button_target) — together the `RICH_TEXT_FIELDS` set — can embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files) and gated by `verify_uploads_unreferenced`.
 
 ### Critical Constraints
 
@@ -679,7 +679,7 @@ After Apartment removal, clean up CarrierWave.
 
 ### 5.0 Rewrite CKEditor Embedded URLs (BEFORE deleting S3 files)
 
-> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` is NOT implemented yet.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `migrate_public_assets`, `merge_partner_to_sponsor`. The rewrite task must be built before Phase 5.0 can run; the matching strategy below is its spec, not existing code.
+> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` is NOT implemented yet.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `verify_consolidated_assets`, `migrate_public_assets`, `backfill_markers`, `merge_partner_to_sponsor`. The rewrite task must be built before Phase 5.0 can run; the matching strategy below is its spec, not existing code.
 
 CKEditor embeds `/uploads/image/file/{id}/...` image URLs into **every rich-text field**, not just Block/News — also `Plan.content`, `Sponsor.description`, `Speaker.description`, `Agenda.description`, `Game.description`, and `Site.{description, indie_space_description, options}` — plus URL inputs an admin can point at an upload (`MenuItem.link`, `Plan.button_target`). All must be rewritten before S3 deletion. The set is encoded as `RICH_TEXT_FIELDS` in the rake task and is exactly what `verify_uploads_unreferenced` scans — keep both in sync with the data-editor admin forms and link/target inputs.
 
