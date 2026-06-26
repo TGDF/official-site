@@ -416,6 +416,33 @@ namespace :tenant_consolidation do
     puts "\nDone. Attached #{migrated} asset(s)."
   end
 
+  desc "Backfill CW marker columns from ActiveStorage (for groups consolidated before marker retention)"
+  task backfill_markers: :environment do
+    puts "Backfilling CW marker columns from ActiveStorage attachments..."
+    filled = 0
+
+    # Groups consolidated before marker retention (e.g. slider) have a null marker, so
+    # the Phase 5 gate cannot see their assets. Record the marker now, while the AS
+    # attachment is intact, so the gate can later detect an asset that goes missing.
+    CONSOLIDATION_MODELS.each do |config|
+      model_class = config[:model].constantize
+      next unless model_already_in_public?(model_class)
+
+      model_class.unscoped.find_each do |record|
+        next if record[config[:field]].present? # idempotent
+
+        attachment = record.public_send(config[:attachment])
+        next unless attachment.attached?
+
+        record.update_column(config[:field], attachment.filename.to_s)
+        filled += 1
+        print "."
+      end
+    end
+
+    puts "\nDone. Backfilled #{filled} marker(s)."
+  end
+
   desc "Merge Partner/PartnerType to Sponsor/SponsorLevel during consolidation"
   task :merge_partner_to_sponsor, [ :dry_run ] => :environment do |_t, args|
     dry_run = args[:dry_run] == "true"

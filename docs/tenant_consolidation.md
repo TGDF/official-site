@@ -155,7 +155,7 @@ Never run `consolidate[partner]` — the partner group is retired and the task a
 bin/rails "tenant_consolidation:verify[<group>]"
 ```
 
-**What `verify` does and does not prove.** It is essentially a count check. On the consolidation (pre-exclude) branch it asserts `public_count >= tenant_count` per model and prints attachment counts; on the public (post-exclude) branch it asserts attachment counts and prints record counts. It does **not** assert FK integrity or translation values. Those, plus asset byte-size, are enforced *at write time* — an unmappable FK, an asset size mismatch, or a lost translation locale each raises and rolls back. So a green `verify` means "row counts are plausible," not "every association is correct." Consolidation **retains the CarrierWave marker column** (it is dropped only in Phase 5.1), so the post-exclude attachment check meaningfully compares CW-vs-AS per record. Exception: groups consolidated *before* marker retention was added (the already-done `slider`) have a null marker and will read a falsely-green `CW=0, AS=0` — spot-check those attachments directly before Phase 5.5.
+**What `verify` does and does not prove.** It is essentially a count check. On the consolidation (pre-exclude) branch it asserts `public_count >= tenant_count` per model and prints attachment counts; on the public (post-exclude) branch it asserts attachment counts and prints record counts. It does **not** assert FK integrity or translation values. Those, plus asset byte-size, are enforced *at write time* — an unmappable FK, an asset size mismatch, or a lost translation locale each raises and rolls back. So a green `verify` means "row counts are plausible," not "every association is correct." Consolidation **retains the CarrierWave marker column** (it is dropped only in Phase 5.1), so the post-exclude attachment check meaningfully compares CW-vs-AS per record. Groups consolidated *before* marker retention (the already-done `slider`) have a null marker; run `tenant_consolidation:backfill_markers` once to repopulate it from the live ActiveStorage attachment, after which the gate can see them too.
 
 ### 5. Update Model
 
@@ -336,6 +336,9 @@ bin/rails tenant_consolidation:verify_uploads_unreferenced
 
 # Attach ActiveStorage for already-public models (Site logo/figure) from CarrierWave
 bin/rails tenant_consolidation:migrate_public_assets
+
+# Backfill CW marker columns from ActiveStorage for pre-retention groups (e.g. slider)
+bin/rails tenant_consolidation:backfill_markers
 ```
 
 Group → models is listed once in [Recommended Migration Order](#recommended-migration-order).
@@ -724,6 +727,10 @@ RUN apk add --no-cache ... vips
 # Already-public models (Site) are not in any group; migrate their assets explicitly
 # (transactional + idempotent — a bad download rolls back, so a re-run retries it):
 bin/rails tenant_consolidation:migrate_public_assets
+
+# Backfill markers for any group consolidated before marker retention (e.g. slider),
+# so the gate below can verify their attachments too:
+bin/rails tenant_consolidation:backfill_markers
 
 # Must exit 0 before deleting. Aborts if any group is not yet consolidated (it scans
 # the public schema only), and exits 1 listing whatever still depends on /uploads/.
