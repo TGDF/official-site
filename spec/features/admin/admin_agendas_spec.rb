@@ -33,6 +33,16 @@ RSpec.describe('Admin::Agendas') do
       click_on '新增Agenda'
       expect(Agenda.last.translated?).to(be(false))
     end
+
+    it 'assigns the selected time on create' do # rubocop:disable RSpec/ExampleLength
+      time = create(:agenda_time)
+      visit new_admin_agenda_path
+      fill_in 'agenda_subject', with: 'Example'
+      fill_in 'agenda_description', with: 'Example Content'
+      select time.label, from: 'agenda[time_id]'
+      click_on '新增Agenda'
+      expect(Agenda.last.time).to(eq(time))
+    end
   end
 
   describe '#edit' do
