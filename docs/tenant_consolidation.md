@@ -85,7 +85,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 ```
 
 **Polymorphic references:**
-- **News.author → AdminUser** — safe *by data assumption*: `author` is polymorphic but every row's `author_type` is `AdminUser` (public, stable ids), verified in production 2025-12, so no remap is needed and the `news` group does not guard it. If any historical row had a tenant-model `author_type`, it would migrate silently wrong — re-check `SELECT DISTINCT author_type FROM news` before the news run.
+- **News.author → AdminUser** — `author` is polymorphic; AdminUser is public with stable ids so no remap is needed. This is now **code-guarded**: `consolidate[news]` aborts if any `author_type` is not `AdminUser` (the same fail-loud guard as Attachment), so a tenant-model author can no longer migrate with a stale id.
 - **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` now **aborts** if any `record_id` is set. In practice `Image` rows set only `file` (record_id null), so this rarely triggers; when it does, migrate attachments via the dump/transform/import path (see "Strategy for High-Risk Groups").
 
 **CKEditor embedded URLs** (`Block.content`, `News.content`) embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files).
@@ -95,7 +95,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 1. **All migrations use groups** - Even single models are migrated as groups for consistency
 2. **Multi-model groups are atomic** - Models with FK relationships are migrated together with automatic ID remapping
 3. **Attachment migrates last, and aborts if `record_id` is set** - Polymorphic `record` can reference any model. Migrating last is necessary but NOT sufficient: the in-place task cannot remap `record_id` across groups, so `consolidate[attachment]` aborts when any `record_id` is present. Use the dump/transform/import path for attachments that carry real references.
-4. **Polymorphic safety (News.author)** - News.author references AdminUser (already public, stable ids); no remap and no FK constraint
+4. **Polymorphic safety (News.author)** - News.author references AdminUser (already public, stable ids); no remap needed. Code-guarded: `consolidate[news]` aborts if any `author_type` is not AdminUser.
 5. **Schema changes for a group are bundled into that group's phase (atomic)** - When a group needs a structural change (e.g. dropping an index), the migration is written and committed **in the same change-set** as that group's consolidation switch — never as a loose, easily-forgotten pre-step. This keeps "code is in the state the data move expects" true at every commit.
 
    Concrete case — **non-site-scoped unique indexes**: per-tenant schemas each held their own copy of a table, so a global `unique` index was safe *within one year*. Once rows from every year share one public table, any unique index **not scoped to `site_id`** collides across tenants. Full `db/schema.rb` scan — the only offender is:
@@ -155,7 +155,7 @@ Never run `consolidate[partner]` — the partner group is retired and the task a
 bin/rails "tenant_consolidation:verify[<group>]"
 ```
 
-**What `verify` does and does not prove.** It is a count check: per model it asserts `public_count >= tenant_count` and reports attachment counts; the public-schema branch only prints. It does **not** assert FK integrity, asset byte-identity, or translation values. Those are instead enforced *at write time* — an unmappable FK or an empty asset raises and rolls back, and locale-key loss raises. So a green `verify` means "row counts are plausible," not "every association is correct." Run `verify` on the **pre-exclude** (consolidation) branch; once a model is in `excluded_models` the attachment check reads zero CW rows and reports a falsely-green `CW=0, AS=0`.
+**What `verify` does and does not prove.** It is essentially a count check. On the consolidation (pre-exclude) branch it asserts `public_count >= tenant_count` per model and prints attachment counts; on the public (post-exclude) branch it asserts attachment counts and prints record counts. It does **not** assert FK integrity or translation values. Those, plus asset byte-size, are enforced *at write time* — an unmappable FK, an asset size mismatch, or a lost translation locale each raises and rolls back. So a green `verify` means "row counts are plausible," not "every association is correct." Run `verify` on the **pre-exclude** branch; once a model is in `excluded_models` its CW column reads as zero rows, so the attachment check reports a falsely-green `CW=0, AS=0`.
 
 ### 5. Update Model
 
@@ -303,9 +303,10 @@ After verification, Partner code can be removed (Phase 5 cleanup).
 # Status - shows all groups and their migration status
 bin/rails tenant_consolidation:status
 
-# Consolidation - all migrations use group names (NOT partner — it aborts; use merge)
+# Consolidation - by group name. NOT partner (aborts; use merge).
+# agenda / attachment: prefer the Dump→Transform→Import path — in-place is fragile
+# for these (see "Strategy for High-Risk Groups"); run in-place only as a fallback.
 bin/rails "tenant_consolidation:consolidate[sponsor]"       # SponsorLevel + Sponsor
-bin/rails "tenant_consolidation:consolidate[agenda]"        # All 8 agenda models
 bin/rails "tenant_consolidation:consolidate[sponsor,true]"  # Dry run
 
 # Verification - all verifications use group names
@@ -444,6 +445,8 @@ For models still in tenant schemas that have `site_id` column:
 
 This ensures CarrierWave URLs are captured before IDs are remapped.
 
+Records are written with `save!(validate: false)` — model-level validations (presence, format, app-level uniqueness) are **intentionally skipped** so legacy rows that no longer satisfy current validations still migrate verbatim. Integrity therefore rests on the write-time *raises* (unmappable FK, asset size mismatch, lost translation locale, DB constraints), not on model validations. If you need a validation enforced during migration, add it as an explicit check, not via `validate: true`.
+
 **Recorded vs operational:** the data move (`consolidate` / `merge`) runs against the DB and is **not in git**; only the switch (model → plain `acts_as_tenant :site`, add to `excluded_models`) is committed — which is why a "complete" commit (Slider `4ee2e021`, Block `3afcf1a7`) is tiny. Run and verify the data move *first*, then commit the switch; committing first makes the records invisible (Apartment routes a non-excluded model to its tenant schema).
 
 ### Re-runs & Recovery
@@ -457,13 +460,13 @@ Idempotency here is **group-level, not row-level**. The current task has no reli
 
 ### Asset transfer
 
-`attach_asset` downloads each CarrierWave object and re-uploads to ActiveStorage **inside the per-tenant transaction** (rake `consolidate_group`). For large groups (agenda) this holds a DB transaction open across slow network I/O — a real lock/timeout risk. A failed **or empty** download re-raises (it is not swallowed) and rolls back that tenant's whole group — intentional all-or-nothing; recover via rollback + redo. The empty-blob check matters because the only safety net is the RDS snapshot, which does **not** cover S3: a silently-bad transfer that later passes Phase 5.5's `s3 rm` would be unrecoverable. Asset transfer is the one I/O-bound, order-independent part that *could* be lifted out of the transaction and run separately; **SolidQueue is not installed** and adopting it is gated on the ECS run-model decision, so this stays inline for now (do not route it through the non-durable `:async` adapter). The dump/transform/import path below makes this separation natural.
+`attach_asset` downloads each CarrierWave object and re-uploads to ActiveStorage **inside the per-tenant transaction** (rake `consolidate_group`). For large groups (agenda) this holds a DB transaction open across slow network I/O — a real lock/timeout risk. It **re-raises** (never swallows) and rolls back that tenant's whole group on any failure — intentional all-or-nothing; recover via rollback + redo. Integrity is checked by comparing the stored blob's byte size against the **authoritative source size read from fog/S3 directly** (captured during collection), not via the CDN. This rejects not just empty downloads but a CDN that answers a missing object with `200 + an HTML error body` (the asset host is a CDN). It matters because the only safety net is the RDS snapshot, which does **not** cover S3: a silently-bad transfer that later passes Phase 5.5's `s3 rm` would be unrecoverable. (A source whose size cannot be determined also raises — investigate the broken reference rather than migrate it blind.) Asset transfer is the one I/O-bound, order-independent part that *could* be lifted out of the transaction and run separately; **SolidQueue is not installed** and adopting it is gated on the ECS run-model decision, so this stays inline for now (do not route it through the non-durable `:async` adapter). The dump/transform/import path below makes this separation natural.
 
 ### Write-Freeze Posture
 
 `consolidate` reads tenant rows, then writes public rows; a write to the tenant schema *during* a run is not captured and is lost on cutover. Before running a group, **freeze writes to that group's models** (admin maintenance window, or take the relevant admin screens offline). The runbook assumes no concurrent writes to a group while it is being consolidated.
 
-Note: a group stops accumulating CarrierWave data automatically once consolidated — `upload_field_for` flips to `{field}_attachment` the moment the model enters `excluded_models`. New data cannot be written to ActiveStorage *before* consolidation, because `active_storage_attachments` is a shared public table keyed by `record_id`, which is only globally unique after the move (pre-move, the same id exists in every tenant schema → cross-tenant ambiguous lookups). So the only lever to shrink the backlog is to consolidate write-heavy groups sooner (e.g. Sponsor).
+Note: a group stops accumulating CarrierWave data automatically once consolidated — `upload_field_for` flips to `{field}_attachment` the moment the model enters `excluded_models`. The app **does not and must not** write ActiveStorage attachments to a model *before* it is consolidated: `upload_field_for` routes its forms to CarrierWave, and ActiveStorage would be unsafe anyway because `active_storage_attachments` is a shared public table keyed by `record_id`, which is only globally unique after the move (pre-move the same id exists in every tenant schema → cross-tenant ambiguous lookups). Any AS attachment found on a not-yet-consolidated model is therefore a leftover from tooling or an aborted run, which is exactly what `cleanup_attachments` removes. The only lever to shrink the backlog is to consolidate write-heavy groups sooner (e.g. Sponsor).
 
 ## Strategy for High-Risk Groups: Dump → Transform → Import
 
@@ -517,7 +520,7 @@ After all models are consolidated to public schema, remove the Apartment gem.
 
 Phase 4.5 drops the tenant schemas — the only correct source — irreversibly. Gate it on **data evidence**, not config:
 
-- [ ] Every group's data confirmed in public by `verify[group]` (and spot-checked) — NOT just `status`, which only reads `excluded_models`
+- [ ] Every group's data was confirmed by `verify[group]` **at its Step 4 (before exclusion)** — NOT `status`, which only reads `excluded_models`. (Re-running `verify` now, post-exclusion, reports a falsely-green `CW=0, AS=0`; instead spot-check directly: public row counts match, and sample records have correct associations + attached files.)
 - [ ] All models added to `Apartment.excluded_models`
 - [ ] Application tested without tenant schema switching
 - [ ] Assets confirmed in ActiveStorage before any S3 cleanup (Phase 5.5 deletes CW originals; the RDS snapshot does not cover S3)
