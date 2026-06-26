@@ -20,8 +20,10 @@ module Admin
     private
 
     def model_ready_for_active_storage?(model)
+      # base_class so STI subclasses (Image, IndieSpace::Game, NightMarket::Game) match
+      # the base class listed in excluded_models and pick the correct form field.
       excluded = Apartment.excluded_models.map(&:to_s)
-      excluded.include?(model.class.name)
+      excluded.include?(model.class.base_class.name)
     end
   end
 end

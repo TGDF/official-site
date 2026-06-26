@@ -43,7 +43,10 @@ module HasMigratedUpload
   end
 
   def apartment_excluded_model?
-    Apartment.excluded_models.map(&:to_s).include?(self.class.name)
+    # excluded_models lists base classes; an STI subclass (Image, IndieSpace::Game,
+    # NightMarket::Game) must resolve via base_class or it would be treated as still
+    # in the tenant schema after its group is consolidated, serving the wrong storage.
+    Apartment.excluded_models.map(&:to_s).include?(self.class.base_class.name)
   end
 
   def active_storage_url_for(attachment, version, variants)

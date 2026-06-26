@@ -34,6 +34,16 @@ RSpec.describe HasMigratedUpload do
     end
   end
 
+  describe 'STI subclass routing' do
+    it 'resolves an STI subclass via its base class in excluded_models' do
+      # Game is the base; excluded_models lists base classes only. A subclass must
+      # match through base_class, or it is wrongly treated as still tenant-schema.
+      allow(Apartment).to receive(:excluded_models).and_return(Apartment.excluded_models + %w[Game])
+
+      expect(IndieSpace::Game.new.send(:apartment_excluded_model?)).to be true
+    end
+  end
+
   describe '#field_present?' do
     let(:speaker) { create(:speaker) }
 
