@@ -543,8 +543,12 @@ namespace :tenant_consolidation do
 
                   new_fk_value = id_maps[parent_model][old_fk_value]
                   if new_fk_value.nil?
-                    puts "\n    WARNING: Cannot remap #{fk_column}=#{old_fk_value} (#{parent_model} not found in id_maps)"
-                    next
+                    # Unmappable FK = an orphaned source row (parent id not migrated).
+                    # Raise rather than keep the stale tenant id: tables without a DB
+                    # foreign key (e.g. agendas_taggings) would otherwise persist a
+                    # cross-tenant-wrong association silently. Fail loud → rollback.
+                    raise "Cannot remap #{model_name}.#{fk_column}=#{old_fk_value} " \
+                          "(#{parent_model} not in id_maps — orphaned source row)"
                   end
                   attrs[fk_column.to_s] = new_fk_value
                 end
@@ -803,8 +807,14 @@ namespace :tenant_consolidation do
       filename: filename,
       content_type: content_type
     )
-  rescue StandardError => e
-    puts "\n  WARNING: Failed to attach asset for #{record.class.name}##{record.id}: #{e.message}"
+
+    # Do NOT swallow failures: a missing/empty download must roll back the record,
+    # not pass verification and let Phase 5.5 delete the only original. An empty blob
+    # (e.g. an error body that returned HTTP 200) is treated as a failure.
+    blob = record.public_send(attachment).blob
+    if blob.nil? || blob.byte_size.zero?
+      raise "Empty asset downloaded for #{record.class.name}##{record.id} from #{url}"
+    end
   end
 
   def already_migrated?(record, field, attachment)
