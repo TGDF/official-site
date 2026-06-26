@@ -43,6 +43,16 @@ RSpec.describe('Admin::Agendas') do
       click_on '新增Agenda'
       expect(Agenda.last.time).to(eq(time))
     end
+
+    it 'renders begin_at as a free-form text field' do
+      visit new_admin_agenda_path
+      expect(page).to(have_field('agenda_begin_at', type: 'text'))
+    end
+
+    it 'renders end_at as a free-form text field' do
+      visit new_admin_agenda_path
+      expect(page).to(have_field('agenda_end_at', type: 'text'))
+    end
   end
 
   describe '#edit' do
