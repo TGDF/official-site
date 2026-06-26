@@ -85,7 +85,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 ```
 
 **Polymorphic references:**
-- **News.author → AdminUser** — `author` is polymorphic; AdminUser is public with stable ids so no remap is needed. This is now **code-guarded**: `consolidate[news]` aborts if any `author_type` is not `AdminUser` (the same fail-loud guard as Attachment), so a tenant-model author can no longer migrate with a stale id.
+- **News.author → AdminUser** — `author` is polymorphic; AdminUser is public with stable ids so no remap is needed. This is now **code-guarded**: `consolidate[news]` aborts if any `author_type` is a model other than `AdminUser` (a null author is fine) — the same fail-loud guard as Attachment, so a tenant-model author can no longer migrate with a stale id.
 - **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` now **aborts** if any `record_id` is set. In practice `Image` rows set only `file` (record_id null), so this rarely triggers; when it does, migrate attachments via the dump/transform/import path (see "Strategy for High-Risk Groups").
 
 **CKEditor embedded URLs** (`Block.content`, `News.content`) embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files).
@@ -95,7 +95,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 1. **All migrations use groups** - Even single models are migrated as groups for consistency
 2. **Multi-model groups are atomic** - Models with FK relationships are migrated together with automatic ID remapping
 3. **Attachment migrates last, and aborts if `record_id` is set** - Polymorphic `record` can reference any model. Migrating last is necessary but NOT sufficient: the in-place task cannot remap `record_id` across groups, so `consolidate[attachment]` aborts when any `record_id` is present. Use the dump/transform/import path for attachments that carry real references.
-4. **Polymorphic safety (News.author)** - News.author references AdminUser (already public, stable ids); no remap needed. Code-guarded: `consolidate[news]` aborts if any `author_type` is not AdminUser.
+4. **Polymorphic safety (News.author)** - News.author references AdminUser (already public, stable ids); no remap needed. Code-guarded: `consolidate[news]` aborts if any `author_type` is a model other than AdminUser (null is fine).
 5. **Schema changes for a group are bundled into that group's phase (atomic)** - When a group needs a structural change (e.g. dropping an index), the migration is written and committed **in the same change-set** as that group's consolidation switch — never as a loose, easily-forgotten pre-step. This keeps "code is in the state the data move expects" true at every commit.
 
    Concrete case — **non-site-scoped unique indexes**: per-tenant schemas each held their own copy of a table, so a global `unique` index was safe *within one year*. Once rows from every year share one public table, any unique index **not scoped to `site_id`** collides across tenants. Full `db/schema.rb` scan — the only offender is:
@@ -326,6 +326,9 @@ bin/rails "tenant_consolidation:reset_sequences[slider]"    # Reset sequences fo
 # CarrierWave original is unaffected, so it is recoverable, but scope is broad —
 # confirm you mean it before running.
 bin/rails tenant_consolidation:cleanup_attachments
+
+# Phase 5 gate — exits non-zero if anything still depends on /uploads/ (run before s3 rm)
+bin/rails tenant_consolidation:verify_uploads_unreferenced
 ```
 
 Group → models is listed once in [Recommended Migration Order](#recommended-migration-order).
@@ -724,9 +727,14 @@ RUN apk add --no-cache ... vips
 
 ### 5.5 Delete S3 Files
 
-After verifying all assets migrated:
+⚠️ **Irreversible and NOT snapshot-recoverable** — the RDS snapshot does not cover S3. Deleting `/uploads/` before Phase 5.0's CKEditor rewrite has run would 404 every embedded image permanently. Gate the deletion on the verification task, which fails unless (a) no `Block`/`News` content still embeds a `/uploads/` URL and (b) every upload record has its ActiveStorage attachment:
 
 ```bash
-# Delete old CarrierWave uploads
+# Must exit 0 before deleting. Exits 1 and lists what still depends on /uploads/.
+bin/rails tenant_consolidation:verify_uploads_unreferenced
+
+# Only then:
 aws s3 rm s3://<bucket>/uploads/ --recursive
 ```
+
+(`aws s3 rm uploads/` is safe for ActiveStorage blobs — AS stores at the bucket root with random keys, while CarrierWave lives under `uploads/{tenant}/...`; the two key spaces are disjoint.)

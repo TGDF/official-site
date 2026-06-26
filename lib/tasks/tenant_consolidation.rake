@@ -301,6 +301,44 @@ namespace :tenant_consolidation do
     puts "\nDone. Orphaned blobs will be cleaned by ActiveStorage GC."
   end
 
+  desc "Phase 5 gate: assert nothing still depends on legacy /uploads/ before deleting S3"
+  task verify_uploads_unreferenced: :environment do
+    puts "Checking whether s3://<bucket>/uploads/ is safe to delete..."
+    puts "=" * 60
+    problems = 0
+
+    # 1. CKEditor content must not still embed /uploads/ URLs (needs Phase 5.0 rewrite).
+    #    Block.content is a text column; News.content is Mobility JSONB (cast to text).
+    block_refs = Block.unscoped.where("content LIKE ?", "%/uploads/%").count
+    news_refs  = News.unscoped.where("content::text LIKE ?", "%/uploads/%").count
+    if block_refs.positive? || news_refs.positive?
+      problems += block_refs + news_refs
+      puts "ERROR: embedded /uploads/ URLs remain — Block: #{block_refs}, News: #{news_refs}"
+      puts "       Run the Phase 5.0 CKEditor URL rewrite before deleting S3 uploads."
+    end
+
+    # 2. Every record with a CarrierWave file value must have its ActiveStorage
+    #    attachment in place, or its asset would be lost when /uploads/ is deleted.
+    MODEL_CONFIGS.each do |config|
+      model_class = config[:model].constantize
+      missing = 0
+      model_class.unscoped.where.not(config[:field] => [ nil, "" ]).find_each do |record|
+        missing += 1 unless record.public_send(config[:attachment]).attached?
+      end
+      next unless missing.positive?
+
+      problems += missing
+      puts "ERROR: #{config[:model]}##{config[:field]}: #{missing} record(s) have no ActiveStorage attachment"
+    end
+
+    if problems.positive?
+      puts "\nNOT SAFE: #{problems} dependency(ies) on /uploads/ remain. Do not delete S3."
+      exit 1
+    end
+
+    puts "\nOK: no /uploads/ references and every asset is in ActiveStorage. Safe to delete."
+  end
+
   desc "Merge Partner/PartnerType to Sponsor/SponsorLevel during consolidation"
   task :merge_partner_to_sponsor, [ :dry_run ] => :environment do |_t, args|
     dry_run = args[:dry_run] == "true"
