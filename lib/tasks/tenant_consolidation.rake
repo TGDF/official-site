@@ -327,6 +327,7 @@ namespace :tenant_consolidation do
               attributes: extract_raw_attributes(p, "logo", "type_id"),
               type_id: p.type_id,
               logo_url: p.logo.present? ? p.logo.url : nil,
+              logo_size: p.logo.present? ? source_asset_size(p.logo) : nil,
               source_translations: capture_source_translations(p, "Partner")
             }
           end
@@ -385,7 +386,7 @@ namespace :tenant_consolidation do
                 sponsor.save!(validate: false)
 
                 if pd[:logo_url].present?
-                  attach_asset(sponsor, :logo_attachment, pd[:logo_url])
+                  attach_asset(sponsor, :logo_attachment, pd[:logo_url], pd[:logo_size])
                 end
 
                 # Post-migration verification
@@ -503,16 +504,23 @@ namespace :tenant_consolidation do
             model_class.unscoped.find_each do |record|
               stats[model_name][:total] += 1
 
-              # Get CarrierWave URL if model has uploads
+              # Get CarrierWave URL + authoritative source size if model has uploads.
+              # Size comes from fog (direct S3), not the CDN url — so a later download
+              # through a CDN that answers 200+HTML on a missing object is caught.
               file_url = nil
+              file_size = nil
               if config
                 uploader = record.public_send(config[:field])
-                file_url = uploader.present? ? uploader.url : nil
+                if uploader.present?
+                  file_url = uploader.url
+                  file_size = source_asset_size(uploader)
+                end
               end
 
               all_tenant_data[model_name] << {
                 attributes: extract_raw_attributes(record, config&.dig(:field).to_s),
                 file_url: file_url,
+                file_size: file_size,
                 original_id: record.id,
                 source_translations: capture_source_translations(record, model_name)
               }
@@ -572,7 +580,7 @@ namespace :tenant_consolidation do
 
                   # Attach asset if present
                   if data[:file_url].present? && config
-                    attach_asset(new_record, config[:attachment], data[:file_url])
+                    attach_asset(new_record, config[:attachment], data[:file_url], data[:file_size])
                   end
 
                   # Post-migration verification
@@ -628,26 +636,38 @@ namespace :tenant_consolidation do
 
   # Abort if a group contains polymorphic references that point at remapped tenant
   # models. These cannot be remapped in place: id_maps are built per-run and groups
-  # migrate in separate runs, so the parent's new id is unknown here. Currently only
-  # Attachment#record is such a reference; News#author points at AdminUser (already
-  # public, stable ids) and is safe.
+  # migrate in separate runs, so the parent's new id is unknown here.
+  #   - Attachment#record → any model: unsafe whenever record_id is set.
+  #   - News#author → expected AdminUser (public, stable id); a tenant-model
+  #     author_type would be remapped and is therefore unsafe.
   def abort_if_unmappable_polymorphic!(group_config)
-    return unless group_config[:order].include?("Attachment")
+    models = group_config[:order]
+    return unless models.include?("Attachment") || models.include?("News")
 
-    dangling = 0
+    attachment_dangling = 0
+    news_foreign_author = 0
     Site.find_each do |site|
       Apartment::Tenant.switch(site.tenant_name) do
         ActsAsTenant.with_tenant(site) do
-          dangling += Attachment.unscoped.where.not(record_id: nil).count
+          attachment_dangling += Attachment.unscoped.where.not(record_id: nil).count if models.include?("Attachment")
+          news_foreign_author += News.unscoped.where.not(author_type: [ nil, "AdminUser" ]).count if models.include?("News")
         end
       end
     end
-    return if dangling.zero?
 
-    puts "ERROR: #{dangling} Attachment record(s) have a polymorphic record_id set."
-    puts "Cross-group polymorphic references cannot be remapped in place."
-    puts "Resolve manually, or migrate via the dump/transform/import path (see docs)."
-    exit 1
+    if attachment_dangling.positive?
+      puts "ERROR: #{attachment_dangling} Attachment record(s) have a polymorphic record_id set."
+      puts "Cross-group polymorphic references cannot be remapped in place."
+      puts "Resolve manually, or migrate via the dump/transform/import path (see docs)."
+      exit 1
+    end
+
+    if news_foreign_author.positive?
+      puts "ERROR: #{news_foreign_author} News record(s) have a non-AdminUser author_type."
+      puts "A polymorphic author pointing at a remapped tenant model cannot be remapped in place."
+      puts "Resolve manually, or migrate via the dump/transform/import path (see docs)."
+      exit 1
+    end
   end
 
   def verify_group(group_config)
@@ -798,7 +818,14 @@ namespace :tenant_consolidation do
     end
   end
 
-  def attach_asset(record, attachment, url)
+  # Authoritative source size via fog (direct S3), used to verify the download.
+  def source_asset_size(uploader)
+    uploader.file&.size
+  rescue StandardError
+    nil
+  end
+
+  def attach_asset(record, attachment, url, expected_size)
     filename = File.basename(url).split("?").first
     content_type = Marcel::MimeType.for(name: filename)
 
@@ -808,12 +835,21 @@ namespace :tenant_consolidation do
       content_type: content_type
     )
 
-    # Do NOT swallow failures: a missing/empty download must roll back the record,
-    # not pass verification and let Phase 5.5 delete the only original. An empty blob
-    # (e.g. an error body that returned HTTP 200) is treated as a failure.
-    blob = record.public_send(attachment).blob
-    if blob.nil? || blob.byte_size.zero?
+    # Do NOT swallow failures: a bad download must roll back the record, not pass
+    # verification and let Phase 5.5 delete the only original (the RDS snapshot does
+    # not cover S3). Compare the stored blob against the authoritative source size so
+    # a CDN that answers 200 + an HTML error body (wrong but non-empty) is rejected.
+    actual_size = record.public_send(attachment).blob&.byte_size
+    if actual_size.nil? || actual_size.zero?
       raise "Empty asset downloaded for #{record.class.name}##{record.id} from #{url}"
+    end
+    if expected_size.nil?
+      raise "Cannot verify asset integrity (source size unknown) for " \
+            "#{record.class.name}##{record.id} from #{url}"
+    end
+    if actual_size != expected_size
+      raise "Asset size mismatch for #{record.class.name}##{record.id}: " \
+            "source=#{expected_size} downloaded=#{actual_size} (corrupt or wrong body) from #{url}"
     end
   end
 
