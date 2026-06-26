@@ -34,11 +34,5 @@ module Admin
     def find_partner
       @partner = Partner.find(params[:id])
     end
-
-    def partner_params
-      params.require(:partner).permit(
-        :name, :logo, :logo_attachment, :remove_logo, :type_id, :url, :order, :description
-      )
-    end
   end
 end
