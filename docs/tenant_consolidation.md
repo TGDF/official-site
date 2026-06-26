@@ -664,7 +664,7 @@ After Apartment removal, clean up CarrierWave.
 
 > ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` is NOT implemented yet.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `migrate_public_assets`, `merge_partner_to_sponsor`. The rewrite task must be built before Phase 5.0 can run; the matching strategy below is its spec, not existing code.
 
-CKEditor embeds `/uploads/image/file/{id}/...` image URLs into **every rich-text field**, not just Block/News — also `Plan.content`, `Sponsor.description`, `Speaker.description`, `Agenda.description`, `Game.description`, and `Site.{description, indie_space_description, options}`. All of these must be rewritten before S3 deletion. The set is encoded as `RICH_TEXT_FIELDS` in the rake task and is exactly what `verify_uploads_unreferenced` scans — keep both in sync with the data-editor admin forms.
+CKEditor embeds `/uploads/image/file/{id}/...` image URLs into **every rich-text field**, not just Block/News — also `Plan.content`, `Sponsor.description`, `Speaker.description`, `Agenda.description`, `Game.description`, and `Site.{description, indie_space_description, options}` — plus URL inputs an admin can point at an upload (`MenuItem.link`, `Plan.button_target`). All must be rewritten before S3 deletion. The set is encoded as `RICH_TEXT_FIELDS` in the rake task and is exactly what `verify_uploads_unreferenced` scans — keep both in sync with the data-editor admin forms and link/target inputs.
 
 The rewrite joins on the preserved `file` column (attachment consolidation keeps `Image#file` precisely so this key survives the id remap):
 ```ruby
@@ -721,10 +721,12 @@ RUN apk add --no-cache ... vips
 ⚠️ **Irreversible and NOT snapshot-recoverable** — the RDS snapshot does not cover S3. Deleting `/uploads/` before Phase 5.0's CKEditor rewrite has run would 404 every embedded image permanently. Gate the deletion on the verification task, which fails unless (a) **no CKEditor rich-text field** (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site — see `RICH_TEXT_FIELDS`) still embeds a `/uploads/` URL, and (b) every upload record — including the already-public **Site** logo/figure — has its ActiveStorage attachment:
 
 ```bash
-# Already-public models (Site) are not in any group; migrate their assets explicitly:
+# Already-public models (Site) are not in any group; migrate their assets explicitly
+# (transactional + idempotent — a bad download rolls back, so a re-run retries it):
 bin/rails tenant_consolidation:migrate_public_assets
 
-# Must exit 0 before deleting. Exits 1 and lists what still depends on /uploads/.
+# Must exit 0 before deleting. Aborts if any group is not yet consolidated (it scans
+# the public schema only), and exits 1 listing whatever still depends on /uploads/.
 bin/rails tenant_consolidation:verify_uploads_unreferenced
 
 # Only then:

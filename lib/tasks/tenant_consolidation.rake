@@ -21,14 +21,16 @@ namespace :tenant_consolidation do
   # Models that need tenant consolidation (not Site, which is already in public)
   CONSOLIDATION_MODELS = MODEL_CONFIGS.reject { |c| c[:model] == "Site" }.uniq { |c| c[:model] }
 
-  # Every rich-text field that the CKEditor admin can embed <img src="/uploads/..."> into.
-  # The Phase 5 S3-deletion gate scans ALL of these — a field missing here would let the
-  # gate pass while embeds still point at /uploads/, then S3 deletion would 404 them
-  # permanently (not snapshot-recoverable). Keep in sync with the data-editor admin forms.
+  # Every field that may contain a /uploads/ URL — CKEditor rich-text bodies plus the
+  # URL fields an admin can point at an uploaded asset. The Phase 5 S3-deletion gate
+  # scans ALL of these; a field missing here would let the gate pass while a /uploads/
+  # reference remains, then S3 deletion would 404 it permanently (not snapshot-
+  # recoverable). Keep in sync with the data-editor admin forms and link/target inputs.
   RICH_TEXT_FIELDS = {
     "Block" => %w[content],
     "News" => %w[content],
-    "Plan" => %w[content],
+    "Plan" => %w[content button_target],
+    "MenuItem" => %w[link],
     "Sponsor" => %w[description],
     "Speaker" => %w[description],
     "Agenda" => %w[description],
@@ -320,6 +322,20 @@ namespace :tenant_consolidation do
   task verify_uploads_unreferenced: :environment do
     puts "Checking whether s3://<bucket>/uploads/ is safe to delete..."
     puts "=" * 60
+
+    # This gate scans the PUBLIC schema only. If a group is not yet consolidated, its
+    # rows still live in a tenant schema and would read as ~0 here — falsely "safe".
+    # Refuse to run until every group is in public. (Partner/PartnerType are retired
+    # via merge and never excluded, so they are not required.)
+    pending = MIGRATION_GROUPS.values.flat_map { |g| g[:order] }.uniq
+    pending -= %w[Partner PartnerType]
+    pending = pending.reject { |m| model_already_in_public?(m.constantize) }
+    if pending.any?
+      puts "ERROR: not all groups consolidated (pending: #{pending.join(', ')})."
+      puts "This gate is only valid once every group is in public. Aborting."
+      exit 1
+    end
+
     problems = 0
 
     # 1. No CKEditor rich-text field may still embed /uploads/ URLs (needs Phase 5.0
@@ -367,10 +383,17 @@ namespace :tenant_consolidation do
 
   desc "Attach ActiveStorage for already-public models (Site logo/figure) from CarrierWave"
   task migrate_public_assets: :environment do
-    puts "Migrating assets for already-public models (e.g. Site)..."
+    puts "Migrating assets for always-public models (e.g. Site)..."
     migrated = 0
 
-    MODEL_CONFIGS.select { |c| model_already_in_public?(c[:model].constantize) }.each do |config|
+    # Only models that no group ever consolidates (group consolidation attaches their
+    # assets transactionally, with a tenant context). The Site uploaders are
+    # tenant-independent, so reading them here without a tenant resolves correctly;
+    # tenant-scoped uploaders would not, hence the exclusion.
+    grouped = MIGRATION_GROUPS.values.flat_map { |g| g[:order] }.uniq
+    always_public = MODEL_CONFIGS.reject { |c| grouped.include?(c[:model]) }
+
+    always_public.each do |config|
       model_class = config[:model].constantize
       model_class.unscoped.find_each do |record|
         next if record.public_send(config[:attachment]).attached? # idempotent
@@ -378,7 +401,13 @@ namespace :tenant_consolidation do
         uploader = record.public_send(config[:field])
         next unless uploader.present?
 
-        attach_asset(record, config[:attachment], uploader.url, source_asset_size(uploader))
+        # Transactional: attach_asset raises on a bad/corrupt/empty download, and the
+        # rollback must undo the attachment row. Without a transaction the bad blob
+        # would persist, the attached? re-run guard would skip it, and the S3-deletion
+        # gate (also attached?-based) would pass — losing the only original.
+        ActiveRecord::Base.transaction do
+          attach_asset(record, config[:attachment], uploader.url, source_asset_size(uploader))
+        end
         migrated += 1
         print "."
       end
