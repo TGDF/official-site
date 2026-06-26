@@ -419,28 +419,34 @@ namespace :tenant_consolidation do
   desc "Verify consolidated groups' assets are fully in ActiveStorage vs the tenant source (run BEFORE Phase 4.5)"
   task verify_consolidated_assets: :environment do
     puts "Comparing tenant CarrierWave asset counts to public ActiveStorage counts..."
-    puts "(Authoritative — must run while tenant schemas still exist, before DROP SCHEMA.)"
+    puts "(Authoritative — reads the physical tenant schemas directly; run before DROP SCHEMA.)"
     puts "=" * 60
     all_ok = true
+    conn = ActiveRecord::Base.connection
 
     CONSOLIDATION_MODELS.each do |config|
       model_class = config[:model].constantize
       next unless model_already_in_public?(model_class)
 
+      # Excluded models pin their table name to the public schema, so
+      # Apartment::Tenant.switch is a no-op for them — read the physical tenant
+      # schema with raw SQL instead, or the "tenant" count would just re-read public.
+      bare_table = model_class.table_name.split(".").last
+      field_col = conn.quote_column_name(config[:field])
+
       tenant_cw = 0
       Site.find_each do |site|
-        Apartment::Tenant.switch(site.tenant_name) do
-          ActsAsTenant.with_tenant(site) do
-            tenant_cw += model_class.unscoped.where.not(config[:field] => [ nil, "" ]).count
-          end
-        end
+        qualified = "#{conn.quote_table_name(site.tenant_name)}.#{conn.quote_table_name(bare_table)}"
+        tenant_cw += conn.select_value(
+          "SELECT COUNT(*) FROM #{qualified} WHERE #{field_col} IS NOT NULL AND #{field_col} <> ''"
+        ).to_i
+      rescue ActiveRecord::StatementInvalid
+        next # tenant schema/table absent for this site
       end
 
       public_as = 0
-      Apartment::Tenant.switch("public") do
-        model_class.unscoped.find_each do |record|
-          public_as += 1 if record.public_send(config[:attachment]).attached?
-        end
+      model_class.unscoped.find_each do |record|
+        public_as += 1 if record.public_send(config[:attachment]).attached?
       end
 
       ok = public_as >= tenant_cw
