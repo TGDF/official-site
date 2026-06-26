@@ -536,7 +536,7 @@ After all models are consolidated to public schema, remove the Apartment gem.
 
 Phase 4.5 drops the tenant schemas — the only correct source — irreversibly. Gate it on **data evidence**, not config:
 
-- [ ] Every group's data was confirmed by `verify[group]` **at its Step 4 (before exclusion)** — NOT `status`, which only reads `excluded_models`. (Re-running `verify` now, post-exclusion, reports a falsely-green `CW=0, AS=0`; instead spot-check directly: public row counts match, and sample records have correct associations + attached files.)
+- [ ] Every group's data was confirmed by `verify[group]` **at its Step 4 (before exclusion)** — NOT `status`, which only reads `excluded_models`. (Post-exclusion `verify` is non-authoritative: its record check only prints and returns true, and for pre-retention groups its attachment check reads `CW=0`. Instead rely on `verify_consolidated_assets` and spot-check directly: public row counts match, sample records have correct associations + attached files.)
 - [ ] All models added to `Apartment.excluded_models`
 - [ ] Application tested without tenant schema switching
 - [ ] **`verify_consolidated_assets` passes** — authoritative count of tenant CarrierWave assets vs public ActiveStorage attachments. This MUST run now, before 4.5 drops the tenant schemas (the only authoritative "which records had a file" source); the Phase 5.5 gate alone cannot detect an asset that was never attached for a pre-retention group (its marker is null and backfill is AS-derived).
@@ -735,7 +735,7 @@ RUN apk add --no-cache ... vips
 
 ### 5.5 Delete S3 Files
 
-⚠️ **Irreversible and NOT snapshot-recoverable** — the RDS snapshot does not cover S3. Deleting `/uploads/` before Phase 5.0's CKEditor rewrite has run would 404 every embedded image permanently. Gate the deletion on the verification task, which fails unless (a) **no CKEditor rich-text field** (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site — see `RICH_TEXT_FIELDS`) still embeds a `/uploads/` URL, and (b) every upload record — including the already-public **Site** logo/figure — has its ActiveStorage attachment:
+⚠️ **Irreversible and NOT snapshot-recoverable** — the RDS snapshot does not cover S3. Deleting `/uploads/` before Phase 5.0's CKEditor rewrite has run would 404 every embedded image permanently. Gate the deletion on the verification task, which fails unless (a) **no field that can hold a `/uploads/` URL** (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site rich text + MenuItem.link/Plan.button_target — the full `RICH_TEXT_FIELDS` set) still references one, and (b) every upload record — including the already-public **Site** logo/figure — has its ActiveStorage attachment:
 
 ```bash
 # Already-public models (Site) are not in any group; migrate their assets explicitly
