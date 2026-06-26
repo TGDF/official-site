@@ -9,7 +9,7 @@ on:
   merge_group:
 
 env:
-  RUBY_VERSION: '3.3.2'
+  RUBY_VERSION: '3.3.6'
   RAILS_ENV: test
   RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
   DATABASE_URL: "postgres://tgdf:tgdf@localhost/tgdf"
