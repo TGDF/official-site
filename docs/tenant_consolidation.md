@@ -85,7 +85,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 ```
 
 **Polymorphic references:**
-- **News.author → AdminUser** — safe. AdminUser is already public with stable ids; no remap needed.
+- **News.author → AdminUser** — safe *by data assumption*: `author` is polymorphic but every row's `author_type` is `AdminUser` (public, stable ids), verified in production 2025-12, so no remap is needed and the `news` group does not guard it. If any historical row had a tenant-model `author_type`, it would migrate silently wrong — re-check `SELECT DISTINCT author_type FROM news` before the news run.
 - **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` now **aborts** if any `record_id` is set. In practice `Image` rows set only `file` (record_id null), so this rarely triggers; when it does, migrate attachments via the dump/transform/import path (see "Strategy for High-Risk Groups").
 
 **CKEditor embedded URLs** (`Block.content`, `News.content`) embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files).
@@ -154,6 +154,8 @@ Never run `consolidate[partner]` — the partner group is retired and the task a
 ```bash
 bin/rails "tenant_consolidation:verify[<group>]"
 ```
+
+**What `verify` does and does not prove.** It is a count check: per model it asserts `public_count >= tenant_count` and reports attachment counts; the public-schema branch only prints. It does **not** assert FK integrity, asset byte-identity, or translation values. Those are instead enforced *at write time* — an unmappable FK or an empty asset raises and rolls back, and locale-key loss raises. So a green `verify` means "row counts are plausible," not "every association is correct." Run `verify` on the **pre-exclude** (consolidation) branch; once a model is in `excluded_models` the attachment check reads zero CW rows and reports a falsely-green `CW=0, AS=0`.
 
 ### 5. Update Model
 
@@ -317,7 +319,11 @@ bin/rails "tenant_consolidation:rollback[agenda]"           # Rollback all 8 age
 # Reset sequences (for fixing already-migrated models)
 bin/rails "tenant_consolidation:reset_sequences[slider]"    # Reset sequences for group
 
-# Cleanup incorrect attachments
+# Cleanup attachments — DESTRUCTIVE: purges EVERY ActiveStorage attachment on
+# all consolidation models still in tenant schemas, across all sites. Intended to
+# clear attachments wrongly created on not-yet-migrated (CarrierWave) models. The
+# CarrierWave original is unaffected, so it is recoverable, but scope is broad —
+# confirm you mean it before running.
 bin/rails tenant_consolidation:cleanup_attachments
 ```
 
@@ -384,20 +390,11 @@ If IDs are remapped during consolidation, asset migration will fail:
 
 **Solution:** The consolidation task gets CarrierWave URL before copying data, then attaches via ActiveStorage after.
 
-### 2. PostgreSQL sequences must be reset after consolidation
+### 2. PostgreSQL sequences
 
-When records are inserted into the public schema, PostgreSQL auto-generates new IDs using sequences. After consolidation completes, the sequence must be reset to `max(id) + 1` to prevent duplicate key errors on next insert.
+Consolidation **does not preserve ids** — `extract_raw_attributes` drops `id`, and `save!` lets PostgreSQL assign a fresh id from the sequence. So the sequence advances correctly on its own and a post-run reset is, in this flow, a **defensive no-op** (it would only matter if a future change started inserting explicit ids). The task runs `reset_sequences_for_models` after a successful run anyway; failures there are warnings, not errors.
 
-**Problem scenario:**
-```
-1. Consolidation migrates records with IDs 1-10
-2. Sequence stops at 5 (last INSERT operation)
-3. Next manual INSERT tries to use ID=6 → ERROR: duplicate key
-```
-
-**Solution:** The consolidation task now automatically resets sequences after migration completes.
-
-**Manual fix for already-migrated models:**
+A standalone reset for already-migrated models exists if ever needed:
 ```bash
 bin/rails "tenant_consolidation:reset_sequences[group_name]"
 ```
@@ -456,10 +453,11 @@ Idempotency here is **group-level, not row-level**. The current task has no reli
 - `consolidate[group]` **aborts if the target public table is non-empty.** A partial/failed run is recovered by `rollback[group]` then re-running clean.
 - This is safe and cheap because **`consolidate` never deletes tenant data** (Rollback Level 1) — rollback only clears the public rows, so a clean redo reproduces the result.
 - The data + FK step is **synchronous and transactional**, ordered parents-before-children via an in-memory id_map built in one full pass. Do not parallelise it; a full pass is what keeps the id_map complete.
+- An **unmappable FK** (a source row whose parent id was never migrated — an orphan) **raises and rolls back** the tenant, rather than persisting a stale tenant id. This matters most for `agendas_taggings`, which has no DB foreign key and would otherwise accept a cross-tenant-wrong id silently. If a run aborts here, inspect/clean the orphaned source row, then redo.
 
 ### Asset transfer
 
-`attach_asset` downloads each CarrierWave object and re-uploads to ActiveStorage **inside the per-tenant transaction** (rake `consolidate_group`). For large groups (agenda) this holds a DB transaction open across slow network I/O — a real lock/timeout risk. A failed download rolls back that tenant's whole group (intentional all-or-nothing; recover via rollback + redo). Asset transfer is the one I/O-bound, order-independent part that *could* be lifted out of the transaction and run separately; **SolidQueue is not installed** and adopting it is gated on the ECS run-model decision, so this stays inline for now (do not route it through the non-durable `:async` adapter). The dump/transform/import path below makes this separation natural.
+`attach_asset` downloads each CarrierWave object and re-uploads to ActiveStorage **inside the per-tenant transaction** (rake `consolidate_group`). For large groups (agenda) this holds a DB transaction open across slow network I/O — a real lock/timeout risk. A failed **or empty** download re-raises (it is not swallowed) and rolls back that tenant's whole group — intentional all-or-nothing; recover via rollback + redo. The empty-blob check matters because the only safety net is the RDS snapshot, which does **not** cover S3: a silently-bad transfer that later passes Phase 5.5's `s3 rm` would be unrecoverable. Asset transfer is the one I/O-bound, order-independent part that *could* be lifted out of the transaction and run separately; **SolidQueue is not installed** and adopting it is gated on the ECS run-model decision, so this stays inline for now (do not route it through the non-durable `:async` adapter). The dump/transform/import path below makes this separation natural.
 
 ### Write-Freeze Posture
 
@@ -517,10 +515,13 @@ After all models are consolidated to public schema, remove the Apartment gem.
 
 ### Pre-Removal Checklist
 
-- [ ] All models consolidated (verify with `tenant_consolidation:status`)
+Phase 4.5 drops the tenant schemas — the only correct source — irreversibly. Gate it on **data evidence**, not config:
+
+- [ ] Every group's data confirmed in public by `verify[group]` (and spot-checked) — NOT just `status`, which only reads `excluded_models`
 - [ ] All models added to `Apartment.excluded_models`
 - [ ] Application tested without tenant schema switching
-- [ ] RDS snapshot created
+- [ ] Assets confirmed in ActiveStorage before any S3 cleanup (Phase 5.5 deletes CW originals; the RDS snapshot does not cover S3)
+- [ ] RDS snapshot created (exact identifier recorded)
 
 ### 4.1 Remove Apartment Middleware
 
