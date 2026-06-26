@@ -62,6 +62,14 @@ RSpec.describe('Admin::Agendas') do
       click_on '更新Agenda'
       expect(page).to(have_text('New agenda Name'))
     end
+
+    it 'assigns the selected time on update' do
+      time = create(:agenda_time)
+      visit edit_admin_agenda_path(agenda)
+      select time.label, from: 'agenda[time_id]'
+      click_on '更新Agenda'
+      expect(agenda.reload.time).to(eq(time))
+    end
   end
 
   describe '#destroy' do
