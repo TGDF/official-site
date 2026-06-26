@@ -34,7 +34,9 @@ The destructive data runs (`consolidate` / `merge`) must not happen near the ann
 
 **Parallel, out of scope here:** migrating the test suite (RSpec + Cucumber) to Minitest is tracked separately and is demand-driven. It is not a prerequisite for consolidation, but Phase 4 (removing Apartment) does depend on the test harness no longer assuming Apartment — see Phase 4.8.
 
-**Current real progress (verify with `tenant_consolidation:status`):** only the four no-upload, no-FK groups are consolidated — `slider`, `block`, `plan`, `menu_item` (present in `Apartment.excluded_models`). Every remaining group has uploads, FK dependencies, or both — i.e. all the high-risk work is still ahead.
+**Current real progress (verify with `tenant_consolidation:status`):** only the four no-FK groups are consolidated — `slider`, `block`, `plan`, `menu_item` (present in `Apartment.excluded_models`). Every remaining group has FK dependencies, polymorphic references, or cross-tenant uniqueness to resolve — i.e. all the high-risk work is still ahead.
+
+> ⚠️ `tenant_consolidation:status` reports a group COMPLETE purely from `Apartment.excluded_models` membership, **not** from actual data presence. If a model is added to `excluded_models` before its data move finishes, status shows ✓ while the public table is empty and records are invisible. Treat `status` as "what the config claims," and `verify[group]` as "what the data shows."
 
 ## Migration Path
 
@@ -68,7 +70,9 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 **Why groups must migrate together:** When records move from tenant to public schema, they get NEW auto-generated IDs. Foreign keys pointing to old IDs will break.
 
 ```
-FK Constraints (db/schema.rb) — mirrors MIGRATION_GROUPS fk_mappings in the rake task:
+Foreign-key relationships remapped during consolidation (rake MIGRATION_GROUPS
+fk_mappings). NOTE: not all are DB-enforced — agendas_taggings.* are app-level
+associations with no add_foreign_key in db/schema.rb, but still need remapping:
   agenda_times.day_id            → agenda_days.id
   agendas.time_id                → agenda_times.id
   agendas.room_id                → rooms.id
@@ -80,41 +84,18 @@ FK Constraints (db/schema.rb) — mirrors MIGRATION_GROUPS fk_mappings in the ra
   sponsors.level_id              → sponsor_levels.id
 ```
 
-**Group Dependencies:**
+**Polymorphic references:**
+- **News.author → AdminUser** — safe. AdminUser is already public with stable ids; no remap needed.
+- **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` now **aborts** if any `record_id` is set. In practice `Image` rows set only `file` (record_id null), so this rarely triggers; when it does, migrate attachments via the dump/transform/import path (see "Strategy for High-Risk Groups").
 
-```
-Partner Group ──── PartnerType → Partner (FK: type_id)
-
-Sponsor Group ──── SponsorLevel → Sponsor (FK: level_id)
-
-Agenda Group ───── AgendaDay → AgendaTime ─┐
-                                           ├→ Agenda ←── Room
-                   Speaker ←── AgendasSpeaker ──┘ │
-                   AgendaTag ←── AgendasTagging ──┘
-```
-
-**Polymorphic References (safe to migrate independently):**
-```
-News ────────────── references: AdminUser (already in public schema)
-Attachment ──────── references: any model (migrate LAST after all others)
-```
-
-**CKEditor Embedded URL References (no migration order impact):**
-```
-Block.content ────── embeds: <img src="/uploads/image/file/{id}/...">
-News.content  ────── embeds: <img src="/uploads/image/file/{id}/...">
-```
-
-These embedded URLs point to Image (Attachment) records but are NOT FK relationships - they're inline HTML in content fields. The URLs continue working until Phase 5 when S3 files are deleted. URL rewriting is handled in Phase 5.0 before S3 cleanup.
-
-**Production data (2025-12-21):** 11 records with embedded images across tgdf_2021, 2022_TGDF, 2023tgdf tenants.
+**CKEditor embedded URLs** (`Block.content`, `News.content`) embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files).
 
 ### Critical Constraints
 
 1. **All migrations use groups** - Even single models are migrated as groups for consistency
 2. **Multi-model groups are atomic** - Models with FK relationships are migrated together with automatic ID remapping
-3. **Attachment migrates last** - Polymorphic `record` can reference any model; all other models must be in public first
-4. **Polymorphic safety** - News.author references AdminUser (already public); no FK constraint
+3. **Attachment migrates last, and aborts if `record_id` is set** - Polymorphic `record` can reference any model. Migrating last is necessary but NOT sufficient: the in-place task cannot remap `record_id` across groups, so `consolidate[attachment]` aborts when any `record_id` is present. Use the dump/transform/import path for attachments that carry real references.
+4. **Polymorphic safety (News.author)** - News.author references AdminUser (already public, stable ids); no remap and no FK constraint
 5. **Schema changes for a group are bundled into that group's phase (atomic)** - When a group needs a structural change (e.g. dropping an index), the migration is written and committed **in the same change-set** as that group's consolidation switch — never as a loose, easily-forgotten pre-step. This keeps "code is in the state the data move expects" true at every commit.
 
    Concrete case — **non-site-scoped unique indexes**: per-tenant schemas each held their own copy of a table, so a global `unique` index was safe *within one year*. Once rows from every year share one public table, any unique index **not scoped to `site_id`** collides across tenants. Full `db/schema.rb` scan — the only offender is:
@@ -134,37 +115,39 @@ These embedded URLs point to Image (Attachment) records but are NOT FK relations
 - [ ] Models with uploads have `has_migrated_upload` configured
 - [ ] Non-site-scoped unique indexes on the group's tables dropped, migration committed with this phase (Critical Constraint #5)
 - [ ] No `site_id IS NULL` rows remain for the group (Critical Constraint #6)
-- [ ] Consolidation re-run safely on this group in a dry-run / copy (idempotent — see "Idempotency & Resumability")
+- [ ] Public schema is empty for this group (consolidate aborts otherwise — re-run = rollback + redo; see "Re-runs & Recovery")
+- [ ] Writes to this group's models are frozen for the duration of the run (see "Write-Freeze Posture")
 - [ ] Outside the event freeze window (Timing & Sequencing)
-- [ ] RDS snapshot created
+- [ ] RDS snapshot created — record its exact identifier for this run
 
 ### 2. Create RDS Snapshot
 
+Pin one exact identifier per run and reuse it for `wait` and any later restore — a `*`
+wildcard is invalid for `wait`/`restore` and can match the wrong snapshot.
+
 ```bash
+SNAP="<group>-migration-$(date +%Y%m%d%H%M)"   # exact, recorded for this run
+
 aws rds create-db-snapshot \
   --db-instance-identifier <your-rds-instance> \
-  --db-snapshot-identifier <model>-migration-$(date +%Y%m%d)
+  --db-snapshot-identifier "$SNAP"
 
 aws rds wait db-snapshot-available \
-  --db-snapshot-identifier <model>-migration-*
+  --db-snapshot-identifier "$SNAP"
 ```
 
 ### 3. Run Consolidation
 
-All migrations use the same command with group name:
+Dry-run first, then execute with the group name (see [Rake Tasks](#rake-tasks) for the full command list):
 
 ```bash
-# Dry run first
-bin/rails "tenant_consolidation:consolidate[<group>,true]"
-
-# Execute
-bin/rails "tenant_consolidation:consolidate[slider]"      # Single model
-bin/rails "tenant_consolidation:consolidate[partner]"     # PartnerType + Partner
-bin/rails "tenant_consolidation:consolidate[sponsor]"     # SponsorLevel + Sponsor
-bin/rails "tenant_consolidation:consolidate[agenda]"      # 8 models together
+bin/rails "tenant_consolidation:consolidate[<group>,true]"   # dry run
+bin/rails "tenant_consolidation:consolidate[<group>]"        # execute
 ```
 
-**This is an operational step, not a code change.** The data move runs against the database and is *not* recorded in git — only Steps 5–6 (model edit + `excluded_models`) are committed. See "Recorded Procedure vs Operational Run". Because it is idempotent and re-runnable (see "Idempotency & Resumability"), prefer a **detached one-off ECS task over an interactive `execute-command` session**, so a dropped shell does not abort a long run.
+Never run `consolidate[partner]` — the partner group is retired and the task aborts; use `merge_partner_to_sponsor` (see [Partner Merge](#partner-merge-to-sponsor)).
+
+**This is an operational step, not a code change.** The data move runs against the database and is *not* recorded in git — only Steps 5–6 (model edit + `excluded_models`) are committed. Prefer a **detached one-off ECS task over an interactive `execute-command` session**, so a dropped shell does not abort a long run. If a run fails partway, recover with rollback + redo (see "Re-runs & Recovery") — the task refuses to resume onto a non-empty target.
 
 ### 4. Verify
 
@@ -208,10 +191,11 @@ config.excluded_models = %w[
   Plan           # independent
   MenuItem       # independent
   Game           # independent (includes STI variants)
-  PartnerType    # partner group - add together
-  Partner        # partner group - add together
   SponsorLevel   # sponsor group - add together
   Sponsor        # sponsor group - add together
+  # NOTE: do NOT add Partner / PartnerType — they are retired via
+  # merge_partner_to_sponsor and removed in Phase 5, never consolidated.
+  # Adding them would route Partner queries to an empty public table.
   AgendaDay      # agenda group - add all 8 together
   AgendaTime     # agenda group
   Room           # agenda group
@@ -317,11 +301,10 @@ After verification, Partner code can be removed (Phase 5 cleanup).
 # Status - shows all groups and their migration status
 bin/rails tenant_consolidation:status
 
-# Consolidation - all migrations use group names
-bin/rails "tenant_consolidation:consolidate[slider]"        # Single model group
-bin/rails "tenant_consolidation:consolidate[partner]"       # PartnerType + Partner
+# Consolidation - all migrations use group names (NOT partner — it aborts; use merge)
+bin/rails "tenant_consolidation:consolidate[sponsor]"       # SponsorLevel + Sponsor
 bin/rails "tenant_consolidation:consolidate[agenda]"        # All 8 agenda models
-bin/rails "tenant_consolidation:consolidate[slider,true]"   # Dry run
+bin/rails "tenant_consolidation:consolidate[sponsor,true]"  # Dry run
 
 # Verification - all verifications use group names
 bin/rails "tenant_consolidation:verify[slider]"             # Verify single model group
@@ -338,29 +321,16 @@ bin/rails "tenant_consolidation:reset_sequences[slider]"    # Reset sequences fo
 bin/rails tenant_consolidation:cleanup_attachments
 ```
 
-### Available Groups
-
-| Group | Models |
-|-------|--------|
-| slider | Slider |
-| block | Block |
-| plan | Plan |
-| menu_item | MenuItem |
-| game | Game |
-| sponsor | SponsorLevel, Sponsor |
-| partner | ~~PartnerType, Partner~~ → Use `merge_partner_to_sponsor` task |
-| agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging |
-| news | News |
-| attachment | Attachment |
+Group → models is listed once in [Recommended Migration Order](#recommended-migration-order).
 
 ## Running on ECS
 
-For `aws ecs execute-command` (interactive shell):
+Prefer a **detached one-off task** (survives a dropped shell) over interactive exec for a real run. Interactive exec is fine for `status` / `verify` / dry-runs:
 
 ```bash
 aws ecs execute-command --cluster <cluster> --task <task-id> \
   --container web --interactive \
-  --command '/bin/sh -c "bin/rails tenant_consolidation:consolidate[slider]"'
+  --command '/bin/sh -c "bin/rails tenant_consolidation:verify[sponsor]"'
 ```
 
 ## Rollback Strategy
@@ -381,11 +351,18 @@ Deletes public schema records for all models in the group (in reverse order for 
 
 ### Level 3: Emergency (Database Restore)
 
+Restore creates a **new** instance from the exact snapshot recorded in Step 2; the app is not recovered until you cut over to it.
+
 ```bash
 aws rds restore-db-instance-from-db-snapshot \
   --db-instance-identifier <new-instance-name> \
-  --db-snapshot-identifier <model>-migration-*
+  --db-snapshot-identifier "$SNAP"   # the exact id recorded for this run
 ```
+
+Then complete the cutover (the restore alone does nothing for the running app):
+1. Put the app in maintenance mode.
+2. Repoint the app's database endpoint (connection config / DNS) to `<new-instance-name>`.
+3. Verify, then lift maintenance.
 
 ## Critical Constraints — Deep Dives
 
@@ -470,52 +447,45 @@ For models still in tenant schemas that have `site_id` column:
 
 This ensures CarrierWave URLs are captured before IDs are remapped.
 
-### Recorded Procedure vs Operational Run
+**Recorded vs operational:** the data move (`consolidate` / `merge`) runs against the DB and is **not in git**; only the switch (model → plain `acts_as_tenant :site`, add to `excluded_models`) is committed — which is why a "complete" commit (Slider `4ee2e021`, Block `3afcf1a7`) is tiny. Run and verify the data move *first*, then commit the switch; committing first makes the records invisible (Apartment routes a non-excluded model to its tenant schema).
 
-A group's migration is **two different things in two different places**:
+### Re-runs & Recovery
 
-| Part | Where it lives | Contents |
-|------|----------------|----------|
-| Data + asset move | Operational — run against the DB, **not in git** | `consolidate[group]` / `merge_partner_to_sponsor` |
-| The switch | A git commit | model → plain `acts_as_tenant :site`; add to `excluded_models`; mark doc |
+Idempotency here is **group-level, not row-level**. The current task has no reliable per-record dedup — a row-level resume previously dropped join-table rows and corrupted child FKs (now removed). Instead:
 
-So a "complete" commit (e.g. Slider `4ee2e021`, Block `3afcf1a7`) looks tiny — three lines — because the real work already happened operationally before it. **Order matters:** run + verify the data move first, *then* commit the switch. Committing the switch before the data is in public makes the group's records invisible (Apartment routes a non-excluded model to its tenant schema; an excluded one to public).
+- `consolidate[group]` **aborts if the target public table is non-empty.** A partial/failed run is recovered by `rollback[group]` then re-running clean.
+- This is safe and cheap because **`consolidate` never deletes tenant data** (Rollback Level 1) — rollback only clears the public rows, so a clean redo reproduces the result.
+- The data + FK step is **synchronous and transactional**, ordered parents-before-children via an in-memory id_map built in one full pass. Do not parallelise it; a full pass is what keeps the id_map complete.
 
-### Idempotency & Resumability
+### Asset transfer
 
-The staged, all-at-once run is the main pain point ("分段處理很難遷移"). The fix is to make `consolidate` **safely re-runnable**, so a failed or partial run is recovered by running it again — no manual surgery.
+`attach_asset` downloads each CarrierWave object and re-uploads to ActiveStorage **inside the per-tenant transaction** (rake `consolidate_group`). For large groups (agenda) this holds a DB transaction open across slow network I/O — a real lock/timeout risk. A failed download rolls back that tenant's whole group (intentional all-or-nothing; recover via rollback + redo). Asset transfer is the one I/O-bound, order-independent part that *could* be lifted out of the transaction and run separately; **SolidQueue is not installed** and adopting it is gated on the ECS run-model decision, so this stays inline for now (do not route it through the non-durable `:async` adapter). The dump/transform/import path below makes this separation natural.
 
-This is cheaper than it looks because **`consolidate` never deletes tenant data** (see Rollback Level 1). The tenant record — with its original id and `file` column — stays available, so the CarrierWave S3 path is always re-derivable from the tenant side. What the task needs to become idempotent:
+### Write-Freeze Posture
 
-| Property | What to add |
-|----------|-------------|
-| No duplicate public rows | Before creating, look up an existing public row for the tenant record by a **natural key** (e.g. `site_id` + slug/name); skip if present |
-| No duplicate attachments | Already covered by `already_migrated?` (filename match) — attach only when missing |
-| Re-run fills gaps | Iterate all tenant records; for each, ensure (a) the public row exists, (b) its asset is attached |
+`consolidate` reads tenant rows, then writes public rows; a write to the tenant schema *during* a run is not captured and is lost on cutover. Before running a group, **freeze writes to that group's models** (admin maintenance window, or take the relevant admin screens offline). The runbook assumes no concurrent writes to a group while it is being consolidated.
 
-The data + FK step stays **synchronous and transactional** — its correctness depends on ordering (parents before children) and the in-memory id_map. Do **not** parallelise that step.
+Note: a group stops accumulating CarrierWave data automatically once consolidated — `upload_field_for` flips to `{field}_attachment` the moment the model enters `excluded_models`. New data cannot be written to ActiveStorage *before* consolidation, because `active_storage_attachments` is a shared public table keyed by `record_id`, which is only globally unique after the move (pre-move, the same id exists in every tenant schema → cross-tenant ambiguous lookups). So the only lever to shrink the backlog is to consolidate write-heavy groups sooner (e.g. Sponsor).
 
-### Asset Transfer as a Separate Step (SolidQueue-ready)
+## Strategy for High-Risk Groups: Dump → Transform → Import
 
-Only one part of the migration is a good async candidate: **asset transfer** (download from CarrierWave S3 → attach to ActiveStorage). It is I/O-bound, per-record idempotent, and order-independent (the public row already exists with its final id). The data + FK move is none of these and stays inline.
+For the remaining complex groups — especially **agenda** (8 models, FK web, cross-tenant slug collisions) and **attachment** (polymorphic `record_id`) — the in-place rake task is fragile: its id_map is per-run/in-memory, so it cannot remap cross-group polymorphic references and cannot resume safely. An **ETL approach is recommended** for these:
 
-Design the seam now, defer the queue:
+1. **Dump** every tenant's rows for the group to a JSON file (raw column values). Raw-column dumping *structurally* preserves Mobility JSONB locales — the locale-loss class of bug disappears. Include each upload record's CarrierWave URL/path.
+2. **Transform** offline, in one pass holding all data: build a complete old→new id map across *all* models (so polymorphic `Attachment.record_id` becomes remappable), resolve the Partner→Sponsor merge, detect collisions and duplicate names, and validate before touching the target. This is where problems are eliminated pre-emptively rather than discovered mid-write.
+3. **Import** the transformed rows into the empty public schema in dependency order, then run **asset transfer** as a separate keyed step (download CW → attach AS) using the dumped URLs.
 
-- Factor asset transfer into a step that takes `(site_id, model, tenant_record_id)` and does: find the public row by natural key → derive the CW URL from the still-present tenant record → attach if missing. The existing `attach_asset` / `already_migrated?` helpers are most of this.
-- Because the job keys off the **still-present tenant record**, it needs **no extra mapping table** to be lifted into a background job later.
-- Run it synchronously for now. If/when SolidQueue is adopted, the same step becomes `perform_later` with batching and retry — no redesign.
+Trade-offs vs in-place:
 
-**SolidQueue is not installed and not adopted yet** (no `solid_queue` gem; ActiveJob adapter is unset → in-process `:async`, non-durable). Introducing it is gated on evaluating the ECS run model (worker process / service). Treat SolidQueue as the **upgrade path this seam is shaped for**, not a current dependency. Do not route the asset step through the `:async` adapter — it loses jobs on restart, worse than a resumable rake task.
+| | In-place rake task | Dump → Transform → Import |
+|---|---|---|
+| Cross-group polymorphic remap | Impossible (per-run id_map) | Works (global id map) |
+| Pre-validation before writes | No | Yes (inspect/validate the transformed dump) |
+| Mobility locale safety | Manual (raw-column access) | Structural (JSON dump) |
+| Resumability | Group-level rollback + redo | Re-import is a pure function of the dump |
+| Cost to build | Already exists (done groups) | New tooling |
 
-### Why New Data Cannot Use ActiveStorage Before Consolidation
-
-A tempting "stop the bleeding" idea — write *new* records straight to ActiveStorage so the backlog stops growing — does not work here, for the same root cause as Critical Constraint #5:
-
-- `active_storage_attachments` is a **single shared (public) table** keyed by `record_type` + `record_id`.
-- A tenant-schema record's `record_id` is only unique **within its schema** — the same id exists in every year's schema. Attaching in that state collides across tenants (exactly what `has_migrated_upload` guards against by forcing CarrierWave for tenant-schema models).
-- `record_id` only becomes globally unique **after** consolidation.
-
-The whole read/write path is one binary switch — `Apartment.excluded_models`: in it → public + ActiveStorage (`upload_field_for` returns `{field}_attachment`); not in it → tenant + CarrierWave. There is no half-state. **Consequence:** a group stops accumulating CarrierWave data **automatically** the moment it is consolidated (the four done groups already have). The only lever to lower future migration cost is to **consolidate write-heavy groups sooner** — which is why Sponsor (prioritised for feature work) is a good early target — not a separate "new data → AS" toggle.
+Keep the in-place task for what is already done; build the ETL path before running `agenda` and `attachment`. The dump file is also a second backup, independent of the RDS snapshot.
 
 ## Testing the Consolidation
 
@@ -530,7 +500,9 @@ Before running a high-risk group (anything with FKs or uploads), add an integrat
 | Asset transfer | `record.field_attachment.attached?` is true and the file is byte-identical |
 | Sequence reset | a fresh `create` after consolidation does not raise duplicate-key |
 | Cross-tenant uniqueness | two tenants with the same speaker slug both migrate (after `index_speakers_on_slug` is dropped) |
-| Idempotency | running `consolidate` twice produces no duplicate rows or attachments |
+| Re-run guard | a second `consolidate` on a non-empty target aborts (no duplicate rows) |
+| Partner guard | `consolidate[partner]` aborts and points to `merge_partner_to_sponsor` |
+| Attachment guard | `consolidate[attachment]` aborts when a `record_id` is set |
 
 The framework is whatever the suite currently uses — this is independent of the separate RSpec/Cucumber → Minitest migration. Prefer one integration test per multi-model group (`partner`, `sponsor`, `agenda`) over unit tests of private helpers.
 
