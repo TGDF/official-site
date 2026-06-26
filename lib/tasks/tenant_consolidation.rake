@@ -124,6 +124,14 @@ namespace :tenant_consolidation do
       exit 1
     end
 
+    # The partner group is retired: Partners merge into Sponsor, never consolidated
+    # as standalone Partner rows. Running consolidate here would create the wrong data.
+    if group_name == "partner"
+      puts "ERROR: The 'partner' group is retired — Partners merge into Sponsor."
+      puts "Run: bin/rails 'tenant_consolidation:merge_partner_to_sponsor'"
+      exit 1
+    end
+
     # Check if any model in group is already in public
     group_config[:order].each do |model_name|
       model_class = model_name.constantize
@@ -133,6 +141,27 @@ namespace :tenant_consolidation do
         exit 1
       end
     end
+
+    # Re-runs must start from a clean target. A partial/aborted run can leave rows in
+    # public while the model is not yet excluded; resuming in place risks dropping rows
+    # (dedup is not per-source-record) and corrupting child FKs (id_maps rebuild only on
+    # a full pass). Tenant data is never deleted, so the safe re-run is rollback + redo.
+    unless dry_run
+      group_config[:order].each do |model_name|
+        existing = Apartment::Tenant.switch("public") { model_name.constantize.unscoped.count }
+        next unless existing.positive?
+
+        puts "ERROR: #{model_name} already has #{existing} record(s) in public schema."
+        puts "Re-runs must start clean. Roll back first:"
+        puts "  bin/rails 'tenant_consolidation:rollback[#{group_name}]'"
+        exit 1
+      end
+    end
+
+    # Polymorphic references to remapped tenant models cannot be remapped in place
+    # (id_maps are per-run/in-memory, and groups migrate in separate runs). Fail loud
+    # rather than write dangling record_ids. See docs for the dump/transform/import path.
+    abort_if_unmappable_polymorphic!(group_config)
 
     puts "Consolidating '#{group_name}' from tenant schemas to public..."
     puts "Models: #{group_config[:order].join(' → ')}"
@@ -520,13 +549,6 @@ namespace :tenant_consolidation do
                   attrs[fk_column.to_s] = new_fk_value
                 end
 
-                # Check for duplicates
-                if record_exists?(model_class, site.id, attrs["created_at"])
-                  stats[model_name][:skipped] += 1
-                  print "s"
-                  next
-                end
-
                 if dry_run
                   # In dry run, still track hypothetical IDs for FK remapping simulation
                   id_maps[model_name][data[:original_id]] = data[:original_id]
@@ -600,10 +622,28 @@ namespace :tenant_consolidation do
     end
   end
 
-  def record_exists?(model_class, site_id, created_at)
-    return false if created_at.nil?
+  # Abort if a group contains polymorphic references that point at remapped tenant
+  # models. These cannot be remapped in place: id_maps are built per-run and groups
+  # migrate in separate runs, so the parent's new id is unknown here. Currently only
+  # Attachment#record is such a reference; News#author points at AdminUser (already
+  # public, stable ids) and is safe.
+  def abort_if_unmappable_polymorphic!(group_config)
+    return unless group_config[:order].include?("Attachment")
 
-    model_class.unscoped.exists?(site_id: site_id, created_at: created_at)
+    dangling = 0
+    Site.find_each do |site|
+      Apartment::Tenant.switch(site.tenant_name) do
+        ActsAsTenant.with_tenant(site) do
+          dangling += Attachment.unscoped.where.not(record_id: nil).count
+        end
+      end
+    end
+    return if dangling.zero?
+
+    puts "ERROR: #{dangling} Attachment record(s) have a polymorphic record_id set."
+    puts "Cross-group polymorphic references cannot be remapped in place."
+    puts "Resolve manually, or migrate via the dump/transform/import path (see docs)."
+    exit 1
   end
 
   def verify_group(group_config)
