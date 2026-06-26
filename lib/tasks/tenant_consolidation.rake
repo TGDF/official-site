@@ -21,6 +21,21 @@ namespace :tenant_consolidation do
   # Models that need tenant consolidation (not Site, which is already in public)
   CONSOLIDATION_MODELS = MODEL_CONFIGS.reject { |c| c[:model] == "Site" }.uniq { |c| c[:model] }
 
+  # Every rich-text field that the CKEditor admin can embed <img src="/uploads/..."> into.
+  # The Phase 5 S3-deletion gate scans ALL of these — a field missing here would let the
+  # gate pass while embeds still point at /uploads/, then S3 deletion would 404 them
+  # permanently (not snapshot-recoverable). Keep in sync with the data-editor admin forms.
+  RICH_TEXT_FIELDS = {
+    "Block" => %w[content],
+    "News" => %w[content],
+    "Plan" => %w[content],
+    "Sponsor" => %w[description],
+    "Speaker" => %w[description],
+    "Agenda" => %w[description],
+    "Game" => %w[description],
+    "Site" => %w[description indie_space_description options]
+  }.freeze
+
   # Translated attributes per model (for verification during migration)
   # These use Mobility JSONB backend and need raw column access to preserve all locales
   TRANSLATED_ATTRS = {
@@ -307,13 +322,24 @@ namespace :tenant_consolidation do
     puts "=" * 60
     problems = 0
 
-    # 1. CKEditor content must not still embed /uploads/ URLs (needs Phase 5.0 rewrite).
-    #    Block.content is a text column; News.content is Mobility JSONB (cast to text).
-    block_refs = Block.unscoped.where("content LIKE ?", "%/uploads/%").count
-    news_refs  = News.unscoped.where("content::text LIKE ?", "%/uploads/%").count
-    if block_refs.positive? || news_refs.positive?
-      problems += block_refs + news_refs
-      puts "ERROR: embedded /uploads/ URLs remain — Block: #{block_refs}, News: #{news_refs}"
+    # 1. No CKEditor rich-text field may still embed /uploads/ URLs (needs Phase 5.0
+    #    rewrite). Cast each column to text so the same LIKE works for text and JSONB.
+    embed_refs = 0
+    RICH_TEXT_FIELDS.each do |model_name, columns|
+      model_class = model_name.constantize
+      columns.each do |col|
+        next unless model_class.column_names.include?(col)
+
+        quoted = model_class.connection.quote_column_name(col)
+        refs = model_class.unscoped.where("#{quoted}::text LIKE ?", "%/uploads/%").count
+        next unless refs.positive?
+
+        embed_refs += refs
+        puts "ERROR: #{model_name}.#{col}: #{refs} record(s) still embed /uploads/ URLs"
+      end
+    end
+    if embed_refs.positive?
+      problems += embed_refs
       puts "       Run the Phase 5.0 CKEditor URL rewrite before deleting S3 uploads."
     end
 
@@ -337,6 +363,28 @@ namespace :tenant_consolidation do
     end
 
     puts "\nOK: no /uploads/ references and every asset is in ActiveStorage. Safe to delete."
+  end
+
+  desc "Attach ActiveStorage for already-public models (Site logo/figure) from CarrierWave"
+  task migrate_public_assets: :environment do
+    puts "Migrating assets for already-public models (e.g. Site)..."
+    migrated = 0
+
+    MODEL_CONFIGS.select { |c| model_already_in_public?(c[:model].constantize) }.each do |config|
+      model_class = config[:model].constantize
+      model_class.unscoped.find_each do |record|
+        next if record.public_send(config[:attachment]).attached? # idempotent
+
+        uploader = record.public_send(config[:field])
+        next unless uploader.present?
+
+        attach_asset(record, config[:attachment], uploader.url, source_asset_size(uploader))
+        migrated += 1
+        print "."
+      end
+    end
+
+    puts "\nDone. Attached #{migrated} asset(s)."
   end
 
   desc "Merge Partner/PartnerType to Sponsor/SponsorLevel during consolidation"
@@ -555,8 +603,14 @@ namespace :tenant_consolidation do
                 end
               end
 
+              # Normally the CarrierWave column is dropped (ActiveStorage owns the file).
+              # EXCEPTION: keep Attachment#file — CKEditor embeds reference Image by it
+              # (/uploads/image/file/{id}/{file}), and the Phase 5.0 URL rewrite joins on
+              # `Image.find_by(file:, site_id:)`. Dropping it would leave the rewrite no key.
+              exclude_field = model_name == "Attachment" ? nil : config&.dig(:field).to_s
+
               all_tenant_data[model_name] << {
-                attributes: extract_raw_attributes(record, config&.dig(:field).to_s),
+                attributes: extract_raw_attributes(record, exclude_field),
                 file_url: file_url,
                 file_size: file_size,
                 original_id: record.id,

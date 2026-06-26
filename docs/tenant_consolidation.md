@@ -88,7 +88,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 - **News.author → AdminUser** — `author` is polymorphic; AdminUser is public with stable ids so no remap is needed. This is now **code-guarded**: `consolidate[news]` aborts if any `author_type` is a model other than `AdminUser` (a null author is fine) — the same fail-loud guard as Attachment, so a tenant-model author can no longer migrate with a stale id.
 - **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` now **aborts** if any `record_id` is set. In practice `Image` rows set only `file` (record_id null), so this rarely triggers; when it does, migrate attachments via the dump/transform/import path (see "Strategy for High-Risk Groups").
 
-**CKEditor embedded URLs** (`Block.content`, `News.content`) embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files).
+**CKEditor embedded URLs** — every rich-text field (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site, the `RICH_TEXT_FIELDS` set) can embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files) and gated by `verify_uploads_unreferenced`.
 
 ### Critical Constraints
 
@@ -181,6 +181,10 @@ Add migrated models to `Apartment.excluded_models`:
 
 ```ruby
 # config/initializers/apartment.rb
+# TARGET END-STATE, not current config. Add each model only AFTER its group's data
+# move is verified — adding a model before its data is in public routes its queries
+# to an empty public table. (Live config today: Site, AdminUser, MenuItem, Plan,
+# Block, Slider + ActiveStorage::*.)
 config.excluded_models = %w[
   Site
   AdminUser
@@ -329,6 +333,9 @@ bin/rails tenant_consolidation:cleanup_attachments
 
 # Phase 5 gate — exits non-zero if anything still depends on /uploads/ (run before s3 rm)
 bin/rails tenant_consolidation:verify_uploads_unreferenced
+
+# Attach ActiveStorage for already-public models (Site logo/figure) from CarrierWave
+bin/rails tenant_consolidation:migrate_public_assets
 ```
 
 Group → models is listed once in [Recommended Migration Order](#recommended-migration-order).
@@ -655,33 +662,17 @@ After Apartment removal, clean up CarrierWave.
 
 ### 5.0 Rewrite CKEditor Embedded URLs (BEFORE deleting S3 files)
 
-> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` is NOT implemented yet.** The rake file currently defines only: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `merge_partner_to_sponsor`. This task must be built before Phase 5.0 can run. The matching strategy below is the spec for that task, not a description of existing code.
+> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` is NOT implemented yet.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `migrate_public_assets`, `merge_partner_to_sponsor`. The rewrite task must be built before Phase 5.0 can run; the matching strategy below is its spec, not existing code.
 
-CKEditor content fields (Block, News) contain embedded image URLs like `/uploads/image/file/{id}/...`. These must be rewritten to ActiveStorage URLs before deleting S3 uploads.
+CKEditor embeds `/uploads/image/file/{id}/...` image URLs into **every rich-text field**, not just Block/News — also `Plan.content`, `Sponsor.description`, `Speaker.description`, `Agenda.description`, `Game.description`, and `Site.{description, indie_space_description, options}`. All of these must be rewritten before S3 deletion. The set is encoded as `RICH_TEXT_FIELDS` in the rake task and is exactly what `verify_uploads_unreferenced` scans — keep both in sync with the data-editor admin forms.
 
-**Production data (2025-12-21):** 11 records with embedded images
-- tgdf_2021/News: 7 records
-- 2022_TGDF/Block: 2 records
-- 2022_TGDF/News: 1 record
-- 2023tgdf/News: 1 record
-
-**Why this is safe to defer to Phase 5:**
-- CarrierWave URLs continue working after Attachment migration (S3 files still exist)
-- New uploads still use CarrierWave until Phase 5 (`mount_uploader` is still active)
-- URL rewriting can be done as a batch operation before S3 deletion
-
-**URL Matching Strategy:**
+The rewrite joins on the preserved `file` column (attachment consolidation keeps `Image#file` precisely so this key survives the id remap):
 ```ruby
-# Extract from embedded URL: /uploads/image/file/5/photo.jpg
-# The CarrierWave `file` column is preserved after migration
+# Embedded URL /uploads/image/file/5/photo.jpg → match by filename within the site
 image = Image.find_by(file: filename, site_id: site.id)
 new_url = rails_blob_url(image.file_attachment)
 ```
-
-**Run rewriting task:**
-```bash
-bin/rails tenant_consolidation:rewrite_ckeditor_urls
-```
+Note the residual ambiguity: if two `Image` rows in one site share a filename, the embed cannot be disambiguated — surface those for manual review rather than guessing.
 
 ### 5.1 Remove Uploaders
 
@@ -727,9 +718,12 @@ RUN apk add --no-cache ... vips
 
 ### 5.5 Delete S3 Files
 
-⚠️ **Irreversible and NOT snapshot-recoverable** — the RDS snapshot does not cover S3. Deleting `/uploads/` before Phase 5.0's CKEditor rewrite has run would 404 every embedded image permanently. Gate the deletion on the verification task, which fails unless (a) no `Block`/`News` content still embeds a `/uploads/` URL and (b) every upload record has its ActiveStorage attachment:
+⚠️ **Irreversible and NOT snapshot-recoverable** — the RDS snapshot does not cover S3. Deleting `/uploads/` before Phase 5.0's CKEditor rewrite has run would 404 every embedded image permanently. Gate the deletion on the verification task, which fails unless (a) **no CKEditor rich-text field** (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site — see `RICH_TEXT_FIELDS`) still embeds a `/uploads/` URL, and (b) every upload record — including the already-public **Site** logo/figure — has its ActiveStorage attachment:
 
 ```bash
+# Already-public models (Site) are not in any group; migrate their assets explicitly:
+bin/rails tenant_consolidation:migrate_public_assets
+
 # Must exit 0 before deleting. Exits 1 and lists what still depends on /uploads/.
 bin/rails tenant_consolidation:verify_uploads_unreferenced
 
