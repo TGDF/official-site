@@ -155,7 +155,7 @@ Never run `consolidate[partner]` — the partner group is retired and the task a
 bin/rails "tenant_consolidation:verify[<group>]"
 ```
 
-**What `verify` does and does not prove.** It is essentially a count check. On the consolidation (pre-exclude) branch it asserts `public_count >= tenant_count` per model and prints attachment counts; on the public (post-exclude) branch it asserts attachment counts and prints record counts. It does **not** assert FK integrity or translation values. Those, plus asset byte-size, are enforced *at write time* — an unmappable FK, an asset size mismatch, or a lost translation locale each raises and rolls back. So a green `verify` means "row counts are plausible," not "every association is correct." Consolidation **retains the CarrierWave marker column** (it is dropped only in Phase 5.1), so the post-exclude attachment check meaningfully compares CW-vs-AS per record. Groups consolidated *before* marker retention (the already-done `slider`) have a null marker; run `tenant_consolidation:backfill_markers` once to repopulate it from the live ActiveStorage attachment, after which the gate can see them too.
+**What `verify` does and does not prove.** It is essentially a count check. On the consolidation (pre-exclude) branch it asserts `public_count >= tenant_count` per model and prints attachment counts; on the public (post-exclude) branch it asserts attachment counts and prints record counts. It does **not** assert FK integrity or translation values. Those, plus asset byte-size, are enforced *at write time* — an unmappable FK, an asset size mismatch, or a lost translation locale each raises and rolls back. So a green `verify` means "row counts are plausible," not "every association is correct." Consolidation **retains the CarrierWave marker column** (dropped only in Phase 5.1), so the post-exclude attachment check meaningfully compares CW-vs-AS per record. Groups consolidated *before* marker retention (the already-done `slider`) have a null marker — the authoritative coverage for them is `verify_consolidated_assets` run **before Phase 4.5** (it counts the tenant source directly, so it catches an asset that was never attached). `backfill_markers` is a secondary aid that repopulates the marker from a *present* AS attachment so the Phase 5.5 gate can later detect one that goes missing afterward; it cannot, by itself, prove a never-attached asset (don't rely on it alone for slider).
 
 ### 5. Update Model
 
@@ -339,6 +339,9 @@ bin/rails tenant_consolidation:migrate_public_assets
 
 # Backfill CW marker columns from ActiveStorage for pre-retention groups (e.g. slider)
 bin/rails tenant_consolidation:backfill_markers
+
+# Authoritative asset check vs tenant source — run BEFORE Phase 4.5 (DROP SCHEMA)
+bin/rails tenant_consolidation:verify_consolidated_assets
 ```
 
 Group → models is listed once in [Recommended Migration Order](#recommended-migration-order).
@@ -536,7 +539,7 @@ Phase 4.5 drops the tenant schemas — the only correct source — irreversibly.
 - [ ] Every group's data was confirmed by `verify[group]` **at its Step 4 (before exclusion)** — NOT `status`, which only reads `excluded_models`. (Re-running `verify` now, post-exclusion, reports a falsely-green `CW=0, AS=0`; instead spot-check directly: public row counts match, and sample records have correct associations + attached files.)
 - [ ] All models added to `Apartment.excluded_models`
 - [ ] Application tested without tenant schema switching
-- [ ] Assets confirmed in ActiveStorage before any S3 cleanup (Phase 5.5 deletes CW originals; the RDS snapshot does not cover S3)
+- [ ] **`verify_consolidated_assets` passes** — authoritative count of tenant CarrierWave assets vs public ActiveStorage attachments. This MUST run now, before 4.5 drops the tenant schemas (the only authoritative "which records had a file" source); the Phase 5.5 gate alone cannot detect an asset that was never attached for a pre-retention group (its marker is null and backfill is AS-derived).
 - [ ] RDS snapshot created (exact identifier recorded)
 
 ### 4.1 Remove Apartment Middleware

@@ -416,6 +416,46 @@ namespace :tenant_consolidation do
     puts "\nDone. Attached #{migrated} asset(s)."
   end
 
+  desc "Verify consolidated groups' assets are fully in ActiveStorage vs the tenant source (run BEFORE Phase 4.5)"
+  task verify_consolidated_assets: :environment do
+    puts "Comparing tenant CarrierWave asset counts to public ActiveStorage counts..."
+    puts "(Authoritative — must run while tenant schemas still exist, before DROP SCHEMA.)"
+    puts "=" * 60
+    all_ok = true
+
+    CONSOLIDATION_MODELS.each do |config|
+      model_class = config[:model].constantize
+      next unless model_already_in_public?(model_class)
+
+      tenant_cw = 0
+      Site.find_each do |site|
+        Apartment::Tenant.switch(site.tenant_name) do
+          ActsAsTenant.with_tenant(site) do
+            tenant_cw += model_class.unscoped.where.not(config[:field] => [ nil, "" ]).count
+          end
+        end
+      end
+
+      public_as = 0
+      Apartment::Tenant.switch("public") do
+        model_class.unscoped.find_each do |record|
+          public_as += 1 if record.public_send(config[:attachment]).attached?
+        end
+      end
+
+      ok = public_as >= tenant_cw
+      all_ok &&= ok
+      puts "  #{config[:model]}: tenant CW=#{tenant_cw}, public AS=#{public_as} #{ok ? '✓' : '✗ MISSING ASSETS'}"
+    end
+
+    unless all_ok
+      puts "\nMissing assets — do NOT proceed to Phase 4.5 / 5.5. Re-attach before tenant data is dropped."
+      exit 1
+    end
+
+    puts "\nOK: every tenant CarrierWave asset has a public ActiveStorage attachment."
+  end
+
   desc "Backfill CW marker columns from ActiveStorage (for groups consolidated before marker retention)"
   task backfill_markers: :environment do
     puts "Backfilling CW marker columns from ActiveStorage attachments..."
