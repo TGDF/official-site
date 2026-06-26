@@ -439,7 +439,9 @@ namespace :tenant_consolidation do
 
           Partner.unscoped.find_each do |p|
             partner_data << {
-              attributes: extract_raw_attributes(p, "logo", "type_id"),
+              # Keep logo (the CW marker) so the merged Sponsor is gate-verifiable; only
+              # type_id is dropped (it is replaced by the remapped SponsorLevel).
+              attributes: extract_raw_attributes(p, "type_id"),
               type_id: p.type_id,
               logo_url: p.logo.present? ? p.logo.url : nil,
               logo_size: p.logo.present? ? source_asset_size(p.logo) : nil,
@@ -632,14 +634,15 @@ namespace :tenant_consolidation do
                 end
               end
 
-              # Normally the CarrierWave column is dropped (ActiveStorage owns the file).
-              # EXCEPTION: keep Attachment#file — CKEditor embeds reference Image by it
-              # (/uploads/image/file/{id}/{file}), and the Phase 5.0 URL rewrite joins on
-              # `Image.find_by(file:, site_id:)`. Dropping it would leave the rewrite no key.
-              exclude_field = model_name == "Attachment" ? nil : config&.dig(:field).to_s
-
+              # Keep the CarrierWave marker column on the migrated row. ActiveStorage is
+              # the source of truth (has_migrated_upload serves AS when attached), but
+              # retaining the column lets the Phase 5 gate and `verify` confirm, per
+              # record, that a row which had a CW file now has an AS attachment — the
+              # backstop before the irreversible S3 delete. It is also the join key for
+              # the CKEditor URL rewrite (Image.find_by(file:)). Dropping it would leave
+              # the gate blind. All marker columns are removed together in Phase 5.1.
               all_tenant_data[model_name] << {
-                attributes: extract_raw_attributes(record, exclude_field),
+                attributes: extract_raw_attributes(record),
                 file_url: file_url,
                 file_size: file_size,
                 original_id: record.id,

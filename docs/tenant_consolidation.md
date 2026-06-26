@@ -155,7 +155,7 @@ Never run `consolidate[partner]` — the partner group is retired and the task a
 bin/rails "tenant_consolidation:verify[<group>]"
 ```
 
-**What `verify` does and does not prove.** It is essentially a count check. On the consolidation (pre-exclude) branch it asserts `public_count >= tenant_count` per model and prints attachment counts; on the public (post-exclude) branch it asserts attachment counts and prints record counts. It does **not** assert FK integrity or translation values. Those, plus asset byte-size, are enforced *at write time* — an unmappable FK, an asset size mismatch, or a lost translation locale each raises and rolls back. So a green `verify` means "row counts are plausible," not "every association is correct." Run `verify` on the **pre-exclude** branch; once a model is in `excluded_models` its CW column reads as zero rows, so the attachment check reports a falsely-green `CW=0, AS=0`.
+**What `verify` does and does not prove.** It is essentially a count check. On the consolidation (pre-exclude) branch it asserts `public_count >= tenant_count` per model and prints attachment counts; on the public (post-exclude) branch it asserts attachment counts and prints record counts. It does **not** assert FK integrity or translation values. Those, plus asset byte-size, are enforced *at write time* — an unmappable FK, an asset size mismatch, or a lost translation locale each raises and rolls back. So a green `verify` means "row counts are plausible," not "every association is correct." Consolidation **retains the CarrierWave marker column** (it is dropped only in Phase 5.1), so the post-exclude attachment check meaningfully compares CW-vs-AS per record. Exception: groups consolidated *before* marker retention was added (the already-done `slider`) have a null marker and will read a falsely-green `CW=0, AS=0` — spot-check those attachments directly before Phase 5.5.
 
 ### 5. Update Model
 
@@ -666,7 +666,7 @@ After Apartment removal, clean up CarrierWave.
 
 CKEditor embeds `/uploads/image/file/{id}/...` image URLs into **every rich-text field**, not just Block/News — also `Plan.content`, `Sponsor.description`, `Speaker.description`, `Agenda.description`, `Game.description`, and `Site.{description, indie_space_description, options}` — plus URL inputs an admin can point at an upload (`MenuItem.link`, `Plan.button_target`). All must be rewritten before S3 deletion. The set is encoded as `RICH_TEXT_FIELDS` in the rake task and is exactly what `verify_uploads_unreferenced` scans — keep both in sync with the data-editor admin forms and link/target inputs.
 
-The rewrite joins on the preserved `file` column (attachment consolidation keeps `Image#file` precisely so this key survives the id remap):
+The rewrite joins on the preserved `file` column (consolidation retains every CW marker column, including `Image#file`, so this key survives the id remap):
 ```ruby
 # Embedded URL /uploads/image/file/5/photo.jpg → match by filename within the site
 image = Image.find_by(file: filename, site_id: site.id)
