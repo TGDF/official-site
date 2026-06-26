@@ -664,6 +664,17 @@ This is the one hard dependency between the Minitest migration and Apartment rem
 
 ## Phase 5: Remove CarrierWave
 
+> 🛑 **NOT EXECUTABLE YET — do not run any Phase 5 step.** Phase 5 ends in the only
+> irreversible, non-snapshot-recoverable action in this plan (`aws s3 rm uploads/`).
+> It must not be attempted until ALL of these hold:
+> 1. `rewrite_ckeditor_urls` is **implemented and tested** (it does not exist yet — see 5.0).
+> 2. `verify_consolidated_assets` passed **before Phase 4.5** (authoritative, while tenant data still existed).
+> 3. `backfill_markers` has run, and `verify_uploads_unreferenced` exits 0.
+> 4. Phase 5 tooling has automated test coverage (none exists today — see "Testing the Consolidation").
+>
+> Until then Phase 5 is a design/spec, not a runbook. The gate (`verify_uploads_unreferenced`)
+> will refuse to pass while embeds remain, so the deletion stays blocked by construction.
+
 After Apartment removal, clean up CarrierWave.
 
 ### 5.0 Rewrite CKEditor Embedded URLs (BEFORE deleting S3 files)
