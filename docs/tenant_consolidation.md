@@ -520,8 +520,14 @@ The consolidation is a one-shot, destructive data move whose ultimate safety net
 | Partner guard | `consolidate[partner]` aborts (use `merge_partner_to_sponsor`) | ✅ |
 | Attachment guard | `consolidate[attachment]` aborts when a `record_id` is set | ✅ |
 | News guard | `consolidate[news]` aborts when an `author_type` is not `AdminUser` | ✅ |
+| Merge: level + sponsor | `merge_partner_to_sponsor` creates a `SponsorLevel` named after the `PartnerType` (all locales preserved) and a `Sponsor` linked to it | ✅ |
+| Merge: reuse level | an existing `SponsorLevel` of the same name is reused, not duplicated | ✅ |
+| Merge: dedup | a Partner whose name already exists as a Sponsor is skipped, not duplicated | ✅ |
+| Merge: idempotent | a second merge run creates no duplicate sponsors/levels | ✅ |
 
-Still uncovered (build before running these groups): an end-to-end **agenda** group test (8 models, 2 join tables) and the **speaker-slug cross-tenant** case, which needs the `index_speakers_on_slug` drop migration first (see Critical Constraint #5). Byte-identity is approximated by byte-size; a checksum assertion would be stronger.
+The merge tests caught a real bug (now fixed): the `SponsorLevel` was created via the Mobility *writer* (`create!(name: hash)`), which nested the locale hash under the current locale (`{"zh-TW"=>{"en"=>…}}`) — corrupting the name and breaking the `find_by(name:)` reuse check. It now writes the raw column, like the Sponsor side.
+
+Still uncovered (build before running these groups): an end-to-end **agenda** group test (8 models, 2 join tables) and the **speaker-slug cross-tenant** case, which needs the `index_speakers_on_slug` drop migration first (see Critical Constraint #5). Byte-identity is approximated by byte-size; a checksum assertion would be stronger. The **Extract-Class refactor** of the 1089-line rake task (into `TenantConsolidation::*` services for unit-testability) is intentionally deferred until after the migration — restructuring a trusted destructive tool without full unit coverage is higher-risk than the debt.
 
 The spec disables transactional fixtures (it issues CREATE/DROP SCHEMA) and seeds upload-free records for the data path (CarrierWave uses local file storage in test, so the download URL is not HTTP-fetchable — the one asset example stubs the download). It is RSpec today; the same assertions port directly if the suite moves to Minitest.
 

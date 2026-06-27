@@ -535,7 +535,13 @@ namespace :tenant_consolidation do
                   type_to_level[td[:id]] = OpenStruct.new(id: td[:id], name: td[:name])
                   stats[:types_created] += 1
                 else
-                  level = SponsorLevel.create!(site_id: site.id, name: td[:name], order: td[:order])
+                  # Write name via the raw column (not the Mobility writer, which would
+                  # nest the locale hash under the current locale and corrupt it — and
+                  # also break the find_by(name:) reuse check above). Mirrors
+                  # assign_raw_attributes used for the Sponsor side.
+                  level = SponsorLevel.new(site_id: site.id, order: td[:order])
+                  level[:name] = td[:name]
+                  level.save!(validate: false)
                   type_to_level[td[:id]] = level
                   stats[:types_created] += 1
                 end

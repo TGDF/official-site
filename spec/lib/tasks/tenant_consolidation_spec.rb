@@ -29,11 +29,18 @@ RSpec.describe 'tenant_consolidation rake tasks' do
   before { reset_consolidation_state! }
   after { reset_consolidation_state! }
 
+  def seeded_models
+    [ Sponsor, SponsorLevel, Partner, PartnerType, Attachment, News ]
+  end
+
   def reset_consolidation_state!
     in_public do
-      [ Sponsor, SponsorLevel, Attachment ].each { |model| model.unscoped.delete_all }
+      seeded_models.each { |model| model.unscoped.delete_all }
       Site.where(tenant_name: extra_tenants).delete_all
     end
+    # Examples seed source rows into the main tenant too; clean it ourselves rather
+    # than leaning on the suite's rewinder, so this spec is self-contained.
+    within_tenant(main_site) { seeded_models.each { |model| model.unscoped.delete_all } }
     extra_tenants.each { |name| drop_tenant(name) }
   end
 
@@ -60,19 +67,50 @@ RSpec.describe 'tenant_consolidation rake tasks' do
   end
 
   # Seed a SponsorLevel + Sponsor in a tenant. Names are raw JSONB (all locales).
+  # site_id is set explicitly: save!(validate: false) skips acts_as_tenant's
+  # before_validation tenant assignment, so it would otherwise be nil.
   def seed_sponsor(site, level_name:, sponsor_name:, with_logo: false)
     within_tenant(site) do
-      level = SponsorLevel.new
+      level = SponsorLevel.new(site_id: site.id)
       level[:name] = level_name
       level.save!(validate: false)
 
-      sponsor = Sponsor.new
+      sponsor = Sponsor.new(site_id: site.id, level_id: level.id)
       sponsor[:name] = sponsor_name
-      sponsor.level_id = level.id
       sponsor.logo = Rack::Test::UploadedFile.new(test_png, 'image/png') if with_logo
       sponsor.save!(validate: false)
-      { level_id: level.id, sponsor_id: sponsor.id }
     end
+  end
+
+  # Seed a PartnerType + Partner in a tenant. Names are raw JSONB (all locales).
+  def seed_partner(site, type_name:, partner_name:)
+    within_tenant(site) do
+      type = PartnerType.new(site_id: site.id)
+      type[:name] = type_name
+      type.save!(validate: false)
+
+      partner = Partner.new(site_id: site.id, type_id: type.id)
+      partner[:name] = partner_name
+      partner.save!(validate: false)
+    end
+  end
+
+  # Create a public Sponsor (with its SponsorLevel) for a site — used to set up
+  # pre-existing-name scenarios the merge must reuse or skip.
+  def create_public_sponsor(site, level_name:, sponsor_name:)
+    in_public do
+      level = SponsorLevel.new(site_id: site.id)
+      level[:name] = level_name
+      level.save!(validate: false)
+
+      sponsor = Sponsor.new(site_id: site.id, level_id: level.id)
+      sponsor[:name] = sponsor_name
+      sponsor.save!(validate: false)
+    end
+  end
+
+  def public_count(model)
+    in_public { model.unscoped.count }
   end
 
   describe 'guard rails' do
@@ -203,6 +241,66 @@ RSpec.describe 'tenant_consolidation rake tasks' do
         expect(sponsor.logo_attachment).to be_attached
         expect(sponsor.logo_attachment.byte_size).to eq(File.size(test_png))
       end
+    end
+  end
+
+  describe 'merge_partner_to_sponsor' do
+    it 'creates a SponsorLevel named after the PartnerType and a Sponsor for the partner' do
+      seed_partner(main_site,
+                   type_name: { 'en' => 'Bronze', 'zh-TW' => '銅' },
+                   partner_name: { 'en' => 'Initech', 'zh-TW' => '創投' })
+
+      run_task('tenant_consolidation:merge_partner_to_sponsor')
+
+      in_public do
+        level = SponsorLevel.unscoped.find_by(site_id: main_site.id)
+        expect(level[:name]).to eq({ 'en' => 'Bronze', 'zh-TW' => '銅' })
+
+        sponsor = Sponsor.unscoped.find_by(site_id: main_site.id)
+        expect(sponsor[:name]).to eq({ 'en' => 'Initech', 'zh-TW' => '創投' })
+        expect(sponsor.level_id).to eq(level.id)
+      end
+    end
+
+    it 'reuses an existing SponsorLevel with the same name instead of creating a duplicate' do
+      create_public_sponsor(main_site,
+                            level_name: { 'en' => 'Bronze' },
+                            sponsor_name: { 'en' => 'Existing' })
+      seed_partner(main_site,
+                   type_name: { 'en' => 'Bronze' },
+                   partner_name: { 'en' => 'Initech' })
+
+      run_task('tenant_consolidation:merge_partner_to_sponsor')
+
+      # One pre-existing level reused (not duplicated); the partner becomes a 2nd sponsor.
+      expect(public_count(SponsorLevel)).to eq(1)
+      expect(public_count(Sponsor)).to eq(2)
+    end
+
+    it 'skips a Partner whose name already exists as a Sponsor (left for manual review)' do
+      create_public_sponsor(main_site,
+                            level_name: { 'en' => 'Bronze' },
+                            sponsor_name: { 'en' => 'Initech' })
+      seed_partner(main_site,
+                   type_name: { 'en' => 'Bronze' },
+                   partner_name: { 'en' => 'Initech' })
+
+      run_task('tenant_consolidation:merge_partner_to_sponsor')
+
+      # The duplicate-named partner is skipped, not merged into a second sponsor.
+      expect(public_count(Sponsor)).to eq(1)
+    end
+
+    it 'is idempotent — a second run creates no duplicate sponsors' do
+      seed_partner(main_site,
+                   type_name: { 'en' => 'Bronze' },
+                   partner_name: { 'en' => 'Initech' })
+
+      run_task('tenant_consolidation:merge_partner_to_sponsor')
+      run_task('tenant_consolidation:merge_partner_to_sponsor')
+
+      expect(public_count(Sponsor)).to eq(1)
+      expect(public_count(SponsorLevel)).to eq(1)
     end
   end
 end
