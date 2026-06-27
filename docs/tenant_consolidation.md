@@ -506,22 +506,24 @@ Keep the in-place task for what is already done; build the ETL path before runni
 
 ## Testing the Consolidation
 
-The consolidation is a one-shot, destructive data move whose only safety net is an RDS snapshot, and the rake task (`lib/tasks/tenant_consolidation.rake`) currently has **no automated coverage**. (The only related spec is `spec/models/concerns/has_migrated_upload_spec.rb`, which covers URL routing, not the task; the old `active_storage_migration.feature` was deleted when the task was renamed.) Every run today relies on manual dry-runs.
+The consolidation is a one-shot, destructive data move whose ultimate safety net is the RDS snapshot. Integration coverage lives in **`spec/lib/tasks/tenant_consolidation_spec.rb`**, which seeds two real tenant schemas (the `sponsor` multi-model group) and drives the actual rake task. It asserts the failure modes most likely to break silently:
 
-Before running a high-risk group (anything with FKs or uploads), add an integration test that seeds two tenants and asserts the things most likely to break silently:
+| Risk | Assertion after consolidate | Covered |
+|------|-----------------------------|---------|
+| FK ID remapping | each child points at its OWN tenant's migrated parent (`sponsor.level_id` → the migrated `SponsorLevel` of the same `site_id`), never a stale/cross-tenant id | ✅ |
+| Mobility translations | every locale survives — `record[:name]` still has both `en` and `zh-TW` | ✅ |
+| Asset transfer | `record.field_attachment.attached?` is true and `blob.byte_size` equals the source size — even for a record invalid under current validations (exercises the `validate: false` attachment persistence) | ✅ |
+| Sequence reset | a fresh `create` after consolidation does not raise duplicate-key | ✅ |
+| Cross-tenant migration | two tenants both migrate with the correct `site_id` and independent FK maps | ✅ |
+| Re-run guard | a second `consolidate` on a non-empty target aborts (no duplicate rows) | ✅ |
+| Dry run | `consolidate[group,true]` writes nothing to public | ✅ |
+| Partner guard | `consolidate[partner]` aborts (use `merge_partner_to_sponsor`) | ✅ |
+| Attachment guard | `consolidate[attachment]` aborts when a `record_id` is set | ✅ |
+| News guard | `consolidate[news]` aborts when an `author_type` is not `AdminUser` | ✅ |
 
-| Risk | Assertion after consolidate |
-|------|-----------------------------|
-| FK ID remapping | child rows point at the new parent IDs, not the old ones (e.g. `agenda.time_id` resolves to the migrated `AgendaTime`) |
-| Mobility translations | every locale survives — `record[:name]` still has both `en` and `zh-TW` |
-| Asset transfer | `record.field_attachment.attached?` is true and the file is byte-identical |
-| Sequence reset | a fresh `create` after consolidation does not raise duplicate-key |
-| Cross-tenant uniqueness | two tenants with the same speaker slug both migrate (after `index_speakers_on_slug` is dropped) |
-| Re-run guard | a second `consolidate` on a non-empty target aborts (no duplicate rows) |
-| Partner guard | `consolidate[partner]` aborts and points to `merge_partner_to_sponsor` |
-| Attachment guard | `consolidate[attachment]` aborts when a `record_id` is set |
+Still uncovered (build before running these groups): an end-to-end **agenda** group test (8 models, 2 join tables) and the **speaker-slug cross-tenant** case, which needs the `index_speakers_on_slug` drop migration first (see Critical Constraint #5). Byte-identity is approximated by byte-size; a checksum assertion would be stronger.
 
-The framework is whatever the suite currently uses — this is independent of the separate RSpec/Cucumber → Minitest migration. Prefer one integration test per multi-model group (`partner`, `sponsor`, `agenda`) over unit tests of private helpers.
+The spec disables transactional fixtures (it issues CREATE/DROP SCHEMA) and seeds upload-free records for the data path (CarrierWave uses local file storage in test, so the download URL is not HTTP-fetchable — the one asset example stubs the download). It is RSpec today; the same assertions port directly if the suite moves to Minitest.
 
 ## Technical Reference
 

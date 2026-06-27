@@ -1059,6 +1059,14 @@ namespace :tenant_consolidation do
       raise "Asset size mismatch for #{record.class.name}##{record.id}: " \
             "source=#{expected_size} downloaded=#{actual_size} (corrupt or wrong body) from #{url}"
     end
+
+    # Persist the attachment with validate: false. `attach` on a persisted record only
+    # auto-saves when the record is valid; a row that is invalid under current
+    # validations (e.g. a tightened rule a legacy row predates) would otherwise leave
+    # the attachment unsaved while the in-memory blob check above still passes — a
+    # silent missing attachment. The whole task migrates with validate: false, so do
+    # the same here.
+    record.save!(validate: false)
   end
 
   def already_migrated?(record, field, attachment)
