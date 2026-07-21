@@ -85,7 +85,7 @@ gem "oj"
 gem "openbox"
 gem "rack-attack"
 gem "rack-utf8_sanitizer"
-gem "store_attribute", "~> 2.1"
+gem "store_attribute", "~> 2.2"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
