@@ -637,7 +637,7 @@ GEM
       actionpack (>= 7.0)
       activemodel (>= 7.0)
     simplecov (1.0.3)
-    sitemap_generator (7.1.0)
+    sitemap_generator (7.1.1)
       builder (~> 3.0)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
