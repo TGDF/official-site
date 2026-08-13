@@ -13,7 +13,7 @@
       </tr>
       <thead>
       <tbody class="block lg:table-row-group">
-        <%= render partial: 'agendas/time', collection: @day.times, locals: { day: @day } %>
+        <%= render partial: 'agendas/time', collection: @day.times, locals: { rooms: @rooms } %>
       </tbody>
   </table>
 </div>
