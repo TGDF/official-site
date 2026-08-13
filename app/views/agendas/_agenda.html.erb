@@ -3,7 +3,13 @@
   <% if period.present? %>
     <p class="text-sm text-gray-500"><%= period %></p>
   <% end %>
-  <h1><%= link_to agenda.subject, agenda.speakers.first, class: 'text-red-500 font-semibold' %></h1>
+  <h1>
+    <% if agenda.speakers.any? %>
+      <%= link_to agenda.subject, agenda.speakers.first, class: 'text-red-500 font-semibold' %>
+    <% else %>
+      <span class="text-red-500 font-semibold"><%= agenda.subject %></span>
+    <% end %>
+  </h1>
   <p><%= agenda_speaker_links(agenda.speakers) %></p>
   <p>
     <% if agenda.language.present? %>

@@ -16,7 +16,9 @@ RSpec.describe AgendaComponent, type: :component do
     sessions.each_with_index do |attributes, order|
       agenda = create(:agenda, subject: attributes[:subject], language: :ZH, order:,
                                time:, room:, begin_at: attributes[:begin_at], end_at: attributes[:end_at])
-      create(:agendas_speaker, agenda:, speaker: create(:speaker, name: attributes[:speaker]))
+      if attributes[:speaker].present?
+        create(:agendas_speaker, agenda:, speaker: create(:speaker, name: attributes[:speaker]))
+      end
       create(:agendas_tagging, agenda:, tag: create(:agenda_tag, name: '遊戲設計'))
     end
   end
@@ -44,6 +46,13 @@ RSpec.describe AgendaComponent, type: :component do
 
     it { is_expected.to have_link('廟會、老街與點擊開發') }
     it { is_expected.to have_no_text('16:30 - 17:00') }
+  end
+
+  context 'when the session has no speaker yet' do
+    let(:session) { super().merge(speaker: nil) }
+
+    it { is_expected.to have_text('廟會、老街與點擊開發') }
+    it { is_expected.to have_no_link('廟會、老街與點擊開發') }
   end
 
   context 'when two sessions share a slot in the same room' do
