@@ -44,6 +44,24 @@ RSpec.describe('Admin::Agendas') do
       expect(Agenda.last.time).to(eq(time))
     end
 
+    it 'leaves the room unset when none is picked' do # rubocop:disable RSpec/ExampleLength
+      create(:room)
+      visit new_admin_agenda_path
+      fill_in 'agenda_subject', with: 'Example'
+      fill_in 'agenda_description', with: 'Example Content'
+      click_on '新增Agenda'
+      expect(Agenda.last.room).to(be_nil)
+    end
+
+    it 'leaves the time unset when none is picked' do # rubocop:disable RSpec/ExampleLength
+      create(:agenda_time)
+      visit new_admin_agenda_path
+      fill_in 'agenda_subject', with: 'Example'
+      fill_in 'agenda_description', with: 'Example Content'
+      click_on '新增Agenda'
+      expect(Agenda.last.time).to(be_nil)
+    end
+
     it 'renders begin_at as a free-form text field' do
       visit new_admin_agenda_path
       expect(page).to(have_field('agenda_begin_at', type: 'text'))
