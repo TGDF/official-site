@@ -28,6 +28,46 @@ RSpec.describe(Agenda) do
     end
   end
 
+  describe '#begin_at=' do
+    subject { build(:agenda, begin_at: value).begin_at }
+
+    context 'when the value carries a date prefix' do
+      let(:value) { '2026-07-16 16:30' }
+
+      it { is_expected.to(eq('16:30')) }
+    end
+
+    context 'when the value is a full ISO datetime' do
+      let(:value) { '2026-07-16T16:30:00' }
+
+      it { is_expected.to(eq('16:30')) }
+    end
+
+    context 'when the value is already a clock time' do
+      let(:value) { '16:30' }
+
+      it { is_expected.to(eq('16:30')) }
+    end
+
+    context 'when the value is blank' do
+      let(:value) { '' }
+
+      it { is_expected.to(be_nil) }
+    end
+
+    context 'when the value holds no clock time' do
+      let(:value) { '下午三點半' }
+
+      it { is_expected.to(eq('下午三點半')) }
+    end
+  end
+
+  describe '#end_at=' do
+    subject { build(:agenda, end_at: '2026-07-16 17:00').end_at }
+
+    it { is_expected.to(eq('17:00')) }
+  end
+
   describe '#destroy' do
     subject(:destroy) { agenda.destroy }
 

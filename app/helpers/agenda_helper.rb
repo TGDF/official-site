@@ -5,8 +5,10 @@ module AgendaHelper
   # label alone cannot tell a reader how long a session runs or which of two
   # stacked sessions comes first.
   #
-  # Times are free-text and some carry a date prefix ("2026-07-16 16:30"). The
-  # schedule is already grouped by day, so only the clock part is kept.
+  # Agenda normalizes times to a clock on write, but rows stored before that
+  # guard can still carry a date prefix ("2026-07-16 16:30") until they are
+  # saved again. The schedule is already grouped by day, so only the clock part
+  # is shown either way.
   def agenda_period(agenda)
     return if agenda.begin_at.blank? || agenda.end_at.blank?
 

@@ -53,6 +53,16 @@ RSpec.describe('Admin::Agendas') do
       visit new_admin_agenda_path
       expect(page).to(have_field('agenda_end_at', type: 'text'))
     end
+
+    it 'keeps only the clock part of a submitted time' do # rubocop:disable RSpec/ExampleLength
+      visit new_admin_agenda_path
+      fill_in 'agenda_subject', with: 'Example'
+      fill_in 'agenda_description', with: 'Example Content'
+      fill_in 'agenda_begin_at', with: '2026-07-16 16:30'
+      fill_in 'agenda_end_at', with: '2026-07-16 17:00'
+      click_on '新增Agenda'
+      expect(Agenda.last).to(have_attributes(begin_at: '16:30', end_at: '17:00'))
+    end
   end
 
   describe '#edit' do

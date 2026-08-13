@@ -40,6 +40,19 @@ class Agenda < ApplicationRecord
   validates :subject, :description, presence: true
   validate :begin_and_end_are_presence
 
+  # begin_at/end_at give a talk its own sub-time inside a shared AgendaTime
+  # slot, and stay free text so an admin can type "16:30" directly. Keeping
+  # only the clock part on write stops the stored shape from depending on
+  # whichever input widget the admin form happens to use. A value holding no
+  # clock time is stored untouched rather than discarded.
+  def begin_at=(value)
+    super(normalize_clock(value))
+  end
+
+  def end_at=(value)
+    super(normalize_clock(value))
+  end
+
   # A session counts as translated only when its translation targets a
   # different language than the original; same-language entries (e.g. a
   # Chinese talk marked as translated to Chinese) are treated as untranslated.
@@ -48,6 +61,11 @@ class Agenda < ApplicationRecord
   end
 
   private
+
+  def normalize_clock(value)
+    text = value.to_s
+    text[/\d{1,2}:\d{2}/] || text.presence
+  end
 
   def begin_and_end_are_presence
     return unless begin_at.present? || end_at.present?
