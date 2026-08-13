@@ -3,6 +3,6 @@
 FactoryBot.define do
   factory :agendas_tagging do
     agenda
-    agenda_tag
+    tag { association :agenda_tag }
   end
 end

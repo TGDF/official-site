@@ -8,11 +8,13 @@
           <%= agenda.language %> → <%= agenda.translated_language %>
         </span>
       <% else %>
-        <span class="rounded px-1 text-sm bg-blue-500 text-white"><%= agenda.language %>
+        <span class="rounded px-1 text-sm bg-blue-500 text-white"><%= agenda.language %></span>
       <% end %>
     <% end %>
+  </p>
   <p>
     <% agenda.tags.each do |tag| %>
       <span class="rounded px-1 text-sm bg-red-500 text-white"><%= tag.name %></span>
     <% end %>
+  </p>
 </article>
