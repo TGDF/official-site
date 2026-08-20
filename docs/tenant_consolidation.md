@@ -542,6 +542,8 @@ freeze ─┬─ consolidate[group] ─── verify[group] ─── commit the
 
 The flag does **not** gate the rake task or the Rails console — it is the admin write path only, which is where concurrent edits come from.
 
+Two things to know about it: a refused write answers with a redirect, so while `attachment` is frozen the CKEditor upload endpoint gives the editor a generic upload failure rather than a message it can display; and the check reads a Flipper flag on every admin non-GET request, which is a dependency that path did not previously have.
+
 Note: a group stops accumulating CarrierWave data automatically once consolidated — `upload_field_for` flips to `{field}_attachment` the moment the model enters `excluded_models`. The app **does not and must not** write ActiveStorage attachments to a model *before* it is consolidated: `upload_field_for` routes its forms to CarrierWave, and ActiveStorage would be unsafe anyway because `active_storage_attachments` is a shared public table keyed by `record_id`, which is only globally unique after the move (pre-move the same id exists in every tenant schema → cross-tenant ambiguous lookups). Any AS attachment found on a not-yet-consolidated model is therefore a leftover from tooling or an aborted run, which is exactly what `cleanup_attachments` removes. The only lever to shrink the backlog is to consolidate write-heavy groups sooner (e.g. Sponsor).
 
 ## Strategy for High-Risk Groups: Dump → Transform → Import
