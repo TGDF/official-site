@@ -478,7 +478,17 @@ Idempotency here is **group-level, not row-level**. The current task has no reli
 
 ### Asset transfer
 
-`attach_asset` downloads each CarrierWave object and re-uploads to ActiveStorage **inside the per-tenant transaction** (rake `consolidate_group`). For large groups (agenda) this holds a DB transaction open across slow network I/O — a real lock/timeout risk. It **re-raises** (never swallows) and rolls back that tenant's whole group on any failure — intentional all-or-nothing; recover via rollback + redo. Integrity is checked by comparing the stored blob's byte size against the **authoritative source size read from fog/S3 directly** (captured during collection), not via the CDN. This rejects not just empty downloads but a CDN that answers a missing object with `200 + an HTML error body` (the asset host is a CDN). It matters because the only safety net is the RDS snapshot, which does **not** cover S3: a silently-bad transfer that later passes Phase 5.5's `s3 rm` would be unrecoverable. (A source whose size cannot be determined also raises — investigate the broken reference rather than migrate it blind.) Asset transfer is the one I/O-bound, order-independent part that *could* be lifted out of the transaction and run separately; **SolidQueue is not installed** and adopting it is gated on the ECS run-model decision, so this stays inline for now (do not route it through the non-durable `:async` adapter). The dump/transform/import path below makes this separation natural.
+`attach_asset` downloads each CarrierWave object and re-uploads it to ActiveStorage. It runs **after the row transaction commits**, one transaction per asset — not inside the per-tenant transaction, which used to stay open across every download in the group. Production's worst case is 2022_TGDF's 130 game thumbnails in a single tenant; 1,071 files move in total.
+
+| | Rows | Assets |
+|---|---|---|
+| Transaction | one per tenant, all-or-nothing | one per asset |
+| On failure | the tenant's rows roll back | that asset's attachment rolls back; the rows stay committed |
+| Recovery | `rollback[group]` then redo | the same — `consolidate` never deletes tenant data |
+
+So a failed run can leave a tenant's rows in public with only some assets attached. That is not a state to patch by hand: `rollback[group]` clears the public rows (purging their attachments) and a clean redo reproduces the result.
+
+Integrity is checked at write time and it still fails loud. The stored blob's byte size is compared against the **authoritative source size read from fog/S3 directly**, captured during collection rather than fetched through the CDN. This rejects an empty download *and* a CDN that answers a missing object with `200` and an HTML error body — which matters because the RDS snapshot does not cover S3, so a silently bad transfer that later passed the Phase 5.5 gate would be unrecoverable. A source whose size cannot be determined raises too: investigate the broken reference rather than migrate it blind.
 
 ### Write-Freeze Posture
 

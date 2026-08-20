@@ -725,6 +725,8 @@ namespace :tenant_consolidation do
       end
 
       # Step 2: Create records in public schema in order, remapping FKs
+      pending_assets = []
+
       Apartment::Tenant.switch("public") do
         ActsAsTenant.with_tenant(site) do
           ActiveRecord::Base.transaction do
@@ -773,16 +775,17 @@ namespace :tenant_consolidation do
                   # Track ID mapping for dependent models
                   id_maps[model_name][data[:original_id]] = new_record.id
 
-                  # Attach asset if present
+                  # Assets move after this transaction commits — see transfer_assets!
                   if data[:file_url].present? && config
-                    attach_asset(new_record, config[:attachment], data[:file_url], data[:file_size])
+                    pending_assets << {
+                      record: new_record,
+                      attachment: config[:attachment],
+                      url: data[:file_url],
+                      size: data[:file_size]
+                    }
                   end
 
-                  # Post-migration verification
                   verify_translations_preserved(data[:source_translations], new_record, model_name)
-                  if data[:file_url].present? && config
-                    verify_attachment_migrated(new_record, config, data[:file_url])
-                  end
 
                   stats[model_name][:migrated] += 1
                   print "."
@@ -794,6 +797,8 @@ namespace :tenant_consolidation do
               end
             end
           end
+
+          transfer_assets!(pending_assets) unless dry_run
         end
       end
     end
@@ -1037,6 +1042,28 @@ namespace :tenant_consolidation do
     uploader.file&.size
   rescue StandardError
     nil
+  end
+
+  # Asset transfer is network I/O, and inside the row transaction it held that
+  # transaction open across every download in the group — 130 files for one production
+  # tenant's games. The rows commit first; each asset then moves in a transaction of
+  # its own, so a bad download rolls back nothing but its own attachment.
+  #
+  # This does change what a failed run leaves behind: the rows are committed by then,
+  # rather than the whole tenant being rolled back. Recovery is unchanged —
+  # rollback[group] and redo — because consolidate never deletes tenant data.
+  def transfer_assets!(pending)
+    return if pending.empty?
+
+    puts "\n  Transferring #{pending.size} asset(s)..."
+
+    pending.each do |asset|
+      ActiveRecord::Base.transaction do
+        attach_asset(asset[:record], asset[:attachment], asset[:url], asset[:size])
+        verify_attachment_migrated(asset[:record], { attachment: asset[:attachment] }, asset[:url])
+      end
+      print "."
+    end
   end
 
   def attach_asset(record, attachment, url, expected_size)

@@ -242,6 +242,38 @@ RSpec.describe 'tenant_consolidation rake tasks' do
         expect(sponsor.logo_attachment.byte_size).to eq(File.size(test_png))
       end
     end
+
+    # Assets move after the rows commit, so their transaction no longer stays open
+    # across every download in the group. What a failed run leaves behind changed with
+    # it: the rows are already in public, and recovery is rollback[group] + redo.
+    context 'when a download fails' do
+      before do
+        seed_sponsor(asset_site,
+                     level_name: { 'en' => 'Gold' },
+                     sponsor_name: { 'en' => 'WithLogo' },
+                     with_logo: true)
+        allow(URI).to receive(:open).and_raise(Errno::ECONNREFUSED)
+      end
+
+      it 'aborts the run' do
+        expect { run_task('tenant_consolidation:consolidate', 'sponsor') }
+          .to raise_error(Errno::ECONNREFUSED)
+      end
+
+      it 'leaves the rows committed rather than rolling the tenant back' do
+        suppress(Errno::ECONNREFUSED) { run_task('tenant_consolidation:consolidate', 'sponsor') }
+
+        expect(public_count(Sponsor)).to eq(1)
+      end
+
+      it 'leaves the asset unattached' do
+        suppress(Errno::ECONNREFUSED) { run_task('tenant_consolidation:consolidate', 'sponsor') }
+
+        in_public do
+          expect(Sponsor.unscoped.find_by(site_id: asset_site.id).logo_attachment).not_to be_attached
+        end
+      end
+    end
   end
 
   describe 'merge_partner_to_sponsor' do
