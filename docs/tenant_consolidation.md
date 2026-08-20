@@ -90,6 +90,8 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 
 **CKEditor embedded URLs** — every rich-text field (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus URL inputs (MenuItem.link, Plan.button_target) — together the `RICH_TEXT_FIELDS` set — can embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files) and gated by `verify_uploads_unreferenced`.
 
+The set is finite rather than growing: `Admin::ImagesController` — the endpoint CKEditor uploads to — routes its write by the same rule as `upload_field_for`, so it writes CarrierWave only while `Attachment` is still in a tenant schema, and ActiveStorage once the group is consolidated. Consolidating `attachment` is therefore what stops new `/uploads/` references appearing, and only then can the Phase 5.0 rewrite converge.
+
 ### Critical Constraints
 
 1. **All migrations use groups** - Even single models are migrated as groups for consistency

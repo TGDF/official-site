@@ -41,6 +41,23 @@ module HasMigratedUpload
         attachment.attached? || public_send(field).present?
       end
 
+      # Writing follows the same routing as reading. A model still in a tenant schema
+      # must go to CarrierWave: active_storage_attachments is one shared public table
+      # keyed by record_id, and that id only becomes unique once the group has moved —
+      # before then the same id exists in every tenant schema.
+      define_method(:"#{field}_upload=") do |uploaded|
+        return public_send(:"#{field}=", uploaded) if model_in_tenant_schema?
+
+        public_send(attachment_name).attach(uploaded)
+      end
+
+      define_method(:"#{field}_filename") do
+        attachment = public_send(attachment_name)
+        return attachment.filename.to_s if !model_in_tenant_schema? && attachment.attached?
+
+        public_send(field).filename
+      end
+
       # CarrierWave's remove_<field> checkbox clears only its own column, but for a
       # model in the public schema it is the ActiveStorage attachment that <field>_url
       # serves — so the checkbox has to reach that attachment too, or "remove" leaves
