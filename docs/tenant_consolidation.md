@@ -482,7 +482,19 @@ Idempotency here is **group-level, not row-level**. The current task has no reli
 
 ### Write-Freeze Posture
 
-`consolidate` reads tenant rows, then writes public rows; a write to the tenant schema *during* a run is not captured and is lost on cutover. Before running a group, **freeze writes to that group's models** (admin maintenance window, or take the relevant admin screens offline). The runbook assumes no concurrent writes to a group while it is being consolidated.
+`consolidate` reads tenant rows, then writes public rows; a write to the tenant schema *during* a run is not captured and is lost on cutover.
+
+**The window is longer than the run.** It closes only when the `excluded_models` change is *deployed* — until then the app still routes that group's queries to the tenant schema, so an admin edit keeps landing on the side that is about to be abandoned. Production deploys wait on a reviewer's approval, so this stretches well past the minutes the data move itself takes:
+
+```
+freeze ─┬─ consolidate[group] ─── verify[group] ─── commit the switch ─── deploy ──┬─ unfreeze
+        │                                                                          │
+        └── writes here land in the tenant schema and are lost ─────────────────────┘
+```
+
+**How to hold it.** Each group has a Flipper flag, `consolidation_freeze_<group>` — enable it from `/flipper` before starting and disable it after the deploy is live. While it is on, the admin screens that write that group's data refuse every non-GET request and send the editor back with an explanation; every other screen keeps working, so freezing `sponsor` does not stop anyone editing the agenda. The screen-to-group table is `TenantConsolidation::ADMIN_SCREENS` in `lib/tenant_consolidation.rb`, and a spec asserts it names every group the rake task can move.
+
+The flag does **not** gate the rake task or the Rails console — it is the admin write path only, which is where concurrent edits come from.
 
 Note: a group stops accumulating CarrierWave data automatically once consolidated — `upload_field_for` flips to `{field}_attachment` the moment the model enters `excluded_models`. The app **does not and must not** write ActiveStorage attachments to a model *before* it is consolidated: `upload_field_for` routes its forms to CarrierWave, and ActiveStorage would be unsafe anyway because `active_storage_attachments` is a shared public table keyed by `record_id`, which is only globally unique after the move (pre-move the same id exists in every tenant schema → cross-tenant ambiguous lookups). Any AS attachment found on a not-yet-consolidated model is therefore a leftover from tooling or an aborted run, which is exactly what `cleanup_attachments` removes. The only lever to shrink the backlog is to consolidate write-heavy groups sooner (e.g. Sponsor).
 

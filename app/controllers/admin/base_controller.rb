@@ -4,6 +4,7 @@ module Admin
   class BaseController < ::ApplicationController
     before_action :authenticate_admin_user!
     before_action :require_tenant_site!
+    before_action :refuse_frozen_writes
     helper_method :admin_current_resource_locale, :navbar_sites
 
     def admin_current_resource_locale
@@ -25,6 +26,18 @@ module Admin
       return if tenant_site?
 
       redirect_to admin_root_path, alert: t("admin.errors.tenant_only")
+    end
+
+    # A write accepted while this screen's group is being consolidated lands in the
+    # tenant schema the move has already read, and is lost at the cutover.
+    def refuse_frozen_writes
+      return if request.get? || request.head?
+      return unless TenantConsolidation.frozen?(TenantConsolidation.group_for_screen(controller_path))
+
+      redirect_back(
+        fallback_location: admin_root_path,
+        alert: t("admin.errors.consolidation_frozen")
+      )
     end
 
     def save_admin_resource_locale

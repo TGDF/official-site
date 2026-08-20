@@ -101,6 +101,8 @@ en:
       new:
         hint: "Sign in to start your session"
   admin:
+    errors:
+      consolidation_frozen: This section is being migrated and is temporarily read-only.
     shared:
       sidebar:
         view_all_sites: View all sites
