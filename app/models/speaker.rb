@@ -9,7 +9,7 @@ class Speaker < ApplicationRecord
   friendly_id :name, use: :slugged
 
   mount_uploader :avatar, AvatarUploader
-  has_migrated_upload :avatar, variants: ImageVariants::AVATAR
+  has_migrated_upload :avatar, variants: ImageVariants::AVATAR, validates_presence: true
 
   has_many :agendas_speakers, dependent: :destroy
   has_many :agendas, through: :agendas_speakers
@@ -17,13 +17,4 @@ class Speaker < ApplicationRecord
   default_scope -> { order(order: :asc) }
 
   validates :name, :slug, :description, presence: true
-  validate :avatar_must_be_present
-
-  private
-
-  def avatar_must_be_present
-    return if avatar_present?
-
-    errors.add(:avatar, :blank)
-  end
 end

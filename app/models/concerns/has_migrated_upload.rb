@@ -11,7 +11,14 @@ module HasMigratedUpload
 
       if validates_presence
         options = validates_presence.is_a?(Hash) ? validates_presence : {}
-        validate(**options) { errors.add(field, :blank) unless public_send(:"#{field}_present?") }
+        # A pending removal counts as blank here rather than inside <field>_present?,
+        # so the predicate keeps meaning "a file is stored" — the admin forms gate the
+        # preview and the removal checkbox on it, and a rejected removal must still
+        # show both.
+        validate(**options) do
+          kept = public_send(:"#{field}_present?") && !public_send(:"#{field}_marked_for_removal?")
+          errors.add(field, :blank) unless kept
+        end
       end
 
       define_method(:"#{field}_url") do |version = nil|
@@ -32,6 +39,37 @@ module HasMigratedUpload
       define_method(:"#{field}_present?") do
         attachment = public_send(attachment_name)
         attachment.attached? || public_send(field).present?
+      end
+
+      # CarrierWave's remove_<field> checkbox clears only its own column, but for a
+      # model in the public schema it is the ActiveStorage attachment that <field>_url
+      # serves — so the checkbox has to reach that attachment too, or "remove" leaves
+      # the file in place. A file supplied in the same request is a replacement, not a
+      # removal, and wins.
+      define_method(:"#{field}_marked_for_removal?") do
+        return false unless respond_to?(:"remove_#{field}?")
+        return false unless public_send(:"remove_#{field}?")
+
+        !public_send(attachment_name).attachment&.new_record?
+      end
+
+      # Removal is only *pending* until the save commits, so a required upload can
+      # still refuse to be emptied and the blob survives a rejected form. Purging
+      # after commit also keeps a rolled-back save from destroying the only original.
+      # The intent is captured at validation time because CarrierWave consumes its own
+      # remove flag in a before_save — by after_save there is nothing left to read.
+      after_validation do
+        next unless errors.empty?
+        next unless public_send(:"#{field}_marked_for_removal?")
+
+        (@pending_upload_purges ||= {})[attachment_name] = true
+      end
+
+      after_commit do
+        next unless @pending_upload_purges&.delete(attachment_name)
+
+        attachment = public_send(attachment_name)
+        attachment.purge if attachment.attached?
       end
     end
   end

@@ -62,4 +62,45 @@ RSpec.describe HasMigratedUpload do
       expect(speaker.avatar_present?).to be false
     end
   end
+
+  # Site is in the public schema and its logo carries no presence validation, so it is
+  # the only real model where a removal is allowed to go through end to end.
+  describe 'removal' do
+    let(:site) { Site.find_by(tenant_name: 'main') }
+
+    before do
+      site.logo_attachment.attach(io: File.open(test_file), filename: 'logo.png')
+    end
+
+    it 'purges the ActiveStorage attachment' do
+      site.update!(remove_logo: '1')
+      expect(site.reload.logo_attachment).not_to be_attached
+    end
+
+    it 'keeps a replacement upload instead of removing it' do
+      site.remove_logo = '1'
+      site.logo_attachment.attach(io: File.open(test_file), filename: 'replacement.png')
+      site.save!
+
+      expect(site.reload.logo_attachment.filename.to_s).to eq('replacement.png')
+    end
+  end
+
+  # Speaker still lives in a tenant schema, so its avatar is CarrierWave-only. Removal
+  # used to slip past the presence validation there too: the column was cleared in a
+  # before_save, after validation had already read it as present.
+  describe 'removal of a required upload' do
+    let(:speaker) { create(:speaker) }
+
+    before { speaker.remove_avatar = '1' }
+
+    it 'is rejected' do
+      expect(speaker).not_to be_valid
+    end
+
+    it 'still reports the stored file, so the form keeps showing it' do
+      speaker.valid?
+      expect(speaker.avatar_present?).to be true
+    end
+  end
 end
