@@ -24,19 +24,43 @@ The migration consolidates tenant data from PostgreSQL schemas to a single publi
 
 ### Timing & Sequencing
 
-The destructive data runs (`consolidate` / `merge`) must not happen near the annual event. The 2026 event runs **2026-07-15 ~ 2026-07-19**; treat that week plus the surrounding days as a freeze window — no data migration.
-
-| Window | What runs | Risk |
-|--------|-----------|------|
-| Before the event | Doc polish, schema prep (drop non-site-scoped unique indexes), write consolidation tests, dry-runs against a copy | Low — no production data moves |
-| Event freeze (07-15 ~ 07-19) | Nothing | — |
-| After the event | Group consolidations in order, then Phase 4 / Phase 5 | High — real data moves |
+The destructive runs (`consolidate` / `merge`) must not happen near the annual event. The 2026 event ran **2026-07-15 ~ 2026-07-19** and is past, so the window is open; the next freeze is whenever the 2027 dates are set.
 
 **Parallel, out of scope here:** migrating the test suite (RSpec + Cucumber) to Minitest is tracked separately and is demand-driven. It is not a prerequisite for consolidation, but Phase 4 (removing Apartment) does depend on the test harness no longer assuming Apartment — see Phase 4.8.
 
-**Current real progress (verify with `tenant_consolidation:status`):** only the four no-FK groups are consolidated — `slider`, `block`, `plan`, `menu_item` (present in `Apartment.excluded_models`). Every remaining group has FK dependencies, polymorphic references, or cross-tenant uniqueness to resolve — i.e. all the high-risk work is still ahead.
+**Where this stands.** Four no-FK groups are consolidated — `slider`, `block`, `plan`, `menu_item`. Everything with a foreign key, a polymorphic reference, or cross-year uniqueness is still ahead.
 
-> ⚠️ `tenant_consolidation:status` reports a group COMPLETE purely from `Apartment.excluded_models` membership, **not** from actual data presence. If a model is added to `excluded_models` before its data move finishes, status shows ✓ while the public table is empty and records are invisible. Treat `status` as "what the config claims," and `verify[group]` as "what the data shows."
+> ⚠️ `tenant_consolidation:status` reports a group COMPLETE purely from `Apartment.excluded_models` membership, **not** from actual data presence. Treat `status` as "what the config claims" and `verify[group]` as "what the data shows". `menu_item` is the illustration: it reads ✓ while public *and every tenant table* hold **zero rows**, so that group proved nothing about the tooling.
+
+### Measured state of production
+
+Taken 2026-08-20 across the nine production tenants, read-only. Recorded here because several statements elsewhere in this document were written without it, and because re-measuring needs access to the live environment.
+
+| | Measured | Bearing |
+|---|---|---|
+| CarrierWave files to move | **1,071** — Speaker 371, Game 214, Sponsor 206, News 126, Attachment 106, Partner 48 | Worst single tenant: 130 game thumbnails |
+| `Attachment.record_id` set | **0 in every tenant**; all 106 attachments are `Image` rows carrying only `file` | Critical Constraint #3 |
+| Embedded `/uploads/` references | **18** — News.content 15, Block.content 2, Site.indie_space_description 1 | Phase 5.0 |
+| Rows with `site_id IS NULL` | the majority — 249/370 speakers, 214/214 games, 259 agendas, 155 sponsors, 107 attachments | Critical Constraint #6 |
+| Speakers with no slug | **176** — tgdf2018, tgdf and tgdf_2021 entirely; tgdf_2020 all but one | Open question 1 below |
+| Speaker slugs used by more than one year | **39** of 157 distinct | Open question 1 below |
+| Partners awaiting the merge | **48** — 2023tgdf 27 / 8 types, 2024tgdf 21 / 6 types | Matches the 2025-12-20 census |
+| ActiveStorage rows on unconsolidated models | **0** | `cleanup_attachments` has nothing to do today |
+| Slider CarrierWave markers in public | **0 of 34** | `backfill_markers` still required before the Phase 5 gate |
+| PostgreSQL | 16.13, 9 tenant schemas + public | Sizing for any migration |
+
+`verify_consolidated_assets` passes today (Slider: tenant CW 32, public AS 34).
+
+### Open questions
+
+Three things this plan asserts but has not settled. A round of work in 2026-08 answered them one way, changed the schema to match, and was rolled back because those were the user's decisions to make. **They are open; do not treat any answer below as chosen.** The work is preserved on branch `wip/consolidation-round-full` for reference, not as a starting point.
+
+**1. What guarantees speaker slug uniqueness through the move, and at what granularity.**
+This is a multi-tenant project: a tenant table gets per-site uniqueness, and only a global table gets global uniqueness. `speakers` is a tenant table, yet it carries both `index_speakers_on_site_id_and_slug UNIQUE (site_id, slug)` and `index_speakers_on_slug UNIQUE (slug)`. The second contradicts the tenancy model and 39 existing slugs already collide across years, so it cannot survive consolidation unchanged — but removing it is a schema decision, and the per-site index does not currently substitute for it (see Constraint #6). Tangled up with this: the 176 slug-less speakers are addressed as `/speakers/{id}`, and consolidation replaces every id, so whatever slug they are given decides whether those URLs survive.
+
+**2. What Phase 5.0 resolves an embedded URL against.** The stored URLs address an upload by the id its row had in a tenant schema, and the current spec (match by filename within the site) cannot work — see Phase 5.0 for the production counter-example. Candidates not yet weighed: recording the old id on each consolidated row; a mapping table in the public schema only; or doing the rewrite inside `consolidate[attachment]` while the id map is still in memory, which needs no schema change.
+
+**3. Whether the Dump → Transform → Import path is still warranted** for `agenda` and `attachment`, now that `Attachment.record_id` is known to be unset everywhere — that was its main justification.
 
 ## Migration Path
 
@@ -86,7 +110,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 
 **Polymorphic references:**
 - **News.author → AdminUser** — `author` is polymorphic; AdminUser is public with stable ids so no remap is needed. This is now **code-guarded**: `consolidate[news]` aborts if any `author_type` is a model other than `AdminUser` (a null author is fine) — the same fail-loud guard as Attachment, so a tenant-model author can no longer migrate with a stale id.
-- **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` now **aborts** if any `record_id` is set. In practice `Image` rows set only `file` (record_id null), so this rarely triggers; when it does, migrate attachments via the dump/transform/import path (see "Strategy for High-Risk Groups").
+- **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` **aborts** if any `record_id` is set. Production has **none** (measured 2026-08-20: all 106 attachments are `Image` rows carrying only `file`), so the guard is a tripwire rather than an obstacle — and that removes the main reason the dump/transform/import path was recommended for this group. See Open question 3.
 
 **CKEditor embedded URLs** — every rich-text field (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus URL inputs (MenuItem.link, Plan.button_target) — together the `RICH_TEXT_FIELDS` set — can embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files) and gated by `verify_uploads_unreferenced`.
 
@@ -96,17 +120,15 @@ The set is finite rather than growing: `Admin::ImagesController` — the endpoin
 
 1. **All migrations use groups** - Even single models are migrated as groups for consistency
 2. **Multi-model groups are atomic** - Models with FK relationships are migrated together with automatic ID remapping
-3. **Attachment migrates last, and aborts if `record_id` is set** - Polymorphic `record` can reference any model. Migrating last is necessary but NOT sufficient: the in-place task cannot remap `record_id` across groups, so `consolidate[attachment]` aborts when any `record_id` is present. Use the dump/transform/import path for attachments that carry real references.
+3. **Attachment migrates last, and aborts if `record_id` is set** - Polymorphic `record` can reference any model, and the in-place task cannot remap across groups, so `consolidate[attachment]` aborts when any `record_id` is present. Production has none, so this is a tripwire; an attachment that ever does carry one has to be resolved before the run.
 4. **Polymorphic safety (News.author)** - News.author references AdminUser (already public, stable ids); no remap needed. Code-guarded: `consolidate[news]` aborts if any `author_type` is a model other than AdminUser (null is fine).
-5. **Schema changes for a group are bundled into that group's phase (atomic)** - When a group needs a structural change (e.g. dropping an index), the migration is written and committed **in the same change-set** as that group's consolidation switch — never as a loose, easily-forgotten pre-step. This keeps "code is in the state the data move expects" true at every commit.
+5. **A group's schema change must be *deployed* before its data move; the switch goes out after** - When a group needs a structural change, the migration ships with that group's phase rather than as a loose pre-step — but "same phase" is not "same deploy". A change the consolidation depends on has to be live *before* `consolidate` runs, while the `excluded_models` switch only goes out *after* the move is verified. That is two deploys, and the write freeze spans both (see [Write-Freeze Posture](#write-freeze-posture)).
 
-   Concrete case — **non-site-scoped unique indexes**: per-tenant schemas each held their own copy of a table, so a global `unique` index was safe *within one year*. Once rows from every year share one public table, any unique index **not scoped to `site_id`** collides across tenants. Full `db/schema.rb` scan — the only offender is:
-   ```
-   index_speakers_on_slug              UNIQUE (slug)            ← MUST be dropped (agenda group)
-   index_speakers_on_site_id_and_slug  UNIQUE (site_id, slug)   ← keep (correctly scoped)
-   ```
-   Without dropping `index_speakers_on_slug`, `consolidate[agenda]` fails with a duplicate-key error the moment two years share a speaker slug. The drop migration ships with the agenda phase. (`news` already uses only the site-scoped composite — no action.)
-6. **No leftover global records before removing `has_global_records`** - That option makes `site_id IS NULL` rows visible to every tenant. Before removing it (Step 5 / Phase 4.2), confirm the group has no `site_id IS NULL` rows, or they become invisible under plain `acts_as_tenant`.
+   Concrete case — **`index_speakers_on_slug`**: per-tenant schemas each held their own copy of the table, so a `UNIQUE (slug)` index was satisfiable *within one year*. Once every year shares one public table it is not: **39 of 157 distinct speaker slugs are already used by more than one year** (2026tgdf's 41 slugs are all numeric, 2025tgdf's are 37 of 44, and they collide with each other), so `consolidate[agenda]` fails on the first of them. What to do about that is **Open question 1** — the index contradicts the project's tenancy model, but removing it is a schema decision and the site-scoped index does not currently substitute for it (Constraint #6). Settle it before the agenda group is scheduled. (`news` uses only the site-scoped composite — no question there.)
+
+6. **`site_id IS NULL` is the normal state of the source data, and the move is what fixes it** - `has_global_records: true` makes those rows visible to every tenant. They are not an edge case: production carries **249 of 370 speakers, all 214 games, 259 agendas, 155 sponsors, 107 attachments** with a null `site_id` — rows predating `acts_as_tenant`. `consolidate` assigns `site_id` on every row it writes, so the public schema comes out with none, which is what makes `has_global_records` safe to drop per group at Step 5. Check the *public* rows after the move, not the tenant source.
+
+   This also decides when a site-scoped unique index starts doing anything. PostgreSQL treats NULLs as distinct, so `UNIQUE (site_id, slug)` constrains nothing while `site_id` is null — which today is most of the table. It becomes a real guarantee only once the rows have moved and been given a `site_id`; making `site_id NOT NULL` afterwards is what would keep it one.
 
 ## How to Migrate a Group
 
@@ -115,11 +137,11 @@ The set is finite rather than growing: `Admin::ImagesController` — the endpoin
 - [ ] All models in group have `site_id` column
 - [ ] All models in group have `acts_as_tenant :site` configured
 - [ ] Models with uploads have `has_migrated_upload` configured
-- [ ] Non-site-scoped unique indexes on the group's tables dropped, migration committed with this phase (Critical Constraint #5)
-- [ ] No `site_id IS NULL` rows remain for the group (Critical Constraint #6)
+- [ ] Any schema change the move depends on is **deployed**, not merely committed (Critical Constraint #5). For `agenda` this is unsettled — see Open question 1.
+- [ ] For `agenda`: the 176 slug-less speakers have been dealt with (Open question 1)
 - [ ] Public schema is empty for this group (consolidate aborts otherwise — re-run = rollback + redo; see "Re-runs & Recovery")
-- [ ] Writes to this group's models are frozen for the duration of the run (see "Write-Freeze Posture")
-- [ ] Outside the event freeze window (Timing & Sequencing)
+- [ ] `consolidation_freeze_<group>` enabled in `/flipper`, and it **stays on until the `excluded_models` deploy is live** (see "Write-Freeze Posture")
+- [ ] Not near an event (Timing & Sequencing)
 - [ ] RDS snapshot created — record its exact identifier for this run
 
 ### 2. Create RDS Snapshot
@@ -221,10 +243,11 @@ config.excluded_models = %w[
 
 ### 7. Deploy and Verify
 
-1. Deploy configuration change
+1. Deploy the configuration change
 2. Verify admin forms use `{field}_attachment`
 3. Verify URLs return ActiveStorage paths
 4. Monitor for errors
+5. **Only now disable `consolidation_freeze_<group>`** — until this deploy is live the app still reads the group from its tenant schema, so an admin edit would land on the abandoned side
 
 ### 8. Update Form-Field Tests (if model has file uploads)
 
@@ -285,10 +308,23 @@ bin/rails "tenant_consolidation:merge_partner_to_sponsor"
 
 ### Merge Behavior
 
-- Each `PartnerType` becomes a `SponsorLevel` (using same name)
-- If `SponsorLevel` with same name exists, Partners are added to it
-- Partners with duplicate names (already exists in Sponsor) are SKIPPED for manual review
+- Each `PartnerType` becomes a `SponsorLevel` carrying the same name
+- An existing `SponsorLevel` of the same name is reused rather than duplicated
+- A Partner whose name already exists as a Sponsor is skipped for manual review
 - CarrierWave logos are migrated to ActiveStorage
+
+**"Same name" means the whole JSONB value, and the comparison is scoped to one site.** `find_by(site_id:, name:)` compares every locale at once, so `{"en"=>"Gold","zh-TW"=>"黃金級"}` and `{"zh-TW"=>"黃金級"}` are different names. In this data it never bites: the only two tenants holding Partners — 2023tgdf and 2024tgdf — have **zero** SponsorLevels and **zero** Sponsors, so neither the reuse check nor the duplicate check has anything to match against. The merge will create 8 + 6 levels and 27 + 21 sponsors. Keep the exactness in mind only if a future merge runs against a site that already has sponsors.
+
+**Operational step before the merge — 2023tgdf's labels are inconsistent.** That year's `PartnerType` rows pair the English and Chinese names the opposite way round from every other year:
+
+```
+2023tgdf:  {"en"=>"Supporting Partners", "zh-TW"=>"協辦單位"}
+           {"en"=>"Co-organizers",       "zh-TW"=>"合作單位"}
+elsewhere: {"en"=>"Supporting Partners", "zh-TW"=>"合作單位"}
+           {"en"=>"Co-organizers",       "zh-TW"=>"協辦單位"}
+```
+
+The merge copies names verbatim, so this carries straight into `SponsorLevel`. Fix the two rows in 2023tgdf first, or accept that the archived 2023 page keeps the swap.
 
 ### Rollback Limitation (no clean undo)
 
@@ -562,6 +598,35 @@ For implementation details (HasMigratedUpload, URL generation, etc.), see:
 
 ## Phase 4: Remove Apartment
 
+> 🛑 **Phase 4 cannot be run in the order written below.** Two dependencies were found
+> after this section was drafted. The steps are otherwise accurate, but 4.6 must not be
+> executed until they are resolved.
+>
+> 1. **Removing the gem breaks the Phase 5 gates.** `verify_uploads_unreferenced` and
+>    `backfill_markers` reach `Apartment.excluded_models` through
+>    `model_already_in_public?`. Those are the only things standing between the plan and
+>    an irreversible `aws s3 rm` — and 4.6 deletes what they read.
+> 2. **Removing the gem breaks uploads.** `HasMigratedUpload` and `upload_field_for` both
+>    decide CarrierWave-vs-ActiveStorage from `Apartment.excluded_models`, and both live
+>    until 5.2. Between 4.6 and 5.2 every upload field and every `<field>_url` raises.
+>
+> Together these make Phase 4 and Phase 5 circular as written. The way out is to collapse
+> the dual system to ActiveStorage-only *before* removing the gem — safe once every group
+> is consolidated, which Phase 4 already requires — so that 4.6 becomes pure cleanup.
+>
+> **Also not covered by 4.7's one-line "any `Apartment::Tenant.switch` calls".** Each of
+> these needs its own replacement, and the first cannot use the pattern 4.4 gives:
+>
+> | Where | Why it needs more than a search-and-replace |
+> |---|---|
+> | `config/routes.rb:68,72` | Routing constraints read `Apartment::Tenant.current`. Routing runs *before* the controller filter that sets `ActsAsTenant.current_tenant`, so the 4.4 pattern evaluates to nil and both branches collapse to the public one. Resolve from `request.host` instead. |
+> | `app/controllers/concerns/tenant_site.rb:24,28` | `current_site` and `tenant_site?` are built on `Apartment::Tenant.current`, and `require_tenant_site!` gates the whole admin on them. |
+> | `app/models/site.rb:25,31` | `after_create` creates a tenant schema and `before_destroy` drops one. Creating the 2027 site after the gem is gone raises `NameError`. |
+> | `config/sitemap.rb:8` | Wraps generation in a tenant switch. |
+> | `lib/tasks/upgrade/indie_space.rake:7` | Same. |
+> | `lib/tasks/tenant_consolidation.rake` | Uses Apartment throughout; it is also the tool Phase 5 still needs. |
+
+
 After all models are consolidated to public schema, remove the Apartment gem.
 
 ### Pre-Removal Checklist
@@ -711,17 +776,25 @@ After Apartment removal, clean up CarrierWave.
 
 ### 5.0 Rewrite CKEditor Embedded URLs (BEFORE deleting S3 files)
 
-> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` is NOT implemented yet.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `verify_consolidated_assets`, `migrate_public_assets`, `backfill_markers`, `merge_partner_to_sponsor`. The rewrite task must be built before Phase 5.0 can run; the matching strategy below is its spec, not existing code.
+> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` does not exist.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `verify_consolidated_assets`, `migrate_public_assets`, `backfill_markers`, `merge_partner_to_sponsor`. How the rewrite resolves a reference is **Open question 2** — settle that before building it.
 
-CKEditor embeds `/uploads/image/file/{id}/...` image URLs into **every rich-text field**, not just Block/News — also `Plan.content`, `Sponsor.description`, `Speaker.description`, `Agenda.description`, `Game.description`, and `Site.{description, indie_space_description, options}` — plus URL inputs an admin can point at an upload (`MenuItem.link`, `Plan.button_target`). All must be rewritten before S3 deletion. The set is encoded as `RICH_TEXT_FIELDS` in the rake task and is exactly what `verify_uploads_unreferenced` scans — keep both in sync with the data-editor admin forms and link/target inputs.
+Rich text embeds an upload as inline HTML, addressed by the id the row had in its tenant schema. Consolidation replaces that id, and deleting `/uploads/` turns every unrewritten embed into a permanent 404. The fields that can hold one are `RICH_TEXT_FIELDS` in the rake task — every rich-text body (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus the URL inputs an admin can point at an upload (`MenuItem.link`, `Plan.button_target`). That set is exactly what `verify_uploads_unreferenced` scans; keep both in step with the data-editor forms.
 
-The rewrite joins on the preserved `file` column (consolidation retains every CW marker column, including `Image#file`, so this key survives the id remap):
-```ruby
-# Embedded URL /uploads/image/file/5/photo.jpg → match by filename within the site
-image = Image.find_by(file: filename, site_id: site.id)
-new_url = rails_blob_url(image.file_attachment)
+**What the stored URLs actually look like** (all 18 in production, measured 2026-08-20):
+
 ```
-Note the residual ambiguity: if two `Image` rows in one site share a filename, the embed cannot be disambiguated — surface those for manual review rather than guessing.
+/uploads/image/file/2/screenshot3.jpg                     ← no tenant segment (17 of 18)
+/uploads/tgdf/news/thumbnail/14/sgs_tgdf_indie_space.png  ← tenant segment, and NOT an Image
+/uploads/<tenant>/<model>/<field>/<id>/<filename>         ← the shape store_dir writes today
+```
+
+Two things follow. The tenant segment only arrived with `HasUploaderTenant`, so most embeds predate it and carry nothing that identifies the year. And the target is not always `Image` — one reference points at a `News` thumbnail.
+
+**Matching by filename cannot work.** `Block#4` embeds `/uploads/image/file/92/all_logos_sssa.png` and `Block#6` embeds `.../93/all_logos_sssa.png`: two different files, the same site, the same filename. Only the id separates them — and after Phase 4.5 drops the tenant schemas, nothing records what that id pointed at. Whatever Open question 2 settles on has to be in place *before* the schemas are dropped.
+
+All 18 references do resolve uniquely today on `(model, field, old id, filename)`, so the job is small and finite. Anything that cannot be resolved uniquely must be surfaced for a human rather than guessed: a wrong guess survives as a permanently wrong image.
+
+The set is also finite rather than growing — `Admin::ImagesController` routes its write by the model's schema, so new `/uploads/` references stop appearing once the `attachment` group is consolidated.
 
 ### 5.1 Remove Uploaders
 
@@ -786,4 +859,4 @@ bin/rails tenant_consolidation:verify_uploads_unreferenced
 aws s3 rm s3://<bucket>/uploads/ --recursive
 ```
 
-(`aws s3 rm uploads/` is safe for ActiveStorage blobs — AS stores at the bucket root with random keys, while CarrierWave lives under `uploads/{tenant}/...`; the two key spaces are disjoint.)
+(`aws s3 rm uploads/` is safe for ActiveStorage blobs: AS stores at the bucket root under random keys, and everything CarrierWave wrote is under `uploads/`. Note the older files sit at `uploads/{model}/{field}/{id}/...` with **no tenant segment** — that only arrived with `HasUploaderTenant` — so a rule written as `uploads/{tenant}/...` would miss most of them. The prefix that matters is `uploads/`.)
