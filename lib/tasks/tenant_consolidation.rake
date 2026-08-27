@@ -481,6 +481,54 @@ namespace :tenant_consolidation do
     puts "\nDone. Backfilled #{filled} marker(s)."
   end
 
+  desc "Backfill missing Speaker slugs from their current id (run BEFORE consolidate[agenda])"
+  task :backfill_speaker_slugs, [ :dry_run ] => :environment do |_t, args|
+    dry_run = args[:dry_run] == "true"
+
+    # A speaker without a slug is reachable only through its id — FriendlyId looks the
+    # slug up first and falls back to the primary key. Consolidation replaces every id,
+    # and FriendlyId's before_save runs even under `save!(validate: false)`, so such a
+    # row lands in public carrying a name-derived slug and its page is gone. Writing the
+    # current id into the slug keeps /speakers/{id} resolving to the same person — but
+    # only while those ids still mean something, which is why this runs before the move.
+    if model_already_in_public?(Speaker)
+      puts "ERROR: Speaker is already in Apartment.excluded_models."
+      puts "       Slugs had to be backfilled before consolidate[agenda] ran; the source ids are gone."
+      exit 1
+    end
+
+    puts "Backfilling Speaker slugs across all tenants..."
+    puts "(DRY RUN - no changes will be made)" if dry_run
+    puts "=" * 60
+
+    filled = 0
+
+    Site.find_each do |site|
+      Apartment::Tenant.switch(site.tenant_name) do
+        # unscoped: has_global_records would otherwise hide a row carrying another
+        # site's id, and that row needs a slug just the same.
+        taken = Speaker.unscoped.where.not(slug: [ nil, "" ]).pluck(:slug).to_set
+        missing = Speaker.unscoped.where(slug: [ nil, "" ]).order(:id)
+        next if missing.empty?
+
+        puts "\n#{site.tenant_name}: #{missing.count} speaker(s) without a slug"
+
+        missing.each do |speaker|
+          slug = unique_speaker_slug(speaker, taken)
+          taken << slug
+          filled += 1
+          puts "  ##{speaker.id} → #{slug}"
+          # update_column: these rows predate today's validations, the slug is the only
+          # thing being corrected, and it must not trigger FriendlyId's callbacks.
+          speaker.update_column(:slug, slug) unless dry_run
+        end
+      end
+    end
+
+    puts "\n#{'=' * 60}"
+    puts dry_run ? "Would backfill #{filled} slug(s)." : "Done. Backfilled #{filled} slug(s)."
+  end
+
   desc "Merge Partner/PartnerType to Sponsor/SponsorLevel during consolidation"
   task :merge_partner_to_sponsor, [ :dry_run ] => :environment do |_t, args|
     dry_run = args[:dry_run] == "true"
@@ -613,6 +661,18 @@ namespace :tenant_consolidation do
 
   def model_has_site_id?(model_class)
     model_class.column_names.include?("site_id")
+  end
+
+  # The id becomes the slug, unless another speaker in this tenant already uses that
+  # string as a slug — /speakers/{that id} already resolves to them, not to this row,
+  # so there is no URL here to preserve and any free slug will do.
+  def unique_speaker_slug(speaker, taken)
+    base = speaker.id.to_s
+    return base unless taken.include?(base)
+
+    suffix = 2
+    suffix += 1 while taken.include?("#{base}-#{suffix}")
+    "#{base}-#{suffix}"
   end
 
   # Extract raw attributes bypassing Mobility's attribute_methods plugin
