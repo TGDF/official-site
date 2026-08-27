@@ -34,16 +34,17 @@ The destructive runs (`consolidate` / `merge`) must not happen near the annual e
 
 ### Measured state of production
 
-Taken 2026-08-20 across the nine production tenants, read-only. Recorded here because several statements elsewhere in this document were written without it, and because re-measuring needs access to the live environment.
+Taken 2026-08-20 across the nine production tenants, read-only. Recorded here because several statements elsewhere in this document were written without it, and because re-measuring needs access to the live environment. The `site_id` and slug rows were re-measured 2026-08-27; the rest still carry the 2026-08-20 figures.
 
 | | Measured | Bearing |
 |---|---|---|
 | CarrierWave files to move | **1,071** — Speaker 371, Game 214, Sponsor 206, News 126, Attachment 106, Partner 48 | Worst single tenant: 130 game thumbnails |
 | `Attachment.record_id` set | **0 in every tenant**; all 106 attachments are `Image` rows carrying only `file` | Critical Constraint #3 |
 | Embedded `/uploads/` references | **18** — News.content 15, Block.content 2, Site.indie_space_description 1 | Phase 5.0 |
-| Rows with `site_id IS NULL` | the majority — 249/370 speakers, 214/214 games, 259 agendas, 155 sponsors, 107 attachments | Critical Constraint #6 |
-| Speakers with no slug | **176** — tgdf2018, tgdf and tgdf_2021 entirely; tgdf_2020 all but one | Open question 1 below |
-| Speaker slugs used by more than one year | **39** of 157 distinct | Open question 1 below |
+| Rows with `site_id IS NULL` | **uniform within each schema, never mixed** (2026-08-27): tgdf2018, tgdf, tgdf_2020, tgdf_2021, 2022_TGDF and 2023tgdf carry null on *every* row; 2024/2025/2026tgdf carry *their own* site id on every row; no schema holds a foreign one. Speakers 249/371. Games 214/214, 259 agendas, 155 sponsors, 107 attachments are 2026-08-20 totals, not re-measured. | Critical Constraint #6 |
+| Speakers with no slug | **175** (2026-08-27) — tgdf2018, tgdf and tgdf_2021 entirely; tgdf_2020 all but one | `backfill_speaker_slugs` |
+| News with no slug | **0** in every tenant (2026-08-27) — nothing to backfill | — |
+| Speaker slugs used by more than one year | **39** of 157 distinct (re-confirmed 2026-08-27) | Critical Constraint #5 |
 | Partners awaiting the merge | **48** — 2023tgdf 27 / 8 types, 2024tgdf 21 / 6 types | Matches the 2025-12-20 census |
 | ActiveStorage rows on unconsolidated models | **0** | `cleanup_attachments` has nothing to do today |
 | Slider CarrierWave markers in public | **0 of 34** | `backfill_markers` still required before the Phase 5 gate |
@@ -53,14 +54,11 @@ Taken 2026-08-20 across the nine production tenants, read-only. Recorded here be
 
 ### Open questions
 
-Three things this plan asserts but has not settled. A round of work in 2026-08 answered them one way, changed the schema to match, and was rolled back because those were the user's decisions to make. **They are open; do not treat any answer below as chosen.** The work is preserved on branch `wip/consolidation-round-full` for reference, not as a starting point.
+Two things this plan asserts but has not settled. **They are open; do not treat any answer below as chosen.** A round of work in 2026-08 answered them one way, changed the schema to match, and was rolled back because those were the user's decisions to make; it is preserved on branch `wip/consolidation-round-full` for reference, not as a starting point. (Speaker slug uniqueness used to be a third question here — it is settled, and the answer lives in Critical Constraint #5.)
 
-**1. What guarantees speaker slug uniqueness through the move, and at what granularity.**
-This is a multi-tenant project: a tenant table gets per-site uniqueness, and only a global table gets global uniqueness. `speakers` is a tenant table, yet it carries both `index_speakers_on_site_id_and_slug UNIQUE (site_id, slug)` and `index_speakers_on_slug UNIQUE (slug)`. The second contradicts the tenancy model and 39 existing slugs already collide across years, so it cannot survive consolidation unchanged — but removing it is a schema decision, and the per-site index does not currently substitute for it (see Constraint #6). Tangled up with this: the 176 slug-less speakers are addressed as `/speakers/{id}`, and consolidation replaces every id, so whatever slug they are given decides whether those URLs survive.
+**1. What Phase 5.0 resolves an embedded URL against.** The stored URLs address an upload by the id its row had in a tenant schema, and the current spec (match by filename within the site) cannot work — see Phase 5.0 for the production counter-example. Candidates not yet weighed: recording the old id on each consolidated row; a mapping table in the public schema only; or doing the rewrite inside `consolidate[attachment]` while the id map is still in memory, which needs no schema change.
 
-**2. What Phase 5.0 resolves an embedded URL against.** The stored URLs address an upload by the id its row had in a tenant schema, and the current spec (match by filename within the site) cannot work — see Phase 5.0 for the production counter-example. Candidates not yet weighed: recording the old id on each consolidated row; a mapping table in the public schema only; or doing the rewrite inside `consolidate[attachment]` while the id map is still in memory, which needs no schema change.
-
-**3. Whether the Dump → Transform → Import path is still warranted** for `agenda` and `attachment`, now that `Attachment.record_id` is known to be unset everywhere — that was its main justification.
+**2. Whether the Dump → Transform → Import path is still warranted** for `agenda` and `attachment`, now that `Attachment.record_id` is known to be unset everywhere — that was its main justification.
 
 ## Migration Path
 
@@ -110,7 +108,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 
 **Polymorphic references:**
 - **News.author → AdminUser** — `author` is polymorphic; AdminUser is public with stable ids so no remap is needed. This is now **code-guarded**: `consolidate[news]` aborts if any `author_type` is a model other than `AdminUser` (a null author is fine) — the same fail-loud guard as Attachment, so a tenant-model author can no longer migrate with a stale id.
-- **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` **aborts** if any `record_id` is set. Production has **none** (measured 2026-08-20: all 106 attachments are `Image` rows carrying only `file`), so the guard is a tripwire rather than an obstacle — and that removes the main reason the dump/transform/import path was recommended for this group. See Open question 3.
+- **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` **aborts** if any `record_id` is set. Production has **none** (measured 2026-08-20: all 106 attachments are `Image` rows carrying only `file`), so the guard is a tripwire rather than an obstacle — and that removes the main reason the dump/transform/import path was recommended for this group. See Open question 2.
 
 **CKEditor embedded URLs** — every rich-text field (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus URL inputs (MenuItem.link, Plan.button_target) — together the `RICH_TEXT_FIELDS` set — can embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files) and gated by `verify_uploads_unreferenced`.
 
@@ -124,11 +122,19 @@ The set is finite rather than growing: `Admin::ImagesController` — the endpoin
 4. **Polymorphic safety (News.author)** - News.author references AdminUser (already public, stable ids); no remap needed. Code-guarded: `consolidate[news]` aborts if any `author_type` is a model other than AdminUser (null is fine).
 5. **A group's schema change must be *deployed* before its data move; the switch goes out after** - When a group needs a structural change, the migration ships with that group's phase rather than as a loose pre-step — but "same phase" is not "same deploy". A change the consolidation depends on has to be live *before* `consolidate` runs, while the `excluded_models` switch only goes out *after* the move is verified. That is two deploys, and the write freeze spans both (see [Write-Freeze Posture](#write-freeze-posture)).
 
-   Concrete case — **`index_speakers_on_slug`**: per-tenant schemas each held their own copy of the table, so a `UNIQUE (slug)` index was satisfiable *within one year*. Once every year shares one public table it is not: **39 of 157 distinct speaker slugs are already used by more than one year** (2026tgdf's 41 slugs are all numeric, 2025tgdf's are 37 of 44, and they collide with each other), so `consolidate[agenda]` fails on the first of them. What to do about that is **Open question 1** — the index contradicts the project's tenancy model, but removing it is a schema decision and the site-scoped index does not currently substitute for it (Constraint #6). Settle it before the agenda group is scheduled. (`news` uses only the site-scoped composite — no question there.)
+   Concrete case — **`index_speakers_on_slug`, settled and implemented.** Each year owned its own copy of `speakers`, so `UNIQUE (slug)` expressed per-year uniqueness. One shared public table turns it into a global constraint the data already violates — **39 of 157 distinct speaker slugs are used by more than one year** — and `consolidate[agenda]` would fail on the first of them. `RemoveGlobalUniqueIndexOnSpeakerSlug` drops it and `Speaker.validates_uniqueness_to_tenant :slug` takes over. The cover has to come from the model: `UNIQUE (site_id, slug)` binds nothing while `site_id` is null (Constraint #6), whereas the validation emits `site_id IS NULL AND slug = ?` and does. `news` made the same move in `abf00edb`, but still uses the plain `uniqueness: { scope: :site_id }` form, which lacks that null cover.
 
-6. **`site_id IS NULL` is the normal state of the source data, and the move is what fixes it** - `has_global_records: true` makes those rows visible to every tenant. They are not an edge case: production carries **249 of 370 speakers, all 214 games, 259 agendas, 155 sponsors, 107 attachments** with a null `site_id` — rows predating `acts_as_tenant`. `consolidate` assigns `site_id` on every row it writes, so the public schema comes out with none, which is what makes `has_global_records` safe to drop per group at Step 5. Check the *public* rows after the move, not the tenant source.
+   **Where this sits in the order of operations.** The migration must be deployed before `consolidate[agenda]`, and its `down` only works until that has run — afterwards the colliding slugs share one table and the unique index cannot be rebuilt. `backfill_speaker_slugs` must have run too. FriendlyId's `:scoped` module (`scope: :site`) is the matching change on the *generating* side — today `scope_for_slug_generator` is `base_class.unscoped`, so new slugs are still made globally unique — but it has to wait until **after** the move: `Scoped#should_generate_new_friendly_id?` is true whenever a scope column changes, and `consolidate` assigns `site_id` on every row it writes, so enabling it early would regenerate every migrated slug.
 
-   This also decides when a site-scoped unique index starts doing anything. PostgreSQL treats NULLs as distinct, so `UNIQUE (site_id, slug)` constrains nothing while `site_id` is null — which today is most of the table. It becomes a real guarantee only once the rows have moved and been given a `site_id`; making `site_id NOT NULL` afterwards is what would keep it one.
+   One residual, only while the index is gone and the group has not moved: a *new* speaker is given a `site_id`, so in a still-null schema it validates in a different scope from the legacy rows and could take a slug one of them already uses — which `consolidate[agenda]` would then reject on `UNIQUE (site_id, slug)`. Only 2022_TGDF and 2023tgdf can produce it; the other four null schemas have almost no slugs to collide with. Both are archived years, and `consolidation_freeze_agenda` closes the window for the move itself.
+
+6. **`site_id IS NULL` is the normal state of the source data, and the move is what fixes it** - `has_global_records: true` makes those rows visible to every tenant. They are not an edge case: production carries **249 of 371 speakers, all 214 games, 259 agendas, 155 sponsors, 107 attachments** with a null `site_id` — rows predating `acts_as_tenant`. `consolidate` assigns `site_id` on every row it writes, so the public schema comes out with none, which is what makes `has_global_records` safe to drop per group at Step 5. Check the *public* rows after the move, not the tenant source.
+
+   **Read that number per schema, not as a total.** Measured 2026-08-27, each tenant schema is uniform: six carry null on every row, three carry their own site id on every row, and none holds a foreign one. The aggregate reads as "mixed" and it is not — which matters, because a per-site *validation* covers a whole uniform schema (every row shares one scope) and would not cover a mixed one.
+
+   This also decides when a site-scoped unique index starts doing anything. PostgreSQL treats NULLs as distinct, so `UNIQUE (site_id, slug)` constrains nothing while `site_id` is null — which today is most of the table. It becomes a real guarantee only once the rows have moved and been given a `site_id`; making `site_id NOT NULL` afterwards is what would keep it one, and that can only happen once **every** group has moved — the column is still null across nine tenant schemas until then.
+
+   **After Phase 4, `site_id` is the only tenant boundary, and nothing in the database enforces it.** It carries no foreign key and cannot: `sites` lives in public and the tenant tables do not. Today the schema boundary covers for that. `sites.domain` and `sites.tenant_name` also carry only plain indexes, while both `Middleware::FullHostElevators` and `TenantSite#set_tenant` resolve identity through `Site.find_by(domain:)` — a uniqueness gap on the table the whole isolation now hangs from.
 
 ## How to Migrate a Group
 
@@ -137,8 +143,8 @@ The set is finite rather than growing: `Admin::ImagesController` — the endpoin
 - [ ] All models in group have `site_id` column
 - [ ] All models in group have `acts_as_tenant :site` configured
 - [ ] Models with uploads have `has_migrated_upload` configured
-- [ ] Any schema change the move depends on is **deployed**, not merely committed (Critical Constraint #5). For `agenda` this is unsettled — see Open question 1.
-- [ ] For `agenda`: the 176 slug-less speakers have been dealt with (Open question 1)
+- [ ] Any schema change the move depends on is **deployed**, not merely committed (Critical Constraint #5). For `agenda` that is `RemoveGlobalUniqueIndexOnSpeakerSlug`.
+- [ ] For `agenda`: `backfill_speaker_slugs` has been run against production (dry run first), and FriendlyId's `:scoped` module is **not** yet enabled — see Critical Constraint #5
 - [ ] Public schema is empty for this group (consolidate aborts otherwise — re-run = rollback + redo; see "Re-runs & Recovery")
 - [ ] `consolidation_freeze_<group>` enabled in `/flipper`, and it **stays on until the `excluded_models` deploy is live** (see "Write-Freeze Posture")
 - [ ] Not near an event (Timing & Sequencing)
@@ -378,6 +384,11 @@ bin/rails tenant_consolidation:migrate_public_assets
 # Backfill CW marker columns from ActiveStorage for pre-retention groups (e.g. slider)
 bin/rails tenant_consolidation:backfill_markers
 
+# Give slug-less speakers their current id as a slug — run BEFORE consolidate[agenda],
+# while those ids still mean something (175 rows across four tenants)
+bin/rails "tenant_consolidation:backfill_speaker_slugs[true]"   # dry run
+bin/rails tenant_consolidation:backfill_speaker_slugs
+
 # Authoritative asset check vs tenant source — run BEFORE Phase 4.5 (DROP SCHEMA)
 bin/rails tenant_consolidation:verify_consolidated_assets
 ```
@@ -589,7 +600,9 @@ The consolidation is a one-shot, destructive data move whose ultimate safety net
 
 The merge tests caught a real bug (now fixed): the `SponsorLevel` was created via the Mobility *writer* (`create!(name: hash)`), which nested the locale hash under the current locale (`{"zh-TW"=>{"en"=>…}}`) — corrupting the name and breaking the `find_by(name:)` reuse check. It now writes the raw column, like the Sponsor side.
 
-Still uncovered (build before running these groups): an end-to-end **agenda** group test (8 models, 2 join tables) and the **speaker-slug cross-tenant** case, which needs the `index_speakers_on_slug` drop migration first (see Critical Constraint #5). Byte-identity is approximated by byte-size; a checksum assertion would be stronger. The **Extract-Class refactor** of the 1089-line rake task (into `TenantConsolidation::*` services for unit-testability) is intentionally deferred until after the migration — restructuring a trusted destructive tool without full unit coverage is higher-risk than the debt.
+The speaker-slug cases now have their own coverage: `spec/models/speaker_spec.rb` asserts that two sites may hold the same slug (written, not merely validated — the dropped index lived in the database) and that one site may not, plus the FriendlyId behaviour the migration turns on — `save!(validate: false)` keeps a slug the record was given and *generates* one for a record that has none. `spec/lib/tasks/backfill_speaker_slugs_spec.rb` covers the backfill: id written into a missing slug, empty string treated as missing, existing slug untouched, dry run inert, the `{id}-2` fallback, and the refusal to run once Speaker is public.
+
+Still uncovered (build before running these groups): an end-to-end **agenda** group test (8 models, 2 join tables). Byte-identity is approximated by byte-size; a checksum assertion would be stronger. The **Extract-Class refactor** of the 1089-line rake task (into `TenantConsolidation::*` services for unit-testability) is intentionally deferred until after the migration — restructuring a trusted destructive tool without full unit coverage is higher-risk than the debt.
 
 The spec disables transactional fixtures (it issues CREATE/DROP SCHEMA) and seeds upload-free records for the data path (CarrierWave uses local file storage in test, so the download URL is not HTTP-fetchable — the one asset example stubs the download). It is RSpec today; the same assertions port directly if the suite moves to Minitest.
 
@@ -778,7 +791,7 @@ After Apartment removal, clean up CarrierWave.
 
 ### 5.0 Rewrite CKEditor Embedded URLs (BEFORE deleting S3 files)
 
-> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` does not exist.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `verify_consolidated_assets`, `migrate_public_assets`, `backfill_markers`, `merge_partner_to_sponsor`. How the rewrite resolves a reference is **Open question 2** — settle that before building it.
+> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` does not exist.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `verify_consolidated_assets`, `migrate_public_assets`, `backfill_markers`, `backfill_speaker_slugs`, `merge_partner_to_sponsor`. How the rewrite resolves a reference is **Open question 1** — settle that before building it.
 
 Rich text embeds an upload as inline HTML, addressed by the id the row had in its tenant schema. Consolidation replaces that id, and deleting `/uploads/` turns every unrewritten embed into a permanent 404. The fields that can hold one are `RICH_TEXT_FIELDS` in the rake task — every rich-text body (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus the URL inputs an admin can point at an upload (`MenuItem.link`, `Plan.button_target`). That set is exactly what `verify_uploads_unreferenced` scans; keep both in step with the data-editor forms.
 
@@ -792,7 +805,7 @@ Rich text embeds an upload as inline HTML, addressed by the id the row had in it
 
 Two things follow. The tenant segment only arrived with `HasUploaderTenant`, so most embeds predate it and carry nothing that identifies the year. And the target is not always `Image` — one reference points at a `News` thumbnail.
 
-**Matching by filename cannot work.** `Block#4` embeds `/uploads/image/file/92/all_logos_sssa.png` and `Block#6` embeds `.../93/all_logos_sssa.png`: two different files, the same site, the same filename. Only the id separates them — and after Phase 4.5 drops the tenant schemas, nothing records what that id pointed at. Whatever Open question 2 settles on has to be in place *before* the schemas are dropped.
+**Matching by filename cannot work.** `Block#4` embeds `/uploads/image/file/92/all_logos_sssa.png` and `Block#6` embeds `.../93/all_logos_sssa.png`: two different files, the same site, the same filename. Only the id separates them — and after Phase 4.5 drops the tenant schemas, nothing records what that id pointed at. Whatever Open question 1 settles on has to be in place *before* the schemas are dropped.
 
 All 18 references do resolve uniquely today on `(model, field, old id, filename)`, so the job is small and finite. Anything that cannot be resolved uniquely must be surfaced for a human rather than guessed: a wrong guess survives as a permanently wrong image.
 
