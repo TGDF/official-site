@@ -17,4 +17,9 @@ class Speaker < ApplicationRecord
   default_scope -> { order(order: :asc) }
 
   validates :name, :slug, :description, presence: true
+  # Not plain `uniqueness: { scope: :site_id }`: while `has_global_records` is on, this
+  # also covers the rows the composite index cannot — six of the nine tenants carry a
+  # null `site_id`, and PostgreSQL treats nulls as distinct. The extra cover falls away
+  # on its own once the group is consolidated and the flag is removed.
+  validates_uniqueness_to_tenant :slug
 end

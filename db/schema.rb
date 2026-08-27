@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_03_26_124034) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_27_125616) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -292,7 +292,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_03_26_124034) do
     t.jsonb "title", default: {}
     t.datetime "updated_at", precision: nil, null: false
     t.index ["site_id", "slug"], name: "index_speakers_on_site_id_and_slug", unique: true
-    t.index ["slug"], name: "index_speakers_on_slug", unique: true
   end
 
   create_table "sponsor_levels", force: :cascade do |t|
