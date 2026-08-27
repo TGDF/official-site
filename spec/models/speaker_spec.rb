@@ -28,6 +28,16 @@ RSpec.describe(Speaker) do
 
       expect(build(:speaker, slug: 'taken-slug')).not_to(be_valid)
     end
+
+    # Rows predating acts_as_tenant have a null site_id while a new row is given one, so
+    # the two sit in different scopes. has_global_records makes the validation reach
+    # across that gap — which is what stops consolidate[agenda], where both end up
+    # carrying the same site_id, from meeting a duplicate.
+    it 'refuses a slug already held by a row that has no site' do
+      build(:speaker, slug: 'legacy-slug').save!(validate: false)
+
+      expect(build(:speaker, slug: 'legacy-slug')).not_to(be_valid)
+    end
   end
 
   # tenant_consolidation writes migrated rows with `save!(validate: false)`, which skips
