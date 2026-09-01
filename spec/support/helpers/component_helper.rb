@@ -12,10 +12,17 @@ module ComponentHelper
       end
     end
 
+    # Renders lazily so the component instance is rendered exactly once per
+    # example: ViewComponent raises ReusedInstanceError on a second render, and
+    # a lazy subject also lets `before` hooks set up time or state that the
+    # render must observe.
     def when_rendered(url: '/')
-      subject { page }
+      let(:render_url) { url }
 
-      before { with_request_url(url) { render_inline(component) } }
+      subject do
+        with_request_url(render_url) { render_inline(component) }
+        page
+      end
     end
   end
 end
