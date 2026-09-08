@@ -389,7 +389,7 @@ GEM
     marcel (1.0.4)
     matrix (0.4.3)
     memoist3 (1.0.0)
-    meta-tags (2.23.0)
+    meta-tags (2.24.0)
       actionpack (>= 6.0.0)
     metrics (0.15.0)
     mime-types (3.7.0)
