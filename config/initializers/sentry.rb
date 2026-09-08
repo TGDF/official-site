@@ -2,6 +2,9 @@
 
 Sentry.init do |config|
   config.breadcrumbs_logger = %i[active_support_logger http_logger]
+  # Errors and traces are the signals we act on; Rails structured logs would
+  # add volume without changing what we investigate.
+  config.rails.structured_logging.enabled = false
   config.profiles_sample_rate = 1.0
   config.traces_sampler = lambda do |sampling_context|
     next sampling_context[:parent_sampled] unless sampling_context[:parent_sampled].nil?
