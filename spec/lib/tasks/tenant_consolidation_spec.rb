@@ -243,6 +243,31 @@ RSpec.describe 'tenant_consolidation rake tasks' do
       end
     end
 
+    # A CDN can answer a missing object with 200 and an HTML error page: non-empty, so
+    # only the comparison with the source size read from storage tells it apart.
+    context 'when the downloaded body differs from the source size' do
+      before do
+        seed_sponsor(asset_site,
+                     level_name: { 'en' => 'Gold' },
+                     sponsor_name: { 'en' => 'WithLogo' },
+                     with_logo: true)
+        allow(URI).to receive(:open) { StringIO.new('<html>Not Found</html>') }
+      end
+
+      it 'aborts the run' do
+        expect { run_task('tenant_consolidation:consolidate', 'sponsor') }
+          .to raise_error(RuntimeError, /Asset size mismatch/)
+      end
+
+      it 'leaves the asset unattached' do
+        suppress(RuntimeError) { run_task('tenant_consolidation:consolidate', 'sponsor') }
+
+        in_public do
+          expect(Sponsor.unscoped.find_by(site_id: asset_site.id).logo_attachment).not_to be_attached
+        end
+      end
+    end
+
     # Assets move after the rows commit, so their transaction no longer stays open
     # across every download in the group. What a failed run leaves behind changed with
     # it: the rows are already in public, and recovery is rollback[group] + redo.
