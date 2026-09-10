@@ -18,7 +18,7 @@ RSpec.shared_context 'with consolidation tenants' do
   end
 
   def seeded_models
-    [ Sponsor, SponsorLevel, Partner, PartnerType, Attachment, News ]
+    [ Sponsor, SponsorLevel, Partner, PartnerType, AgendaTime, AgendaDay, Game, Attachment, News ]
   end
 
   # A dangling Site whose schema is dropped would break the next example's
@@ -103,7 +103,7 @@ RSpec.shared_context 'with consolidation tenants' do
   end
 
   # A public Sponsor (with its SponsorLevel), for scenarios that need a name the
-  # import must reuse or skip.
+  # merge must reuse or skip.
   def create_public_sponsor(site, level_name:, sponsor_name:)
     in_public do
       level = SponsorLevel.new(site_id: site.id)
@@ -113,6 +113,27 @@ RSpec.shared_context 'with consolidation tenants' do
       sponsor = Sponsor.new(site_id: site.id, level_id: level.id)
       sponsor[:name] = sponsor_name
       sponsor.save!(validate: false)
+    end
+  end
+
+  def seed_game(site, name:, with_thumbnail: false)
+    within_tenant(site) do
+      game = Game.new(site_id: site.id)
+      game[:name] = name
+      game.thumbnail = Rack::Test::UploadedFile.new(test_png, 'image/png') if with_thumbnail
+      game.save!(validate: false)
+      game
+    end
+  end
+
+  def seed_agenda_time(site, day_label:, time_label:)
+    within_tenant(site) do
+      day = AgendaDay.new(site_id: site.id, label: day_label)
+      day.save!(validate: false)
+
+      time = AgendaTime.new(site_id: site.id, day_id: day.id, label: time_label)
+      time.save!(validate: false)
+      time
     end
   end
 end

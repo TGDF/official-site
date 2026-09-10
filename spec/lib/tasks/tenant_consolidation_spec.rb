@@ -45,104 +45,89 @@ RSpec.describe 'tenant_consolidation rake tasks' do
     end
   end
 
-  describe 'consolidate[sponsor] across two tenants (no uploads)' do
+  describe 'consolidate[agenda] across two tenants' do
     let(:other_site) do
       create(:site, name: 'Other', domain: 'other.example.test', tenant_name: 'spec_cons_b')
     end
 
     before do
-      seed_sponsor(main_site,
-                   level_name: { 'en' => 'Gold', 'zh-TW' => '金' },
-                   sponsor_name: { 'en' => 'Acme', 'zh-TW' => '艾克米' })
-      seed_sponsor(other_site,
-                   level_name: { 'en' => 'Silver', 'zh-TW' => '銀' },
-                   sponsor_name: { 'en' => 'Globex', 'zh-TW' => '環球' })
-      run_task('tenant_consolidation:consolidate', 'sponsor')
+      seed_agenda_time(main_site, day_label: 'Day 1', time_label: 'Morning')
+      seed_agenda_time(other_site, day_label: 'Day A', time_label: 'Evening')
+      run_task('tenant_consolidation:consolidate', 'agenda')
     end
 
     it 'migrates every tenant\'s rows into public with the correct site_id' do
       in_public do
-        expect(SponsorLevel.unscoped.count).to eq(2)
-        expect(Sponsor.unscoped.count).to eq(2)
-        expect(Sponsor.unscoped.pluck(:site_id)).to contain_exactly(main_site.id, other_site.id)
+        expect(AgendaDay.unscoped.count).to eq(2)
+        expect(AgendaTime.unscoped.pluck(:site_id)).to contain_exactly(main_site.id, other_site.id)
       end
     end
 
-    it 'remaps sponsor.level_id to each sponsor\'s OWN migrated level (no stale/cross-tenant id)' do
+    it 'remaps agenda_time.day_id to each time\'s OWN migrated day (no stale/cross-tenant id)' do
       in_public do
-        Sponsor.unscoped.find_each do |sponsor|
-          level = SponsorLevel.unscoped.find_by(id: sponsor.level_id)
-          expect(level).to be_present
-          expect(level.site_id).to eq(sponsor.site_id)
+        AgendaTime.unscoped.find_each do |time|
+          day = AgendaDay.unscoped.find_by(id: time.day_id)
+          expect(day).to be_present
+          expect(day.site_id).to eq(time.site_id)
         end
-      end
-    end
-
-    it 'preserves all Mobility locales' do
-      in_public do
-        acme = Sponsor.unscoped.find_by(site_id: main_site.id)
-        expect(acme[:name].keys).to match_array(%w[en zh-TW])
-        expect(acme[:name]['zh-TW']).to eq('艾克米')
       end
     end
 
     it 'aborts a re-run onto a non-empty public target' do
-      expect { run_task('tenant_consolidation:consolidate', 'sponsor') }.to raise_error(SystemExit)
+      expect { run_task('tenant_consolidation:consolidate', 'agenda') }.to raise_error(SystemExit)
     end
 
     it 'leaves the id sequence usable (a fresh insert does not hit a duplicate key)' do
       in_public do
-        ActsAsTenant.with_tenant(main_site) do
-          level = SponsorLevel.new
-          level[:name] = { 'en' => 'Fresh', 'zh-TW' => '新' }
-          expect { level.save!(validate: false) }.not_to raise_error
-          expect(level.id).to be_present
-        end
+        day = AgendaDay.new(site_id: main_site.id, label: 'Fresh')
+        expect { day.save!(validate: false) }.not_to raise_error
+        expect(day.id).to be_present
       end
     end
   end
 
-  describe 'consolidate[sponsor] dry run' do
-    before do
-      seed_sponsor(main_site,
-                   level_name: { 'en' => 'Gold', 'zh-TW' => '金' },
-                   sponsor_name: { 'en' => 'Acme', 'zh-TW' => '艾克米' })
-    end
+  describe 'consolidate[game]' do
+    it 'preserves all Mobility locales' do
+      seed_game(main_site, name: { 'en' => 'Quest', 'zh-TW' => '冒險' })
 
-    it 'writes nothing to the public schema' do
-      run_task('tenant_consolidation:consolidate', 'sponsor', 'true')
+      run_task('tenant_consolidation:consolidate', 'game')
+
       in_public do
-        expect(SponsorLevel.unscoped.count).to eq(0)
-        expect(Sponsor.unscoped.count).to eq(0)
+        expect(Game.unscoped.find_by(site_id: main_site.id)[:name]).to eq({ 'en' => 'Quest', 'zh-TW' => '冒險' })
       end
+    end
+
+    it 'writes nothing to the public schema on a dry run' do
+      seed_game(main_site, name: { 'en' => 'Quest' })
+
+      run_task('tenant_consolidation:consolidate', 'game', 'true')
+
+      expect(public_count(Game)).to eq(0)
     end
   end
 
-  describe 'consolidate[sponsor] asset transfer' do
+  describe 'consolidate[game] asset transfer' do
     let(:asset_site) do
       create(:site, name: 'Asset', domain: 'asset.example.test', tenant_name: 'spec_cons_asset')
     end
 
-    it 'attaches the logo to ActiveStorage with a matching byte size, even for a record invalid under current validations' do
-      # Name only in :en — under the default locale (zh-TW) the Sponsor is invalid.
+    it 'attaches the thumbnail to ActiveStorage with a matching byte size, even for a record invalid under current validations' do
+      # Name only in :en — under the default locale (zh-TW) the Game is invalid.
       # ActiveStorage#attach auto-saves only a valid record, so this also exercises the
       # task's validate:false persistence (a legacy row predating a tightened rule must
       # still get its attachment, not silently lose it while the in-memory check passes).
-      seed_sponsor(asset_site,
-                   level_name: { 'en' => 'Gold' },
-                   sponsor_name: { 'en' => 'WithLogo' },
-                   with_logo: true)
+      seed_game(asset_site, name: { 'en' => 'WithThumbnail' }, with_thumbnail: true)
 
       # CarrierWave uses local file storage in test, so the download URL is not
       # HTTP-fetchable — return the on-disk test image for the asset download.
       allow(URI).to receive(:open) { File.open(test_png, 'rb') }
 
-      run_task('tenant_consolidation:consolidate', 'sponsor')
+      run_task('tenant_consolidation:consolidate', 'game')
 
       in_public do
-        sponsor = Sponsor.unscoped.find_by(site_id: asset_site.id)
-        expect(sponsor.logo_attachment).to be_attached
-        expect(sponsor.logo_attachment.byte_size).to eq(File.size(test_png))
+        game = Game.unscoped.find_by(site_id: asset_site.id)
+        expect(game.thumbnail_attachment).to be_attached
+        expect(game.thumbnail_attachment.byte_size).to eq(File.size(test_png))
       end
     end
 
@@ -150,55 +135,49 @@ RSpec.describe 'tenant_consolidation rake tasks' do
     # only the comparison with the source size read from storage tells it apart.
     context 'when the downloaded body differs from the source size' do
       before do
-        seed_sponsor(asset_site,
-                     level_name: { 'en' => 'Gold' },
-                     sponsor_name: { 'en' => 'WithLogo' },
-                     with_logo: true)
+        seed_game(asset_site, name: { 'en' => 'WithThumbnail' }, with_thumbnail: true)
         allow(URI).to receive(:open) { StringIO.new('<html>Not Found</html>') }
       end
 
       it 'aborts the run' do
-        expect { run_task('tenant_consolidation:consolidate', 'sponsor') }
+        expect { run_task('tenant_consolidation:consolidate', 'game') }
           .to raise_error(RuntimeError, /Asset size mismatch/)
       end
 
       it 'leaves the asset unattached' do
-        suppress(RuntimeError) { run_task('tenant_consolidation:consolidate', 'sponsor') }
+        suppress(RuntimeError) { run_task('tenant_consolidation:consolidate', 'game') }
 
         in_public do
-          expect(Sponsor.unscoped.find_by(site_id: asset_site.id).logo_attachment).not_to be_attached
+          expect(Game.unscoped.find_by(site_id: asset_site.id).thumbnail_attachment).not_to be_attached
         end
       end
     end
 
-    # Assets move after the rows commit, so their transaction no longer stays open
-    # across every download in the group. What a failed run leaves behind changed with
-    # it: the rows are already in public, and recovery is rollback[group] + redo.
+    # Assets move after the rows commit, so their transaction does not stay open across
+    # every download in the group. A failed run therefore leaves the rows in public,
+    # and recovery is rollback[group] + redo.
     context 'when a download fails' do
       before do
-        seed_sponsor(asset_site,
-                     level_name: { 'en' => 'Gold' },
-                     sponsor_name: { 'en' => 'WithLogo' },
-                     with_logo: true)
+        seed_game(asset_site, name: { 'en' => 'WithThumbnail' }, with_thumbnail: true)
         allow(URI).to receive(:open).and_raise(Errno::ECONNREFUSED)
       end
 
       it 'aborts the run' do
-        expect { run_task('tenant_consolidation:consolidate', 'sponsor') }
+        expect { run_task('tenant_consolidation:consolidate', 'game') }
           .to raise_error(Errno::ECONNREFUSED)
       end
 
       it 'leaves the rows committed rather than rolling the tenant back' do
-        suppress(Errno::ECONNREFUSED) { run_task('tenant_consolidation:consolidate', 'sponsor') }
+        suppress(Errno::ECONNREFUSED) { run_task('tenant_consolidation:consolidate', 'game') }
 
-        expect(public_count(Sponsor)).to eq(1)
+        expect(public_count(Game)).to eq(1)
       end
 
       it 'leaves the asset unattached' do
-        suppress(Errno::ECONNREFUSED) { run_task('tenant_consolidation:consolidate', 'sponsor') }
+        suppress(Errno::ECONNREFUSED) { run_task('tenant_consolidation:consolidate', 'game') }
 
         in_public do
-          expect(Sponsor.unscoped.find_by(site_id: asset_site.id).logo_attachment).not_to be_attached
+          expect(Game.unscoped.find_by(site_id: asset_site.id).thumbnail_attachment).not_to be_attached
         end
       end
     end
