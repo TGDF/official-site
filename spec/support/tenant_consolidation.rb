@@ -102,20 +102,6 @@ RSpec.shared_context 'with consolidation tenants' do
     end
   end
 
-  # A public Sponsor (with its SponsorLevel), for scenarios that need a name the
-  # merge must reuse or skip.
-  def create_public_sponsor(site, level_name:, sponsor_name:)
-    in_public do
-      level = SponsorLevel.new(site_id: site.id)
-      level[:name] = level_name
-      level.save!(validate: false)
-
-      sponsor = Sponsor.new(site_id: site.id, level_id: level.id)
-      sponsor[:name] = sponsor_name
-      sponsor.save!(validate: false)
-    end
-  end
-
   def seed_game(site, name:, with_thumbnail: false)
     within_tenant(site) do
       game = Game.new(site_id: site.id)

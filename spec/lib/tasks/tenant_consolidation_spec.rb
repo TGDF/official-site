@@ -5,10 +5,9 @@ require 'rails_helper'
 # Load the rake tasks once when this spec file is required (idempotent guard).
 Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidation:consolidate')
 
-# Integration tests for the tenant consolidation rake task. Assertions mirror the
-# "Testing the Consolidation" risk table in docs/tenant_consolidation.md:
-#   FK ID remapping, Mobility translations, asset transfer (byte size), re-run guard,
-#   partner guard, attachment polymorphic guard, cross-tenant uniqueness.
+# Integration tests for the in-place consolidate task, which the groups still ahead of
+# the dump-and-import tasks move through: FK ID remapping, Mobility translations, asset
+# transfer (byte size), re-run guard, and the guards that refuse a group it must not move.
 #
 # Integration examples legitimately drive a whole flow and assert several outcomes,
 # so the per-example RSpec metric cops are relaxed for this file.
@@ -21,7 +20,14 @@ RSpec.describe 'tenant_consolidation rake tasks' do
       expect { run_task('tenant_consolidation:consolidate') }.to raise_error(SystemExit)
     end
 
-    it 'aborts the retired partner group (use merge instead)' do
+    it 'aborts the sponsor group, which moves through the sponsor tasks' do
+      seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' })
+
+      expect { run_task('tenant_consolidation:consolidate', 'sponsor') }.to raise_error(SystemExit)
+      expect(public_count(Sponsor)).to eq(0)
+    end
+
+    it 'aborts the retired partner group, which folds into sponsor' do
       expect { run_task('tenant_consolidation:consolidate', 'partner') }.to raise_error(SystemExit)
     end
 
@@ -180,66 +186,6 @@ RSpec.describe 'tenant_consolidation rake tasks' do
           expect(Game.unscoped.find_by(site_id: asset_site.id).thumbnail_attachment).not_to be_attached
         end
       end
-    end
-  end
-
-  describe 'merge_partner_to_sponsor' do
-    it 'creates a SponsorLevel named after the PartnerType and a Sponsor for the partner' do
-      seed_partner(main_site,
-                   type_name: { 'en' => 'Bronze', 'zh-TW' => '銅' },
-                   partner_name: { 'en' => 'Initech', 'zh-TW' => '創投' })
-
-      run_task('tenant_consolidation:merge_partner_to_sponsor')
-
-      in_public do
-        level = SponsorLevel.unscoped.find_by(site_id: main_site.id)
-        expect(level[:name]).to eq({ 'en' => 'Bronze', 'zh-TW' => '銅' })
-
-        sponsor = Sponsor.unscoped.find_by(site_id: main_site.id)
-        expect(sponsor[:name]).to eq({ 'en' => 'Initech', 'zh-TW' => '創投' })
-        expect(sponsor.level_id).to eq(level.id)
-      end
-    end
-
-    it 'reuses an existing SponsorLevel with the same name instead of creating a duplicate' do
-      create_public_sponsor(main_site,
-                            level_name: { 'en' => 'Bronze' },
-                            sponsor_name: { 'en' => 'Existing' })
-      seed_partner(main_site,
-                   type_name: { 'en' => 'Bronze' },
-                   partner_name: { 'en' => 'Initech' })
-
-      run_task('tenant_consolidation:merge_partner_to_sponsor')
-
-      # One pre-existing level reused (not duplicated); the partner becomes a 2nd sponsor.
-      expect(public_count(SponsorLevel)).to eq(1)
-      expect(public_count(Sponsor)).to eq(2)
-    end
-
-    it 'skips a Partner whose name already exists as a Sponsor (left for manual review)' do
-      create_public_sponsor(main_site,
-                            level_name: { 'en' => 'Bronze' },
-                            sponsor_name: { 'en' => 'Initech' })
-      seed_partner(main_site,
-                   type_name: { 'en' => 'Bronze' },
-                   partner_name: { 'en' => 'Initech' })
-
-      run_task('tenant_consolidation:merge_partner_to_sponsor')
-
-      # The duplicate-named partner is skipped, not merged into a second sponsor.
-      expect(public_count(Sponsor)).to eq(1)
-    end
-
-    it 'is idempotent — a second run creates no duplicate sponsors' do
-      seed_partner(main_site,
-                   type_name: { 'en' => 'Bronze' },
-                   partner_name: { 'en' => 'Initech' })
-
-      run_task('tenant_consolidation:merge_partner_to_sponsor')
-      run_task('tenant_consolidation:merge_partner_to_sponsor')
-
-      expect(public_count(Sponsor)).to eq(1)
-      expect(public_count(SponsorLevel)).to eq(1)
     end
   end
 end

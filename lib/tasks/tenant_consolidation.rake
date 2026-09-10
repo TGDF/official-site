@@ -123,11 +123,12 @@ namespace :tenant_consolidation do
       exit 1
     end
 
-    # The partner group is retired: Partners merge into Sponsor, never consolidated
-    # as standalone Partner rows. Running consolidate here would create the wrong data.
-    if group_name == "partner"
-      puts "ERROR: The 'partner' group is retired — Partners merge into Sponsor."
-      puts "Run: bin/rails 'tenant_consolidation:merge_partner_to_sponsor'"
+    # Sponsor moves by dump and import, with the retired Partner rows folded into it —
+    # never in place, and never as standalone Partner rows.
+    if %w[sponsor partner].include?(group_name)
+      puts "ERROR: The '#{group_name}' group moves through the sponsor tasks, with Partner folded into Sponsor."
+      puts "Run: bin/rails 'tenant_consolidation:sponsor:backup', then sponsor:migrate and sponsor:verify"
+      puts "(docs/tenant/migrate_sponsor.md)"
       exit 1
     end
 
@@ -509,130 +510,6 @@ namespace :tenant_consolidation do
 
     puts "\n#{'=' * 60}"
     puts dry_run ? "Would backfill #{filled} slug(s)." : "Done. Backfilled #{filled} slug(s)."
-  end
-
-  desc "Merge Partner/PartnerType to Sponsor/SponsorLevel during consolidation"
-  task :merge_partner_to_sponsor, [ :dry_run ] => :environment do |_t, args|
-    dry_run = args[:dry_run] == "true"
-    puts "Merging Partner → Sponsor across all tenants..."
-    puts "(DRY RUN - no changes will be made)" if dry_run
-
-    stats = { types_created: 0, types_matched: 0, partners_merged: 0, skipped: 0, failed: 0 }
-
-    Site.find_each do |site|
-      puts "\nProcessing tenant: #{site.tenant_name}"
-
-      # Collect Partner data from tenant schema (with CW URLs)
-      partner_data = []
-      type_data = []
-
-      Apartment::Tenant.switch(site.tenant_name) do
-        ActsAsTenant.with_tenant(site) do
-          PartnerType.unscoped.find_each do |pt|
-            type_data << { id: pt.id, name: pt[:name], order: pt.order }
-          end
-
-          Partner.unscoped.find_each do |p|
-            partner_data << {
-              # Keep logo (the CW marker) so the merged Sponsor is gate-verifiable; only
-              # type_id is dropped (it is replaced by the remapped SponsorLevel).
-              attributes: TenantConsolidation::Records.extract_raw_attributes(p, "type_id"),
-              type_id: p.type_id,
-              logo_url: p.logo.present? ? p.logo.url : nil,
-              logo_size: p.logo.present? ? TenantConsolidation::Assets.source_asset_size(p.logo) : nil,
-              source_translations: TenantConsolidation::Records.capture_source_translations(p, "Partner")
-            }
-          end
-        end
-      end
-
-      next if partner_data.empty?
-
-      # Create in public schema
-      Apartment::Tenant.switch("public") do
-        ActsAsTenant.with_tenant(site) do
-          ActiveRecord::Base.transaction do
-            # Map PartnerType -> SponsorLevel (by name)
-            type_to_level = {}
-            type_data.each do |td|
-              existing = SponsorLevel.find_by(site_id: site.id, name: td[:name])
-              if existing
-                type_to_level[td[:id]] = existing
-                stats[:types_matched] += 1
-                puts "  SponsorLevel '#{td[:name]}' already exists"
-              else
-                if dry_run
-                  type_to_level[td[:id]] = OpenStruct.new(id: td[:id], name: td[:name])
-                  stats[:types_created] += 1
-                else
-                  # Write name via the raw column (not the Mobility writer, which would
-                  # nest the locale hash under the current locale and corrupt it — and
-                  # also break the find_by(name:) reuse check above). Mirrors
-                  # assign_raw_attributes used for the Sponsor side.
-                  level = SponsorLevel.new(site_id: site.id, order: td[:order])
-                  level[:name] = td[:name]
-                  level.save!(validate: false)
-                  type_to_level[td[:id]] = level
-                  stats[:types_created] += 1
-                end
-                puts "  Created SponsorLevel '#{td[:name]}'"
-              end
-            end
-
-            # Merge Partners -> Sponsors
-            partner_data.each do |pd|
-              level = type_to_level[pd[:type_id]]
-
-              # Check for duplicate by name
-              if Sponsor.exists?(site_id: site.id, name: pd[:attributes]["name"])
-                puts "  SKIP: Sponsor '#{pd[:attributes]["name"]}' already exists (manual review needed)"
-                stats[:skipped] += 1
-                next
-              end
-
-              if dry_run
-                stats[:partners_merged] += 1
-                print "."
-                next
-              end
-
-              begin
-                sponsor = Sponsor.new
-                TenantConsolidation::Records.assign_raw_attributes(sponsor, pd[:attributes])
-                sponsor.site_id = site.id
-                sponsor.level = level
-                sponsor.save!(validate: false)
-
-                if pd[:logo_url].present?
-                  TenantConsolidation::Assets.attach_asset(sponsor, :logo_attachment, pd[:logo_url], pd[:logo_size])
-                end
-
-                # Post-migration verification
-                TenantConsolidation::Records.verify_translations_preserved(pd[:source_translations], sponsor, "Sponsor")
-                if pd[:logo_url].present?
-                  TenantConsolidation::Assets.verify_attachment_migrated(sponsor, { attachment: :logo_attachment }, pd[:logo_url])
-                end
-
-                stats[:partners_merged] += 1
-                print "."
-              rescue StandardError => e
-                stats[:failed] += 1
-                puts "\n  ERROR: #{e.message}"
-                raise # Re-raise to rollback transaction
-              end
-            end
-          end
-        end
-      end
-    end
-
-    puts "\n\n#{"=" * 60}"
-    puts "Merge Complete"
-    puts "  SponsorLevels created: #{stats[:types_created]}"
-    puts "  SponsorLevels matched: #{stats[:types_matched]}"
-    puts "  Partners merged:       #{stats[:partners_merged]}"
-    puts "  Skipped (duplicates):  #{stats[:skipped]}"
-    puts "  Failed:                #{stats[:failed]}"
   end
 
   private
