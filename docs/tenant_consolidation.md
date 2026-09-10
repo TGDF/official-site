@@ -11,6 +11,7 @@ The migration consolidates tenant data from PostgreSQL schemas to a single publi
 - **Combined data + asset migration** - Assets must be migrated together with data (ID remap breaks separate migration)
 - **Schema-based routing** - During migration, storage backend is chosen based on model's schema location
 - **RDS snapshots for rollback** - Always create snapshot before migration
+- **Dump → transform → import for every remaining group** - Each moves from a reviewed dump, with its own runbook under `docs/tenant/` ([How a Group Moves](#how-a-group-moves))
 
 ### Migration Phases
 
@@ -24,11 +25,11 @@ The migration consolidates tenant data from PostgreSQL schemas to a single publi
 
 ### Timing & Sequencing
 
-The destructive runs (`consolidate` / `merge`) must not happen near the annual event. The 2026 event ran **2026-07-15 ~ 2026-07-19** and is past, so the window is open; the next freeze is whenever the 2027 dates are set.
+The destructive runs (`consolidate`, a group's `migrate`) must not happen near the annual event. The 2026 event ran **2026-07-15 ~ 2026-07-19** and is past, so the window is open; the next freeze is whenever the 2027 dates are set.
 
 **Parallel, out of scope here:** migrating the test suite (RSpec + Cucumber) to Minitest is tracked separately and is demand-driven. It is not a prerequisite for consolidation, but Phase 4 (removing Apartment) does depend on the test harness no longer assuming Apartment — see Phase 4.8.
 
-**Where this stands.** Four no-FK groups are consolidated — `slider`, `block`, `plan`, `menu_item`. Everything with a foreign key, a polymorphic reference, or cross-year uniqueness is still ahead.
+**Where this stands.** Four no-FK groups are consolidated — `slider`, `block`, `plan`, `menu_item`. `sponsor`, with `partner` folded in, is being prepared: its tooling and [runbook](tenant/migrate_sponsor.md) are built and no data has moved. Everything else with a foreign key, a polymorphic reference, or cross-year uniqueness is still ahead.
 
 > ⚠️ `tenant_consolidation:status` reports a group COMPLETE purely from `Apartment.excluded_models` membership, **not** from actual data presence. Treat `status` as "what the config claims" and `verify[group]` as "what the data shows". `menu_item` is the illustration: it reads ✓ while public *and every tenant table* hold **zero rows**, so that group proved nothing about the tooling.
 
@@ -45,7 +46,7 @@ Taken 2026-08-20 across the nine production tenants, read-only. Recorded here be
 | Speakers with no slug | **175** (2026-08-27) — tgdf2018, tgdf and tgdf_2021 entirely; tgdf_2020 all but one | `backfill_speaker_slugs` |
 | News with no slug | **0** in every tenant (2026-08-27) — nothing to backfill | — |
 | Speaker slugs used by more than one year | **39** of 157 distinct (re-confirmed 2026-08-27) | Critical Constraint #5 |
-| Partners awaiting the merge | **48** — 2023tgdf 27 / 8 types, 2024tgdf 21 / 6 types | Matches the 2025-12-20 census |
+| Partners to fold into Sponsor | **48** — 2023tgdf 27 / 8 types, 2024tgdf 21 / 6 types | Matches the 2025-12-20 census |
 | ActiveStorage rows on unconsolidated models | **0** | `cleanup_attachments` has nothing to do today |
 | Slider CarrierWave markers in public | **0 of 34** | `backfill_markers` still required before the Phase 5 gate |
 | PostgreSQL | 16.13, 9 tenant schemas + public | Sizing for any migration |
@@ -54,11 +55,9 @@ Taken 2026-08-20 across the nine production tenants, read-only. Recorded here be
 
 ### Open questions
 
-Two things this plan asserts but has not settled. **They are open; do not treat any answer below as chosen.** A round of work in 2026-08 answered them one way, changed the schema to match, and was rolled back because those were the user's decisions to make; it is preserved on branch `wip/consolidation-round-full` for reference, not as a starting point. (Speaker slug uniqueness used to be a third question here — it is settled, and the answer lives in Critical Constraint #5.)
+What this plan asserts but has not settled. **It is open; do not treat any answer below as chosen.** A round of work in 2026-08 answered it one way, changed the schema to match, and was rolled back because it was the user's decision to make; it is preserved on branch `wip/consolidation-round-full` for reference, not as a starting point. (Two former questions are settled: speaker slug uniqueness, in Critical Constraint #5, and whether the dump → transform → import path is warranted — every remaining group moves that way, see [How a Group Moves](#how-a-group-moves).)
 
 **1. What Phase 5.0 resolves an embedded URL against.** The stored URLs address an upload by the id its row had in a tenant schema, and the current spec (match by filename within the site) cannot work — see Phase 5.0 for the production counter-example. Candidates not yet weighed: recording the old id on each consolidated row; a mapping table in the public schema only; or doing the rewrite inside `consolidate[attachment]` while the id map is still in memory, which needs no schema change.
-
-**2. Whether the Dump → Transform → Import path is still warranted** for `agenda` and `attachment`, now that `Attachment.record_id` is known to be unset everywhere — that was its main justification.
 
 ## Migration Path
 
@@ -72,7 +71,7 @@ Two things this plan asserts but has not settled. **They are open; do not treat 
 
 ALL migrations use groups for consistent behavior. Multi-model groups must be migrated together due to FK constraints.
 
-**Priority note:** Sponsor is prioritized for upcoming feature development. Partner is deprecated and merges into Sponsor.
+**Priority note:** Sponsor is prioritized for upcoming feature development. Partner is deprecated and folds into Sponsor as part of the sponsor move.
 
 | Order | Group | Models | Uploads | Status |
 |-------|-------|--------|---------|--------|
@@ -80,8 +79,8 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 | 2 | block | Block | - | ✅ Complete |
 | 3 | plan | Plan | - | ✅ Complete |
 | 4 | menu_item | MenuItem | - | ✅ Complete |
-| 5 | sponsor | SponsorLevel, Sponsor | logo | ⏳ Pending |
-| 6 | **partner** | **→ Merge to Sponsor** | **logo** | ⏳ Pending |
+| 5 | sponsor | SponsorLevel, Sponsor | logo | 🔧 Preparing — [runbook](tenant/migrate_sponsor.md) |
+| 6 | **partner** | **→ folds into Sponsor** | **logo** | 🔧 Preparing — moves with sponsor |
 | 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | ⏳ Pending |
 | 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | ⏳ Pending |
 | 9 | news | News | thumbnail | ⏳ Pending |
@@ -108,7 +107,7 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
 
 **Polymorphic references:**
 - **News.author → AdminUser** — `author` is polymorphic; AdminUser is public with stable ids so no remap is needed. This is now **code-guarded**: `consolidate[news]` aborts if any `author_type` is a model other than `AdminUser` (a null author is fine) — the same fail-loud guard as Attachment, so a tenant-model author can no longer migrate with a stale id.
-- **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` **aborts** if any `record_id` is set. Production has **none** (measured 2026-08-20: all 106 attachments are `Image` rows carrying only `file`), so the guard is a tripwire rather than an obstacle — and that removes the main reason the dump/transform/import path was recommended for this group. See Open question 2.
+- **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` **aborts** if any `record_id` is set. Production has **none** (measured 2026-08-20: all 106 attachments are `Image` rows carrying only `file`), so the guard is a tripwire rather than an obstacle.
 
 **CKEditor embedded URLs** — every rich-text field (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus URL inputs (MenuItem.link, Plan.button_target) — together the `RICH_TEXT_FIELDS` set — can embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files) and gated by `verify_uploads_unreferenced`.
 
@@ -128,7 +127,7 @@ The set is finite rather than growing: `Admin::ImagesController` — the endpoin
 
    **Why `validates_uniqueness_to_tenant` and not the plain scoped form.** A new speaker is given a `site_id`, so in a still-null schema it sits in a different scope from the legacy rows and could take a slug one of them already holds — a duplicate `consolidate[agenda]` would then meet once both carry the same `site_id`. While `has_global_records` is on, `validates_uniqueness_to_tenant` also checks a row that *has* a `site_id` against the rows that do not, which closes exactly that gap; `uniqueness: { scope: :site_id }` does not, and a spec pins the difference. Both `Speaker` and `News` use the tenant-aware form for this reason.
 
-6. **`site_id IS NULL` is the normal state of the source data, and the move is what fixes it** - `has_global_records: true` makes those rows visible to every tenant. They are not an edge case: production carries **249 of 371 speakers, all 214 games, 259 agendas, 155 sponsors, 107 attachments** with a null `site_id` — rows predating `acts_as_tenant`. `consolidate` assigns `site_id` on every row it writes, so the public schema comes out with none, which is what makes `has_global_records` safe to drop per group at Step 5. Check the *public* rows after the move, not the tenant source.
+6. **`site_id IS NULL` is the normal state of the source data, and the move is what fixes it** - `has_global_records: true` makes those rows visible to every tenant. They are not an edge case: production carries **249 of 371 speakers, all 214 games, 259 agendas, 155 sponsors, 107 attachments** with a null `site_id` — rows predating `acts_as_tenant`. The move assigns `site_id` on every row it writes, so the public schema comes out with none, which is what makes `has_global_records` safe to drop per group in the switch commit. Check the *public* rows after the move, not the tenant source.
 
    **Read that number per schema, not as a total.** Measured 2026-08-27, each tenant schema is uniform: six carry null on every row, three carry their own site id on every row, and none holds a foreign one. The aggregate reads as "mixed" and it is not — which matters, because a per-site *validation* covers a whole uniform schema (every row shares one scope) and would not cover a mixed one.
 
@@ -136,21 +135,50 @@ The set is finite rather than growing: `Admin::ImagesController` — the endpoin
 
    **After Phase 4, `site_id` is the only tenant boundary, and nothing in the database enforces it.** It carries no foreign key and cannot: `sites` lives in public and the tenant tables do not. Today the schema boundary covers for that. `sites.domain` and `sites.tenant_name` also carry only plain indexes, while both `Middleware::FullHostElevators` and `TenantSite#set_tenant` resolve identity through `Site.find_by(domain:)` — a uniqueness gap on the table the whole isolation now hangs from.
 
-## How to Migrate a Group
+## How a Group Moves
 
-### 1. Pre-Migration Checklist
+Every group still ahead moves by **dump → transform → import**, and gets its own runbook under `docs/tenant/` that carries the full safety net for that group. The four groups already moved went through the in-place `consolidate` task and are not revisited.
 
-- [ ] All models in group have `site_id` column
-- [ ] All models in group have `acts_as_tenant :site` configured
-- [ ] Models with uploads have `has_migrated_upload` configured
-- [ ] Any schema change the move depends on is **deployed**, not merely committed (Critical Constraint #5). For `agenda` that is `RemoveGlobalUniqueIndexOnSpeakerSlug`.
-- [ ] For `agenda`: `backfill_speaker_slugs` has been run against production (dry run first), and FriendlyId's `:scoped` module is **not** yet enabled — see Critical Constraint #5
-- [ ] Public schema is empty for this group (consolidate aborts otherwise — re-run = rollback + redo; see "Re-runs & Recovery")
-- [ ] `consolidation_freeze_<group>` enabled in `/flipper`, and it **stays on until the `excluded_models` deploy is live** (see "Write-Freeze Posture")
-- [ ] Not near an event (Timing & Sequencing)
-- [ ] RDS snapshot created — record its exact identifier for this run
+| Group | Runbook |
+|---|---|
+| 5 sponsor, with 6 partner folded in | [tenant/migrate_sponsor.md](tenant/migrate_sponsor.md) |
+| 7 game, 8 agenda, 9 news, 10 attachment | written when the group's round starts |
 
-### 2. Create RDS Snapshot
+```
+ backup ──▶ dump.json ── S3 (private), downloaded and kept
+              │           census: what the import will meet
+              ▼
+ migrate ─▶ preflight ─ refuses, nothing written
+              ▼
+            rows (one transaction) ─▶ id_map.json ─▶ assets (one transaction each)
+              ▼
+ verify ──▶ each dumped row followed through the id map to its public row
+              ▼
+ switch commit ─▶ deploy (beta first, production on approval) ─▶ verify again ─▶ unfreeze
+```
+
+Why this shape rather than moving rows in place:
+
+| | In-place `consolidate` | Dump → transform → import |
+|---|---|---|
+| Before anything is written | nothing to inspect | the dump is reviewed; the census and preflight refuse what would fail mid-run |
+| What verify can check | row counts | every row, through the id map |
+| A re-run | rollback and redo from the live tenant schemas | rollback and redo from the same reviewed dump |
+| Cross-group references (`Attachment.record_id`) | cannot be remapped (the id map lives one run) | the id map is a file |
+| Rehearsal on production data | no | locally, against the production dump |
+
+Row and asset handling shared by both paths lives in `lib/tenant_consolidation/` (`Records`, `Assets`, `Dump`, `Store`); a group adds only its own rules (sponsor: `SponsorGroup::Transform`). `consolidate[group]` stays for groups that have no runbook yet, and refuses sponsor and partner.
+
+### What every runbook carries
+
+- The group's models carry `site_id` and `acts_as_tenant :site`, uploads have `has_migrated_upload`, and any schema change the move needs is **deployed** first (Critical Constraint #5).
+- An **RDS snapshot** with one recorded identifier (below).
+- A **write freeze** from backup until the switch deploy is live ([Write-Freeze Posture](#write-freeze-posture)).
+- **Rehearsal**: the data locally against the production dump, the operations on beta.
+- **The switch commit**, pushed only once verify passes (below).
+- **Recovery** for wherever a run can stop, down to the snapshot ([Rollback Strategy](#rollback-strategy)).
+
+### Create RDS Snapshot
 
 Pin one exact identifier per run and reuse it for `wait` and any later restore — a `*`
 wildcard is invalid for `wait`/`restore` and can match the wrong snapshot.
@@ -166,184 +194,28 @@ aws rds wait db-snapshot-available \
   --db-snapshot-identifier "$SNAP"
 ```
 
-### 3. Run Consolidation
+### The switch commit
 
-Dry-run first, then execute with the group name (see [Rake Tasks](#rake-tasks) for the full command list):
+The data move runs against the database and is not in git; the switch is the only committed change, and it goes out after verify passes — committing it first routes the group's queries to an empty public table. A group's commit carries:
 
-```bash
-bin/rails "tenant_consolidation:consolidate[<group>,true]"   # dry run
-bin/rails "tenant_consolidation:consolidate[<group>]"        # execute
-```
-
-Never run `consolidate[partner]` — the partner group is retired and the task aborts; use `merge_partner_to_sponsor` (see [Partner Merge](#partner-merge-to-sponsor)).
-
-**This is an operational step, not a code change.** The data move runs against the database and is *not* recorded in git — only Steps 5–6 (model edit + `excluded_models`) are committed. Prefer a **detached one-off ECS task over an interactive `execute-command` session**, so a dropped shell does not abort a long run. If a run fails partway, recover with rollback + redo (see "Re-runs & Recovery") — the task refuses to resume onto a non-empty target.
-
-### 4. Verify
-
-```bash
-bin/rails "tenant_consolidation:verify[<group>]"
-```
-
-**What `verify` does and does not prove.** It is essentially a count check. On the consolidation (pre-exclude) branch it asserts `public_count >= tenant_count` per model and prints attachment counts; on the public (post-exclude) branch it asserts attachment counts and prints record counts. It does **not** assert FK integrity or translation values. Those, plus asset byte-size, are enforced *at write time* — an unmappable FK, an asset size mismatch, or a lost translation locale each raises and rolls back. So a green `verify` means "row counts are plausible," not "every association is correct." Consolidation **retains the CarrierWave marker column** (dropped only in Phase 5.1), so the post-exclude attachment check meaningfully compares CW-vs-AS per record. Groups consolidated *before* marker retention (the already-done `slider`) have a null marker — the authoritative coverage for them is `verify_consolidated_assets` run **before Phase 4.5** (it counts the tenant source directly, so it catches an asset that was never attached). `backfill_markers` is a secondary aid that repopulates the marker from a *present* AS attachment so the Phase 5.5 gate can later detect one that goes missing afterward; it cannot, by itself, prove a never-attached asset (don't rely on it alone for slider).
-
-### 5. Update Model
-
-Remove `optional: true` and `has_global_records: true` from migrated models:
+1. **Its models in `Apartment.excluded_models`**, all of the group together. Never `Partner` / `PartnerType`: they fold into Sponsor and are removed in Phase 5.
+2. **Plain `acts_as_tenant :site`** on those models — `optional:` and `has_global_records:` go per group, once no public row has a null `site_id` (Critical Constraint #6). Phase 4.2 is only a final sweep. The done groups' commits show the size of it (Slider `4ee2e021`, Block `3afcf1a7`).
+3. **Tests that follow ActiveStorage.** `upload_field_for` switches the form field to `{field}_attachment` the moment the model is excluded; features name that field, and factories and steps attach through ActiveStorage so the suite exercises the path production now takes rather than the CarrierWave fallback.
 
 ```ruby
-# Before (during migration)
-class Slider < ApplicationRecord
-  acts_as_tenant :site, optional: true, has_global_records: true
-end
-
-# After (migration complete)
-class Slider < ApplicationRecord
-  acts_as_tenant :site
-end
-```
-
-**Per-group, here — not deferred to Phase 4.** This flag is removed as soon as *this* group is consolidated and verified (confirm Critical Constraint #6 first: no `site_id IS NULL` rows remain). The four done groups already have plain `acts_as_tenant :site`. Phase 4.2 is only a final sweep, not a batch removal. This is the entire git-recorded change for a group (see Slider `4ee2e021`, Block `3afcf1a7`).
-
-### 6. Update Configuration
-
-Add migrated models to `Apartment.excluded_models`:
-
-```ruby
-# config/initializers/apartment.rb
-# TARGET END-STATE, not current config. Add each model only AFTER its group's data
-# move is verified — adding a model before its data is in public routes its queries
-# to an empty public table. (Live config today: Site, AdminUser, MenuItem, Plan,
-# Block, Slider + ActiveStorage::*.)
+# config/initializers/apartment.rb — the end state; each group joins after its move is verified
 config.excluded_models = %w[
-  Site
-  AdminUser
-  ActiveStorage::Blob
-  ActiveStorage::Attachment
-  ActiveStorage::VariantRecord
-  # Add after verification:
-  Slider         # independent
-  Block          # independent
-  Plan           # independent
-  MenuItem       # independent
-  Game           # independent (includes STI variants)
-  SponsorLevel   # sponsor group - add together
-  Sponsor        # sponsor group - add together
-  # NOTE: do NOT add Partner / PartnerType — they are retired via
-  # merge_partner_to_sponsor and removed in Phase 5, never consolidated.
-  # Adding them would route Partner queries to an empty public table.
-  AgendaDay      # agenda group - add all 8 together
-  AgendaTime     # agenda group
-  Room           # agenda group
-  AgendaTag      # agenda group
-  Speaker        # agenda group
-  Agenda         # agenda group
-  AgendasSpeaker # agenda group
-  AgendasTagging # agenda group
-  News           # independent
-  Attachment     # independent (migrate last)
+  Site AdminUser ActiveStorage::Blob ActiveStorage::Attachment ActiveStorage::VariantRecord
+  Slider Block Plan MenuItem          # moved
+  SponsorLevel Sponsor                # sponsor
+  Game                                # includes the STI variants
+  AgendaDay AgendaTime Room AgendaTag Speaker Agenda AgendasSpeaker AgendasTagging
+  News
+  Attachment                          # last
 ]
 ```
 
-**Important:** When migrating a group, add ALL models from that group to `excluded_models` together.
-
-### 7. Deploy and Verify
-
-1. Deploy the configuration change
-2. Verify admin forms use `{field}_attachment`
-3. Verify URLs return ActiveStorage paths
-4. Monitor for errors
-5. **Only now disable `consolidation_freeze_<group>`** — until this deploy is live the app still reads the group from its tenant schema, so an admin edit would land on the abandoned side
-
-### 8. Update Form-Field Tests (if model has file uploads)
-
-After migration, `upload_field_for` switches the form field from `{field}` to `{field}_attachment` (it keys off `Apartment.excluded_models`). Update the affected tests accordingly. The examples below are Cucumber (the current suite); if the suite has moved to Minitest by then, apply the same field rename there — the assertion is framework-neutral.
-
-```gherkin
-# Before (CarrierWave)
-And I attach files in the "slider" form
-  | field | value    |
-  | image | TGDF.png |
-
-# After (ActiveStorage)
-And I attach files in the "slider" form
-  | field            | value    |
-  | image_attachment | TGDF.png |
-```
-
-## Partner Merge to Sponsor
-
-Since Partner is deprecated and only Sponsor is actively used, Partners are merged into Sponsors during consolidation.
-
-### Production Data Status (2025-12-20)
-
-| Tenant | Partners | Sponsors |
-|--------|----------|----------|
-| 2018-2022 | 0 | ✓ (26-33 each) |
-| 2023tgdf | 27 (8 types) | 0 |
-| 2024tgdf | 21 (6 types) | 0 |
-| 2025tgdf | 0 | 23 (8 levels) |
-
-- **No duplicates** - No organization exists in both Partner and Sponsor
-- **Total to migrate**: 48 Partners from 2 tenants
-
-### Prerequisites
-
-1. Run Sponsor group consolidation first:
-   ```bash
-   bin/rails "tenant_consolidation:consolidate[sponsor]"
-   ```
-2. Add SponsorLevel and Sponsor to `Apartment.excluded_models`
-
-### Check Production Data
-
-Run assessment scripts in Rails console to check Partner usage (see status above):
-- [x] Count Partners vs Sponsors per tenant
-- [x] Identify duplicate names (same org in both) → None found
-- [ ] Export Partner data for backup (optional)
-
-### Run Merge
-
-```bash
-# Dry run
-bin/rails "tenant_consolidation:merge_partner_to_sponsor[true]"
-
-# Execute
-bin/rails "tenant_consolidation:merge_partner_to_sponsor"
-```
-
-### Merge Behavior
-
-- Each `PartnerType` becomes a `SponsorLevel` carrying the same name
-- An existing `SponsorLevel` of the same name is reused rather than duplicated
-- A Partner whose name already exists as a Sponsor is skipped for manual review
-- CarrierWave logos are migrated to ActiveStorage
-
-**"Same name" means the whole JSONB value, and the comparison is scoped to one site.** `find_by(site_id:, name:)` compares every locale at once, so `{"en"=>"Gold","zh-TW"=>"黃金級"}` and `{"zh-TW"=>"黃金級"}` are different names. In this data it never bites: the only two tenants holding Partners — 2023tgdf and 2024tgdf — have **zero** SponsorLevels and **zero** Sponsors, so neither the reuse check nor the duplicate check has anything to match against. The merge will create 8 + 6 levels and 27 + 21 sponsors. Keep the exactness in mind only if a future merge runs against a site that already has sponsors.
-
-**Operational step before the merge — 2023tgdf's labels are inconsistent.** That year's `PartnerType` rows pair the English and Chinese names the opposite way round from every other year:
-
-```
-2023tgdf:  {"en"=>"Supporting Partners", "zh-TW"=>"協辦單位"}
-           {"en"=>"Co-organizers",       "zh-TW"=>"合作單位"}
-elsewhere: {"en"=>"Supporting Partners", "zh-TW"=>"合作單位"}
-           {"en"=>"Co-organizers",       "zh-TW"=>"協辦單位"}
-```
-
-The merge copies names verbatim, so this carries straight into `SponsorLevel`. Fix the two rows in 2023tgdf first, or accept that the archived 2023 page keeps the swap.
-
-### Rollback Limitation (no clean undo)
-
-`merge_partner_to_sponsor` adds Partners **into existing** `Sponsor` / `SponsorLevel` records. There is no dedicated rollback, and **`rollback[sponsor]` is not a substitute** — it deletes *all* Sponsor records in the public schema, including the legitimately consolidated ones, not just the merged-in Partners.
-
-Therefore:
-- Run the merge **after** `sponsor` is consolidated and verified, never interleaved.
-- The only safe recovery is the Level 3 RDS snapshot restore.
-- If a reversible merge is ever required, add a provenance marker (e.g. a `migrated_from_partner_id` column) so merged rows can be selectively removed — not currently implemented.
-
-### Post-Merge
-
-After verification, Partner code can be removed (Phase 5 cleanup).
+The freeze lifts only once the switch deploy is live in production.
 
 ## Rake Tasks
 
@@ -351,11 +223,14 @@ After verification, Partner code can be removed (Phase 5 cleanup).
 # Status - shows all groups and their migration status
 bin/rails tenant_consolidation:status
 
-# Consolidation - by group name. NOT partner (aborts; use merge).
-# agenda / attachment: prefer the Dump→Transform→Import path — in-place is fragile
-# for these (see "Strategy for High-Risk Groups"); run in-place only as a fallback.
-bin/rails "tenant_consolidation:consolidate[sponsor]"       # SponsorLevel + Sponsor
-bin/rails "tenant_consolidation:consolidate[sponsor,true]"  # Dry run
+# Sponsor, with Partner folded in — see tenant/migrate_sponsor.md
+bin/rails tenant_consolidation:sponsor:backup                 # dump + census, new run location
+bin/rails "tenant_consolidation:sponsor:migrate[<location>]"  # import the dump, write the id map
+bin/rails "tenant_consolidation:sponsor:verify[<location>]"   # row by row; exits 1 on any problem
+
+# In-place consolidation, for groups with no runbook yet. Refuses sponsor and partner.
+bin/rails "tenant_consolidation:consolidate[game]"
+bin/rails "tenant_consolidation:consolidate[game,true]"     # Dry run
 
 # Verification - all verifications use group names
 bin/rails "tenant_consolidation:verify[slider]"             # Verify single model group
@@ -512,8 +387,6 @@ This ensures CarrierWave URLs are captured before IDs are remapped.
 
 Records are written with `save!(validate: false)` — model-level validations (presence, format, app-level uniqueness) are **intentionally skipped** so legacy rows that no longer satisfy current validations still migrate verbatim. Integrity therefore rests on the write-time *raises* (unmappable FK, asset size mismatch, lost translation locale, DB constraints), not on model validations. If you need a validation enforced during migration, add it as an explicit check, not via `validate: true`.
 
-**Recorded vs operational:** the data move (`consolidate` / `merge`) runs against the DB and is **not in git**; only the switch (model → plain `acts_as_tenant :site`, add to `excluded_models`) is committed — which is why a "complete" commit (Slider `4ee2e021`, Block `3afcf1a7`) is tiny. Run and verify the data move *first*, then commit the switch; committing first makes the records invisible (Apartment routes a non-excluded model to its tenant schema).
-
 ### Re-runs & Recovery
 
 Idempotency here is **group-level, not row-level**. The current task has no reliable per-record dedup — a row-level resume previously dropped join-table rows and corrupted child FKs (now removed). Instead:
@@ -557,54 +430,20 @@ Two things to know about it: a refused write answers with a redirect, so while `
 
 Note: a group stops accumulating CarrierWave data automatically once consolidated — `upload_field_for` flips to `{field}_attachment` the moment the model enters `excluded_models`. The app **does not and must not** write ActiveStorage attachments to a model *before* it is consolidated: `upload_field_for` routes its forms to CarrierWave, and ActiveStorage would be unsafe anyway because `active_storage_attachments` is a shared public table keyed by `record_id`, which is only globally unique after the move (pre-move the same id exists in every tenant schema → cross-tenant ambiguous lookups). Any AS attachment found on a not-yet-consolidated model is therefore a leftover from tooling or an aborted run, which is exactly what `cleanup_attachments` removes. The only lever to shrink the backlog is to consolidate write-heavy groups sooner (e.g. Sponsor).
 
-## Strategy for High-Risk Groups: Dump → Transform → Import
-
-For the remaining complex groups — especially **agenda** (8 models, FK web, cross-tenant slug collisions) and **attachment** (polymorphic `record_id`) — the in-place rake task is fragile: its id_map is per-run/in-memory, so it cannot remap cross-group polymorphic references and cannot resume safely. An **ETL approach is recommended** for these:
-
-1. **Dump** every tenant's rows for the group to a JSON file (raw column values). Raw-column dumping *structurally* preserves Mobility JSONB locales — the locale-loss class of bug disappears. Include each upload record's CarrierWave URL/path.
-2. **Transform** offline, in one pass holding all data: build a complete old→new id map across *all* models (so polymorphic `Attachment.record_id` becomes remappable), resolve the Partner→Sponsor merge, detect collisions and duplicate names, and validate before touching the target. This is where problems are eliminated pre-emptively rather than discovered mid-write.
-3. **Import** the transformed rows into the empty public schema in dependency order, then run **asset transfer** as a separate keyed step (download CW → attach AS) using the dumped URLs.
-
-Trade-offs vs in-place:
-
-| | In-place rake task | Dump → Transform → Import |
-|---|---|---|
-| Cross-group polymorphic remap | Impossible (per-run id_map) | Works (global id map) |
-| Pre-validation before writes | No | Yes (inspect/validate the transformed dump) |
-| Mobility locale safety | Manual (raw-column access) | Structural (JSON dump) |
-| Resumability | Group-level rollback + redo | Re-import is a pure function of the dump |
-| Cost to build | Already exists (done groups) | New tooling |
-
-Keep the in-place task for what is already done; build the ETL path before running `agenda` and `attachment`. The dump file is also a second backup, independent of the RDS snapshot.
-
 ## Testing the Consolidation
 
-The consolidation is a one-shot, destructive data move whose ultimate safety net is the RDS snapshot. Integration coverage lives in **`spec/lib/tasks/tenant_consolidation_spec.rb`**, which seeds two real tenant schemas (the `sponsor` multi-model group) and drives the actual rake task. It asserts the failure modes most likely to break silently:
+The move is one-shot and destructive, so the tooling's promises are pinned by integration specs that seed real tenant schemas and drive the actual tasks. The promises of the dump tooling, the sponsor tasks, and the in-place path's remapping, locales and asset checks were each proven by breaking them on purpose and watching a spec object; the older refusal guards (partner, attachment, news) were not re-proven that way.
 
-| Risk | Assertion after consolidate | Covered |
-|------|-----------------------------|---------|
-| FK ID remapping | each child points at its OWN tenant's migrated parent (`sponsor.level_id` → the migrated `SponsorLevel` of the same `site_id`), never a stale/cross-tenant id | ✅ |
-| Mobility translations | every locale survives — `record[:name]` still has both `en` and `zh-TW` | ✅ |
-| Asset transfer | `record.field_attachment.attached?` is true and `blob.byte_size` equals the source size — even for a record invalid under current validations (exercises the `validate: false` attachment persistence) | ✅ |
-| Sequence reset | a fresh `create` after consolidation does not raise duplicate-key | ✅ |
-| Cross-tenant migration | two tenants both migrate with the correct `site_id` and independent FK maps | ✅ |
-| Re-run guard | a second `consolidate` on a non-empty target aborts (no duplicate rows) | ✅ |
-| Dry run | `consolidate[group,true]` writes nothing to public | ✅ |
-| Partner guard | `consolidate[partner]` aborts (use `merge_partner_to_sponsor`) | ✅ |
-| Attachment guard | `consolidate[attachment]` aborts when a `record_id` is set | ✅ |
-| News guard | `consolidate[news]` aborts when an `author_type` is not `AdminUser` | ✅ |
-| Merge: level + sponsor | `merge_partner_to_sponsor` creates a `SponsorLevel` named after the `PartnerType` (all locales preserved) and a `Sponsor` linked to it | ✅ |
-| Merge: reuse level | an existing `SponsorLevel` of the same name is reused, not duplicated | ✅ |
-| Merge: dedup | a Partner whose name already exists as a Sponsor is skipped, not duplicated | ✅ |
-| Merge: idempotent | a second merge run creates no duplicate sponsors/levels | ✅ |
+| Spec | Pins |
+|---|---|
+| `spec/lib/tasks/tenant_consolidation_spec.rb` | in-place `consolidate`: foreign keys remapped per tenant (agenda day → time), locales kept, asset byte size including a CDN's wrong body, rows committed before assets, dry run, re-run guard, sequences; and the refusals of sponsor, partner, a set `Attachment.record_id`, a non-`AdminUser` news author |
+| `spec/lib/tenant_consolidation/` | the dump — every column, microsecond timestamps, uploads keyed on the stored filename, a truncated file refused — and the run store, private and only under `consolidation/` |
+| `spec/lib/tasks/sponsor_*_spec.rb` | the sponsor tasks, end to end through S3 and the switch — the runbook's *safety net* lists what each layer catches |
+| `spec/models/speaker_spec.rb`, `spec/lib/tasks/backfill_speaker_slugs_spec.rb` | two sites may share a speaker slug and one site may not; the backfill |
 
-The merge tests caught a real bug (now fixed): the `SponsorLevel` was created via the Mobility *writer* (`create!(name: hash)`), which nested the locale hash under the current locale (`{"zh-TW"=>{"en"=>…}}`) — corrupting the name and breaking the `find_by(name:)` reuse check. It now writes the raw column, like the Sponsor side.
+The specs run without transactional fixtures (they issue CREATE/DROP SCHEMA) through the shared context in `spec/support/tenant_consolidation.rb`. CarrierWave stores locally in test, so downloads are stubbed, and byte identity is approximated by byte size. A task that finds a problem exits non-zero; a spec must catch that exit, because one escaping an example ends the run while still reporting no failures.
 
-The speaker-slug cases now have their own coverage: `spec/models/speaker_spec.rb` asserts that two sites may hold the same slug (written, not merely validated — the dropped index lived in the database) and that one site may not, plus the FriendlyId behaviour the migration turns on — `save!(validate: false)` keeps a slug the record was given and *generates* one for a record that has none. `spec/lib/tasks/backfill_speaker_slugs_spec.rb` covers the backfill: id written into a missing slug, empty string treated as missing, existing slug untouched, dry run inert, the `{id}-2` fallback, and the refusal to run once Speaker is public.
-
-Still uncovered (build before running these groups): an end-to-end **agenda** group test (8 models, 2 join tables). Byte-identity is approximated by byte-size; a checksum assertion would be stronger. The **Extract-Class refactor** of the 1089-line rake task (into `TenantConsolidation::*` services for unit-testability) is intentionally deferred until after the migration — restructuring a trusted destructive tool without full unit coverage is higher-risk than the debt.
-
-The spec disables transactional fixtures (it issues CREATE/DROP SCHEMA) and seeds upload-free records for the data path (CarrierWave uses local file storage in test, so the download URL is not HTTP-fetchable — the one asset example stubs the download). It is RSpec today; the same assertions port directly if the suite moves to Minitest.
+Still uncovered: an end-to-end agenda test (8 models, 2 join tables) — to build with agenda's runbook.
 
 ## Technical Reference
 
@@ -680,7 +519,7 @@ class Speaker < ApplicationRecord
 end
 ```
 
-**Timing:** `optional: true` (and `has_global_records: true`) is removed **per group in Step 5**, not here — by the time Phase 4 runs every group already has plain `acts_as_tenant :site`. This subsection is only a final sweep confirming none were missed.
+**Timing:** `optional: true` (and `has_global_records: true`) is removed **per group in its switch commit**, not here — by the time Phase 4 runs every group already has plain `acts_as_tenant :site`. This subsection is only a final sweep confirming none were missed.
 
 ### 4.3 Update Tenant Switching
 
@@ -791,7 +630,7 @@ After Apartment removal, clean up CarrierWave.
 
 ### 5.0 Rewrite CKEditor Embedded URLs (BEFORE deleting S3 files)
 
-> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` does not exist.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `verify_consolidated_assets`, `migrate_public_assets`, `backfill_markers`, `backfill_speaker_slugs`, `merge_partner_to_sponsor`. How the rewrite resolves a reference is **Open question 1** — settle that before building it.
+> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` does not exist.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `verify_consolidated_assets`, `migrate_public_assets`, `backfill_markers`, `backfill_speaker_slugs`, `sponsor:backup`, `sponsor:migrate`, `sponsor:verify`. How the rewrite resolves a reference is **Open question 1** — settle that before building it.
 
 Rich text embeds an upload as inline HTML, addressed by the id the row had in its tenant schema. Consolidation replaces that id, and deleting `/uploads/` turns every unrewritten embed into a permanent 404. The fields that can hold one are `RICH_TEXT_FIELDS` in the rake task — every rich-text body (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus the URL inputs an admin can point at an upload (`MenuItem.link`, `Plan.button_target`). That set is exactly what `verify_uploads_unreferenced` scans; keep both in step with the data-editor forms.
 
