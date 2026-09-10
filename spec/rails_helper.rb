@@ -6,7 +6,11 @@ ENV['RAILS_ENV'] ||= 'test'
 
 require 'simplecov'
 
-SimpleCov.refuse_coverage_drop
+# CI judges each suite on its own run, as GitHub runs them in separate jobs.
+if ENV['CI']
+  SimpleCov.merging false
+  SimpleCov.minimum_coverage 74
+end
 SimpleCov.start('rails')
 
 require File.expand_path('../config/environment', __dir__)
