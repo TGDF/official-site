@@ -43,7 +43,7 @@ module TenantConsolidation
       in_public = models & Apartment.excluded_models.map(&:to_s)
       raise Invalid, "#{in_public.join(', ')} already in the public schema" if in_public.any?
 
-      sites = ::Site.order(:id).map do |site|
+      sites = ::Site.reorder(:id).map do |site|
         Apartment::Tenant.switch(site.tenant_name) do
           ActsAsTenant.with_tenant(site) do
             Site.new(
@@ -68,10 +68,13 @@ module TenantConsolidation
       end
     end
 
+    # Keyed on the stored filename rather than the uploader: CarrierWave calls a file
+    # it cannot find blank, and a row whose file is gone must show up as missing
+    # rather than as a row that never had one.
     def self.collect_upload(record, field)
-      uploader = record.public_send(field)
-      return unless uploader.present?
+      return if record[field].blank?
 
+      uploader = record.public_send(field)
       Upload.new(field: field.to_s, url: uploader.url, path: uploader.path,
                  size: Assets.source_asset_size(uploader))
     end

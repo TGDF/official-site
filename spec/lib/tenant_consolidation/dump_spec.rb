@@ -44,6 +44,14 @@ RSpec.describe TenantConsolidation::Dump do
                                         path: end_with('TGDF.png'), size: File.size(test_png))
     end
 
+    it 'records a row whose file is gone as a missing upload, not as a row without one' do
+      sponsor = seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' },
+                                        with_logo: true)
+      within_tenant(main_site) { FileUtils.rm(Sponsor.unscoped.find(sponsor.id).logo.path) }
+
+      expect(collect.sites.find { |s| s.tenant_name == 'main' }.rows('Sponsor').sole.upload).to be_missing
+    end
+
     it 'records no upload for a row without a file' do
       seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' })
 
