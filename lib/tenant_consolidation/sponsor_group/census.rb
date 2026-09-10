@@ -23,21 +23,18 @@ module TenantConsolidation
         end
       end
 
-      # Names are compared as the whole JSONB value, locales and all.
       def duplicate_names
-        @dump.sites.flat_map do |site|
-          sponsor_names = site.rows("Sponsor").map { |row| row.attributes["name"] }
-          site.rows("Partner").select { |row| sponsor_names.include?(row.attributes["name"]) }
-              .map { |row| Duplicate.new(site.tenant_name, row.id, row.attributes["name"]) }
+        transforms.flat_map do |transform|
+          transform.skipped_partners.map do |row|
+            Duplicate.new(transform.site.tenant_name, row.id, row.attributes["name"])
+          end
         end
       end
 
       def label_fixes
-        @dump.sites.flat_map do |site|
-          site.rows("PartnerType").filter_map do |row|
-            name = row.attributes["name"]
-            fixed = SponsorGroup.level_name_for(site.tenant_name, name)
-            LabelFix.new(site.tenant_name, row.id, name, fixed) unless fixed == name
+        transforms.flat_map do |transform|
+          transform.label_fixes.map do |fix|
+            LabelFix.new(transform.site.tenant_name, fix.partner_type_id, fix.from, fix.to)
           end
         end
       end
@@ -66,6 +63,10 @@ module TenantConsolidation
       end
 
       private
+
+      def transforms
+        @transforms ||= @dump.sites.map { |site| Transform.new(site) }
+      end
 
       def counts_table
         width = [ @dump.sites.map { |site| site.tenant_name.size }.max.to_i, 6 ].max
