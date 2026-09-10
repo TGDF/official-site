@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-# The part of the tenant consolidation the running application has to know about.
+# The tenant consolidation — moving each group from its Apartment schemas into the
+# public schema. The modules under lib/tenant_consolidation/ are the tooling the rake
+# tasks run; this file is the one part the running application has to know about.
 #
 # `consolidate` reads a group's tenant rows and then writes them into the public
 # schema. A row written to the tenant schema after the read is not carried over, and

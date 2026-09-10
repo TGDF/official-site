@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "open-uri"
-
 namespace :tenant_consolidation do
   # Model configurations for tenant consolidation and storage migration
   # Models in tenant schema need consolidation first, then storage migration happens automatically
@@ -36,22 +34,6 @@ namespace :tenant_consolidation do
     "Agenda" => %w[description],
     "Game" => %w[description],
     "Site" => %w[description indie_space_description options]
-  }.freeze
-
-  # Translated attributes per model (for verification during migration)
-  # These use Mobility JSONB backend and need raw column access to preserve all locales
-  TRANSLATED_ATTRS = {
-    "Plan" => %w[name content button_label button_target],
-    "Sponsor" => %w[name description],
-    "SponsorLevel" => %w[name],
-    "Partner" => %w[name description],
-    "PartnerType" => %w[name],
-    "Game" => %w[name description team],
-    "News" => %w[title content],
-    "Speaker" => %w[name title description],
-    "Agenda" => %w[subject description],
-    "AgendaTag" => %w[name],
-    "MenuItem" => %w[name link]
   }.freeze
 
   # Migration groups - ALL models are organized into groups for consistent migration
@@ -406,7 +388,7 @@ namespace :tenant_consolidation do
         # would persist, the attached? re-run guard would skip it, and the S3-deletion
         # gate (also attached?-based) would pass — losing the only original.
         ActiveRecord::Base.transaction do
-          attach_asset(record, config[:attachment], uploader.url, source_asset_size(uploader))
+          TenantConsolidation::Assets.attach_asset(record, config[:attachment], uploader.url, TenantConsolidation::Assets.source_asset_size(uploader))
         end
         migrated += 1
         print "."
@@ -554,11 +536,11 @@ namespace :tenant_consolidation do
             partner_data << {
               # Keep logo (the CW marker) so the merged Sponsor is gate-verifiable; only
               # type_id is dropped (it is replaced by the remapped SponsorLevel).
-              attributes: extract_raw_attributes(p, "type_id"),
+              attributes: TenantConsolidation::Records.extract_raw_attributes(p, "type_id"),
               type_id: p.type_id,
               logo_url: p.logo.present? ? p.logo.url : nil,
-              logo_size: p.logo.present? ? source_asset_size(p.logo) : nil,
-              source_translations: capture_source_translations(p, "Partner")
+              logo_size: p.logo.present? ? TenantConsolidation::Assets.source_asset_size(p.logo) : nil,
+              source_translations: TenantConsolidation::Records.capture_source_translations(p, "Partner")
             }
           end
         end
@@ -616,19 +598,19 @@ namespace :tenant_consolidation do
 
               begin
                 sponsor = Sponsor.new
-                assign_raw_attributes(sponsor, pd[:attributes])
+                TenantConsolidation::Records.assign_raw_attributes(sponsor, pd[:attributes])
                 sponsor.site_id = site.id
                 sponsor.level = level
                 sponsor.save!(validate: false)
 
                 if pd[:logo_url].present?
-                  attach_asset(sponsor, :logo_attachment, pd[:logo_url], pd[:logo_size])
+                  TenantConsolidation::Assets.attach_asset(sponsor, :logo_attachment, pd[:logo_url], pd[:logo_size])
                 end
 
                 # Post-migration verification
-                verify_translations_preserved(pd[:source_translations], sponsor, "Sponsor")
+                TenantConsolidation::Records.verify_translations_preserved(pd[:source_translations], sponsor, "Sponsor")
                 if pd[:logo_url].present?
-                  verify_attachment_migrated(sponsor, { attachment: :logo_attachment }, pd[:logo_url])
+                  TenantConsolidation::Assets.verify_attachment_migrated(sponsor, { attachment: :logo_attachment }, pd[:logo_url])
                 end
 
                 stats[:partners_merged] += 1
@@ -675,54 +657,6 @@ namespace :tenant_consolidation do
     "#{base}-#{suffix}"
   end
 
-  # Extract raw attributes bypassing Mobility's attribute_methods plugin
-  # This preserves full JSONB content with all locales instead of current locale only
-  def extract_raw_attributes(record, *excluded_fields)
-    excluded = [ "id" ] + excluded_fields.compact.map(&:to_s)
-    record.attribute_names
-          .reject { |name| excluded.include?(name) }
-          .to_h { |name| [ name, record[name] ] }
-          .compact
-  end
-
-  # Capture translated attribute values while in tenant schema for later verification
-  def capture_source_translations(record, model_name)
-    translated_attrs = TRANSLATED_ATTRS[model_name] || []
-    translated_attrs.to_h { |attr| [ attr, record[attr] ] }
-  end
-
-  # Verify that all locale keys are preserved after migration
-  def verify_translations_preserved(source_translations, new_record, model_name)
-    translated_attrs = TRANSLATED_ATTRS[model_name] || []
-    translated_attrs.each do |attr|
-      source_locales = (source_translations[attr] || {}).keys.sort
-      new_locales = (new_record[attr] || {}).keys.sort
-      if source_locales != new_locales
-        raise "Translation loss detected for #{model_name}##{new_record.id}.#{attr}: " \
-              "expected #{source_locales}, got #{new_locales}"
-      end
-    end
-  end
-
-  # Verify that attachment was successfully migrated
-  def verify_attachment_migrated(new_record, config, source_url)
-    return true unless source_url.present? && config
-
-    attachment = new_record.public_send(config[:attachment])
-    unless attachment.attached?
-      raise "Attachment not migrated for #{new_record.class.name}##{new_record.id}"
-    end
-    true
-  end
-
-  # Assign attributes bypassing Mobility's writer plugin
-  # This preserves full JSONB content with all locales
-  def assign_raw_attributes(record, attrs)
-    attrs.each do |attr, value|
-      record[attr] = value
-    end
-  end
-
   # ============================================================
   # Group Consolidation (for models with FK dependencies)
   # ============================================================
@@ -761,7 +695,7 @@ namespace :tenant_consolidation do
                 uploader = record.public_send(config[:field])
                 if uploader.present?
                   file_url = uploader.url
-                  file_size = source_asset_size(uploader)
+                  file_size = TenantConsolidation::Assets.source_asset_size(uploader)
                 end
               end
 
@@ -773,11 +707,11 @@ namespace :tenant_consolidation do
               # the CKEditor URL rewrite (Image.find_by(file:)). Dropping it would leave
               # the gate blind. All marker columns are removed together in Phase 5.1.
               all_tenant_data[model_name] << {
-                attributes: extract_raw_attributes(record),
+                attributes: TenantConsolidation::Records.extract_raw_attributes(record),
                 file_url: file_url,
                 file_size: file_size,
                 original_id: record.id,
-                source_translations: capture_source_translations(record, model_name)
+                source_translations: TenantConsolidation::Records.capture_source_translations(record, model_name)
               }
             end
           end
@@ -801,22 +735,7 @@ namespace :tenant_consolidation do
               records_data.each do |data|
                 attrs = data[:attributes].dup
 
-                # Remap FK columns using id_maps from previously migrated models
-                model_fk_mappings.each do |fk_column, parent_model|
-                  old_fk_value = attrs[fk_column.to_s]
-                  next unless old_fk_value
-
-                  new_fk_value = id_maps[parent_model][old_fk_value]
-                  if new_fk_value.nil?
-                    # Unmappable FK = an orphaned source row (parent id not migrated).
-                    # Raise rather than keep the stale tenant id: tables without a DB
-                    # foreign key (e.g. agendas_taggings) would otherwise persist a
-                    # cross-tenant-wrong association silently. Fail loud → rollback.
-                    raise "Cannot remap #{model_name}.#{fk_column}=#{old_fk_value} " \
-                          "(#{parent_model} not in id_maps — orphaned source row)"
-                  end
-                  attrs[fk_column.to_s] = new_fk_value
-                end
+                TenantConsolidation::Records.remap_foreign_keys(attrs, model_fk_mappings, id_maps, model_name)
 
                 if dry_run
                   # In dry run, still track hypothetical IDs for FK remapping simulation
@@ -828,7 +747,7 @@ namespace :tenant_consolidation do
 
                 begin
                   new_record = model_class.new
-                  assign_raw_attributes(new_record, attrs)
+                  TenantConsolidation::Records.assign_raw_attributes(new_record, attrs)
                   new_record.site_id = site.id
                   new_record.save!(validate: false)
 
@@ -845,7 +764,7 @@ namespace :tenant_consolidation do
                     }
                   end
 
-                  verify_translations_preserved(data[:source_translations], new_record, model_name)
+                  TenantConsolidation::Records.verify_translations_preserved(data[:source_translations], new_record, model_name)
 
                   stats[model_name][:migrated] += 1
                   print "."
@@ -858,7 +777,7 @@ namespace :tenant_consolidation do
             end
           end
 
-          transfer_assets!(pending_assets) unless dry_run
+          TenantConsolidation::Assets.transfer_assets!(pending_assets) unless dry_run
         end
       end
     end
@@ -1095,71 +1014,6 @@ namespace :tenant_consolidation do
       next
     end
     total
-  end
-
-  # Authoritative source size via fog (direct S3), used to verify the download.
-  def source_asset_size(uploader)
-    uploader.file&.size
-  rescue StandardError
-    nil
-  end
-
-  # Asset transfer is network I/O, and inside the row transaction it held that
-  # transaction open across every download in the group — 130 files for one production
-  # tenant's games. The rows commit first; each asset then moves in a transaction of
-  # its own, so a bad download rolls back nothing but its own attachment.
-  #
-  # This does change what a failed run leaves behind: the rows are committed by then,
-  # rather than the whole tenant being rolled back. Recovery is unchanged —
-  # rollback[group] and redo — because consolidate never deletes tenant data.
-  def transfer_assets!(pending)
-    return if pending.empty?
-
-    puts "\n  Transferring #{pending.size} asset(s)..."
-
-    pending.each do |asset|
-      ActiveRecord::Base.transaction do
-        attach_asset(asset[:record], asset[:attachment], asset[:url], asset[:size])
-        verify_attachment_migrated(asset[:record], { attachment: asset[:attachment] }, asset[:url])
-      end
-      print "."
-    end
-  end
-
-  def attach_asset(record, attachment, url, expected_size)
-    filename = File.basename(url).split("?").first
-    content_type = Marcel::MimeType.for(name: filename)
-
-    record.public_send(attachment).attach(
-      io: URI.open(url),
-      filename: filename,
-      content_type: content_type
-    )
-
-    # Do NOT swallow failures: a bad download must roll back the record, not pass
-    # verification and let Phase 5.5 delete the only original (the RDS snapshot does
-    # not cover S3). Compare the stored blob against the authoritative source size so
-    # a CDN that answers 200 + an HTML error body (wrong but non-empty) is rejected.
-    actual_size = record.public_send(attachment).blob&.byte_size
-    if actual_size.nil? || actual_size.zero?
-      raise "Empty asset downloaded for #{record.class.name}##{record.id} from #{url}"
-    end
-    if expected_size.nil?
-      raise "Cannot verify asset integrity (source size unknown) for " \
-            "#{record.class.name}##{record.id} from #{url}"
-    end
-    if actual_size != expected_size
-      raise "Asset size mismatch for #{record.class.name}##{record.id}: " \
-            "source=#{expected_size} downloaded=#{actual_size} (corrupt or wrong body) from #{url}"
-    end
-
-    # Persist the attachment with validate: false. `attach` on a persisted record only
-    # auto-saves when the record is valid; a row that is invalid under current
-    # validations (e.g. a tightened rule a legacy row predates) would otherwise leave
-    # the attachment unsaved while the in-memory blob check above still passes — a
-    # silent missing attachment. The whole task migrates with validate: false, so do
-    # the same here.
-    record.save!(validate: false)
   end
 
   def already_migrated?(record, field, attachment)
