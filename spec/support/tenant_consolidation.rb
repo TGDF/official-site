@@ -14,7 +14,7 @@ RSpec.shared_context 'with consolidation tenants' do
   after { reset_consolidation_state! }
 
   def extra_tenants
-    %w[spec_cons_b spec_cons_asset]
+    %w[spec_cons_b spec_cons_asset 2023tgdf]
   end
 
   def seeded_models
@@ -26,6 +26,8 @@ RSpec.shared_context 'with consolidation tenants' do
   def reset_consolidation_state!
     in_public do
       seeded_models.each { |model| model.unscoped.delete_all }
+      ActiveStorage::Attachment.where(record_type: seeded_models.map(&:name)).delete_all
+      ActiveStorage::Blob.where.missing(:attachments).delete_all
       Site.where(tenant_name: extra_tenants).delete_all
     end
     within_tenant(main_site) { seeded_models.each { |model| model.unscoped.delete_all } }
@@ -36,6 +38,14 @@ RSpec.shared_context 'with consolidation tenants' do
     Apartment::Tenant.drop(name)
   rescue StandardError
     nil
+  end
+
+  def silently
+    original = $stdout
+    $stdout = StringIO.new
+    yield
+  ensure
+    $stdout = original
   end
 
   def run_task(name, *args)
