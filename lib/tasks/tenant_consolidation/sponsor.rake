@@ -44,5 +44,26 @@ namespace :tenant_consolidation do
       puts ""
       puts "Next: bin/rails 'tenant_consolidation:sponsor:verify[#{store}]'"
     end
+
+    desc "Check the public schema row by row against a sponsor dump and the id map migrate wrote"
+    task :verify, [ :location ] => :environment do |_t, args|
+      if args[:location].blank?
+        puts "Usage: bin/rails 'tenant_consolidation:sponsor:verify[<run location>]'"
+        exit 1
+      end
+
+      store = TenantConsolidation::Store.open(args[:location])
+      dump = TenantConsolidation::Dump.parse(store.read("dump.json"))
+      id_map = JSON.parse(store.read("id_map.json"))
+      problems = TenantConsolidation::SponsorGroup::Verify.new(dump, id_map).problems
+
+      if problems.any?
+        puts "NOT VERIFIED — #{problems.size} problem(s):"
+        problems.each { |problem| puts "  - #{problem}" }
+        exit 1
+      end
+
+      puts "OK: every dumped sponsor-group row is in public as planned, logos included."
+    end
   end
 end
