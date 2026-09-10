@@ -24,10 +24,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bundle exec rake coverage` - Generate test coverage report
 
 ### Code Quality
+- `bin/ci` - Full local CI (setup, RuboCop, bundler-audit, Brakeman, RSpec, Cucumber); steps live in `config/ci.rb`
 - `bundle exec rubocop -A` - Auto-fix Ruby style issues (run this first)
 - `bundle exec rubocop` - Check Ruby style without fixing
 - `bundle exec brakeman` - Security analysis
 - **Overcommit hooks**: PreCommit runs RuboCop (warnings are failures), PrePush runs Brakeman
+- **Claude Code hooks**: `.claude/hooks/edit.sh` checks each edited file (RuboCop, its spec or feature); `.claude/hooks/stop.sh` runs `bin/ci` when the tree has changes
+- **Coverage floors**: under `CI` each suite must meet its own `minimum_coverage` (`spec/rails_helper.rb`, `features/support/env.rb`)
 
 ### Database
 - `bin/rails db:migrate` - Run migrations

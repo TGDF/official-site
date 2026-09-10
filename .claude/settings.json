@@ -17,19 +17,23 @@
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Write|Edit|MultiEdit",
+        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path | select(endswith(\".rb\"))' | xargs -r bundle exec rubocop -A"
-          },
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/edit.sh",
+            "statusMessage": "Checking the edited file"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path | select(endswith(\"_spec.rb\"))' | xargs -r bundle exec rspec"
-          },
-          {
-            "type": "command",
-            "command": "jq -r '.tool_input.file_path | select(endswith(\".feature\"))' | xargs -r bundle exec cucumber"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/stop.sh",
+            "statusMessage": "Running bin/ci"
           }
         ]
       }
