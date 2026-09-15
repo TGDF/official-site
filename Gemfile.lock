@@ -759,6 +759,7 @@ DEPENDENCIES
   rubocop-rails-omakase
   rubocop-rspec
   ruby-lsp
+  ruby-vips (~> 2.0)
   select2-rails
   sentry-rails
   sentry-ruby
