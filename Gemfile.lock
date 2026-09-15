@@ -233,7 +233,7 @@ GEM
       zeitwerk (~> 2.6)
     dry-matcher (1.0.0)
       dry-core (~> 1.0, < 2)
-    dry-monads (1.10.0)
+    dry-monads (1.11.0)
       concurrent-ruby (~> 1.0)
       dry-core (~> 1.1)
       zeitwerk (~> 2.6)
