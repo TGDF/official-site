@@ -78,6 +78,9 @@ gem "aws-sdk-s3", require: false
 gem "carrierwave"
 gem "fog-aws"
 gem "gretel"
+# 1.x is the Rails 8.1 default: with 2.x, Active Storage 8.1 aborts boot wherever libvips
+# is missing (e.g. the asset build) instead of warning. Revisit when upgrading Rails.
+gem "image_processing", "~> 1.2"
 gem "irb"
 gem "liveness"
 gem "mini_magick"
@@ -85,7 +88,6 @@ gem "oj"
 gem "openbox"
 gem "rack-attack"
 gem "rack-utf8_sanitizer"
-gem "ruby-vips", "~> 2.0"
 gem "store_attribute", "~> 2.2"
 
 # Reduces boot times through caching; required in config/boot.rb
