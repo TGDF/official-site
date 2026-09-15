@@ -58,8 +58,6 @@ jobs:
             - 5432:5432
     steps:
     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-    - name: Install libvips
-      run: sudo apt-get update && sudo apt-get install -y libvips42
     - name: Set up Ruby
       uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1
       with:
@@ -98,8 +96,6 @@ jobs:
             - 5432:5432
     steps:
     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-    - name: Install libvips
-      run: sudo apt-get update && sudo apt-get install -y libvips42
     - name: Set up Ruby
       uses: ruby/setup-ruby@319994f95fa847cf3fb3cd3dbe89f6dcde9f178f # v1
       with:
