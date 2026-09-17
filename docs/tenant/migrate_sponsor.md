@@ -169,11 +169,11 @@ Beta stays migrated because the switch commit deploys to beta first and needs it
 ### 2. Local — rehearse the data with the production dump
 
 ```
- laptop ── AWS_PROFILE=tgdf ──▶ one-off prod task: backup[/tmp/run]   reads the database, HEADs S3
+ local ───────────────▶ one-off production task: backup into its own disk   reads the database, HEADs S3
                                    │  dump stays in the container; printed as numbered base64 lines
                                    ▼
-                              CloudWatch log stream ecs/web/<task-id>
-                                   │  filter DUMP lines, sort by number, decode, check SHA256
+                              the task's log
+                                   │  collect the numbered lines, sort, decode, check SHA256
                                    ▼
  laptop: ./<time>/dump.json ─▶ Sites ─▶ migrate ─▶ verify ─▶ rollback
 ```
@@ -182,26 +182,20 @@ The rehearsal writes nothing to production. The backup is given a directory insi
 
 #### 2a. Take the dump through the task log
 
-```bash
-cd ~/Workspace/TGDF
-AWS_PROFILE=tgdf ./ecs-console.sh prod run "'tenant_consolidation:sponsor:backup[/tmp/run]' && echo SHA256 \$(sha256sum /tmp/run/dump.json | cut -d' ' -f1) && gzip -c /tmp/run/dump.json | base64 | tr -d '[:space:]' | fold -w 76 | awk -v p=DUMP '{print p, NR, \$0}'"
-# note the task id it prints; the census is at the head of the log it shows
-
-GROUP=$(AWS_PROFILE=tgdf aws ecs describe-task-definition --task-definition "$(AWS_PROFILE=tgdf aws ecs describe-services \
-  --cluster official-website-prod --services web --query 'services[0].taskDefinition' --output text)" \
-  --query 'taskDefinition.containerDefinitions[0].logConfiguration.options."awslogs-group"' --output text)
-AWS_PROFILE=tgdf aws logs filter-log-events --log-group-name "$GROUP" --log-stream-names "ecs/web/<task-id>" \
-  --output json | jq -r '.events[].message' > <time>.log   # the CLI follows every page
-mkdir <time> && grep '^DUMP ' <time>.log | sort -k2,2n | cut -d' ' -f3 | tr -d '\n' | base64 -d | gunzip > <time>/dump.json
-shasum -a 256 <time>/dump.json; grep '^SHA256 ' <time>.log   # the two digests must match
-```
+| In the task | Locally |
+|---|---|
+| `sponsor:backup` into a directory on the container's own disk | — |
+| print `SHA256 <digest>` of `dump.json` | — |
+| print the dump gzipped, base64-encoded, one numbered line per 76 characters | collect every numbered line from the task's log, across all pages |
+| — | sort by number, decode, gunzip into `<time>/dump.json` |
+| — | compare its SHA256 with the printed digest |
 
 | Must see | If not |
 |---|---|
 | the task exits 0 and the log opens with the census | read the census; stop on anything the production run would stop on |
-| the two SHA256 digests match | the log was cut or reordered badly — take the dump again |
+| the two digests match | the log was cut or reordered badly — take the dump again |
 
-The numbering is what makes the log safe to read back: events that share a timestamp can come back out of order, and sorting by number restores them. The digest is taken inside the container before encoding, so a match proves the local file is byte for byte the dump the task wrote.
+The numbering is what makes the log safe to read back: events that share a timestamp can come back out of order, and sorting by number restores them. The digest is taken inside the container before encoding, so a match proves the local file is byte for byte the dump the task wrote. The operator's own tooling runs the task and reads its log; how it reaches production is kept out of this repository.
 
 #### 2b. Move, check and undo locally
 
@@ -227,7 +221,7 @@ This is the only rehearsal that meets every production logo, so it is where an u
 | 1 | RDS snapshot, one exact identifier recorded (the parent's *Create RDS Snapshot*) | — |
 | 2 | Enable `consolidation_freeze_sponsor` and `consolidation_freeze_partner` | — |
 | 3 | `sponsor:backup`, read the census | a missing logo, a leftover attachment, or a count or skipped partner you did not expect |
-| 4 | Download the run (`aws s3 cp s3://<bucket>/consolidation/sponsor/<time> ./<time> --recursive --profile tgdf`) and keep it | — |
+| 4 | Download the run from `consolidation/sponsor/<time>/` in the bucket and keep it | — |
 | 5 | `sponsor:migrate[<location>]`, then `sponsor:verify[<location>]` | anything but `OK` |
 
 From step 2 until the switch deploy is live, an admin edit to either group would be lost, so the window should be as short as the approval allows. Migrate needs no further waiting once it exits, because every logo is analyzed inside it. Verify must print `OK` before the switch commit is pushed; a problem here is recovered by the *Recovery* table while nothing public reads these rows yet.
