@@ -44,6 +44,15 @@ RSpec.describe TenantConsolidation::Dump do
                                         path: end_with('TGDF.png'), size: File.size(test_png))
     end
 
+    it 'records where each version CarrierWave cut from the upload lives and how large it is' do
+      seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' }, with_logo: true)
+
+      upload = collect.sites.find { |s| s.tenant_name == 'main' }.rows('Sponsor').sole.upload
+      stored = within_tenant(main_site) { Sponsor.unscoped.sole.logo.v1 }
+
+      expect(upload.versions).to eq('v1' => { 'url' => stored.url, 'path' => stored.path, 'size' => File.size(stored.path) })
+    end
+
     it 'records a row whose file is gone as a missing upload, not as a row without one' do
       sponsor = seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' },
                                         with_logo: true)
@@ -83,6 +92,15 @@ RSpec.describe TenantConsolidation::Dump do
       expect(level.attributes['name']).to eq({ 'en' => 'Gold', 'zh-TW' => '金' })
     end
 
+    it 'keeps the versions recorded for an upload' do
+      seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' }, with_logo: true)
+      dump = collect
+
+      row = round_trip(dump).sites.find { |s| s.tenant_name == 'main' }.rows('Sponsor').sole
+
+      expect(row.upload).to eq(dump.sites.find { |s| s.tenant_name == 'main' }.rows('Sponsor').sole.upload)
+    end
+
     it 'refuses a dump that lost rows on the way' do
       seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' })
       data = JSON.parse(collect.to_json)
@@ -102,9 +120,9 @@ RSpec.describe TenantConsolidation::Dump do
 
   describe TenantConsolidation::Dump::Upload do
     it 'counts a source fog reports as empty or unknown as missing' do
-      expect(described_class.new(field: 'logo', url: 'u', path: 'p', size: 0)).to be_missing
-      expect(described_class.new(field: 'logo', url: 'u', path: 'p', size: nil)).to be_missing
-      expect(described_class.new(field: 'logo', url: 'u', path: 'p', size: 12)).not_to be_missing
+      expect(described_class.new(field: 'logo', url: 'u', path: 'p', size: 0, versions: {})).to be_missing
+      expect(described_class.new(field: 'logo', url: 'u', path: 'p', size: nil, versions: {})).to be_missing
+      expect(described_class.new(field: 'logo', url: 'u', path: 'p', size: 12, versions: {})).not_to be_missing
     end
   end
 end

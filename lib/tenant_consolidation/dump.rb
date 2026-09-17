@@ -11,18 +11,24 @@ module TenantConsolidation
   #                  "models": { "Sponsor": [ { "id": 5,
   #                                             "attributes": { "name": {...}, "logo": "a.png", ... },
   #                                             "upload": { "field": "logo", "url": "...",
-  #                                                         "path": "uploads/...", "size": 1234 } } ] } } ],
+  #                                                         "path": "uploads/...", "size": 1234,
+  #                                                         "versions": { "v1": { "url": "...",
+  #                                                                               "path": "...", "size": 567 } } } } ] } } ],
   #     "counts": { "tgdf": { "Sponsor": 1 } } }
   #
   # Every column is kept, nil included, so an import writes back what was there rather
   # than a column default. Times keep their microseconds — JSON's default encoding
   # stops at milliseconds, which would make every timestamp differ from its source.
+  # `versions` records the files CarrierWave cut from each upload. Nothing moves them —
+  # ActiveStorage makes its own variants — so they are kept only as the record of what
+  # was served before the move.
+  #
   # `counts` is written after the rows and checked on parse, so a dump that lost rows
   # on the way is refused instead of imported short.
   class Dump
     FORMAT = 1
 
-    Upload = Data.define(:field, :url, :path, :size) do
+    Upload = Data.define(:field, :url, :path, :size, :versions) do
       # fog reports 0 for an object that is not there, and nil when it cannot tell.
       def missing? = size.to_i.zero?
     end
@@ -76,7 +82,11 @@ module TenantConsolidation
 
       uploader = record.public_send(field)
       Upload.new(field: field.to_s, url: uploader.url, path: uploader.path,
-                 size: Assets.source_asset_size(uploader))
+                 size: Assets.source_asset_size(uploader),
+                 versions: uploader.versions.to_h do |name, version|
+                   [ name.to_s, { "url" => version.url, "path" => version.path,
+                                  "size" => Assets.source_asset_size(version) } ]
+                 end)
     end
 
     def self.encode(value)
