@@ -27,13 +27,6 @@ module Admin
       end
     end
 
-    def admin_v2_sidebar_group(name)
-      content_tag :div do
-        concat content_tag(:h4, name, class: "px-2.5 py-1 text-xs font-medium uppercase text-gray-500 tracking-wide")
-        concat content_tag(:ul, capture { yield if block_given? }, class: "space-y-0.5 pl-4")
-      end
-    end
-
     def admin_v2_sidebar_item(name, path, icon:)
       is_active = current_admin_path_under?(path)
       link_to path, class: "flex items-center gap-2.5 px-2.5 py-1.5 #{is_active ? 'text-gray-900 bg-gray-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'} rounded-md" do
@@ -66,37 +59,6 @@ module Admin
           id: "#{submenu_id}-submenu",
           class: "ml-6 mt-1 space-y-0.5 transition-all duration-200 overflow-hidden #{is_expanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}"
         )
-      end
-    end
-
-    def admin_sidebar_header(name)
-      tag.li(name, class: "c-sidebar-nav-title")
-    end
-
-    def admin_sidebar_treeview(name, icon:)
-      options = { class: "c-sidebar-nav-item c-sidebar-nav-dropdown" }
-
-      items = capture { yield if block_given? }
-      options[:class] += " c-show" if items.to_str.match?(/class="[^"]*c-active[^"]*"/)
-      tag.li(**options) do
-        concat admin_sidebar_link(name, "#", icon:, style: "c-sidebar-nav-dropdown-toggle")
-        concat tag.ul(items, class: "c-sidebar-nav-dropdown-items")
-      end
-    end
-
-    def admin_sidebar_item(name, path, icon:)
-      style = "c-sidebar-nav-link"
-      style += " c-active" if current_admin_path_under?(path)
-      tag.li class: "c-sidebar-nav-item" do
-        admin_sidebar_link(name, path, icon:, style:)
-      end
-    end
-
-    def admin_sidebar_link(name, path, icon:, style: "c-sidebar-nav-link")
-      link_to path, class: style do
-        concat fa_icon(icon)
-        concat " "
-        concat name
       end
     end
   end
