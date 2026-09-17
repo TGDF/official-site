@@ -2,7 +2,7 @@
 <%= form_with model: [:admin, @agenda_time], local: true, html: { class: 'space-y-6' } do |f| %>
   <% if @agenda_time.errors.any? %>
     <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-6">
-      <h2 class="font-semibold"><%= t('errors.template.header', count: @agenda_time.errors.count, model: @agenda_time) %></h2>
+      <h2 class="font-semibold"><%= t('errors.template.header', count: @agenda_time.errors.count, model: @agenda_time.model_name.human) %></h2>
       <ul class="mt-2 list-disc list-inside space-y-1">
         <% @agenda_time.errors.full_messages.each do |msg| %>
           <li><%= msg %></li>

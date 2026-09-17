@@ -59,7 +59,8 @@ Feature: Admin Sliders Management
       | field        |
       | remove_image |
     And I click "更新Slider" button
-    Then I can see "Image不能為空白"
+    Then I can see "有1個錯誤發生使得「Slider」無法被儲存。"
+    And I can see "Image不能為空白"
     And the slider keeps its image
 
   Scenario: Admin can delete a slider

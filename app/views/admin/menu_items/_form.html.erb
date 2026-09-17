@@ -4,7 +4,7 @@
   <%= form_with model: [:admin, @menu_item], local: true, html: { class: 'space-y-6' } do |f| %>
     <% if @menu_item.errors.any? %>
       <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-6">
-        <h2 class="font-semibold"><%= t('errors.template.header', count: @menu_item.errors.count, model: @menu_item) %></h2>
+        <h2 class="font-semibold"><%= t('errors.template.header', count: @menu_item.errors.count, model: @menu_item.model_name.human) %></h2>
         <ul class="mt-2 list-disc list-inside space-y-1">
           <% @menu_item.errors.full_messages.each do |msg| %>
             <li><%= msg %></li>

@@ -73,7 +73,8 @@ Feature: Admin manage Sponsors
       | field       |
       | remove_logo |
     And I click "更新Sponsor" button
-    Then I can see "Logo不能為空白"
+    Then I can see "有1個錯誤發生使得「Sponsor」無法被儲存。"
+    And I can see "Logo不能為空白"
     And the sponsor "雷亞遊戲" keeps its logo
 
   Scenario: Admin can destroy sponsor
