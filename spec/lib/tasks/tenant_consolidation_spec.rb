@@ -15,6 +15,10 @@ Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidati
 RSpec.describe 'tenant_consolidation rake tasks' do
   include_context 'with consolidation tenants'
 
+  def stored_files
+    Dir.glob(File.join(ActiveStorage::Blob.service.root, '**', '*')).select { |path| File.file?(path) }
+  end
+
   describe 'guard rails' do
     it 'aborts when no group is given' do
       expect { run_task('tenant_consolidation:consolidate') }.to raise_error(SystemExit)
@@ -156,6 +160,30 @@ RSpec.describe 'tenant_consolidation rake tasks' do
         in_public do
           expect(Game.unscoped.find_by(site_id: asset_site.id).thumbnail_attachment).not_to be_attached
         end
+      end
+
+      it 'leaves no file of the rejected body in storage' do
+        before = stored_files
+        suppress(RuntimeError) { run_task('tenant_consolidation:consolidate', 'game') }
+
+        expect(stored_files - before).to be_empty
+      end
+    end
+
+    context 'when a step after the upload fails' do
+      before do
+        seed_game(asset_site, name: { 'en' => 'WithThumbnail' }, with_thumbnail: true)
+        allow(URI).to receive(:open) { File.open(test_png, 'rb') }
+        allow(ActiveStorage::Blob).to receive(:create_and_upload!).and_wrap_original do |original, **options|
+          original.call(**options).tap { |blob| allow(blob).to receive(:analyze).and_raise('analysis failed') }
+        end
+      end
+
+      it 'leaves no file of the uploaded blob in storage' do
+        before = stored_files
+        suppress(RuntimeError) { run_task('tenant_consolidation:consolidate', 'game') }
+
+        expect(stored_files - before).to be_empty
       end
     end
 

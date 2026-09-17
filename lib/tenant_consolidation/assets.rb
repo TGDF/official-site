@@ -37,38 +37,53 @@ module TenantConsolidation
 
     # The blob is named by the CarrierWave column itself: a stored URL percent-encodes
     # any name that is not ASCII, and that encoding is not the file's name.
+    #
+    # The blob is uploaded and analyzed before it is attached. Attaching an io would
+    # upload only after the commit and leave analysis to the AnalyzeJob the commit
+    # enqueues, which runs on the in-process :async adapter and dies with the task that
+    # queued it; a blob already analyzed when its attachment commits enqueues nothing.
+    # An image vips cannot read still analyzes, only without width and height.
     def attach_asset(record, field, attachment, url, expected_size)
       filename = record[field]
-      content_type = Marcel::MimeType.for(name: filename)
-
-      record.public_send(attachment).attach(
+      blob = ActiveStorage::Blob.create_and_upload!(
         io: URI.open(url),
         filename: filename,
-        content_type: content_type
+        content_type: Marcel::MimeType.for(name: filename)
       )
+      store_blob(blob, record, attachment, url, expected_size)
+    rescue StandardError
+      # The file is already in the service; a failure from here on would leave it
+      # there with no row pointing at it.
+      blob&.purge
+      raise
+    end
 
-      # Compare the stored blob against the authoritative source size so a CDN that
-      # answers 200 + an HTML error body (wrong but non-empty) is rejected.
-      actual_size = record.public_send(attachment).blob&.byte_size
-      if actual_size.nil? || actual_size.zero?
-        raise "Empty asset downloaded for #{record.class.name}##{record.id} from #{url}"
-      end
-      if expected_size.nil?
-        raise "Cannot verify asset integrity (source size unknown) for " \
-              "#{record.class.name}##{record.id} from #{url}"
-      end
-      if actual_size != expected_size
-        raise "Asset size mismatch for #{record.class.name}##{record.id}: " \
-              "source=#{expected_size} downloaded=#{actual_size} (corrupt or wrong body) from #{url}"
-      end
+    def store_blob(blob, record, attachment, url, expected_size)
+      verify_blob_size!(blob, record, url, expected_size)
+      blob.analyze
 
+      record.public_send(attachment).attach(blob)
       # Persist the attachment with validate: false. `attach` on a persisted record only
       # auto-saves when the record is valid; a row that is invalid under current
       # validations (e.g. a tightened rule a legacy row predates) would otherwise leave
-      # the attachment unsaved while the in-memory blob check above still passes — a
-      # silent missing attachment. The whole task migrates with validate: false, so do
-      # the same here.
+      # the attachment unsaved while the blob checks above still pass — a silent missing
+      # attachment. The whole task migrates with validate: false, so do the same here.
       record.save!(validate: false)
+    end
+
+    # Compare the stored blob against the authoritative source size so a CDN that
+    # answers 200 + an HTML error body (wrong but non-empty) is rejected.
+    def verify_blob_size!(blob, record, url, expected_size)
+      problem =
+        if blob.byte_size.zero?
+          "Empty asset downloaded for #{record.class.name}##{record.id} from #{url}"
+        elsif expected_size.nil?
+          "Cannot verify asset integrity (source size unknown) for #{record.class.name}##{record.id} from #{url}"
+        elsif blob.byte_size != expected_size
+          "Asset size mismatch for #{record.class.name}##{record.id}: " \
+            "source=#{expected_size} downloaded=#{blob.byte_size} (corrupt or wrong body) from #{url}"
+        end
+      raise problem if problem
     end
 
     def verify_attachment_migrated(new_record, config, source_url)

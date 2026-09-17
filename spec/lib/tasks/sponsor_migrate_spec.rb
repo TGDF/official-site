@@ -193,6 +193,16 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
     expect(public_sponsor(main_site).logo_attachment.filename.to_s).to eq('創投標誌.png')
   end
 
+  it 'analyzes each logo before the task ends, leaving nothing for a background job' do
+    seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' }, with_logo: true)
+    backup
+    allow(ActiveStorage::AnalyzeJob).to receive(:perform_later)
+    migrate
+
+    expect(public_sponsor(main_site).logo_attachment.blob.metadata).to include('analyzed' => true, 'width' => 600, 'height' => 400)
+    expect(ActiveStorage::AnalyzeJob).not_to have_received(:perform_later)
+  end
+
   it 'keeps the rows and the id map when a logo download fails, so verify can name what is missing' do
     seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' }, with_logo: true)
     backup
