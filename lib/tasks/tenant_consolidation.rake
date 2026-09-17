@@ -389,7 +389,8 @@ namespace :tenant_consolidation do
         # would persist, the attached? re-run guard would skip it, and the S3-deletion
         # gate (also attached?-based) would pass — losing the only original.
         ActiveRecord::Base.transaction do
-          TenantConsolidation::Assets.attach_asset(record, config[:attachment], uploader.url, TenantConsolidation::Assets.source_asset_size(uploader))
+          TenantConsolidation::Assets.attach_asset(record, config[:field], config[:attachment], uploader.url,
+                                                   TenantConsolidation::Assets.source_asset_size(uploader))
         end
         migrated += 1
         print "."
@@ -635,6 +636,7 @@ namespace :tenant_consolidation do
                   if data[:file_url].present? && config
                     pending_assets << {
                       record: new_record,
+                      field: config[:field],
                       attachment: config[:attachment],
                       url: data[:file_url],
                       size: data[:file_size]

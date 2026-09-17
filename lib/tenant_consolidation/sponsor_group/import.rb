@@ -99,7 +99,8 @@ module TenantConsolidation
       def queue_logo(sponsor, upload)
         return unless upload
 
-        @pending_assets << { record: sponsor, attachment: :logo_attachment, url: upload.url, size: upload.size }
+        @pending_assets << { record: sponsor, field: upload.field, attachment: :logo_attachment,
+                            url: upload.url, size: upload.size }
       end
 
       def public_problems

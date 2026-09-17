@@ -184,6 +184,15 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
     expect([ public_count(SponsorLevel), public_count(Sponsor) ]).to eq([ 0, 0 ])
   end
 
+  it 'names the attached logo exactly as CarrierWave stored it, even when the name is not ASCII' do
+    seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Initech' },
+                            with_logo: true, logo_name: '創投標誌.png')
+    backup
+    migrate
+
+    expect(public_sponsor(main_site).logo_attachment.filename.to_s).to eq('創投標誌.png')
+  end
+
   it 'keeps the rows and the id map when a logo download fails, so verify can name what is missing' do
     seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' }, with_logo: true)
     backup

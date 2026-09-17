@@ -74,7 +74,7 @@ RSpec.shared_context 'with consolidation tenants' do
 
   # site_id is set explicitly: save!(validate: false) skips acts_as_tenant's
   # before_validation tenant assignment, so it would otherwise be nil.
-  def seed_sponsor(site, level_name:, sponsor_name:, with_logo: false)
+  def seed_sponsor(site, level_name:, sponsor_name:, with_logo: false, logo_name: File.basename(test_png))
     within_tenant(site) do
       level = SponsorLevel.new(site_id: site.id)
       level[:name] = level_name
@@ -82,7 +82,7 @@ RSpec.shared_context 'with consolidation tenants' do
 
       sponsor = Sponsor.new(site_id: site.id, level_id: level.id)
       sponsor[:name] = sponsor_name
-      sponsor.logo = Rack::Test::UploadedFile.new(test_png, 'image/png') if with_logo
+      sponsor.logo = Rack::Test::UploadedFile.new(test_png, 'image/png', original_filename: logo_name) if with_logo
       sponsor.save!(validate: false)
       sponsor
     end

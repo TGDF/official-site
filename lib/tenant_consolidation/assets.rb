@@ -28,15 +28,17 @@ module TenantConsolidation
 
       pending.each do |asset|
         ActiveRecord::Base.transaction do
-          attach_asset(asset[:record], asset[:attachment], asset[:url], asset[:size])
+          attach_asset(asset[:record], asset[:field], asset[:attachment], asset[:url], asset[:size])
           verify_attachment_migrated(asset[:record], { attachment: asset[:attachment] }, asset[:url])
         end
         print "."
       end
     end
 
-    def attach_asset(record, attachment, url, expected_size)
-      filename = File.basename(url).split("?").first
+    # The blob is named by the CarrierWave column itself: a stored URL percent-encodes
+    # any name that is not ASCII, and that encoding is not the file's name.
+    def attach_asset(record, field, attachment, url, expected_size)
+      filename = record[field]
       content_type = Marcel::MimeType.for(name: filename)
 
       record.public_send(attachment).attach(
