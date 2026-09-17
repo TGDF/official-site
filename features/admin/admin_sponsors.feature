@@ -59,6 +59,23 @@ Feature: Admin manage Sponsors
       | text              |
       | New sponsor Name  |
 
+  Scenario: Admin cannot remove the logo a sponsor requires
+    Given there are some sponsor levels
+      | name   |
+      | 白金級 |
+    And there are some sponsors
+      | name     | level  | logo     |
+      | 雷亞遊戲 | 白金級 | TGDF.png |
+    When I visit "/admin"
+    And I click admin sidebar "List" in "Sponsor"
+    And I click "Edit" on row "雷亞遊戲"
+    And I check options in the "sponsor" form
+      | field       |
+      | remove_logo |
+    And I click "更新Sponsor" button
+    Then I can see "Logo不能為空白"
+    And the sponsor "雷亞遊戲" keeps its logo
+
   Scenario: Admin can destroy sponsor
     Given there are some sponsor levels
       | name   |

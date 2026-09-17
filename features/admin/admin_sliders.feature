@@ -48,6 +48,20 @@ Feature: Admin Sliders Management
       | text    |
       | English |
 
+  Scenario: Admin cannot remove the image a slider requires
+    Given there are some slide in "home"
+      | image    | language | interval |
+      | TGDF.png | zh-TW    | 5000     |
+    When I visit "/admin"
+    And I click admin sidebar "List" in "Slider"
+    And I click link "Edit"
+    And I check options in the "slider" form
+      | field        |
+      | remove_image |
+    And I click "更新Slider" button
+    Then I can see "Image不能為空白"
+    And the slider keeps its image
+
   Scenario: Admin can delete a slider
     Given there are some slide in "home"
       | image    | language | interval |

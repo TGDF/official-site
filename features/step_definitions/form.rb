@@ -26,6 +26,12 @@ When('I fill the {string} form') do |form, table|
   end
 end
 
+When('I check options in the {string} form') do |form, table|
+  table.rows.each do |(key)|
+    check "#{form}_#{key}"
+  end
+end
+
 When('I attach files in the {string} form') do |form, table|
   table.rows.each do |key, value|
     attach_file(

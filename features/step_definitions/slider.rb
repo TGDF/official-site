@@ -11,3 +11,7 @@ end
 Then('I can see the {int} slide in page') do |amount|
   expect(page).to have_css('#slider .swiper-slide', count: amount)
 end
+
+Then('the slider keeps its image') do
+  expect(Slider.sole.image_present?).to be(true)
+end

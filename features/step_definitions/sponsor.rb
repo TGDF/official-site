@@ -14,3 +14,7 @@ Given('there are some sponsors') do |table|
     Sponsor.create!(**attr)
   end
 end
+
+Then('the sponsor {string} keeps its logo') do |name|
+  expect(Sponsor.i18n.find_by!(name: name).logo_present?).to be(true)
+end
