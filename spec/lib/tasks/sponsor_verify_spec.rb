@@ -58,6 +58,18 @@ RSpec.describe 'tenant_consolidation:sponsor:verify' do
     expect { verify }.to reports(/logo is 1 bytes, the source was #{File.size(test_png)}/)
   end
 
+  it 'names a logo that was never analyzed' do
+    in_public { acme.logo_attachment.blob.update_column(:metadata, { 'identified' => true }) }
+
+    expect { verify }.to reports(/main Sponsor#\d+ logo was never analyzed/)
+  end
+
+  it 'names a logo analyzed without dimensions, which vips could not read as an image' do
+    in_public { acme.logo_attachment.blob.update_column(:metadata, { 'identified' => true, 'analyzed' => true }) }
+
+    expect { verify }.to reports(/main Sponsor#\d+ logo cannot be read as an image/)
+  end
+
   it 'names a column that differs from the dump' do
     in_public { acme.update_column(:url, 'https://changed.example') }
 

@@ -203,6 +203,24 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
     expect(ActiveStorage::AnalyzeJob).not_to have_received(:perform_later)
   end
 
+  it 'moves a logo vips cannot read without stopping, analyzed but with no dimensions' do
+    unreadable = Rails.root.join('tmp/consolidation/spec/unreadable.png')
+    FileUtils.mkdir_p(unreadable.dirname)
+    File.binwrite(unreadable, "\x89PNG\r\n\x1A\n" + ('broken' * 16)) # a PNG signature over bytes vips cannot decode
+    seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' },
+                            with_logo: true, logo_file: unreadable)
+    backup
+    allow(URI).to receive(:open) { File.open(unreadable, 'rb') }
+    migrate
+
+    metadata = public_sponsor(main_site).logo_attachment.blob.metadata
+    expect(metadata).to include('analyzed' => true)
+    expect(public_sponsor(main_site).logo_attachment.blob.content_type).to eq('image/png')
+    expect(metadata).not_to include('width', 'height')
+  ensure
+    FileUtils.rm_f(unreadable)
+  end
+
   it 'keeps the rows and the id map when a logo download fails, so verify can name what is missing' do
     seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' }, with_logo: true)
     backup

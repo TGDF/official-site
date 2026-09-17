@@ -8,7 +8,7 @@ module TenantConsolidation
     #   dump.json ─ Transform ─▶ planned row ─ id_map.json ─▶ public row
     #                                  │                          │
     #                                  └──── same site, same columns, same locales,
-    #                                        right level, logo at the source size
+    #                                        right level, logo at the source size and readable
     #
     # plus, per site, no public row the plan does not account for. It reads only, so
     # it can run as often as wanted — before the switch deploy and after it.
@@ -83,7 +83,19 @@ module TenantConsolidation
         unless attachment.byte_size == row.upload.size
           problems << "#{label(row, ctx)} logo is #{attachment.byte_size} bytes, the source was #{row.upload.size}"
         end
-        problems
+        problems + readability_problems(attachment.blob, row, ctx)
+      end
+
+      # Analysis runs during migrate. An image vips cannot read still counts as
+      # analyzed, only without the width and height a readable one carries.
+      def readability_problems(blob, row, ctx)
+        if !blob.analyzed?
+          [ "#{label(row, ctx)} logo was never analyzed" ]
+        elsif blob.metadata.values_at(:width, :height).any?(&:blank?)
+          [ "#{label(row, ctx)} logo cannot be read as an image" ]
+        else
+          []
+        end
       end
 
       def count_problem(model_class, planned, ctx)
