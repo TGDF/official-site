@@ -398,17 +398,27 @@ Idempotency here is **group-level, not row-level**. The current task has no reli
 
 ### Asset transfer
 
-`attach_asset` downloads each CarrierWave object and re-uploads it to ActiveStorage. It runs **after the row transaction commits**, one transaction per asset — not inside the per-tenant transaction, which used to stay open across every download in the group. Production's worst case is 2022_TGDF's 130 game thumbnails in a single tenant; 1,071 files move in total.
-
 | | Rows | Assets |
 |---|---|---|
 | Transaction | one per tenant, all-or-nothing | one per asset |
-| On failure | the tenant's rows roll back | that asset's attachment rolls back; the rows stay committed |
+| On failure | the tenant's rows roll back | that asset rolls back and its blob is purged; the rows stay committed |
 | Recovery | `rollback[group]` then redo | the same — `consolidate` never deletes tenant data |
 
-So a failed run can leave a tenant's rows in public with only some assets attached. That is not a state to patch by hand: `rollback[group]` clears the public rows (purging their attachments) and a clean redo reproduces the result.
+`TenantConsolidation::Assets.attach_asset` downloads each CarrierWave object and stores it in ActiveStorage. It runs **after the row transaction commits**, one transaction per asset, so no tenant's transaction stays open across a group's downloads. Production's worst case is 2022_TGDF's 130 game thumbnails in one tenant; 1,071 files move in total. A failed run can therefore leave a tenant's rows in public with only some assets attached. That is not a state to patch by hand: `rollback[group]` clears the public rows, purging their attachments, and a clean redo reproduces the result.
 
-Integrity is checked at write time and it still fails loud. The stored blob's byte size is compared against the **authoritative source size read from fog/S3 directly**, captured during collection rather than fetched through the CDN. This rejects an empty download *and* a CDN that answers a missing object with `200` and an HTML error body — which matters because the RDS snapshot does not cover S3, so a silently bad transfer that later passed the Phase 5.5 gate would be unrecoverable. A source whose size cannot be determined raises too: investigate the broken reference rather than migrate it blind.
+#### Integrity and analysis
+
+```
+ download ─▶ upload blob, named by the CarrierWave column ─▶ size = source size? ─ no ─▶ raise
+                                                                     │ yes
+                                           analyze with vips ◀───────┘
+                                                 │  unreadable image: analyzed, no width/height
+                                                 ▼
+                                   attach, save without validation ─▶ commit (no AnalyzeJob)
+         any raise after the upload purges the blob, so storage keeps no file without a row
+```
+
+The stored size is compared with the **source size read from fog/S3 directly** at collection, not through the CDN. That rejects an empty download and a CDN answering a missing object with `200` and an HTML page — the RDS snapshot does not cover S3, so a bad transfer passing the Phase 5.5 gate would be unrecoverable. An unknown source size raises too. The blob takes the column's filename, since a URL percent-encodes names that are not ASCII. It is analyzed inside the task: an `AnalyzeJob` on the in-process adapter dies with a one-off task.
 
 ### Write-Freeze Posture
 
@@ -432,16 +442,16 @@ Note: a group stops accumulating CarrierWave data automatically once consolidate
 
 ## Testing the Consolidation
 
-The move is one-shot and destructive, so the tooling's promises are pinned by integration specs that seed real tenant schemas and drive the actual tasks. The promises of the dump tooling, the sponsor tasks, and the in-place path's remapping, locales and asset checks were each proven by breaking them on purpose and watching a spec object; the older refusal guards (partner, attachment, news) were not re-proven that way.
+The move is one-shot and destructive, so its promises are pinned by integration specs that seed real tenant schemas and drive the actual tasks. Each promise of the dump, the sponsor tasks and the in-place asset and remapping checks was proven by breaking it on purpose and watching a spec object; the older refusal guards (partner, attachment, news) were not.
 
 | Spec | Pins |
 |---|---|
-| `spec/lib/tasks/tenant_consolidation_spec.rb` | in-place `consolidate`: foreign keys remapped per tenant (agenda day → time), locales kept, asset byte size including a CDN's wrong body, rows committed before assets, dry run, re-run guard, sequences; and the refusals of sponsor, partner, a set `Attachment.record_id`, a non-`AdminUser` news author |
-| `spec/lib/tenant_consolidation/` | the dump — every column, microsecond timestamps, uploads keyed on the stored filename, a truncated file refused — and the run store, private and only under `consolidation/` |
-| `spec/lib/tasks/sponsor_*_spec.rb` | the sponsor tasks, end to end through S3 and the switch — the runbook's *safety net* lists what each layer catches |
+| `spec/lib/tasks/tenant_consolidation_spec.rb` | in-place `consolidate`: foreign keys remapped per tenant (agenda day → time), locales kept, asset byte size including a CDN's wrong body, no file left in storage by a rejected or failed asset, rows committed before assets, dry run, re-run guard, sequences; and the refusals of sponsor, partner, a set `Attachment.record_id`, a non-`AdminUser` news author |
+| `spec/lib/tenant_consolidation/` | the dump — every column, microsecond timestamps, uploads keyed on the stored filename with their CarrierWave versions, a truncated file refused — and the run store, private and only under `consolidation/` |
+| `spec/lib/tasks/sponsor_*_spec.rb` | the sponsor tasks, end to end through S3 and the switch: a logo named as stored even when not ASCII, analyzed before the task exits, and named by verify when vips cannot read it — the runbook's *safety net* lists what each layer catches |
 | `spec/models/speaker_spec.rb`, `spec/lib/tasks/backfill_speaker_slugs_spec.rb` | two sites may share a speaker slug and one site may not; the backfill |
 
-The specs run without transactional fixtures (they issue CREATE/DROP SCHEMA) through the shared context in `spec/support/tenant_consolidation.rb`. CarrierWave stores locally in test, so downloads are stubbed, and byte identity is approximated by byte size. A task that finds a problem exits non-zero; a spec must catch that exit, because one escaping an example ends the run while still reporting no failures.
+The specs run without transactional fixtures (they issue CREATE/DROP SCHEMA) through `spec/support/tenant_consolidation.rb`. CarrierWave stores locally in test, so downloads are stubbed and byte identity is approximated by byte size, but analysis runs real vips — CI installs libvips for it. A task that finds a problem exits non-zero; a spec must catch that exit, because one escaping an example ends the run while still reporting no failures.
 
 Still uncovered: an end-to-end agenda test (8 models, 2 join tables) — to build with agenda's runbook.
 
