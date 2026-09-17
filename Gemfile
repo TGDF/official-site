@@ -116,8 +116,6 @@ group :development, :test do
   gem "rubocop-performance", require: false
   gem "rubocop-rails-omakase", require: false
   gem "rubocop-rspec", require: false
-
-  gem "roast-ai", require: false
 end
 
 group :development do
