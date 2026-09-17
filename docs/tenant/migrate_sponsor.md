@@ -134,7 +134,7 @@ A location is a local directory or `s3://<application bucket>/consolidation/…`
 ```
             beta (own data)          local (production dump)        production
             ───────────────          ───────────────────────        ──────────
- rehearse   freeze → backup →        backup(prod) → download →      ·
+ rehearse   freeze → backup →        read-only backup(prod) → log → ·
             migrate → verify         migrate → verify → rollback
  run        ·                        ·                              snapshot → freeze → backup →
                                                                     download → migrate → verify
@@ -168,10 +168,44 @@ Beta stays migrated because the switch commit deploys to beta first and needs it
 
 ### 2. Local — rehearse the data with the production dump
 
+```
+ laptop ── AWS_PROFILE=tgdf ──▶ one-off prod task: backup[/tmp/run]   reads the database, HEADs S3
+                                   │  dump stays in the container; printed as numbered base64 lines
+                                   ▼
+                              CloudWatch log stream ecs/web/<task-id>
+                                   │  filter DUMP lines, sort by number, decode, check SHA256
+                                   ▼
+ laptop: ./<time>/dump.json ─▶ Sites ─▶ migrate ─▶ verify ─▶ rollback
+```
+
+The rehearsal writes nothing to production. The backup is given a directory inside the task's own container, so no dump reaches S3, and the task only reads the database and asks S3 for file sizes. The dump leaves the container through its log, gzipped, base64-encoded and numbered line by line, because a one-off task's disk is gone when it stops. The production image must already carry the tooling this runbook describes, since a dump from older tooling lacks fields the local parser requires.
+
+#### 2a. Take the dump through the task log
+
 ```bash
-# 1. production backup (read-only, can run before the freeze), then bring it home
-aws s3 cp s3://<bucket>/consolidation/sponsor/<time> ./<time> --recursive --profile tgdf
-# 2. give every dumped tenant a Site — migrate refuses a tenant it cannot find
+cd ~/Workspace/TGDF
+AWS_PROFILE=tgdf ./ecs-console.sh prod run "'tenant_consolidation:sponsor:backup[/tmp/run]' && echo SHA256 \$(sha256sum /tmp/run/dump.json | cut -d' ' -f1) && gzip -c /tmp/run/dump.json | base64 | tr -d '[:space:]' | fold -w 76 | awk -v p=DUMP '{print p, NR, \$0}'"
+# note the task id it prints; the census is at the head of the log it shows
+
+GROUP=$(AWS_PROFILE=tgdf aws ecs describe-task-definition --task-definition "$(AWS_PROFILE=tgdf aws ecs describe-services \
+  --cluster official-website-prod --services web --query 'services[0].taskDefinition' --output text)" \
+  --query 'taskDefinition.containerDefinitions[0].logConfiguration.options."awslogs-group"' --output text)
+AWS_PROFILE=tgdf aws logs filter-log-events --log-group-name "$GROUP" --log-stream-names "ecs/web/<task-id>" \
+  --output json | jq -r '.events[].message' > <time>.log   # the CLI follows every page
+mkdir <time> && grep '^DUMP ' <time>.log | sort -k2,2n | cut -d' ' -f3 | tr -d '\n' | base64 -d | gunzip > <time>/dump.json
+shasum -a 256 <time>/dump.json; grep '^SHA256 ' <time>.log   # the two digests must match
+```
+
+| Must see | If not |
+|---|---|
+| the task exits 0 and the log opens with the census | read the census; stop on anything the production run would stop on |
+| the two SHA256 digests match | the log was cut or reordered badly — take the dump again |
+
+The numbering is what makes the log safe to read back: events that share a timestamp can come back out of order, and sorting by number restores them. The digest is taken inside the container before encoding, so a match proves the local file is byte for byte the dump the task wrote.
+
+#### 2b. Move, check and undo locally
+
+```bash
 bin/rails runner '
   JSON.parse(File.read("<time>/dump.json"))["sites"].each do |s|
     Site.find_or_create_by!(tenant_name: s["tenant_name"]) do |site|
@@ -179,13 +213,12 @@ bin/rails runner '
       site.domain = "#{s["tenant_name"].downcase.tr("_", "-")}.localhost.test"
     end
   end'
-# 3. move, check, and leave the database as it was
 bin/rails "tenant_consolidation:sponsor:migrate[<time>]"   # logos download from the public production CDN
 bin/rails "tenant_consolidation:sponsor:verify[<time>]"    # must print OK
 bin/rails "tenant_consolidation:rollback[sponsor]"
 ```
 
-This is the only rehearsal that meets every production logo, so it is where an unreadable image shows up first. Local development needs libvips for it, as the project setup already requires. A logo verify names as unreadable is a source problem, not a tooling one: fix or replace it at the source, take a new backup, and rehearse again. The backup here is for rehearsal only; the real run takes its own.
+This is the only rehearsal that meets every production logo, so it is where an unreadable image shows up first. Migrate refuses a tenant with no `Site`, hence the runner. Local development needs libvips, as the project setup already requires. A logo verify names as unreadable is a source problem, not a tooling one: fix or replace it at the source, take a new dump, and rehearse again. Downloading logos reads the public CDN only.
 
 ### 3. Production — the run
 
@@ -194,7 +227,7 @@ This is the only rehearsal that meets every production logo, so it is where an u
 | 1 | RDS snapshot, one exact identifier recorded (the parent's *Create RDS Snapshot*) | — |
 | 2 | Enable `consolidation_freeze_sponsor` and `consolidation_freeze_partner` | — |
 | 3 | `sponsor:backup`, read the census | a missing logo, a leftover attachment, or a count or skipped partner you did not expect |
-| 4 | Download the run (step 2) and keep it | — |
+| 4 | Download the run (`aws s3 cp s3://<bucket>/consolidation/sponsor/<time> ./<time> --recursive --profile tgdf`) and keep it | — |
 | 5 | `sponsor:migrate[<location>]`, then `sponsor:verify[<location>]` | anything but `OK` |
 
 From step 2 until the switch deploy is live, an admin edit to either group would be lost, so the window should be as short as the approval allows. Migrate needs no further waiting once it exits, because every logo is analyzed inside it. Verify must print `OK` before the switch commit is pushed; a problem here is recovered by the *Recovery* table while nothing public reads these rows yet.
