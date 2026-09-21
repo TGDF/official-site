@@ -80,7 +80,7 @@ gem "fog-aws"
 gem "gretel"
 # 1.x is the Rails 8.1 default: with 2.x, Active Storage 8.1 aborts boot wherever libvips
 # is missing (e.g. the asset build) instead of warning. Revisit when upgrading Rails.
-gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 2.1"
 gem "irb"
 gem "liveness"
 gem "mini_magick"
