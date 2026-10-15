@@ -2,7 +2,7 @@
 
 **Parent document:** [../tenant_consolidation.md](../tenant_consolidation.md) — groups 5 `sponsor` and 6 `partner`.
 
-**Status: 🔧 Preparing.** The tooling and this runbook are built; no data has moved. The move starts only once the preparation is confirmed, and never near the annual event (see the parent's *Timing & Sequencing*).
+**Status: ✅ Complete (2026-10-15).** Production moved 70 levels and 254 sponsors (206 sponsors, 48 partners) with their logos; `sponsor:verify` printed `OK` before and after the switch. `consolidation_freeze_partner` stays on until Phase 5 removes Partner. The runbook is kept as the record of how the move ran and as the template for the groups that follow.
 
 ## What moves
 
