@@ -7,10 +7,7 @@ class PagesController < ApplicationController
                 .limit(Settings.news.latest.size)
     @sliders = Slider.localized.home.with_attached_image_attachment
     @plans = Plan.ordered
-    @partners_and_sponsors = (
-      Partner.with_attached_logo_attachment.to_a +
-      Sponsor.with_attached_logo_attachment.to_a
-    )
+    @partners_and_sponsors = Sponsor.with_attached_logo_attachment.to_a
   end
 
   def coc; end

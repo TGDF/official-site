@@ -24,11 +24,15 @@ RSpec.describe 'tenant_consolidation rake tasks' do
       expect { run_task('tenant_consolidation:consolidate') }.to raise_error(SystemExit)
     end
 
-    it 'aborts the sponsor group, which moves through the sponsor tasks' do
-      seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' })
+    context 'when sponsor is still in the tenant schemas' do
+      include_context 'with sponsor before its switch'
 
-      expect { run_task('tenant_consolidation:consolidate', 'sponsor') }.to raise_error(SystemExit)
-      expect(public_count(Sponsor)).to eq(0)
+      it 'aborts the sponsor group, which moves through the sponsor tasks' do
+        seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' })
+
+        expect { run_task('tenant_consolidation:consolidate', 'sponsor') }.to raise_error(SystemExit)
+        expect(public_count(Sponsor)).to eq(0)
+      end
     end
 
     it 'aborts the retired partner group, which folds into sponsor' do

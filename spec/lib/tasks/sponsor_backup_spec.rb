@@ -7,6 +7,7 @@ Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidati
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe 'tenant_consolidation:sponsor:backup' do
   include_context 'with consolidation tenants'
+  include_context 'with sponsor before its switch'
 
   let(:location) { Rails.root.join('tmp/consolidation/spec', SecureRandom.hex(4)).to_s }
 

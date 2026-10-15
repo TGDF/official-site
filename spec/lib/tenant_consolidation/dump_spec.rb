@@ -5,6 +5,7 @@ require 'rails_helper'
 # rubocop:disable RSpec/MultipleExpectations
 RSpec.describe TenantConsolidation::Dump do
   include_context 'with consolidation tenants'
+  include_context 'with sponsor before its switch'
 
   let(:models) { %w[SponsorLevel Sponsor] }
   let(:uploads) { { 'Sponsor' => :logo } }

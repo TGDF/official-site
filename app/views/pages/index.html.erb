@@ -12,5 +12,5 @@
     <%= render PlanListComponent.new(site: current_site) %>
   <% end %>
   <%= render 'pages/index/news' if @news.exists? %>
-  <%= render 'pages/index/partner' if Sponsor.exists? || Partner.exists? %>
+  <%= render 'pages/index/partner' if Sponsor.exists? %>
 <% end %>

@@ -17,6 +17,8 @@ Apartment.configure do |config|
     Plan
     Block
     Slider
+    SponsorLevel
+    Sponsor
     ActiveStorage::Blob
     ActiveStorage::Attachment
     ActiveStorage::VariantRecord

@@ -123,3 +123,26 @@ RSpec.shared_context 'with consolidation tenants' do
     end
   end
 end
+
+# Sponsor serves from the public schema since its switch, where Apartment pins its
+# table to public. The sponsor tasks still carry the move that ran before it, so these
+# specs put SponsorLevel and Sponsor back in the tenant schemas for the example. The
+# table names change in an around hook, which wraps every before and after hook, so
+# the consolidation reset reaches the tenant tables too.
+RSpec.shared_context 'with sponsor before its switch' do
+  around do |example|
+    pinned = switched_models.to_h { |model| [ model, model.table_name ] }
+    switched_models.each { |model| model.table_name = model.table_name.split('.', 2).last }
+    example.run
+  ensure
+    pinned.each { |model, name| model.table_name = name }
+  end
+
+  before do
+    allow(Apartment).to receive(:excluded_models).and_return(Apartment.excluded_models - switched_models.map(&:name))
+  end
+
+  def switched_models
+    [ SponsorLevel, Sponsor ]
+  end
+end

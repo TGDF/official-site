@@ -13,6 +13,7 @@ Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidati
 # rubocop:disable RSpec/DescribeClass, RSpec/MultipleExpectations, RSpec/ExampleLength
 RSpec.describe 'the sponsor move, backup to switch' do
   include_context 'with consolidation tenants'
+  include_context 'with sponsor before its switch'
 
   let(:bucket) { 'files.example.test' }
   let(:objects) { {} }

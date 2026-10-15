@@ -33,8 +33,8 @@ Feature: Admin manage Sponsors
       | field    | value  |
       | level_id | 白金級 |
     And I attach files in the "sponsor" form
-      | field | value    |
-      | logo  | TGDF.png |
+      | field           | value    |
+      | logo_attachment | TGDF.png |
     And I click "新增Sponsor" button
     Then I can see these items in table
       | text    |
