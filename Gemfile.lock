@@ -147,8 +147,9 @@ GEM
       ostruct
     connection_pool (3.0.2)
     crass (1.0.7)
-    css_parser (3.0.0)
+    css_parser (3.3.0)
       addressable
+      base64
       ssrf_filter (~> 1.5)
     cssbundling-rails (1.4.3)
       railties (>= 6.0.0)
