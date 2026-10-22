@@ -27,10 +27,6 @@ RSpec.describe 'tenant_consolidation:game:migrate' do
     silently { run_task('tenant_consolidation:game:migrate', location) }
   end
 
-  def stored_files
-    Dir.glob(File.join(ActiveStorage::Blob.service.root, '**', '*')).select { |path| File.file?(path) }
-  end
-
   def public_thumbnail
     in_public { Game.unscoped.find_by(site_id: main_site.id).thumbnail_attachment }
   end

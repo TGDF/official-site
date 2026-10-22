@@ -16,10 +16,6 @@ Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidati
 RSpec.describe 'tenant_consolidation rake tasks' do
   include_context 'with consolidation tenants'
 
-  def stored_files
-    Dir.glob(File.join(ActiveStorage::Blob.service.root, '**', '*')).select { |path| File.file?(path) }
-  end
-
   describe 'guard rails' do
     it 'aborts when no group is given' do
       expect { run_task('tenant_consolidation:consolidate') }.to raise_error(SystemExit)
