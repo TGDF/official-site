@@ -5,22 +5,6 @@ module TenantConsolidation
   # through its raw columns so Mobility's JSONB translations keep every locale, and a
   # foreign key is only ever rewritten to a parent this run has already migrated.
   module Records
-    # Mobility JSONB attributes per model — the columns whose locale set is checked
-    # after each write, since a lost locale would otherwise pass silently.
-    TRANSLATED_ATTRS = {
-      "Plan" => %w[name content button_label button_target],
-      "Sponsor" => %w[name description],
-      "SponsorLevel" => %w[name],
-      "Partner" => %w[name description],
-      "PartnerType" => %w[name],
-      "Game" => %w[name description team],
-      "News" => %w[title content],
-      "Speaker" => %w[name title description],
-      "Agenda" => %w[subject description],
-      "AgendaTag" => %w[name],
-      "MenuItem" => %w[name link]
-    }.freeze
-
     module_function
 
     # Reads through `record[name]`, bypassing Mobility's attribute_methods plugin, which
@@ -41,14 +25,20 @@ module TenantConsolidation
       end
     end
 
+    # The Mobility JSONB attributes the model declares with `translates` — the columns
+    # whose locale set is checked after each write, since a lost locale would
+    # otherwise pass silently.
+    def translated_attributes(model_name)
+      model = model_name.constantize
+      model.respond_to?(:mobility_attributes) ? model.mobility_attributes : []
+    end
+
     def capture_source_translations(record, model_name)
-      translated_attrs = TRANSLATED_ATTRS[model_name] || []
-      translated_attrs.to_h { |attr| [ attr, record[attr] ] }
+      translated_attributes(model_name).to_h { |attr| [ attr, record[attr] ] }
     end
 
     def verify_translations_preserved(source_translations, new_record, model_name)
-      translated_attrs = TRANSLATED_ATTRS[model_name] || []
-      translated_attrs.each do |attr|
+      translated_attributes(model_name).each do |attr|
         source_locales = (source_translations[attr] || {}).keys.sort
         new_locales = (new_record[attr] || {}).keys.sort
         if source_locales != new_locales
