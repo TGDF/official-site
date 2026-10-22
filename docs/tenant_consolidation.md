@@ -488,6 +488,7 @@ Each promise below has a spec that objects when it breaks.
 | a lost original taken over from its largest version | sponsor, game |
 | `type` kept per kind; a missing locale left to fallback | game |
 | a wrong-size body refused, no file left, rows before assets | game |
+| rollback after the switch leaves no upload or variant file | game |
 
 The specs run without transactional fixtures (they issue CREATE/DROP SCHEMA) through `spec/support/tenant_consolidation.rb`. CarrierWave stores locally in test, so downloads are stubbed and byte identity is approximated by byte size, but analysis runs real vips — CI installs libvips for it. A task that finds a problem exits non-zero; a spec must catch that exit, because one escaping an example ends the run while still reporting no failures.
 

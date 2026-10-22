@@ -850,6 +850,9 @@ namespace :tenant_consolidation do
     Apartment::Tenant.switch("public") do
       model_class.unscoped.find_each do |record|
         if attachment && record.public_send(attachment).attached?
+          # A blob's purge leaves its variants to purge_later, whose job runs on the
+          # in-process :async adapter and dies with this task — purge them here.
+          record.public_send(attachment).blob.variant_records.each { |variant| variant.image.purge }
           record.public_send(attachment).purge
           attachments_purged += 1
         end

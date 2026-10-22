@@ -72,6 +72,10 @@ RSpec.shared_context 'with consolidation tenants' do
     in_public { model.unscoped.count }
   end
 
+  def stored_files
+    Dir.glob(File.join(ActiveStorage::Blob.service.root, '**', '*')).select { |path| File.file?(path) }
+  end
+
   # site_id is set explicitly: save!(validate: false) skips acts_as_tenant's
   # before_validation tenant assignment, so it would otherwise be nil.
   def seed_sponsor(site, level_name:, sponsor_name:, with_logo: false, logo_file: test_png, logo_name: File.basename(logo_file))

@@ -68,6 +68,22 @@ RSpec.describe 'the game move, backup to switch' do
     end
   end
 
+  # Recovery after the switch deploy: the switch is reverted, then rollback[game]
+  # runs, by which time pages have already made variants of the thumbnails.
+  it 'leaves no thumbnail or variant file behind when rolled back after the switch' do
+    seed_game(main_site, name: { 'zh-TW' => '流明' }, as: IndieSpace::Game, with_thumbnail: true)
+    stored_before = stored_files
+    run(:backup)
+    run(:migrate)
+
+    switch_to_public
+    in_public { Game.unscoped.sole.thumbnail_url(:thumb).processed }
+    allow(Apartment).to receive(:excluded_models).and_call_original
+    silently { run_task('tenant_consolidation:rollback', 'game') }
+
+    expect([ ActiveStorage::Blob.count, stored_files - stored_before ]).to eq([ 0, [] ])
+  end
+
   it 'takes a thumbnail over from its largest version when the original is gone' do
     game = seed_game(night_market_site, name: { 'zh-TW' => '迷霧國度' }, as: NightMarket::Game, with_thumbnail: true)
     large_path = within_tenant(night_market_site) do
