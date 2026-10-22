@@ -16,8 +16,9 @@ module TenantConsolidation
   #
   # An upload whose original is gone is taken over from the largest version
   # CarrierWave cut from it, and recorded in `stand_ins`; ActiveStorage derives its
-  # own variants from whatever original it is given. With no version left either,
-  # the upload stays missing and the import refuses it.
+  # own variants from whatever original it is given. With no version left either, or
+  # with an original whose size could not be read, the upload stays missing and the
+  # import refuses it.
   class Plan
     Row = Data.define(:source, :model, :attributes, :refs, :upload)
     StandIn = Data.define(:source, :field, :version, :missing_path, :path)
@@ -51,7 +52,7 @@ module TenantConsolidation
     private
 
     def with_stand_in(row)
-      return row unless row.upload&.missing?
+      return row unless row.upload&.gone?
 
       name, version = row.upload.versions.reject { |_name, file| file["size"].to_i.zero? }
                          .max_by { |_name, file| file["size"] }

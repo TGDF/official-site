@@ -31,6 +31,8 @@ module TenantConsolidation
     Upload = Data.define(:field, :url, :path, :size, :versions) do
       # fog reports 0 for an object that is not there, and nil when it cannot tell.
       def missing? = size.to_i.zero?
+
+      def gone? = size == 0 # rubocop:disable Style/NumericPredicate -- nil is not zero here
     end
 
     Row = Data.define(:id, :attributes, :upload)
