@@ -81,7 +81,7 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 | 4 | menu_item | MenuItem | - | ✅ Complete |
 | 5 | sponsor | SponsorLevel, Sponsor | logo | ✅ Complete — [runbook](tenant/migrate_sponsor.md) |
 | 6 | **partner** | **→ folds into Sponsor** | **logo** | ✅ Complete — folded into sponsor; Partner stays frozen until Phase 5 |
-| 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | ⏳ Pending |
+| 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | 🔧 Preparing — [runbook](tenant/migrate_game.md) |
 | 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | ⏳ Pending |
 | 9 | news | News | thumbnail | ⏳ Pending |
 | 10 | attachment | Attachment (+Image STI) | file | ⏳ Pending |
@@ -142,7 +142,8 @@ Every group still ahead moves by **dump → transform → import**, and gets its
 | Group | Runbook |
 |---|---|
 | 5 sponsor, with 6 partner folded in | [tenant/migrate_sponsor.md](tenant/migrate_sponsor.md) |
-| 7 game, 8 agenda, 9 news, 10 attachment | written when the group's round starts |
+| 7 game | [tenant/migrate_game.md](tenant/migrate_game.md) |
+| 8 agenda, 9 news, 10 attachment | written when the group's round starts |
 
 ```
  backup ──▶ dump.json ── S3 (private), downloaded and kept
@@ -167,7 +168,19 @@ Why this shape rather than moving rows in place:
 | Cross-group references (`Attachment.record_id`) | cannot be remapped (the id map lives one run) | the id map is a file |
 | Rehearsal on production data | no | locally, against the production dump |
 
-Row and asset handling shared by both paths lives in `lib/tenant_consolidation/` (`Records`, `Assets`, `Dump`, `Store`); a group adds only its own rules (sponsor: `SponsorGroup::Transform`). `consolidate[group]` stays for groups that have no runbook yet, and refuses sponsor and partner.
+### Pipeline Parts
+
+Each part of the pipeline lives in `lib/tenant_consolidation/`, and a group supplies only what is its own.
+
+| Part | Role |
+|---|---|
+| `Dump`, `Store` | the reviewed file, and where a run keeps it |
+| `Plan` | what one dumped site becomes; a stand-in for a lost original |
+| `Census`, `Import`, `Verify` | backup's report, migrate, the row-by-row check |
+| `Records`, `Assets` | raw-column writes, the locale check, upload transfer |
+| A group module | its models, uploads, public targets and `plan(site)` |
+
+Listing a group in `DUMP_GROUPS` gives it `backup`, `migrate` and `verify`. Game carries each row as it is (`Plan.carry`); sponsor folds Partner in (`SponsorGroup::Transform`). An upload whose original is gone is taken over from its largest CarrierWave version. `consolidate[group]` refuses every dump group, partner included.
 
 ### What every runbook carries
 
@@ -228,9 +241,14 @@ bin/rails tenant_consolidation:sponsor:backup                 # dump + census, n
 bin/rails "tenant_consolidation:sponsor:migrate[<location>]"  # import the dump, write the id map
 bin/rails "tenant_consolidation:sponsor:verify[<location>]"   # row by row; exits 1 on any problem
 
-# In-place consolidation, for groups with no runbook yet. Refuses sponsor and partner.
-bin/rails "tenant_consolidation:consolidate[game]"
-bin/rails "tenant_consolidation:consolidate[game,true]"     # Dry run
+# Game — see tenant/migrate_game.md; every group in DUMP_GROUPS has the same three
+bin/rails tenant_consolidation:game:backup
+bin/rails "tenant_consolidation:game:migrate[<location>]"
+bin/rails "tenant_consolidation:game:verify[<location>]"
+
+# In-place consolidation, for groups with no dump tasks. Refuses every dump group.
+bin/rails "tenant_consolidation:consolidate[news]"
+bin/rails "tenant_consolidation:consolidate[news,true]"     # Dry run
 
 # Verification - all verifications use group names
 bin/rails "tenant_consolidation:verify[slider]"             # Verify single model group
@@ -442,14 +460,34 @@ Note: a group stops accumulating CarrierWave data automatically once consolidate
 
 ## Testing the Consolidation
 
-The move is one-shot and destructive, so its promises are pinned by integration specs that seed real tenant schemas and drive the actual tasks. Each promise of the dump, the sponsor tasks and the in-place asset and remapping checks was proven by breaking it on purpose and watching a spec object; the older refusal guards (partner, attachment, news) were not.
+The move is one-shot and destructive, so its promises are pinned by integration specs that seed real tenant schemas and drive the actual tasks. Each promise of the dump, the group tasks, the asset transfer and the remapping was proven by breaking it on purpose. The older refusal guards (partner, attachment, news) were not.
 
-| Spec | Pins |
+| Spec | Covers |
 |---|---|
-| `spec/lib/tasks/tenant_consolidation_spec.rb` | in-place `consolidate`: foreign keys remapped per tenant (agenda day → time), locales kept, asset byte size including a CDN's wrong body, no file left in storage by a rejected or failed asset, rows committed before assets, dry run, re-run guard, sequences; and the refusals of sponsor, partner, a set `Attachment.record_id`, a non-`AdminUser` news author |
-| `spec/lib/tenant_consolidation/` | the dump — every column, microsecond timestamps, uploads keyed on the stored filename with their CarrierWave versions, a truncated file refused — and the run store, private and only under `consolidation/` |
-| `spec/lib/tasks/sponsor_*_spec.rb` | the sponsor tasks, end to end through S3 and the switch: a logo named as stored even when not ASCII, analyzed before the task exits, and named by verify when vips cannot read it — the runbook's *safety net* lists what each layer catches |
-| `spec/models/speaker_spec.rb`, `spec/lib/tasks/backfill_speaker_slugs_spec.rb` | two sites may share a speaker slug and one site may not; the backfill |
+| `spec/lib/tasks/tenant_consolidation_spec.rb` | in-place `consolidate` and its refusals |
+| `spec/lib/tenant_consolidation/` | the dump, the run store, the locale check |
+| `spec/lib/tasks/sponsor_*_spec.rb` | the sponsor tasks, through S3 and the switch |
+| `spec/lib/tasks/game_*_spec.rb` | the game tasks through the switch; asset transfer |
+| `spec/models/speaker_spec.rb`, `backfill_speaker_slugs_spec.rb` | per-site speaker slugs; the backfill |
+
+### Pinned Promises
+
+Each promise below has a spec that objects when it breaks.
+
+| Promise | Spec |
+|---|---|
+| foreign keys remapped per tenant (day → time) | in-place |
+| dry run, re-run guard, usable sequences | in-place |
+| refusing dump groups, partner, `record_id`, a non-`AdminUser` author | in-place |
+| every column, microsecond timestamps, a truncated dump refused | dump |
+| uploads keyed on the stored filename, with their versions | dump |
+| runs private and only under `consolidation/` | store |
+| a locale lost in writing raises | records |
+| a logo named as stored, even when not ASCII | sponsor |
+| analyzed before the task exits; unreadable named by verify | sponsor |
+| a lost original taken over from its largest version | sponsor, game |
+| `type` kept per kind; a missing locale left to fallback | game |
+| a wrong-size body refused, no file left, rows before assets | game |
 
 The specs run without transactional fixtures (they issue CREATE/DROP SCHEMA) through `spec/support/tenant_consolidation.rb`. CarrierWave stores locally in test, so downloads are stubbed and byte identity is approximated by byte size, but analysis runs real vips — CI installs libvips for it. A task that finds a problem exits non-zero; a spec must catch that exit, because one escaping an example ends the run while still reporting no failures.
 
@@ -640,7 +678,7 @@ After Apartment removal, clean up CarrierWave.
 
 ### 5.0 Rewrite CKEditor Embedded URLs (BEFORE deleting S3 files)
 
-> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` does not exist.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `verify_consolidated_assets`, `migrate_public_assets`, `backfill_markers`, `backfill_speaker_slugs`, `sponsor:backup`, `sponsor:migrate`, `sponsor:verify`. How the rewrite resolves a reference is **Open question 1** — settle that before building it.
+> ⚠️ **`tenant_consolidation:rewrite_ckeditor_urls` does not exist.** Defined tasks are: `status`, `consolidate`, `verify`, `rollback`, `reset_sequences`, `cleanup_attachments`, `verify_uploads_unreferenced`, `verify_consolidated_assets`, `migrate_public_assets`, `backfill_markers`, `backfill_speaker_slugs`, and `backup`, `migrate`, `verify` for each group in `DUMP_GROUPS`. How the rewrite resolves a reference is **Open question 1** — settle that before building it.
 
 Rich text embeds an upload as inline HTML, addressed by the id the row had in its tenant schema. Consolidation replaces that id, and deleting `/uploads/` turns every unrewritten embed into a permanent 404. The fields that can hold one are `RICH_TEXT_FIELDS` in the rake task — every rich-text body (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus the URL inputs an admin can point at an upload (`MenuItem.link`, `Plan.button_target`). That set is exactly what `verify_uploads_unreferenced` scans; keep both in step with the data-editor forms.
 

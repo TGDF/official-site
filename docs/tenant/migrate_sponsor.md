@@ -237,7 +237,7 @@ From step 2 until the switch deploy is live, an admin edit to either group would
 | `app/controllers/sponsors_controller.rb`, `app/views/sponsors/index.html.erb` | drop `@partner_types` |
 | `features/admin/admin_sponsors.feature`, `features/admin/sponsors.feature` | the attached field is `logo_attachment` |
 | `features/step_definitions/sponsor.rb`, `spec/factories/sponsors.rb` | attach the logo through `logo_attachment` |
-| the sponsor task specs, `spec/support/tenant_consolidation.rb` | include `with sponsor before its switch`, which puts both models back in the tenant schemas |
+| the sponsor task specs | include `with a group before its switch` with `SponsorGroup`, which puts both models back in the tenant schemas |
 
 It is one commit, pushed only after step 3 prints `OK`, with RSpec and Cucumber green. Every partner is now a sponsor, so the public pages stop reading Partner or each would show twice. The tests follow ActiveStorage so they exercise the path production now takes rather than the CarrierWave fallback. The sponsor task specs keep pinning the move as it ran, before the switch, since Apartment pins an excluded model's table to public. The Partner admin screens stay, behind `consolidation_freeze_partner`, until Phase 5 removes Partner.
 
