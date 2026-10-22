@@ -52,7 +52,7 @@ A thumbnail whose original is gone moves from the largest version CarrierWave cu
                                         └── no ──▶ preflight refuses the run
 ```
 
-ActiveStorage derives every variant from whatever original it receives. The census lists each stand-in under *taken over from their largest version*. The id map records it under `stand_ins`, so the choice stays reviewable after the move. The blob keeps the name in the `thumbnail` column.
+Only an original S3 reports at size 0 counts as gone; one whose size cannot be read stays missing. ActiveStorage derives every variant from whatever original it receives. The census lists each stand-in under *taken over from their largest version*. The id map records it under `stand_ins`, so the choice stays reviewable after the move. The blob keeps the name in the `thumbnail` column.
 
 ## Missing locales
 
