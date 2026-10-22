@@ -5,7 +5,7 @@
 # resolved when a task runs (tasks load before the application autoloads), and has
 # its runbook at docs/tenant/migrate_<name>.md.
 namespace :tenant_consolidation do
-  DUMP_GROUPS = %w[sponsor].freeze
+  DUMP_GROUPS = %w[sponsor game].freeze
 
   def dump_group(name) = TenantConsolidation.const_get("#{name.camelize}Group")
 

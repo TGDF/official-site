@@ -102,9 +102,9 @@ RSpec.shared_context 'with consolidation tenants' do
     end
   end
 
-  def seed_game(site, name:, with_thumbnail: false)
+  def seed_game(site, name:, as: Game, with_thumbnail: false)
     within_tenant(site) do
-      game = Game.new(site_id: site.id)
+      game = as.new(site_id: site.id)
       game[:name] = name
       game.thumbnail = Rack::Test::UploadedFile.new(test_png, 'image/png') if with_thumbnail
       game.save!(validate: false)
