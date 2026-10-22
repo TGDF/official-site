@@ -30,12 +30,20 @@ RSpec.describe 'tenant_consolidation:sponsor:backup' do
       .to eq('SponsorLevel' => 1, 'Sponsor' => 1, 'PartnerType' => 1, 'Partner' => 1)
   end
 
-  it 'reports a logo whose source file is gone' do
+  it 'reports a logo whose source file and every version of it are gone' do
+    sponsor = seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' },
+                                      with_logo: true)
+    within_tenant(main_site) { FileUtils.rm_r(File.dirname(Sponsor.unscoped.find(sponsor.id).logo.path)) }
+
+    expect { backup }.to output(/source file is missing \(1\)\n  main Sponsor##{sponsor.id} /).to_stdout
+  end
+
+  it 'reports a logo taken over from its largest version, the original being gone' do
     sponsor = seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' },
                                       with_logo: true)
     within_tenant(main_site) { FileUtils.rm(Sponsor.unscoped.find(sponsor.id).logo.path) }
 
-    expect { backup }.to output(/source file is missing \(1\)\n  main Sponsor##{sponsor.id} /).to_stdout
+    expect { backup }.to output(/original being gone \(1\)\n  main Sponsor##{sponsor.id} logo ← v1 .*v1_TGDF\.png/).to_stdout
   end
 
   it 'reports an ActiveStorage attachment already sitting on a Sponsor id' do

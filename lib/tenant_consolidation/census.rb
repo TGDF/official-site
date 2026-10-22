@@ -2,8 +2,9 @@
 
 module TenantConsolidation
   # What a group's dump holds and what the import will meet, read before anything is
-  # written: the rows per site, the files that cannot be fetched, the attachments left
-  # where none should be, and whatever the group's own rules will do on import.
+  # written: the rows per site, the files that cannot be fetched, the versions standing
+  # in for a lost original, the attachments left where none should be, and whatever
+  # the group's own rules will do on import.
   class Census
     Missing = Data.define(:tenant_name, :model, :id, :path)
 
@@ -13,12 +14,14 @@ module TenantConsolidation
     end
 
     def missing_sources
-      @dump.sites.flat_map do |site|
-        @group::UPLOADS.keys.flat_map do |model|
-          site.rows(model).select { |row| row.upload&.missing? }
-              .map { |row| Missing.new(site.tenant_name, model, row.id, row.upload.path) }
-        end
+      plans.flat_map do |plan|
+        plan.rows.select { |row| row.upload&.missing? }
+            .map { |row| Missing.new(plan.site.tenant_name, *row.source, row.upload.path) }
       end
+    end
+
+    def stand_ins
+      plans.flat_map { |plan| plan.stand_ins.map { |stand_in| [ plan.site.tenant_name, stand_in ] } }
     end
 
     # A consolidated model is the only one that may carry an ActiveStorage
@@ -34,6 +37,9 @@ module TenantConsolidation
         section("Uploads whose source file is missing", missing_sources) do |m|
           "#{m.tenant_name} #{m.model}##{m.id} #{m.path}"
         end,
+        section("Uploads taken over from their largest version, the original being gone", stand_ins) do |tenant_name, s|
+          "#{tenant_name} #{s.source.join('#')} #{s.field} ← #{s.version} #{s.path}"
+        end,
         section("Leftover ActiveStorage attachments on #{@group::UPLOADS.keys.join('/')}",
                 leftover_attachments.to_a) { |type, count| "#{type}: #{count}" },
         *group_sections
@@ -41,6 +47,10 @@ module TenantConsolidation
     end
 
     private
+
+    def plans
+      @plans ||= @dump.sites.map { |site| @group.plan(site) }
+    end
 
     def group_sections
       return [] unless @group.respond_to?(:census_sections)

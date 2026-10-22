@@ -61,6 +61,9 @@ module TenantConsolidation
         "sites" => ids,
         "skipped" => plans.to_h do |plan|
           [ plan.site.tenant_name, plan.skipped.transform_values { |rows| rows.map(&:id) } ]
+        end,
+        "stand_ins" => plans.to_h do |plan|
+          [ plan.site.tenant_name, plan.stand_ins.map { |stand_in| stand_in.to_h.transform_keys(&:to_s) } ]
         end
       )
     end

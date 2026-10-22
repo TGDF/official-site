@@ -134,10 +134,10 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
   describe 'refusing before anything is written' do
     before { seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' }) }
 
-    it 'refuses a logo whose source file is gone' do
+    it 'refuses a logo whose source file and every version of it are gone' do
       sponsor = seed_sponsor(main_site, level_name: { 'en' => 'Silver' }, sponsor_name: { 'en' => 'Lost' },
                                         with_logo: true)
-      within_tenant(main_site) { FileUtils.rm(Sponsor.unscoped.find(sponsor.id).logo.path) }
+      within_tenant(main_site) { FileUtils.rm_r(File.dirname(Sponsor.unscoped.find(sponsor.id).logo.path)) }
       backup
 
       expect { migrate }.to raise_error(TenantConsolidation::Import::Invalid, /logo source is missing/)
@@ -183,6 +183,25 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
 
     expect { migrate }.to raise_error('boom')
     expect([ public_count(SponsorLevel), public_count(Sponsor) ]).to eq([ 0, 0 ])
+  end
+
+  it 'takes a logo over from its largest version when the original is gone, and records it' do
+    sponsor = seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' }, with_logo: true)
+    version_path = within_tenant(main_site) do
+      logo = Sponsor.unscoped.find(sponsor.id).logo
+      FileUtils.rm(logo.path)
+      logo.v1.path
+    end
+    backup
+    allow(URI).to receive(:open) { File.open(version_path, 'rb') }
+    migrate
+
+    attachment = public_sponsor(main_site).logo_attachment
+    expect([ attachment.filename.to_s, attachment.byte_size ]).to eq([ 'TGDF.png', File.size(version_path) ])
+    expect(id_map.dig('stand_ins', 'main')).to contain_exactly(
+      hash_including('source' => [ 'Sponsor', sponsor.id ], 'field' => 'logo', 'version' => 'v1')
+    )
+    expect { silently { run_task('tenant_consolidation:sponsor:verify', location) } }.not_to raise_error
   end
 
   it 'names the attached logo exactly as CarrierWave stored it, even when the name is not ASCII' do
