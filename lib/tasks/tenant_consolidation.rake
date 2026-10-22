@@ -36,6 +36,9 @@ namespace :tenant_consolidation do
     "Site" => %w[description indie_space_description options]
   }.freeze
 
+  # Groups retired into another group's move, by the group they fold into.
+  FOLDED_GROUPS = { "partner" => "sponsor" }.freeze
+
   # Migration groups - ALL models are organized into groups for consistent migration
   # Single-model groups have no FK dependencies; multi-model groups must migrate together
   # Order determines migration sequence within group (parents before children)
@@ -123,12 +126,13 @@ namespace :tenant_consolidation do
       exit 1
     end
 
-    # Sponsor moves by dump and import, with the retired Partner rows folded into it —
-    # never in place, and never as standalone Partner rows.
-    if %w[sponsor partner].include?(group_name)
-      puts "ERROR: The '#{group_name}' group moves through the sponsor tasks, with Partner folded into Sponsor."
-      puts "Run: bin/rails 'tenant_consolidation:sponsor:backup', then sponsor:migrate and sponsor:verify"
-      puts "(docs/tenant/migrate_sponsor.md)"
+    # A group with dump tasks never moves in place; the retired Partner rows fold into
+    # Sponsor and never move as standalone rows.
+    dump_name = FOLDED_GROUPS.fetch(group_name, group_name)
+    if DUMP_GROUPS.include?(dump_name)
+      puts "ERROR: The '#{group_name}' group moves through the #{dump_name} dump tasks."
+      puts "Run: bin/rails 'tenant_consolidation:#{dump_name}:backup', then #{dump_name}:migrate and #{dump_name}:verify"
+      puts "(docs/tenant/migrate_#{dump_name}.md)"
       exit 1
     end
 

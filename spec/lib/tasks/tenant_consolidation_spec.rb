@@ -5,9 +5,10 @@ require 'rails_helper'
 # Load the rake tasks once when this spec file is required (idempotent guard).
 Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidation:consolidate')
 
-# Integration tests for the in-place consolidate task, which the groups still ahead of
-# the dump-and-import tasks move through: FK ID remapping, Mobility translations, asset
-# transfer (byte size), re-run guard, and the guards that refuse a group it must not move.
+# Integration tests for the in-place consolidate task, which the groups without dump
+# tasks still move through: FK ID remapping, dry run, re-run guard, and the guards
+# that refuse a group it must not move. Asset transfer is pinned on the dump path
+# (game_migrate_spec.rb).
 #
 # Integration examples legitimately drive a whole flow and assert several outcomes,
 # so the per-example RSpec metric cops are relaxed for this file.
@@ -37,6 +38,14 @@ RSpec.describe 'tenant_consolidation rake tasks' do
 
     it 'aborts the retired partner group, which folds into sponsor' do
       expect { run_task('tenant_consolidation:consolidate', 'partner') }.to raise_error(SystemExit)
+    end
+
+    it 'aborts the game group, which moves through the game tasks' do
+      seed_game(main_site, name: { 'en' => 'Quest' })
+
+      expect { run_task('tenant_consolidation:consolidate', 'game') }
+        .to raise_error(SystemExit).and output(/tenant_consolidation:game:backup/).to_stdout
+      expect(public_count(Game)).to eq(0)
     end
 
     it 'aborts attachment consolidation when a polymorphic record_id is set' do
@@ -100,124 +109,13 @@ RSpec.describe 'tenant_consolidation rake tasks' do
     end
   end
 
-  describe 'consolidate[game]' do
-    it 'preserves all Mobility locales' do
-      seed_game(main_site, name: { 'en' => 'Quest', 'zh-TW' => '冒險' })
-
-      run_task('tenant_consolidation:consolidate', 'game')
-
-      in_public do
-        expect(Game.unscoped.find_by(site_id: main_site.id)[:name]).to eq({ 'en' => 'Quest', 'zh-TW' => '冒險' })
-      end
-    end
-
+  describe 'consolidate[agenda]' do
     it 'writes nothing to the public schema on a dry run' do
-      seed_game(main_site, name: { 'en' => 'Quest' })
+      seed_agenda_time(main_site, day_label: 'Day 1', time_label: '09:00')
 
-      run_task('tenant_consolidation:consolidate', 'game', 'true')
+      run_task('tenant_consolidation:consolidate', 'agenda', 'true')
 
-      expect(public_count(Game)).to eq(0)
-    end
-  end
-
-  describe 'consolidate[game] asset transfer' do
-    let(:asset_site) do
-      create(:site, name: 'Asset', domain: 'asset.example.test', tenant_name: 'spec_cons_asset')
-    end
-
-    it 'attaches the thumbnail to ActiveStorage with a matching byte size, even for a record invalid under current validations' do
-      # Name only in :en — under the default locale (zh-TW) the Game is invalid.
-      # ActiveStorage#attach auto-saves only a valid record, so this also exercises the
-      # task's validate:false persistence (a legacy row predating a tightened rule must
-      # still get its attachment, not silently lose it while the in-memory check passes).
-      seed_game(asset_site, name: { 'en' => 'WithThumbnail' }, with_thumbnail: true)
-
-      # CarrierWave uses local file storage in test, so the download URL is not
-      # HTTP-fetchable — return the on-disk test image for the asset download.
-      allow(URI).to receive(:open) { File.open(test_png, 'rb') }
-
-      run_task('tenant_consolidation:consolidate', 'game')
-
-      in_public do
-        game = Game.unscoped.find_by(site_id: asset_site.id)
-        expect(game.thumbnail_attachment).to be_attached
-        expect(game.thumbnail_attachment.byte_size).to eq(File.size(test_png))
-      end
-    end
-
-    # A CDN can answer a missing object with 200 and an HTML error page: non-empty, so
-    # only the comparison with the source size read from storage tells it apart.
-    context 'when the downloaded body differs from the source size' do
-      before do
-        seed_game(asset_site, name: { 'en' => 'WithThumbnail' }, with_thumbnail: true)
-        allow(URI).to receive(:open) { StringIO.new('<html>Not Found</html>') }
-      end
-
-      it 'aborts the run' do
-        expect { run_task('tenant_consolidation:consolidate', 'game') }
-          .to raise_error(RuntimeError, /Asset size mismatch/)
-      end
-
-      it 'leaves the asset unattached' do
-        suppress(RuntimeError) { run_task('tenant_consolidation:consolidate', 'game') }
-
-        in_public do
-          expect(Game.unscoped.find_by(site_id: asset_site.id).thumbnail_attachment).not_to be_attached
-        end
-      end
-
-      it 'leaves no file of the rejected body in storage' do
-        before = stored_files
-        suppress(RuntimeError) { run_task('tenant_consolidation:consolidate', 'game') }
-
-        expect(stored_files - before).to be_empty
-      end
-    end
-
-    context 'when a step after the upload fails' do
-      before do
-        seed_game(asset_site, name: { 'en' => 'WithThumbnail' }, with_thumbnail: true)
-        allow(URI).to receive(:open) { File.open(test_png, 'rb') }
-        allow(ActiveStorage::Blob).to receive(:create_and_upload!).and_wrap_original do |original, **options|
-          original.call(**options).tap { |blob| allow(blob).to receive(:analyze).and_raise('analysis failed') }
-        end
-      end
-
-      it 'leaves no file of the uploaded blob in storage' do
-        before = stored_files
-        suppress(RuntimeError) { run_task('tenant_consolidation:consolidate', 'game') }
-
-        expect(stored_files - before).to be_empty
-      end
-    end
-
-    # Assets move after the rows commit, so their transaction does not stay open across
-    # every download in the group. A failed run therefore leaves the rows in public,
-    # and recovery is rollback[group] + redo.
-    context 'when a download fails' do
-      before do
-        seed_game(asset_site, name: { 'en' => 'WithThumbnail' }, with_thumbnail: true)
-        allow(URI).to receive(:open).and_raise(Errno::ECONNREFUSED)
-      end
-
-      it 'aborts the run' do
-        expect { run_task('tenant_consolidation:consolidate', 'game') }
-          .to raise_error(Errno::ECONNREFUSED)
-      end
-
-      it 'leaves the rows committed rather than rolling the tenant back' do
-        suppress(Errno::ECONNREFUSED) { run_task('tenant_consolidation:consolidate', 'game') }
-
-        expect(public_count(Game)).to eq(1)
-      end
-
-      it 'leaves the asset unattached' do
-        suppress(Errno::ECONNREFUSED) { run_task('tenant_consolidation:consolidate', 'game') }
-
-        in_public do
-          expect(Game.unscoped.find_by(site_id: asset_site.id).thumbnail_attachment).not_to be_attached
-        end
-      end
+      expect([ public_count(AgendaDay), public_count(AgendaTime) ]).to eq([ 0, 0 ])
     end
   end
 end
