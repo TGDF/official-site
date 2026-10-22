@@ -9,7 +9,7 @@ Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidati
 # rubocop:disable RSpec/DescribeClass, RSpec/MultipleExpectations, RSpec/ExampleLength
 RSpec.describe 'tenant_consolidation:sponsor:migrate' do
   include_context 'with consolidation tenants'
-  include_context 'with sponsor before its switch'
+  include_context 'with a group before its switch', TenantConsolidation::SponsorGroup
 
   let(:location) { Rails.root.join('tmp/consolidation/spec', SecureRandom.hex(4)).to_s }
   let(:dump_path) { File.join(location, 'dump.json') }

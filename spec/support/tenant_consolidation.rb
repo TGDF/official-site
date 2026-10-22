@@ -124,12 +124,15 @@ RSpec.shared_context 'with consolidation tenants' do
   end
 end
 
-# Sponsor serves from the public schema since its switch, where Apartment pins its
-# table to public. The sponsor tasks still carry the move that ran before it, so these
-# specs put SponsorLevel and Sponsor back in the tenant schemas for the example. The
-# table names change in an around hook, which wraps every before and after hook, so
-# the consolidation reset reaches the tenant tables too.
-RSpec.shared_context 'with sponsor before its switch' do
+# A group serves from the public schema once its switch is deployed, where Apartment
+# pins each of its tables to public. Its dump tasks still carry the move that ran
+# before it, so a spec including this context with the group's module puts the
+# group's models back in the tenant schemas for the example. The table names change
+# in an around hook, which wraps every before and after hook, so the consolidation
+# reset reaches the tenant tables too.
+RSpec.shared_context 'with a group before its switch' do |group|
+  let(:switched_models) { group::TARGETS.map(&:constantize) }
+
   around do |example|
     pinned = switched_models.to_h { |model| [ model, model.table_name ] }
     switched_models.each { |model| model.table_name = model.table_name.split('.', 2).last }
@@ -139,10 +142,6 @@ RSpec.shared_context 'with sponsor before its switch' do
   end
 
   before do
-    allow(Apartment).to receive(:excluded_models).and_return(Apartment.excluded_models - switched_models.map(&:name))
-  end
-
-  def switched_models
-    [ SponsorLevel, Sponsor ]
+    allow(Apartment).to receive(:excluded_models).and_return(Apartment.excluded_models - group::TARGETS)
   end
 end

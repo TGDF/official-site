@@ -26,7 +26,7 @@ RSpec.describe 'tenant_consolidation rake tasks' do
     end
 
     context 'when sponsor is still in the tenant schemas' do
-      include_context 'with sponsor before its switch'
+      include_context 'with a group before its switch', TenantConsolidation::SponsorGroup
 
       it 'aborts the sponsor group, which moves through the sponsor tasks' do
         seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' })
