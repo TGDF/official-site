@@ -2,9 +2,7 @@
 
 module TenantConsolidation
   module SponsorGroup
-    # What one dumped site becomes in the public schema. It reads the dump and
-    # nothing else, so the census can show the outcome before anything is written,
-    # the import writes exactly this, and verify compares the public schema against it.
+    # The sponsor group's plan for one dumped site:
     #
     #   SponsorLevel ───────────────────────────────▶ level
     #   PartnerType ── same-site level of that name? ─ yes ─▶ (reuses it)
@@ -13,20 +11,14 @@ module TenantConsolidation
     #   Partner ── name taken in the site? ── yes ─▶ skipped, left for review
     #                                     └── no ──▶ sponsor under its type's level
     #
-    # `source` is the dumped row a planned row comes from, as [model, id]; a sponsor's
-    # `level` is the source of its level, which for a merged partner may be a PartnerType.
+    # A sponsor's `level_id` ref is the source of its level, which for a merged
+    # partner may be a PartnerType.
     class Transform
-      LevelRow = Data.define(:source, :attributes)
-      SponsorRow = Data.define(:source, :level, :attributes, :upload)
       LabelFix = Data.define(:partner_type_id, :from, :to)
 
-      class Invalid < StandardError; end
+      DROPPED = (Plan::DROPPED + %w[level_id type_id]).freeze
 
-      # Never carried over: the public row gets a fresh id and the importing site's id,
-      # and a foreign key is re-pointed at the parent's new row.
-      DROPPED = %w[id site_id level_id type_id].freeze
-
-      attr_reader :site, :levels, :sponsors, :skipped_partners, :label_fixes
+      attr_reader :site, :skipped_partners, :label_fixes
 
       def initialize(site)
         @site = site
@@ -35,21 +27,21 @@ module TenantConsolidation
         @skipped_partners = []
         @label_fixes = []
         @level_by_type = {}
-        plan
-      end
-
-      private
-
-      def plan
         plan_levels
         plan_partner_types
         plan_sponsors
         plan_partners
       end
 
+      def plan
+        Plan.new(site, rows: @levels + @sponsors, skipped: { "Partner" => skipped_partners })
+      end
+
+      private
+
       def plan_levels
         site.rows("SponsorLevel").each do |row|
-          @levels << LevelRow.new([ "SponsorLevel", row.id ], carried(row))
+          @levels << level_row([ "SponsorLevel", row.id ], carried(row))
         end
       end
 
@@ -60,7 +52,7 @@ module TenantConsolidation
           @label_fixes << LabelFix.new(row.id, name, fixed) unless fixed == name
 
           @level_by_type[row.id] = existing_level_named(fixed) || begin
-            @levels << LevelRow.new([ "PartnerType", row.id ], carried(row).merge("name" => fixed))
+            @levels << level_row([ "PartnerType", row.id ], carried(row).merge("name" => fixed))
             [ "PartnerType", row.id ]
           end
         end
@@ -75,10 +67,10 @@ module TenantConsolidation
         site.rows("Sponsor").each do |row|
           level_id = row.attributes["level_id"]
           if level_id && !level_ids.include?(level_id)
-            raise Invalid, "#{site.tenant_name} Sponsor##{row.id} points at SponsorLevel##{level_id}, which is not in the dump"
+            raise Plan::Invalid, "#{site.tenant_name} Sponsor##{row.id} points at SponsorLevel##{level_id}, which is not in the dump"
           end
 
-          @sponsors << SponsorRow.new([ "Sponsor", row.id ], level_id && [ "SponsorLevel", level_id ], carried(row), row.upload)
+          @sponsors << sponsor_row([ "Sponsor", row.id ], level_id && [ "SponsorLevel", level_id ], row)
         end
       end
 
@@ -91,7 +83,7 @@ module TenantConsolidation
           next @skipped_partners << row if taken.include?(name)
 
           taken << name
-          @sponsors << SponsorRow.new([ "Partner", row.id ], level_for_partner(row), carried(row), row.upload)
+          @sponsors << sponsor_row([ "Partner", row.id ], level_for_partner(row), row)
         end
       end
 
@@ -100,8 +92,16 @@ module TenantConsolidation
         return unless type_id
 
         @level_by_type.fetch(type_id) do
-          raise Invalid, "#{site.tenant_name} Partner##{row.id} points at PartnerType##{type_id}, which is not in the dump"
+          raise Plan::Invalid, "#{site.tenant_name} Partner##{row.id} points at PartnerType##{type_id}, which is not in the dump"
         end
+      end
+
+      def level_row(source, attributes)
+        Plan::Row.new(source, "SponsorLevel", attributes, {}, nil)
+      end
+
+      def sponsor_row(source, level, row)
+        Plan::Row.new(source, "Sponsor", carried(row), { "level_id" => level }, row.upload)
       end
 
       def carried(row)

@@ -81,7 +81,7 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
     end
 
     it 'refuses a second run onto the rows the first one wrote' do
-      expect { migrate }.to raise_error(TenantConsolidation::SponsorGroup::Import::Invalid, /rollback\[sponsor\]/)
+      expect { migrate }.to raise_error(TenantConsolidation::Import::Invalid, /rollback\[sponsor\]/)
     end
   end
 
@@ -140,7 +140,7 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
       within_tenant(main_site) { FileUtils.rm(Sponsor.unscoped.find(sponsor.id).logo.path) }
       backup
 
-      expect { migrate }.to raise_error(TenantConsolidation::SponsorGroup::Import::Invalid, /logo source is missing/)
+      expect { migrate }.to raise_error(TenantConsolidation::Import::Invalid, /logo source is missing/)
       expect(public_count(Sponsor)).to eq(0)
     end
 
@@ -150,7 +150,7 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
       backup
       in_public { Site.where(id: site.id).delete_all }
 
-      expect { migrate }.to raise_error(TenantConsolidation::SponsorGroup::Import::Invalid, /no Site here for dumped tenant spec_cons_b/)
+      expect { migrate }.to raise_error(TenantConsolidation::Import::Invalid, /no Site here for dumped tenant spec_cons_b/)
       expect(public_count(Sponsor)).to eq(0)
     end
 
@@ -158,7 +158,7 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
       backup
       edit_dump { |data| data['sites'].find { |s| s['tenant_name'] == 'main' }['models']['Sponsor'][0]['attributes']['level_id'] = 999 }
 
-      expect { migrate }.to raise_error(TenantConsolidation::SponsorGroup::Import::Invalid, /SponsorLevel#999/)
+      expect { migrate }.to raise_error(TenantConsolidation::Import::Invalid, /SponsorLevel#999/)
       expect(public_count(SponsorLevel)).to eq(0)
     end
 
@@ -169,7 +169,7 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
       )
       backup
 
-      expect { migrate }.to raise_error(TenantConsolidation::SponsorGroup::Import::Invalid, /already sit on Sponsor ids/)
+      expect { migrate }.to raise_error(TenantConsolidation::Import::Invalid, /already sit on Sponsor ids/)
     end
   end
 

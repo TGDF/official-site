@@ -6,13 +6,13 @@ namespace :tenant_consolidation do
   namespace :sponsor do
     desc "Dump the sponsor group (with Partner) and report what the import will meet"
     task :backup, [ :location ] => :environment do |_t, args|
-      dump = TenantConsolidation::SponsorGroup.collect
+      dump = TenantConsolidation::Dump.collect(group: TenantConsolidation::SponsorGroup::NAME, models: TenantConsolidation::SponsorGroup::MODELS, uploads: TenantConsolidation::SponsorGroup::UPLOADS)
       store = TenantConsolidation::Store.open(
         args[:location].presence || TenantConsolidation::Store.new_run(TenantConsolidation::SponsorGroup::NAME)
       )
       store.write("dump.json", dump.to_json)
 
-      puts TenantConsolidation::SponsorGroup::Census.new(dump).report
+      puts TenantConsolidation::Census.new(TenantConsolidation::SponsorGroup, dump).report
       puts ""
       puts "Dump written to #{store}"
       puts "Bring it home: aws s3 cp #{store} ./#{File.basename(store.to_s)} --recursive" if store.to_s.start_with?("s3://")
@@ -32,7 +32,7 @@ namespace :tenant_consolidation do
         exit 1
       end
 
-      import = TenantConsolidation::SponsorGroup::Import.new(dump)
+      import = TenantConsolidation::Import.new(TenantConsolidation::SponsorGroup, dump)
       import.preflight!
 
       ids = import.import_rows!
@@ -55,7 +55,7 @@ namespace :tenant_consolidation do
       store = TenantConsolidation::Store.open(args[:location])
       dump = TenantConsolidation::Dump.parse(store.read("dump.json"))
       id_map = JSON.parse(store.read("id_map.json"))
-      problems = TenantConsolidation::SponsorGroup::Verify.new(dump, id_map).problems
+      problems = TenantConsolidation::Verify.new(TenantConsolidation::SponsorGroup, dump, id_map).problems
 
       if problems.any?
         puts "NOT VERIFIED — #{problems.size} problem(s):"
