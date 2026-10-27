@@ -56,8 +56,6 @@ GEM
       activemodel (= 8.1.4)
       activesupport (= 8.1.4)
       timeout (>= 0.4.0)
-    activerecord-import (2.3.0)
-      activerecord (>= 4.2)
     activestorage (8.1.4)
       actionpack (= 8.1.4)
       activejob (= 8.1.4)
@@ -652,7 +650,6 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  activerecord-import
   acts_as_tenant
   amazing_print
   aws-sdk-s3
