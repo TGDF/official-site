@@ -110,7 +110,7 @@ group :development, :test do
 
   gem "brakeman", require: false
   gem "bundler-audit", require: false
-  gem "rubocop", "~> 1.91.0", require: false
+  gem "rubocop", "~> 1.92.1", require: false
   gem "rubocop-capybara", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rails-omakase", require: false
