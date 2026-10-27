@@ -567,8 +567,8 @@ GEM
       ffi (~> 1.12)
       logger
     rubyzip (3.6.0)
-    sanitize (7.0.0)
-      crass (~> 1.0.2)
+    sanitize (7.0.1)
+      crass (~> 1.0.8)
       nokogiri (>= 1.16.8)
     securerandom (0.4.1)
     select2-rails (4.0.13)
