@@ -116,9 +116,10 @@ One commit, pushed only after production verify prints `OK`, with RSpec and Cucu
 | `config/initializers/apartment.rb` | add `Game` to `excluded_models` |
 | `app/models/game.rb` | plain `acts_as_tenant :site` |
 | `features/step_definitions/{indie_space,night_market}/game.rb`, `spec/factories/games.rb` | attach through `thumbnail_attachment` |
+| `features/admin/{indie_space,night_market}/game.feature`, `spec/features/admin/indie_space/admin_games_spec.rb` | the attached field is `thumbnail_attachment` |
 | the game task specs | include `with a group before its switch` with `GameGroup` |
 
-Apartment pins an excluded model's table to public, and STI subclasses share it. The task specs therefore put `Game` back in the tenant schemas to keep pinning the move as it ran.
+Apartment pins an excluded model's table to public, and STI subclasses share it. The task specs therefore put `Game` back in the tenant schemas to keep pinning the move as it ran. Each subclass keeps the table name it first read, so the shared context sets it on every loaded subclass too.
 
 ## Recovery
 

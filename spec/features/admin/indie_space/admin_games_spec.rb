@@ -24,7 +24,7 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
       fill_in 'indie_space_game_description', with: 'Example Description'
       fill_in 'indie_space_game_team', with: 'Team'
       attach_file(
-        'indie_space_game_thumbnail',
+        'indie_space_game_thumbnail_attachment',
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       click_on '新增Game'
@@ -38,7 +38,7 @@ RSpec.describe('Admin::IndieSpace::Games', level: :feature) do
       visit edit_admin_indie_space_game_path(game)
       fill_in 'indie_space_game_name', with: 'New Game Name'
       attach_file(
-        'indie_space_game_thumbnail',
+        'indie_space_game_thumbnail_attachment',
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       click_on '更新Game'

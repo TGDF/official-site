@@ -5,7 +5,7 @@ FactoryBot.define do
     name { Faker::Name.name }
     description { Faker::Lorem.paragraph }
     team { Faker::Name.name }
-    thumbnail do
+    thumbnail_attachment do
       Rack::Test::UploadedFile.new(
         Rails.root.join('spec/support/brands/logos/TGDF.png'),
         'image/jpeg'

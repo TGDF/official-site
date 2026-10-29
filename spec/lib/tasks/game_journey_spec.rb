@@ -11,6 +11,7 @@ Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidati
 # rubocop:disable RSpec/DescribeClass, RSpec/MultipleExpectations, RSpec/ExampleLength
 RSpec.describe 'the game move, backup to switch' do
   include_context 'with consolidation tenants'
+  include_context 'with a group before its switch', TenantConsolidation::GameGroup
 
   let(:location) { Rails.root.join('tmp/consolidation/spec', SecureRandom.hex(4)).to_s }
   let(:night_market_site) { create_tenant_site('spec_cons_b') }
@@ -76,9 +77,10 @@ RSpec.describe 'the game move, backup to switch' do
     run(:backup)
     run(:migrate)
 
+    before_switch = Apartment.excluded_models
     switch_to_public
     in_public { Game.unscoped.sole.thumbnail_url(:thumb).processed }
-    allow(Apartment).to receive(:excluded_models).and_call_original
+    allow(Apartment).to receive(:excluded_models).and_return(before_switch)
     silently { run_task('tenant_consolidation:rollback', 'game') }
 
     expect([ ActiveStorage::Blob.count, stored_files - stored_before ]).to eq([ 0, [] ])

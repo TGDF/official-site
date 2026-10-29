@@ -24,8 +24,8 @@ Feature: Manage Indie Space Games
       | description | 2015 年銘傳大學學生作品 |
       | team        | 玄武工作室              |
     And I attach files in the "indie_space_game" form
-      | field       | value                   |
-      | thumbnail   | TGDF.png                |
+      | field                | value    |
+      | thumbnail_attachment | TGDF.png |
     And I click "新增Game" button
     Then I can see these items in table
       | text     |

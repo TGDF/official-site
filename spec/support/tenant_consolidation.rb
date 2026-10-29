@@ -133,19 +133,26 @@ end
 # before it, so a spec including this context with the group's module puts the
 # group's models back in the tenant schemas for the example. The table names change
 # in an around hook, which wraps every before and after hook, so the consolidation
-# reset reaches the tenant tables too.
+# reset reaches the tenant tables too. An STI subclass keeps the table name it first
+# read from its base class, so every subclass loaded by then follows the base class.
 RSpec.shared_context 'with a group before its switch' do |group|
   let(:switched_models) { group::TARGETS.map(&:constantize) }
 
   around do |example|
     pinned = switched_models.to_h { |model| [ model, model.table_name ] }
-    switched_models.each { |model| model.table_name = model.table_name.split('.', 2).last }
+    pin_tables(pinned.transform_values { |name| name.split('.', 2).last })
     example.run
   ensure
-    pinned.each { |model, name| model.table_name = name }
+    pin_tables(pinned)
   end
 
   before do
     allow(Apartment).to receive(:excluded_models).and_return(Apartment.excluded_models - group::TARGETS)
+  end
+
+  def pin_tables(names)
+    names.each do |model, name|
+      [ model, *model.descendants ].each { |klass| klass.table_name = name }
+    end
   end
 end

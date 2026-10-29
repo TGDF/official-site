@@ -2,7 +2,7 @@
 
 Given('there are some night market games') do |table|
   table.hashes.each do |game|
-    game[:thumbnail] = uploaded_thumbnail(game[:thumbnail])
+    game[:thumbnail_attachment] = uploaded_thumbnail(game.delete('thumbnail'))
     NightMarket::Game.create!(**game)
   end
 end

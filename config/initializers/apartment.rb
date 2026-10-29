@@ -19,6 +19,7 @@ Apartment.configure do |config|
     Slider
     SponsorLevel
     Sponsor
+    Game
     ActiveStorage::Blob
     ActiveStorage::Attachment
     ActiveStorage::VariantRecord

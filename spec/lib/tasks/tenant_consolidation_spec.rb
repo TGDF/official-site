@@ -36,12 +36,16 @@ RSpec.describe 'tenant_consolidation rake tasks' do
       expect { run_task('tenant_consolidation:consolidate', 'partner') }.to raise_error(SystemExit)
     end
 
-    it 'aborts the game group, which moves through the game tasks' do
-      seed_game(main_site, name: { 'en' => 'Quest' })
+    context 'when game is still in the tenant schemas' do
+      include_context 'with a group before its switch', TenantConsolidation::GameGroup
 
-      expect { run_task('tenant_consolidation:consolidate', 'game') }
-        .to raise_error(SystemExit).and output(/tenant_consolidation:game:backup/).to_stdout
-      expect(public_count(Game)).to eq(0)
+      it 'aborts the game group, which moves through the game tasks' do
+        seed_game(main_site, name: { 'en' => 'Quest' })
+
+        expect { run_task('tenant_consolidation:consolidate', 'game') }
+          .to raise_error(SystemExit).and output(/tenant_consolidation:game:backup/).to_stdout
+        expect(public_count(Game)).to eq(0)
+      end
     end
 
     it 'aborts attachment consolidation when a polymorphic record_id is set' do

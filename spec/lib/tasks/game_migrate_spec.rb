@@ -12,6 +12,7 @@ Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidati
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe 'tenant_consolidation:game:migrate' do
   include_context 'with consolidation tenants'
+  include_context 'with a group before its switch', TenantConsolidation::GameGroup
 
   let(:location) { Rails.root.join('tmp/consolidation/spec', SecureRandom.hex(4)).to_s }
 
