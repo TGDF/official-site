@@ -31,14 +31,38 @@ module TenantConsolidation
     attr_reader :site, :rows, :skipped, :stand_ins
 
     # A group whose rows move as they are, each to the model it was dumped from.
-    def self.carry(site, models)
+    # `refs` names each foreign key a model carries and the model it points at, as
+    # { "AgendaTime" => { "day_id" => "AgendaDay" } }; `models` lists parents first. A
+    # key pointing at a row the dump does not hold refuses the plan, unless its model
+    # is in `skip_dangling` — then the row is left out and kept in `skipped`.
+    def self.carry(site, models, refs: {}, skip_dangling: [])
+      skipped = Hash.new { |hash, model| hash[model] = [] }
       rows = models.flat_map do |model|
-        site.rows(model).map do |row|
-          Row.new([ model, row.id ], model, row.attributes.except(*DROPPED), {}, row.upload)
+        keys = refs.fetch(model, {})
+        site.rows(model).filter_map do |row|
+          dangling = keys.find { |column, parent| dangling?(site, row, column, parent) }
+          if dangling && skip_dangling.include?(model)
+            skipped[model] << row
+            next
+          end
+          if dangling
+            raise Invalid, "#{site.tenant_name} #{model}##{row.id} points at #{dangling.last}" \
+                           "##{row.attributes[dangling.first]}, which is not in the dump"
+          end
+
+          Row.new([ model, row.id ], model, row.attributes.except(*DROPPED, *keys.keys),
+                  keys.to_h { |column, parent| [ column, row.attributes[column] && [ parent, row.attributes[column] ] ] },
+                  row.upload)
         end
       end
-      new(site, rows: rows)
+      new(site, rows: rows, skipped: skipped.to_h)
     end
+
+    def self.dangling?(site, row, column, parent)
+      id = row.attributes[column]
+      id && site.rows(parent).none? { |candidate| candidate.id == id }
+    end
+    private_class_method :dangling?
 
     def initialize(site, rows:, skipped: {})
       @site = site

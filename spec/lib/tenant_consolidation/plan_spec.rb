@@ -25,4 +25,43 @@ RSpec.describe TenantConsolidation::Plan do
 
     expect([ plan.rows.first.upload.missing?, plan.stand_ins ]).to eq([ true, [] ])
   end
+
+  describe 'foreign keys' do
+    def row(id, **attributes)
+      TenantConsolidation::Dump::Row.new(id: id, attributes: { 'id' => id, **attributes }, upload: nil)
+    end
+
+    def site_with_times(*times)
+      TenantConsolidation::Dump::Site.new(tenant_name: 'main', site_id: 1,
+                                          models: { 'AgendaDay' => [ row(3) ], 'AgendaTime' => times })
+    end
+
+    def carry(site, **options)
+      described_class.carry(site, %w[AgendaDay AgendaTime], refs: { 'AgendaTime' => { 'day_id' => 'AgendaDay' } }, **options)
+    end
+
+    it 'carries a key as the source of the row it points at, outside the attributes' do
+      time = carry(site_with_times(row(7, 'day_id' => 3, 'label' => 'Morning'))).rows_of('AgendaTime').sole
+
+      expect([ time.refs, time.attributes ]).to eq([ { 'day_id' => [ 'AgendaDay', 3 ] }, { 'label' => 'Morning' } ])
+    end
+
+    it 'carries an empty key as empty' do
+      time = carry(site_with_times(row(7, 'day_id' => nil))).rows_of('AgendaTime').sole
+
+      expect(time.refs).to eq({ 'day_id' => nil })
+    end
+
+    it 'refuses a key pointing at a row the dump does not hold' do
+      expect { carry(site_with_times(row(7, 'day_id' => 9))) }
+        .to raise_error(described_class::Invalid, 'main AgendaTime#7 points at AgendaDay#9, which is not in the dump')
+    end
+
+    it 'leaves such a row out, kept in skipped, when its model may skip it' do
+      plan = carry(site_with_times(row(7, 'day_id' => 9), row(8, 'day_id' => 3)), skip_dangling: %w[AgendaTime])
+
+      expect([ plan.rows_of('AgendaTime').map(&:source), plan.skipped['AgendaTime'].map(&:id) ])
+        .to eq([ [ [ 'AgendaTime', 8 ] ], [ 7 ] ])
+    end
+  end
 end
