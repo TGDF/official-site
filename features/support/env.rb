@@ -9,7 +9,11 @@ if ENV['CI']
   SimpleCov.merging false
   SimpleCov.minimum_coverage 77
 end
-SimpleCov.start('rails')
+SimpleCov.start('rails') do
+  # The consolidation tooling runs from rake tasks, never from a page, so no feature
+  # can reach it; RSpec's floor covers it.
+  add_filter 'lib/tenant_consolidation/'
+end
 
 require 'cucumber/rails'
 
