@@ -91,7 +91,7 @@ module TenantConsolidation
       Records.assign_raw_attributes(record, attributes)
       record.site_id = site.id
       record.save!(validate: false)
-      Records.verify_translations_preserved(attributes, record, model_name)
+      Records.verify_written_as_planned(attributes, record, model_name)
       record
     end
 

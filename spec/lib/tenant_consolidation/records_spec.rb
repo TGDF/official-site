@@ -30,4 +30,26 @@ RSpec.describe TenantConsolidation::Records do
         .to raise_error(/Translation loss detected for Game#\.name/)
     end
   end
+
+  describe '.verify_written_as_planned' do
+    def write(attributes)
+      Speaker.new.tap do |speaker|
+        described_class.assign_raw_attributes(speaker, attributes)
+        speaker.save!(validate: false)
+      end
+    end
+
+    it 'passes a row saved exactly as written' do
+      attributes = { 'name' => { 'zh-TW' => 'Ada' }, 'slug' => '12' }
+
+      expect { described_class.verify_written_as_planned(attributes, write(attributes), 'Speaker') }.not_to raise_error
+    end
+
+    it 'raises when a callback rewrote a column on save' do
+      attributes = { 'name' => { 'zh-TW' => 'Ada' }, 'slug' => nil }
+
+      expect { described_class.verify_written_as_planned(attributes, write(attributes), 'Speaker') }
+        .to raise_error(/Speaker#\d+\.slug was written as "ada", planned nil/)
+    end
+  end
 end

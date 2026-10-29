@@ -48,6 +48,18 @@ module TenantConsolidation
       end
     end
 
+    # Raises on any column a save left different from what was written — a callback
+    # such as FriendlyId's slug generation would otherwise rewrite it silently.
+    def verify_written_as_planned(attrs, record, model_name)
+      attrs.each do |column, value|
+        expected = record.class.type_for_attribute(column).cast(value)
+        next if record[column] == expected
+
+        raise "#{model_name}##{record.id}.#{column} was written as #{record[column].inspect}, " \
+              "planned #{expected.inspect}"
+      end
+    end
+
     # Rewrites each foreign key in `attrs` to its parent's new id. A parent missing from
     # `id_maps` means an orphaned source row; raising keeps a stale tenant id from being
     # persisted — silently, on tables with no database foreign key (agendas_taggings).

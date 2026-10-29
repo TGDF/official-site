@@ -177,8 +177,8 @@ RSpec.describe 'tenant_consolidation:sponsor:migrate' do
     seed_sponsor(main_site, level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Acme' })
     seed_sponsor(create_tenant_site('spec_cons_b'), level_name: { 'en' => 'Gold' }, sponsor_name: { 'en' => 'Globex' })
     backup
-    allow(TenantConsolidation::Records).to receive(:verify_translations_preserved).and_call_original
-    allow(TenantConsolidation::Records).to receive(:verify_translations_preserved)
+    allow(TenantConsolidation::Records).to receive(:verify_written_as_planned).and_call_original
+    allow(TenantConsolidation::Records).to receive(:verify_written_as_planned)
       .with(hash_including('name' => { 'en' => 'Globex' }), anything, anything).and_raise('boom')
 
     expect { migrate }.to raise_error('boom')
