@@ -39,12 +39,10 @@ namespace :tenant_consolidation do
   # Groups retired into another group's move, by the group they fold into.
   FOLDED_GROUPS = { "partner" => "sponsor" }.freeze
 
-  # Migration groups - ALL models are organized into groups for consistent migration
-  # Single-model groups have no FK dependencies; multi-model groups must migrate together
-  # Order determines migration sequence within group (parents before children)
-  # fk_mappings: { "ChildModel" => { fk_column: "ParentModel" } }
+  # Migration groups - ALL models are organized into groups for consistent migration.
+  # Order is parents before children; rollback deletes in reverse. The groups with
+  # foreign keys move through the dump tasks, which rewrite them (dump_groups.rake).
   MIGRATION_GROUPS = {
-    # Single-model groups (no FK dependencies)
     "slider"     => { order: %w[Slider] },
     "block"      => { order: %w[Block] },
     "plan"       => { order: %w[Plan] },
@@ -52,25 +50,9 @@ namespace :tenant_consolidation do
     "game"       => { order: %w[Game] },
     "news"       => { order: %w[News] },
     "attachment" => { order: %w[Attachment] },
-
-    # Multi-model groups (FK dependencies - must migrate together)
-    "partner" => {
-      order: %w[PartnerType Partner],
-      fk_mappings: { "Partner" => { type_id: "PartnerType" } }
-    },
-    "sponsor" => {
-      order: %w[SponsorLevel Sponsor],
-      fk_mappings: { "Sponsor" => { level_id: "SponsorLevel" } }
-    },
-    "agenda" => {
-      order: %w[AgendaDay AgendaTime Room AgendaTag Speaker Agenda AgendasSpeaker AgendasTagging],
-      fk_mappings: {
-        "AgendaTime" => { day_id: "AgendaDay" },
-        "Agenda" => { time_id: "AgendaTime", room_id: "Room" },
-        "AgendasSpeaker" => { agenda_id: "Agenda", speaker_id: "Speaker" },
-        "AgendasTagging" => { agenda_id: "Agenda", agenda_tag_id: "AgendaTag" }
-      }
-    }
+    "partner"    => { order: %w[PartnerType Partner] },
+    "sponsor"    => { order: %w[SponsorLevel Sponsor] },
+    "agenda"     => { order: %w[AgendaDay AgendaTime Room AgendaTag Speaker Agenda AgendasSpeaker AgendasTagging] }
   }.freeze
 
   desc "Show tenant consolidation status for all groups"
@@ -102,7 +84,7 @@ namespace :tenant_consolidation do
     puts "  bin/rails 'tenant_consolidation:rollback[group]'          - Rollback group (delete from public)"
   end
 
-  desc "Consolidate a group of models to public schema with FK remapping"
+  desc "Consolidate a group of models to public schema"
   task :consolidate, [ :group, :dry_run ] => :environment do |_t, args|
     group_name = args[:group]
     dry_run = args[:dry_run] == "true"
@@ -148,8 +130,8 @@ namespace :tenant_consolidation do
 
     # Re-runs must start from a clean target. A partial/aborted run can leave rows in
     # public while the model is not yet excluded; resuming in place risks dropping rows
-    # (dedup is not per-source-record) and corrupting child FKs (id_maps rebuild only on
-    # a full pass). Tenant data is never deleted, so the safe re-run is rollback + redo.
+    # (dedup is not per-source-record). Tenant data is never deleted, so the safe
+    # re-run is rollback + redo.
     unless dry_run
       group_config[:order].each do |model_name|
         existing = Apartment::Tenant.switch("public") { model_name.constantize.unscoped.count }
@@ -163,7 +145,7 @@ namespace :tenant_consolidation do
     end
 
     # Polymorphic references to remapped tenant models cannot be remapped in place
-    # (id_maps are per-run/in-memory, and groups migrate in separate runs). Fail loud
+    # (the in-place task keeps no id map, and groups migrate in separate runs). Fail loud
     # rather than write dangling record_ids. See docs for the dump/transform/import path.
     abort_if_unmappable_polymorphic!(group_config)
 
@@ -540,19 +522,15 @@ namespace :tenant_consolidation do
   end
 
   # ============================================================
-  # Group Consolidation (for models with FK dependencies)
+  # Group Consolidation (in place, for groups without foreign keys)
   # ============================================================
 
   def consolidate_group(group_name, group_config, dry_run: false)
     models = group_config[:order]
-    fk_mappings = group_config[:fk_mappings] || {}
     stats = Hash.new { |h, k| h[k] = { total: 0, migrated: 0, skipped: 0, failed: 0 } }
 
     Site.find_each do |site|
       puts "\nProcessing tenant: #{site.tenant_name}"
-
-      # ID mapping: { "ModelName" => { old_id => new_id } }
-      id_maps = Hash.new { |h, k| h[k] = {} }
 
       # Step 1: Collect all records from tenant schema with their CW URLs
       all_tenant_data = {}
@@ -600,7 +578,7 @@ namespace :tenant_consolidation do
         end
       end
 
-      # Step 2: Create records in public schema in order, remapping FKs
+      # Step 2: Create records in public schema in order
       pending_assets = []
 
       Apartment::Tenant.switch("public") do
@@ -609,7 +587,6 @@ namespace :tenant_consolidation do
             models.each do |model_name|
               model_class = model_name.constantize
               config = MODEL_CONFIGS.find { |c| c[:model] == model_name }
-              model_fk_mappings = fk_mappings[model_name] || {}
               records_data = all_tenant_data[model_name] || []
 
               puts "\n  Migrating #{model_name} (#{records_data.size} records)..."
@@ -617,11 +594,7 @@ namespace :tenant_consolidation do
               records_data.each do |data|
                 attrs = data[:attributes].dup
 
-                TenantConsolidation::Records.remap_foreign_keys(attrs, model_fk_mappings, id_maps, model_name)
-
                 if dry_run
-                  # In dry run, still track hypothetical IDs for FK remapping simulation
-                  id_maps[model_name][data[:original_id]] = data[:original_id]
                   stats[model_name][:migrated] += 1
                   print "."
                   next
@@ -632,9 +605,6 @@ namespace :tenant_consolidation do
                   TenantConsolidation::Records.assign_raw_attributes(new_record, attrs)
                   new_record.site_id = site.id
                   new_record.save!(validate: false)
-
-                  # Track ID mapping for dependent models
-                  id_maps[model_name][data[:original_id]] = new_record.id
 
                   # Assets move after this transaction commits — see transfer_assets!
                   if data[:file_url].present? && config
@@ -697,7 +667,7 @@ namespace :tenant_consolidation do
   end
 
   # Abort if a group contains polymorphic references that point at remapped tenant
-  # models. These cannot be remapped in place: id_maps are built per-run and groups
+  # models. These cannot be remapped in place: the task keeps no id map and groups
   # migrate in separate runs, so the parent's new id is unknown here.
   #   - Attachment#record → any model: unsafe whenever record_id is set.
   #   - News#author → expected AdminUser (public, stable id); a tenant-model

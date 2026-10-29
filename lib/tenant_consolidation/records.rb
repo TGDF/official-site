@@ -2,8 +2,8 @@
 
 module TenantConsolidation
   # Row-level handling shared by every consolidation path: a row is read and written
-  # through its raw columns so Mobility's JSONB translations keep every locale, and a
-  # foreign key is only ever rewritten to a parent this run has already migrated.
+  # through its raw columns so Mobility's JSONB translations keep every locale, and
+  # checked after its save against what was written.
   module Records
     module_function
 
@@ -57,23 +57,6 @@ module TenantConsolidation
 
         raise "#{model_name}##{record.id}.#{column} was written as #{record[column].inspect}, " \
               "planned #{expected.inspect}"
-      end
-    end
-
-    # Rewrites each foreign key in `attrs` to its parent's new id. A parent missing from
-    # `id_maps` means an orphaned source row; raising keeps a stale tenant id from being
-    # persisted — silently, on tables with no database foreign key (agendas_taggings).
-    def remap_foreign_keys(attrs, fk_mappings, id_maps, model_name)
-      fk_mappings.each do |fk_column, parent_model|
-        old_fk_value = attrs[fk_column.to_s]
-        next unless old_fk_value
-
-        new_fk_value = id_maps[parent_model][old_fk_value]
-        if new_fk_value.nil?
-          raise "Cannot remap #{model_name}.#{fk_column}=#{old_fk_value} " \
-                "(#{parent_model} not in id_maps — orphaned source row)"
-        end
-        attrs[fk_column.to_s] = new_fk_value
       end
     end
   end
