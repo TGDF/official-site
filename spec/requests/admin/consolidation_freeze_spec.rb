@@ -49,6 +49,6 @@ RSpec.describe('Admin consolidation freeze') do
   # A group nobody can freeze is a hole in the runbook, so the screen table has to
   # name every group the rake task knows how to move.
   it 'covers every migration group' do
-    expect(TenantConsolidation::ADMIN_SCREENS.values.uniq).to(match_array(MIGRATION_GROUPS.keys))
+    expect(TenantConsolidation::ADMIN_SCREENS.values.uniq).to(match_array(migration_groups.keys))
   end
 end

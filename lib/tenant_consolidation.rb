@@ -17,7 +17,7 @@ module TenantConsolidation
   # writes nothing a consolidation moves — the dashboard, profiles, and the Site
   # screens (Site is already in the public schema and belongs to no group).
   #
-  # Spec keeps the group names in step with the rake task's MIGRATION_GROUPS.
+  # Spec keeps the group names in step with the rake task's migration_groups.
   ADMIN_SCREENS = {
     "admin/sliders" => "slider",
     "admin/blocks" => "block",

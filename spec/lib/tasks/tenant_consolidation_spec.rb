@@ -56,6 +56,16 @@ RSpec.describe 'tenant_consolidation rake tasks' do
       expect(public_count(AgendaDay)).to eq(0)
     end
 
+    it 'sends a dump group to its own verify, which checks every row against its dump' do
+      expect { run_task('tenant_consolidation:verify', 'agenda') }
+        .to raise_error(SystemExit).and output(/tenant_consolidation:agenda:verify\[<run location>\]/).to_stdout
+    end
+
+    it 'names every group, dump groups included, when none is given' do
+      expect { run_task('tenant_consolidation:rollback') }
+        .to raise_error(SystemExit).and output(/tenant_consolidation:rollback\[slider\].*agenda: AgendaDay/m).to_stdout
+    end
+
     it 'aborts attachment consolidation when a polymorphic record_id is set' do
       within_tenant(main_site) do
         Attachment.new(record_type: 'Foo', record_id: 123, file: 'x.png').save!(validate: false)

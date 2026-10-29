@@ -39,20 +39,16 @@ namespace :tenant_consolidation do
   # Groups retired into another group's move, by the group they fold into.
   FOLDED_GROUPS = { "partner" => "sponsor" }.freeze
 
-  # Migration groups - ALL models are organized into groups for consistent migration.
-  # Order is parents before children; rollback deletes in reverse. The groups with
-  # foreign keys move through the dump tasks, which rewrite them (dump_groups.rake).
-  MIGRATION_GROUPS = {
+  # The groups without dump tasks, each with its models, parents before children;
+  # rollback deletes in reverse. Partner stays listed so its models stay known.
+  IN_PLACE_GROUPS = {
     "slider"     => { order: %w[Slider] },
     "block"      => { order: %w[Block] },
     "plan"       => { order: %w[Plan] },
     "menu_item"  => { order: %w[MenuItem] },
-    "game"       => { order: %w[Game] },
     "news"       => { order: %w[News] },
     "attachment" => { order: %w[Attachment] },
-    "partner"    => { order: %w[PartnerType Partner] },
-    "sponsor"    => { order: %w[SponsorLevel Sponsor] },
-    "agenda"     => { order: %w[AgendaDay AgendaTime Room AgendaTag Speaker Agenda AgendasSpeaker AgendasTagging] }
+    "partner"    => { order: %w[PartnerType Partner] }
   }.freeze
 
   desc "Show tenant consolidation status for all groups"
@@ -62,7 +58,7 @@ namespace :tenant_consolidation do
 
     excluded = Apartment.excluded_models.map(&:to_s)
 
-    MIGRATION_GROUPS.each do |group_name, config|
+    migration_groups.each do |group_name, config|
       models = config[:order]
       migrated_count = models.count { |m| excluded.include?(m) }
 
@@ -85,37 +81,13 @@ namespace :tenant_consolidation do
   end
 
   desc "Consolidate a group of models to public schema"
-  task :consolidate, [ :group, :dry_run ] => :environment do |_t, args|
+  task :consolidate, [ :group, :dry_run ] => :environment do |t, args|
     group_name = args[:group]
     dry_run = args[:dry_run] == "true"
 
-    if group_name.blank?
-      puts "ERROR: group argument required"
-      puts "Usage: bin/rails 'tenant_consolidation:consolidate[slider]'"
-      puts "       bin/rails 'tenant_consolidation:consolidate[agenda,true]'  # dry run"
-      puts ""
-      puts "Available groups:"
-      MIGRATION_GROUPS.each do |name, config|
-        puts "  #{name}: #{config[:order].join(', ')}"
-      end
-      exit 1
-    end
-
-    group_config = MIGRATION_GROUPS[group_name]
-    if group_config.nil?
-      puts "ERROR: Unknown group '#{group_name}'"
-      puts "Available groups: #{MIGRATION_GROUPS.keys.join(', ')}"
-      exit 1
-    end
-
-    # A group with dump tasks never moves in place; the retired Partner rows fold into
-    # Sponsor and never move as standalone rows.
-    dump_name = FOLDED_GROUPS.fetch(group_name, group_name)
-    if DUMP_GROUPS.include?(dump_name)
-      puts "ERROR: The '#{group_name}' group moves through the #{dump_name} dump tasks."
-      puts "Run: bin/rails 'tenant_consolidation:#{dump_name}:backup', then #{dump_name}:migrate and #{dump_name}:verify"
-      puts "(docs/tenant/migrate_#{dump_name}.md)"
-      exit 1
+    group_config = migration_group!(t, group_name)
+    refuse_dump_group!(group_name) do |dump_name|
+      "bin/rails 'tenant_consolidation:#{dump_name}:backup', then #{dump_name}:migrate and #{dump_name}:verify"
     end
 
     # Check if any model in group is already in public
@@ -158,25 +130,13 @@ namespace :tenant_consolidation do
   end
 
   desc "Verify migration status for a group"
-  task :verify, [ :group ] => :environment do |_t, args|
+  task :verify, [ :group ] => :environment do |t, args|
     group_name = args[:group]
 
-    if group_name.blank?
-      puts "ERROR: group argument required"
-      puts "Usage: bin/rails 'tenant_consolidation:verify[slider]'"
-      puts ""
-      puts "Available groups:"
-      MIGRATION_GROUPS.each do |name, config|
-        puts "  #{name}: #{config[:order].join(', ')}"
-      end
-      exit 1
-    end
+    group_config = migration_group!(t, group_name)
 
-    group_config = MIGRATION_GROUPS[group_name]
-    if group_config.nil?
-      puts "ERROR: Unknown group '#{group_name}'"
-      puts "Available groups: #{MIGRATION_GROUPS.keys.join(', ')}"
-      exit 1
+    refuse_dump_group!(group_name) do |dump_name|
+      "bin/rails 'tenant_consolidation:#{dump_name}:verify[<run location>]', which checks every row against its dump"
     end
 
     puts "#{group_name.titleize} Group Verification"
@@ -186,26 +146,10 @@ namespace :tenant_consolidation do
   end
 
   desc "Rollback consolidated records for a group (delete from public schema)"
-  task :rollback, [ :group ] => :environment do |_t, args|
+  task :rollback, [ :group ] => :environment do |t, args|
     group_name = args[:group]
 
-    if group_name.blank?
-      puts "ERROR: group argument required"
-      puts "Usage: bin/rails 'tenant_consolidation:rollback[slider]'"
-      puts ""
-      puts "Available groups:"
-      MIGRATION_GROUPS.each do |name, config|
-        puts "  #{name}: #{config[:order].join(', ')}"
-      end
-      exit 1
-    end
-
-    group_config = MIGRATION_GROUPS[group_name]
-    if group_config.nil?
-      puts "ERROR: Unknown group '#{group_name}'"
-      puts "Available groups: #{MIGRATION_GROUPS.keys.join(', ')}"
-      exit 1
-    end
+    group_config = migration_group!(t, group_name)
 
     # Check if any model in group is still in excluded_models
     group_config[:order].each do |model_name|
@@ -226,26 +170,10 @@ namespace :tenant_consolidation do
   end
 
   desc "Reset PostgreSQL sequences for migrated models"
-  task :reset_sequences, [ :group ] => :environment do |_t, args|
+  task :reset_sequences, [ :group ] => :environment do |t, args|
     group_name = args[:group]
 
-    if group_name.blank?
-      puts "ERROR: group argument required"
-      puts "Usage: bin/rails 'tenant_consolidation:reset_sequences[slider]'"
-      puts ""
-      puts "Available groups:"
-      MIGRATION_GROUPS.each do |name, config|
-        puts "  #{name}: #{config[:order].join(', ')}"
-      end
-      exit 1
-    end
-
-    group_config = MIGRATION_GROUPS[group_name]
-    if group_config.nil?
-      puts "ERROR: Unknown group '#{group_name}'"
-      puts "Available groups: #{MIGRATION_GROUPS.keys.join(', ')}"
-      exit 1
-    end
+    group_config = migration_group!(t, group_name)
 
     puts "Resetting sequences for '#{group_name}' group..."
     puts "Models: #{group_config[:order].join(', ')}"
@@ -296,7 +224,7 @@ namespace :tenant_consolidation do
     # rows still live in a tenant schema and would read as ~0 here — falsely "safe".
     # Refuse to run until every group is in public. (Partner/PartnerType are retired
     # via merge and never excluded, so they are not required.)
-    pending = MIGRATION_GROUPS.values.flat_map { |g| g[:order] }.uniq
+    pending = migration_groups.values.flat_map { |g| g[:order] }.uniq
     pending -= %w[Partner PartnerType]
     pending = pending.reject { |m| model_already_in_public?(m.constantize) }
     if pending.any?
@@ -359,7 +287,7 @@ namespace :tenant_consolidation do
     # assets transactionally, with a tenant context). The Site uploaders are
     # tenant-independent, so reading them here without a tenant resolves correctly;
     # tenant-scoped uploaders would not, hence the exclusion.
-    grouped = MIGRATION_GROUPS.values.flat_map { |g| g[:order] }.uniq
+    grouped = migration_groups.values.flat_map { |g| g[:order] }.uniq
     always_public = MODEL_CONFIGS.reject { |c| grouped.include?(c[:model]) }
 
     always_public.each do |config|
@@ -500,6 +428,42 @@ namespace :tenant_consolidation do
   end
 
   private
+
+  # Every group with its models, parents before children. A dump group's models are
+  # its TenantConsolidation::Group targets, which can only be read once a task runs.
+  def migration_groups
+    IN_PLACE_GROUPS.merge(DUMP_GROUPS.to_h { |name| [ name, { order: TenantConsolidation::Group.find(name).targets } ] })
+  end
+
+  # The group a task was given, or the usage and every group it could have been.
+  def migration_group!(rake_task, group_name)
+    if group_name.blank?
+      puts "ERROR: group argument required"
+      puts "Usage: bin/rails '#{rake_task.name}[slider]'"
+      puts ""
+      puts "Available groups:"
+      migration_groups.each { |name, config| puts "  #{name}: #{config[:order].join(', ')}" }
+      exit 1
+    end
+
+    migration_groups.fetch(group_name) do
+      puts "ERROR: Unknown group '#{group_name}'"
+      puts "Available groups: #{migration_groups.keys.join(', ')}"
+      exit 1
+    end
+  end
+
+  # A dump group never moves or checks in place, and the retired Partner rows fold
+  # into Sponsor's dump; the block names the dump task to run instead.
+  def refuse_dump_group!(group_name)
+    dump_name = FOLDED_GROUPS.fetch(group_name, group_name)
+    return unless DUMP_GROUPS.include?(dump_name)
+
+    puts "ERROR: The '#{group_name}' group moves through the #{dump_name} dump tasks."
+    puts "Run: #{yield dump_name}"
+    puts "(docs/tenant/migrate_#{dump_name}.md)"
+    exit 1
+  end
 
   def model_already_in_public?(model_class)
     Apartment.excluded_models.map(&:to_s).include?(model_class.name)

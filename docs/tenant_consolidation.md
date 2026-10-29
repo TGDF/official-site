@@ -195,9 +195,10 @@ Each part of the pipeline lives in `lib/tenant_consolidation/`, and a group supp
 | `Plan` | what one dumped site becomes; a stand-in for a lost original |
 | `Census`, `Import`, `Verify` | backup's report, migrate, the row-by-row check |
 | `Records`, `Assets` | raw-column writes, the write-time check, upload transfer |
-| A group module | its models, uploads, public targets and `plan(site)` |
+| `Group` | what every group answers, with the defaults a plain carry needs |
+| A group module | extends `Group`: its models, uploads, public targets, any rules of its own |
 
-Listing a group in `DUMP_GROUPS` gives it `backup`, `migrate` and `verify`. Game carries each row as it is (`Plan.carry`); agenda carries its foreign keys as refs and shares its tags across sites (`SHARED`); sponsor folds Partner in (`SponsorGroup::Transform`). An upload whose original is gone is taken over from its largest CarrierWave version. `consolidate[group]` refuses every dump group, partner included.
+Listing a group's name in `DUMP_GROUPS` gives it `backup`, `migrate` and `verify`, and `rollback`, `status` and `reset_sequences` read its models from its module. Game carries each row as it is (`Plan.carry`). Agenda carries its foreign keys as refs and shares its tags across sites (`SHARED`). Sponsor folds Partner in (`SponsorGroup::Transform`). An upload whose original is gone is taken over from its largest CarrierWave version. `consolidate[group]` and `verify[group]` refuse every dump group, partner included.
 
 ### What every runbook carries
 
@@ -267,9 +268,8 @@ bin/rails "tenant_consolidation:game:verify[<location>]"
 bin/rails "tenant_consolidation:consolidate[news]"
 bin/rails "tenant_consolidation:consolidate[news,true]"     # Dry run
 
-# Verification - all verifications use group names
+# Verification of an in-place group; a dump group has its own verify
 bin/rails "tenant_consolidation:verify[slider]"             # Verify single model group
-bin/rails "tenant_consolidation:verify[agenda]"             # Verify all 8 agenda models
 
 # Rollback - all rollbacks use group names
 bin/rails "tenant_consolidation:rollback[slider]"           # Rollback single model group
@@ -312,7 +312,7 @@ Prefer a **detached one-off task** (survives a dropped shell) over interactive e
 ```bash
 aws ecs execute-command --cluster <cluster> --task <task-id> \
   --container web --interactive \
-  --command '/bin/sh -c "bin/rails tenant_consolidation:verify[sponsor]"'
+  --command '/bin/sh -c "bin/rails tenant_consolidation:verify[news]"'
 ```
 
 ## Rollback Strategy
