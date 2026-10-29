@@ -63,7 +63,7 @@ Before that commit, deleting a tagging also deleted its tag. Removing agendas #2
 Every speaker must carry a slug before backup, so its `/speakers/<id>` link keeps resolving.
 
 1. Run `backfill_speaker_slugs` inside the freeze; it writes each missing slug as the speaker's current id.
-2. Run backup; a speaker still without a slug makes the plan refuse.
+2. Run backup; a speaker still without a slug, or two of a site sharing one, makes the plan refuse.
 3. Run migrate; a save that rewrites any column aborts the run before its rows commit.
 
 FriendlyId would make a slug from the name for a speaker saved without one. Its `:scoped` module regenerates a slug whenever `site_id` changes, so it joins only in the switch commit.
@@ -77,7 +77,7 @@ Every layer answers a different failure.
 | RDS snapshot | anything, by restoring | before the freeze |
 | `consolidation_freeze_agenda` | admin edits on the old side | backup to switch |
 | Census | missing files, stand-ins, left-out taggings, shared tags | backup |
-| Plan | a slugless speaker, an unmapped key | backup, migrate |
+| Plan | a slugless speaker, a slug two speakers share, an unmapped key | backup, migrate |
 | Write-time check | a column a save rewrote | migrate |
 | `agenda:verify` | every row, ref, locale, avatar, shared tag | after migrate, after the switch |
 

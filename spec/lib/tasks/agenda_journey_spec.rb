@@ -112,5 +112,14 @@ RSpec.describe 'the agenda move, backup to switch' do
     expect { run(:backup) }.to raise_error(TenantConsolidation::Plan::Invalid, /main Speaker #\d+ has no slug/)
     expect(public_count(Speaker)).to eq(0)
   end
+
+  it 'refuses two speakers of a site sharing a slug, before anything is written' do
+    seed_agenda(main_site, subject: 'Opening', speaker_slug: '12')
+    seed_agenda(main_site, subject: 'Closing', speaker_slug: '13')
+    within_tenant(main_site) { Speaker.unscoped.update_all(slug: 'ada', site_id: nil) }
+
+    expect { run(:backup) }.to raise_error(TenantConsolidation::Plan::Invalid, /main Speaker #\d+ #\d+ share the slug "ada"/)
+    expect(public_count(Speaker)).to eq(0)
+  end
 end
 # rubocop:enable RSpec/DescribeClass, RSpec/MultipleExpectations, RSpec/ExampleLength
