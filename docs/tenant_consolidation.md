@@ -82,18 +82,18 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 | 5 | sponsor | SponsorLevel, Sponsor | logo | ✅ Complete — [runbook](tenant/migrate_sponsor.md) |
 | 6 | **partner** | **→ folds into Sponsor** | **logo** | ✅ Complete — folded into sponsor; Partner stays frozen until Phase 5 |
 | 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | ✅ Complete — [runbook](tenant/migrate_game.md) |
-| 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | ⏳ Pending |
+| 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | 🔧 Preparing — [runbook](tenant/migrate_agenda.md) |
 | 9 | news | News | thumbnail | ⏳ Pending |
 | 10 | attachment | Attachment (+Image STI) | file | ⏳ Pending |
 
 ### Migration Dependencies
 
-**Why groups must migrate together:** When records move from tenant to public schema, they get NEW auto-generated IDs. Foreign keys pointing to old IDs will break.
+A group's records get new ids when they move to the public schema, so every foreign key between them moves in the same run and is rewritten there.
 
 ```
-Foreign-key relationships remapped during consolidation (rake MIGRATION_GROUPS
-fk_mappings). NOTE: not all are DB-enforced — agendas_taggings.* are app-level
-associations with no add_foreign_key in db/schema.rb, but still need remapping:
+Foreign-key relationships rewritten by the dump pipeline (a group's plan refs).
+NOTE: not all are DB-enforced — agendas_taggings.* are app-level associations
+with no add_foreign_key in db/schema.rb, but still need rewriting:
   agenda_times.day_id            → agenda_days.id
   agendas.time_id                → agenda_times.id
   agendas.room_id                → rooms.id
@@ -105,13 +105,29 @@ associations with no add_foreign_key in db/schema.rb, but still need remapping:
   sponsors.level_id              → sponsor_levels.id
 ```
 
-**Polymorphic references:**
-- **News.author → AdminUser** — `author` is polymorphic; AdminUser is public with stable ids so no remap is needed. This is now **code-guarded**: `consolidate[news]` aborts if any `author_type` is a model other than `AdminUser` (a null author is fine) — the same fail-loud guard as Attachment, so a tenant-model author can no longer migrate with a stale id.
-- **Attachment.record → any model** — NOT safe to remap in place. `record_id` points at a tenant id that changes on consolidation, and the rake task has no cross-group remap (id_maps are per-run). `consolidate[attachment]` **aborts** if any `record_id` is set. Production has **none** (measured 2026-08-20: all 106 attachments are `Image` rows carrying only `file`), so the guard is a tripwire rather than an obstacle.
+#### Polymorphic References
 
-**CKEditor embedded URLs** — every rich-text field (Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site) plus URL inputs (MenuItem.link, Plan.button_target) — together the `RICH_TEXT_FIELDS` set — can embed `<img src="/uploads/image/file/{id}/...">` as inline HTML, not FK relationships. They keep working until S3 cleanup and have no migration-order impact; rewriting is handled in [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files) and gated by `verify_uploads_unreferenced`.
+A polymorphic reference can point across groups, which the in-place task cannot rewrite, so it refuses one that would carry a stale id.
 
-The set is finite rather than growing: `Admin::ImagesController` — the endpoint CKEditor uploads to — routes its write by the same rule as `upload_field_for`, so it writes CarrierWave only while `Attachment` is still in a tenant schema, and ActiveStorage once the group is consolidated. Consolidating `attachment` is therefore what stops new `/uploads/` references appearing, and only then can the Phase 5.0 rewrite converge.
+| Reference | Points at | `consolidate` aborts when | Production |
+|---|---|---|---|
+| `News.author` | `AdminUser`, public, stable ids | `author_type` is another model | none |
+| `Attachment.record` | any model | any `record_id` is set | none of 106 (2026-08-20) |
+
+A null author is fine. All 106 attachments are `Image` rows carrying only `file`, so the Attachment guard is a tripwire rather than an obstacle.
+
+#### CKEditor Embedded URLs
+
+Rich text can embed an upload's URL as inline HTML, which is not a foreign key and has no effect on migration order.
+
+```
+<img src="/uploads/image/file/{id}/...">   in Block/News/Plan/Sponsor/Speaker/Agenda/Game/Site
+                                           and MenuItem.link, Plan.button_target (RICH_TEXT_FIELDS)
+```
+
+These URLs keep working until S3 cleanup. [Phase 5.0](#50-rewrite-ckeditor-embedded-urls-before-deleting-s3-files) rewrites them, gated by `verify_uploads_unreferenced`.
+
+The set stops growing once `attachment` moves. `Admin::ImagesController`, where CKEditor uploads, routes its write like `upload_field_for`: CarrierWave while `Attachment` is in a tenant schema, ActiveStorage after. Only then can the Phase 5.0 rewrite converge.
 
 ### Critical Constraints
 
@@ -121,11 +137,11 @@ The set is finite rather than growing: `Admin::ImagesController` — the endpoin
 4. **Polymorphic safety (News.author)** - News.author references AdminUser (already public, stable ids); no remap needed. Code-guarded: `consolidate[news]` aborts if any `author_type` is a model other than AdminUser (null is fine).
 5. **A group's schema change must be *deployed* before its data move; the switch goes out after** - When a group needs a structural change, the migration ships with that group's phase rather than as a loose pre-step — but "same phase" is not "same deploy". A change the consolidation depends on has to be live *before* `consolidate` runs, while the `excluded_models` switch only goes out *after* the move is verified. That is two deploys, and the write freeze spans both (see [Write-Freeze Posture](#write-freeze-posture)).
 
-   Concrete case — **`index_speakers_on_slug`, settled and implemented.** Each year owned its own copy of `speakers`, so `UNIQUE (slug)` expressed per-year uniqueness. One shared public table turns it into a global constraint the data already violates — **39 of 157 distinct speaker slugs are used by more than one year** — and `consolidate[agenda]` would fail on the first of them. `RemoveGlobalUniqueIndexOnSpeakerSlug` drops it and `Speaker.validates_uniqueness_to_tenant :slug` takes over. The cover has to come from the model: `UNIQUE (site_id, slug)` binds nothing while `site_id` is null (Constraint #6), whereas the validation emits `site_id IS NULL AND slug = ?` and does. `news` made the same move in `abf00edb`, and now carries the same validation.
+   Concrete case — **`index_speakers_on_slug`, settled and implemented.** Each year owned its own copy of `speakers`, so `UNIQUE (slug)` expressed per-year uniqueness. One shared public table turns it into a global constraint the data already violates — **39 of 157 distinct speaker slugs are used by more than one year** — and the agenda move would fail on the first of them. `RemoveGlobalUniqueIndexOnSpeakerSlug` drops it and `Speaker.validates_uniqueness_to_tenant :slug` takes over. The cover has to come from the model: `UNIQUE (site_id, slug)` binds nothing while `site_id` is null (Constraint #6), whereas the validation emits `site_id IS NULL AND slug = ?` and does. `news` made the same move in `abf00edb`, and now carries the same validation.
 
-   **Where this sits in the order of operations.** The migration must be deployed before `consolidate[agenda]`, and its `down` only works until that has run — afterwards the colliding slugs share one table and the unique index cannot be rebuilt. `backfill_speaker_slugs` must have run too. FriendlyId's `:scoped` module (`scope: :site`) is the matching change on the *generating* side — today `scope_for_slug_generator` is `base_class.unscoped`, so new slugs are still made globally unique — but it has to wait until **after** the move: `Scoped#should_generate_new_friendly_id?` is true whenever a scope column changes, and `consolidate` assigns `site_id` on every row it writes, so enabling it early would regenerate every migrated slug.
+   **Where this sits in the order of operations.** The migration must be deployed before `agenda:migrate`, and its `down` only works until that has run — afterwards the colliding slugs share one table and the unique index cannot be rebuilt. `backfill_speaker_slugs` must have run before `agenda:backup`. FriendlyId's `:scoped` module (`scope: :site`) is the matching change on the *generating* side — today `scope_for_slug_generator` is `base_class.unscoped`, so new slugs are still made globally unique — but it has to wait until **after** the move: `Scoped#should_generate_new_friendly_id?` is true whenever a scope column changes, and the import assigns `site_id` on every row it writes, so enabling it early would regenerate every migrated slug — the import's write-time check would refuse the run.
 
-   **Why `validates_uniqueness_to_tenant` and not the plain scoped form.** A new speaker is given a `site_id`, so in a still-null schema it sits in a different scope from the legacy rows and could take a slug one of them already holds — a duplicate `consolidate[agenda]` would then meet once both carry the same `site_id`. While `has_global_records` is on, `validates_uniqueness_to_tenant` also checks a row that *has* a `site_id` against the rows that do not, which closes exactly that gap; `uniqueness: { scope: :site_id }` does not, and a spec pins the difference. Both `Speaker` and `News` use the tenant-aware form for this reason.
+   **Why `validates_uniqueness_to_tenant` and not the plain scoped form.** A new speaker is given a `site_id`, so in a still-null schema it sits in a different scope from the legacy rows and could take a slug one of them already holds — a duplicate the agenda move would then meet once both carry the same `site_id`. While `has_global_records` is on, `validates_uniqueness_to_tenant` also checks a row that *has* a `site_id` against the rows that do not, which closes exactly that gap; `uniqueness: { scope: :site_id }` does not, and a spec pins the difference. Both `Speaker` and `News` use the tenant-aware form for this reason.
 
 6. **`site_id IS NULL` is the normal state of the source data, and the move is what fixes it** - `has_global_records: true` makes those rows visible to every tenant. They are not an edge case: production carries **249 of 371 speakers, all 214 games, 259 agendas, 155 sponsors, 107 attachments** with a null `site_id` — rows predating `acts_as_tenant`. The move assigns `site_id` on every row it writes, so the public schema comes out with none, which is what makes `has_global_records` safe to drop per group in the switch commit. Check the *public* rows after the move, not the tenant source.
 
@@ -143,7 +159,8 @@ Every group still ahead moves by **dump → transform → import**, and gets its
 |---|---|
 | 5 sponsor, with 6 partner folded in | [tenant/migrate_sponsor.md](tenant/migrate_sponsor.md) |
 | 7 game | [tenant/migrate_game.md](tenant/migrate_game.md) |
-| 8 agenda, 9 news, 10 attachment | written when the group's round starts |
+| 8 agenda | [tenant/migrate_agenda.md](tenant/migrate_agenda.md) |
+| 9 news, 10 attachment | written when the group's round starts |
 
 ```
  backup ──▶ dump.json ── S3 (private), downloaded and kept
@@ -165,7 +182,7 @@ Why this shape rather than moving rows in place:
 | Before anything is written | nothing to inspect | the dump is reviewed; the census and preflight refuse what would fail mid-run |
 | What verify can check | row counts | every row, through the id map |
 | A re-run | rollback and redo from the live tenant schemas | rollback and redo from the same reviewed dump |
-| Cross-group references (`Attachment.record_id`) | cannot be remapped (the id map lives one run) | the id map is a file |
+| Cross-group references (`Attachment.record_id`) | cannot be remapped (no id map) | the id map is a file |
 | Rehearsal on production data | no | locally, against the production dump |
 
 ### Pipeline Parts
@@ -177,10 +194,10 @@ Each part of the pipeline lives in `lib/tenant_consolidation/`, and a group supp
 | `Dump`, `Store` | the reviewed file, and where a run keeps it |
 | `Plan` | what one dumped site becomes; a stand-in for a lost original |
 | `Census`, `Import`, `Verify` | backup's report, migrate, the row-by-row check |
-| `Records`, `Assets` | raw-column writes, the locale check, upload transfer |
+| `Records`, `Assets` | raw-column writes, the write-time check, upload transfer |
 | A group module | its models, uploads, public targets and `plan(site)` |
 
-Listing a group in `DUMP_GROUPS` gives it `backup`, `migrate` and `verify`. Game carries each row as it is (`Plan.carry`); sponsor folds Partner in (`SponsorGroup::Transform`). An upload whose original is gone is taken over from its largest CarrierWave version. `consolidate[group]` refuses every dump group, partner included.
+Listing a group in `DUMP_GROUPS` gives it `backup`, `migrate` and `verify`. Game carries each row as it is (`Plan.carry`); agenda carries its foreign keys as refs and shares its tags across sites (`SHARED`); sponsor folds Partner in (`SponsorGroup::Transform`). An upload whose original is gone is taken over from its largest CarrierWave version. `consolidate[group]` refuses every dump group, partner included.
 
 ### What every runbook carries
 
@@ -277,7 +294,7 @@ bin/rails tenant_consolidation:migrate_public_assets
 # Backfill CW marker columns from ActiveStorage for pre-retention groups (e.g. slider)
 bin/rails tenant_consolidation:backfill_markers
 
-# Give slug-less speakers their current id as a slug — run BEFORE consolidate[agenda],
+# Give slug-less speakers their current id as a slug — run BEFORE agenda:backup,
 # while those ids still mean something (175 rows across four tenants)
 bin/rails "tenant_consolidation:backfill_speaker_slugs[true]"   # dry run
 bin/rails tenant_consolidation:backfill_speaker_slugs

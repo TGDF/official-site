@@ -451,7 +451,7 @@ namespace :tenant_consolidation do
     puts "\nDone. Backfilled #{filled} marker(s)."
   end
 
-  desc "Backfill missing Speaker slugs from their current id (run BEFORE consolidate[agenda])"
+  desc "Backfill missing Speaker slugs from their current id (run BEFORE agenda:backup)"
   task :backfill_speaker_slugs, [ :dry_run ] => :environment do |_t, args|
     dry_run = args[:dry_run] == "true"
 
@@ -463,7 +463,7 @@ namespace :tenant_consolidation do
     # only while those ids still mean something, which is why this runs before the move.
     if model_already_in_public?(Speaker)
       puts "ERROR: Speaker is already in Apartment.excluded_models."
-      puts "       Slugs had to be backfilled before consolidate[agenda] ran; the source ids are gone."
+      puts "       Slugs had to be backfilled before the agenda move; the source ids are gone."
       exit 1
     end
 
