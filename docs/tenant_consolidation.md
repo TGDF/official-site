@@ -29,7 +29,7 @@ The destructive runs (`consolidate`, a group's `migrate`) must not happen near t
 
 **Parallel, out of scope here:** migrating the test suite (RSpec + Cucumber) to Minitest is tracked separately and is demand-driven. It is not a prerequisite for consolidation, but Phase 4 (removing Apartment) does depend on the test harness no longer assuming Apartment — see Phase 4.8.
 
-**Where this stands.** Four no-FK groups are consolidated in place — `slider`, `block`, `plan`, `menu_item`. `sponsor`, with `partner` folded in, moved on 2026-10-15 through the dump pipeline and its [runbook](tenant/migrate_sponsor.md): 70 levels, 254 sponsors and their logos, verified row by row. Everything else with a foreign key, a polymorphic reference, or cross-year uniqueness is still ahead.
+**Where this stands.** Four no-FK groups are consolidated in place — `slider`, `block`, `plan`, `menu_item`. `sponsor`, with `partner` folded in, moved on 2026-10-15 through the dump pipeline and its [runbook](tenant/migrate_sponsor.md): 70 levels, 254 sponsors and their logos, verified row by row. `game` followed on 2026-10-29 through its [runbook](tenant/migrate_game.md): 214 games and their thumbnails, verified row by row. Everything else with a foreign key, a polymorphic reference, or cross-year uniqueness is still ahead.
 
 > ⚠️ `tenant_consolidation:status` reports a group COMPLETE purely from `Apartment.excluded_models` membership, **not** from actual data presence. Treat `status` as "what the config claims" and `verify[group]` as "what the data shows". `menu_item` is the illustration: it reads ✓ while public *and every tenant table* hold **zero rows**, so that group proved nothing about the tooling.
 
@@ -81,7 +81,7 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 | 4 | menu_item | MenuItem | - | ✅ Complete |
 | 5 | sponsor | SponsorLevel, Sponsor | logo | ✅ Complete — [runbook](tenant/migrate_sponsor.md) |
 | 6 | **partner** | **→ folds into Sponsor** | **logo** | ✅ Complete — folded into sponsor; Partner stays frozen until Phase 5 |
-| 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | 🔧 Preparing — [runbook](tenant/migrate_game.md) |
+| 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | ✅ Complete — [runbook](tenant/migrate_game.md) |
 | 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | ⏳ Pending |
 | 9 | news | News | thumbnail | ⏳ Pending |
 | 10 | attachment | Attachment (+Image STI) | file | ⏳ Pending |

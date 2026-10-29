@@ -5,7 +5,7 @@ Game moves through the same dump pipeline as [sponsor](migrate_sponsor.md), so t
 | | |
 |---|---|
 | Parent | [../tenant_consolidation.md](../tenant_consolidation.md), group 7 `game` |
-| Status | 🔧 Preparing — tooling in place and specced; no environment has run it |
+| Status | ✅ Complete (2026-10-29) — production moved 214 games (84 `IndieSpace::Game`, 130 `NightMarket::Game`) with their thumbnails; `game:verify` printed `OK` before and after the switch. The runbook is kept as the record of how the move ran. |
 
 ## Moved rows
 
