@@ -40,13 +40,13 @@ module TenantConsolidation
 
       ctx = Context.new(tenant_name, site, @id_map.dig("sites", tenant_name) || {})
       plan.rows.flat_map { |row| row_problems(row, ctx) } +
-        (@group::TARGETS - @group::SHARED).flat_map { |model| count_problem(model.constantize, plan.rows_of(model).size, ctx) }
+        (@group.targets - @group.shared).flat_map { |model| count_problem(model.constantize, plan.rows_of(model).size, ctx) }
     end
 
     # A shared model holds only its shared rows, one for each distinct row across
     # sites; a row of it under any site is one the plan does not account for.
     def shared_problems
-      @group::SHARED.filter_map do |model|
+      @group.shared.filter_map do |model|
         planned = Plan.shared_keys(plans, model).size
         actual = model.constantize.unscoped.count
         "public holds #{actual} #{model} row(s), the plan has #{planned} shared" unless actual == planned
@@ -73,7 +73,7 @@ module TenantConsolidation
       row.upload ? %w[updated_at] : []
     end
 
-    def shared?(row) = @group::SHARED.include?(row.model)
+    def shared?(row) = @group.shared?(row.model)
 
     def column_problems(model_class, record, row, ctx, skip:)
       problems = []

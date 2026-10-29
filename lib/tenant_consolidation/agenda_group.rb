@@ -14,10 +14,11 @@ module TenantConsolidation
   # is refused: the save would make one from its name, and its /speakers/<id> link
   # would stop resolving — backfill_speaker_slugs runs first.
   module AgendaGroup
+    extend Group
+
     NAME = "agenda"
     MODELS = %w[AgendaDay AgendaTime Room AgendaTag Speaker Agenda AgendasSpeaker AgendasTagging].freeze
     UPLOADS = { "Speaker" => :avatar }.freeze
-    TARGETS = MODELS
     SHARED = %w[AgendaTag].freeze
 
     REFS = {

@@ -38,7 +38,7 @@ RSpec.describe 'the agenda move, backup to switch' do
 
   def switch_to_public
     allow(Apartment).to receive(:excluded_models)
-      .and_return(Apartment.excluded_models + TenantConsolidation::AgendaGroup::TARGETS)
+      .and_return(Apartment.excluded_models + TenantConsolidation::AgendaGroup.targets)
   end
 
   def public_agenda(site)
@@ -79,7 +79,7 @@ RSpec.describe 'the agenda move, backup to switch' do
     run(:migrate)
     silently { run_task('tenant_consolidation:rollback', 'agenda') }
 
-    models = TenantConsolidation::AgendaGroup::MODELS.map(&:constantize)
+    models = TenantConsolidation::AgendaGroup.models.map(&:constantize)
     expect(models.map { |model| public_count(model) }).to all(eq(0))
     expect(ActiveStorage::Blob.count).to eq(0)
     run(:migrate)

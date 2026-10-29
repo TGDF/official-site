@@ -163,7 +163,7 @@ end
 # reset reaches the tenant tables too. An STI subclass keeps the table name it first
 # read from its base class, so every subclass loaded by then follows the base class.
 RSpec.shared_context 'with a group before its switch' do |group|
-  let(:switched_models) { group::TARGETS.map(&:constantize) }
+  let(:switched_models) { group.targets.map(&:constantize) }
 
   around do |example|
     pinned = switched_models.to_h { |model| [ model, model.table_name ] }
@@ -174,7 +174,7 @@ RSpec.shared_context 'with a group before its switch' do |group|
   end
 
   before do
-    allow(Apartment).to receive(:excluded_models).and_return(Apartment.excluded_models - group::TARGETS)
+    allow(Apartment).to receive(:excluded_models).and_return(Apartment.excluded_models - group.targets)
   end
 
   def pin_tables(names)

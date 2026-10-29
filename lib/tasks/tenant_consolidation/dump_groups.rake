@@ -1,20 +1,18 @@
 # frozen_string_literal: true
 
 # The groups that move by dump → transform → import, one task per step so each can
-# be run, read and repeated on its own. Each is TenantConsolidation::<Name>Group,
-# resolved when a task runs (tasks load before the application autoloads), and has
-# its runbook at docs/tenant/migrate_<name>.md.
+# be run, read and repeated on its own. Each is a TenantConsolidation::Group found by
+# its name when a task runs — tasks load before the application autoloads, so only
+# the names can be listed here — and has its runbook at docs/tenant/migrate_<name>.md.
 namespace :tenant_consolidation do
   DUMP_GROUPS = %w[sponsor game agenda].freeze
-
-  def dump_group(name) = TenantConsolidation.const_get("#{name.camelize}Group")
 
   DUMP_GROUPS.each do |name|
     namespace name do
       desc "Dump the #{name} group and report what the import will meet"
       task :backup, [ :location ] => :environment do |_t, args|
-        group = dump_group(name)
-        dump = TenantConsolidation::Dump.collect(group: name, models: group::MODELS, uploads: group::UPLOADS)
+        group = TenantConsolidation::Group.find(name)
+        dump = TenantConsolidation::Dump.collect(group: name, models: group.models, uploads: group.uploads)
         store = TenantConsolidation::Store.open(args[:location].presence || TenantConsolidation::Store.new_run(name))
         store.write("dump.json", dump.to_json)
 
@@ -38,7 +36,7 @@ namespace :tenant_consolidation do
           exit 1
         end
 
-        import = TenantConsolidation::Import.new(dump_group(name), dump)
+        import = TenantConsolidation::Import.new(TenantConsolidation::Group.find(name), dump)
         import.preflight!
 
         ids = import.import_rows!
@@ -61,7 +59,7 @@ namespace :tenant_consolidation do
         store = TenantConsolidation::Store.open(args[:location])
         dump = TenantConsolidation::Dump.parse(store.read("dump.json"))
         id_map = JSON.parse(store.read("id_map.json"))
-        problems = TenantConsolidation::Verify.new(dump_group(name), dump, id_map).problems
+        problems = TenantConsolidation::Verify.new(TenantConsolidation::Group.find(name), dump, id_map).problems
 
         if problems.any?
           puts "NOT VERIFIED — #{problems.size} problem(s):"

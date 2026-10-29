@@ -5,16 +5,10 @@ module TenantConsolidation
   # Space and Night Market games stay apart, and a locale a game never had stays
   # missing for Mobility's fallback to cover.
   module GameGroup
+    extend Group
+
     NAME = "game"
     MODELS = %w[Game].freeze
     UPLOADS = { "Game" => :thumbnail }.freeze
-    TARGETS = %w[Game].freeze
-    SHARED = [].freeze
-
-    module_function
-
-    def plan(site)
-      Plan.carry(site, MODELS)
-    end
   end
 end

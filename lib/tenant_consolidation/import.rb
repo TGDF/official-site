@@ -43,12 +43,12 @@ module TenantConsolidation
 
     def summary
       plans.map do |plan|
-        line = "#{plan.site.tenant_name}: " + @group::TARGETS.map { |model| "#{plan.rows_of(model).size} #{model}" }.join(", ")
+        line = "#{plan.site.tenant_name}: " + @group.targets.map { |model| "#{plan.rows_of(model).size} #{model}" }.join(", ")
         skipped = plan.skipped.reject { |_model, rows| rows.empty? }.map do |model, rows|
           "skipped #{model} #{rows.map { |row| "##{row.id}" }.join(' ')} (left for review)"
         end
         [ line, *skipped ].join("; ")
-      end + @group::SHARED.map { |model| "shared: #{Plan.shared_keys(plans, model).size} #{model}" }
+      end + @group.shared.map { |model| "shared: #{Plan.shared_keys(plans, model).size} #{model}" }
     end
 
     # What verify reads to find each dumped row's public counterpart, and what the
@@ -79,7 +79,7 @@ module TenantConsolidation
           refs = row.refs.transform_values { |parent| parent && ids.fetch(parent.first).fetch(parent.last) }
           # A shared row is written once, for the first site holding it, and belongs
           # to no site; every later site's copy maps to it.
-          record = if @group::SHARED.include?(row.model)
+          record = if @group.shared?(row.model)
             shared_records[Plan.shared_key(row)] ||= write(row.model, row.attributes.merge(refs), nil)
           else
             write(row.model, row.attributes.merge(refs), site)
@@ -114,18 +114,18 @@ module TenantConsolidation
 
     def public_problems
       problems = []
-      in_public = @group::TARGETS & Apartment.excluded_models.map(&:to_s)
+      in_public = @group.targets & Apartment.excluded_models.map(&:to_s)
       problems << "#{in_public.join(', ')} already served from the public schema" if in_public.any?
 
       Apartment::Tenant.switch("public") do
-        @group::TARGETS.map(&:constantize).each do |model|
+        @group.targets.map(&:constantize).each do |model|
           count = model.unscoped.count
           next unless count.positive?
 
-          problems << "public #{model.table_name} already holds #{count} row(s) — run rollback[#{@group::NAME}] first"
+          problems << "public #{model.table_name} already holds #{count} row(s) — run rollback[#{@group.group_name}] first"
         end
 
-        ActiveStorage::Attachment.where(record_type: @group::TARGETS).group(:record_type).count.each do |type, count|
+        ActiveStorage::Attachment.where(record_type: @group.targets).group(:record_type).count.each do |type, count|
           problems << "#{count} ActiveStorage attachment(s) already sit on #{type} ids"
         end
       end

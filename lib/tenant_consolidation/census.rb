@@ -28,7 +28,7 @@ module TenantConsolidation
     # attachment; one on a tenant-schema row was left by tooling or an aborted run,
     # and would sit on a public row with the same id once the group has moved.
     def leftover_attachments
-      ActiveStorage::Attachment.where(record_type: @group::UPLOADS.keys).group(:record_type).count
+      ActiveStorage::Attachment.where(record_type: @group.uploads.keys).group(:record_type).count
     end
 
     def report
@@ -40,7 +40,7 @@ module TenantConsolidation
         section("Uploads taken over from their largest version, the original being gone", stand_ins) do |tenant_name, s|
           "#{tenant_name} #{s.source.join('#')} #{s.field} ← #{s.version} #{s.path}"
         end,
-        section("Leftover ActiveStorage attachments on #{@group::UPLOADS.keys.join('/')}",
+        section("Leftover ActiveStorage attachments on #{@group.uploads.keys.join('/')}",
                 leftover_attachments.to_a) { |type, count| "#{type}: #{count}" },
         *group_sections
       ].join("\n\n")
@@ -53,19 +53,17 @@ module TenantConsolidation
     end
 
     def group_sections
-      return [] unless @group.respond_to?(:census_sections)
-
       @group.census_sections(@dump).map { |title, lines| section(title, lines, &:itself) }
     end
 
     def counts_table
-      models = @group::MODELS
+      models = @group.models
       width = [ @dump.sites.map { |site| site.tenant_name.size }.max.to_i, 6 ].max
       header = "site".ljust(width) + models.map { |m| m.rjust(14) }.join
       rows = @dump.counts.map do |tenant_name, counts|
         tenant_name.ljust(width) + models.map { |m| counts.fetch(m, 0).to_s.rjust(14) }.join
       end
-      [ "#{@group::NAME.humanize} group — #{@dump.sites.size} site(s)", header, *rows ].join("\n")
+      [ "#{@group.group_name.humanize} group — #{@dump.sites.size} site(s)", header, *rows ].join("\n")
     end
 
     def section(title, items, &line)
