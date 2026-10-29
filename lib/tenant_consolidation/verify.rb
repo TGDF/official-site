@@ -23,7 +23,7 @@ module TenantConsolidation
 
     def problems
       Apartment::Tenant.switch("public") do
-        @dump.sites.flat_map { |site| site_problems(@group.plan(site)) }
+        @dump.sites.flat_map { |site| site_problems(@group.plan(site)) } + shared_problems
       end
     end
 
@@ -36,7 +36,17 @@ module TenantConsolidation
 
       ctx = Context.new(tenant_name, site, @id_map.dig("sites", tenant_name) || {})
       plan.rows.flat_map { |row| row_problems(row, ctx) } +
-        @group::TARGETS.flat_map { |model| count_problem(model.constantize, plan.rows_of(model).size, ctx) }
+        (@group::TARGETS - @group::SHARED).flat_map { |model| count_problem(model.constantize, plan.rows_of(model).size, ctx) }
+    end
+
+    # A shared model's rows belong to no site, one for each distinct row across sites.
+    def shared_problems
+      import = Import.new(@group, @dump)
+      @group::SHARED.filter_map do |model|
+        planned = import.shared_keys(model).size
+        actual = model.constantize.unscoped.where(site_id: nil).count
+        "public holds #{actual} shared #{model} row(s), the plan has #{planned}" unless actual == planned
+      end
     end
 
     # Attaching an upload touches its record (ActiveStorage.touch_attachment_records),
@@ -46,15 +56,26 @@ module TenantConsolidation
       record = find(model_class, row.source, ctx)
       return [ "#{label(row, ctx)} has no public #{model_class.name}" ] unless record
 
-      column_problems(model_class, record, row, ctx, skip: row.upload ? %w[updated_at] : []) +
+      column_problems(model_class, record, row, ctx, skip: skipped_columns(row)) +
         ref_problems(record, row, ctx) +
         upload_problems(record, row, ctx)
     end
 
+    # A shared row keeps the first site's timestamps, so only its other columns match
+    # every site it stands for.
+    def skipped_columns(row)
+      return Import::SHARED_IGNORED if shared?(row)
+
+      row.upload ? %w[updated_at] : []
+    end
+
+    def shared?(row) = @group::SHARED.include?(row.model)
+
     def column_problems(model_class, record, row, ctx, skip:)
       problems = []
-      unless record.site_id == ctx.site.id
-        problems << "#{label(row, ctx)} belongs to site #{record.site_id}, expected #{ctx.site.id}"
+      site_id = shared?(row) ? nil : ctx.site.id
+      unless record.site_id == site_id
+        problems << "#{label(row, ctx)} belongs to site #{record.site_id.inspect}, expected #{site_id.inspect}"
       end
       (row.attributes.keys - skip).each do |column|
         expected = model_class.type_for_attribute(column).cast(row.attributes[column])

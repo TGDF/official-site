@@ -48,6 +48,14 @@ RSpec.describe 'tenant_consolidation rake tasks' do
       end
     end
 
+    it 'aborts the agenda group, which moves through the agenda tasks' do
+      seed_agenda_time(main_site, day_label: 'Day 1', time_label: 'Morning')
+
+      expect { run_task('tenant_consolidation:consolidate', 'agenda') }
+        .to raise_error(SystemExit).and output(/tenant_consolidation:agenda:backup/).to_stdout
+      expect(public_count(AgendaDay)).to eq(0)
+    end
+
     it 'aborts attachment consolidation when a polymorphic record_id is set' do
       within_tenant(main_site) do
         Attachment.new(record_type: 'Foo', record_id: 123, file: 'x.png').save!(validate: false)
@@ -68,54 +76,53 @@ RSpec.describe 'tenant_consolidation rake tasks' do
     end
   end
 
-  describe 'consolidate[agenda] across two tenants' do
-    let(:other_site) do
-      create(:site, name: 'Other', domain: 'other.example.test', tenant_name: 'spec_cons_b')
+  describe 'consolidate[news] across two tenants' do
+    let(:other_site) { create_tenant_site('spec_cons_b') }
+
+    def seed_news(site, slug)
+      within_tenant(site) do
+        news = News.new(site_id: site.id, slug: slug)
+        news[:title] = { 'en' => slug }
+        news.save!(validate: false)
+      end
     end
 
     before do
-      seed_agenda_time(main_site, day_label: 'Day 1', time_label: 'Morning')
-      seed_agenda_time(other_site, day_label: 'Day A', time_label: 'Evening')
-      run_task('tenant_consolidation:consolidate', 'agenda')
+      seed_news(main_site, 'opening')
+      seed_news(other_site, 'closing')
+      run_task('tenant_consolidation:consolidate', 'news')
     end
 
     it 'migrates every tenant\'s rows into public with the correct site_id' do
       in_public do
-        expect(AgendaDay.unscoped.count).to eq(2)
-        expect(AgendaTime.unscoped.pluck(:site_id)).to contain_exactly(main_site.id, other_site.id)
-      end
-    end
-
-    it 'remaps agenda_time.day_id to each time\'s OWN migrated day (no stale/cross-tenant id)' do
-      in_public do
-        AgendaTime.unscoped.find_each do |time|
-          day = AgendaDay.unscoped.find_by(id: time.day_id)
-          expect(day).to be_present
-          expect(day.site_id).to eq(time.site_id)
-        end
+        expect(News.unscoped.pluck(:site_id, :slug)).to contain_exactly([ main_site.id, 'opening' ], [ other_site.id, 'closing' ])
       end
     end
 
     it 'aborts a re-run onto a non-empty public target' do
-      expect { run_task('tenant_consolidation:consolidate', 'agenda') }.to raise_error(SystemExit)
+      expect { run_task('tenant_consolidation:consolidate', 'news') }.to raise_error(SystemExit)
     end
 
     it 'leaves the id sequence usable (a fresh insert does not hit a duplicate key)' do
       in_public do
-        day = AgendaDay.new(site_id: main_site.id, label: 'Fresh')
-        expect { day.save!(validate: false) }.not_to raise_error
-        expect(day.id).to be_present
+        news = News.new(site_id: main_site.id, slug: 'fresh')
+        expect { news.save!(validate: false) }.not_to raise_error
+        expect(news.id).to be_present
       end
     end
   end
 
-  describe 'consolidate[agenda]' do
+  describe 'consolidate[news]' do
     it 'writes nothing to the public schema on a dry run' do
-      seed_agenda_time(main_site, day_label: 'Day 1', time_label: '09:00')
+      within_tenant(main_site) do
+        news = News.new(site_id: main_site.id, slug: 'dry')
+        news[:title] = { 'en' => 'Dry' }
+        news.save!(validate: false)
+      end
 
-      run_task('tenant_consolidation:consolidate', 'agenda', 'true')
+      run_task('tenant_consolidation:consolidate', 'news', 'true')
 
-      expect([ public_count(AgendaDay), public_count(AgendaTime) ]).to eq([ 0, 0 ])
+      expect(public_count(News)).to eq(0)
     end
   end
 end

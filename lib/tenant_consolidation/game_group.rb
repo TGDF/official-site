@@ -9,6 +9,7 @@ module TenantConsolidation
     MODELS = %w[Game].freeze
     UPLOADS = { "Game" => :thumbnail }.freeze
     TARGETS = %w[Game].freeze
+    SHARED = [].freeze
 
     module_function
 

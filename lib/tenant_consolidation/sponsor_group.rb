@@ -9,6 +9,7 @@ module TenantConsolidation
     MODELS = %w[SponsorLevel Sponsor PartnerType Partner].freeze
     UPLOADS = { "Sponsor" => :logo, "Partner" => :logo }.freeze
     TARGETS = %w[SponsorLevel Sponsor].freeze
+    SHARED = [].freeze
 
     # 2023tgdf paired its PartnerType labels the other way round from every other
     # year. Keyed by the English label, the zh-TW label every other year gives it.

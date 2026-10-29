@@ -18,7 +18,8 @@ RSpec.shared_context 'with consolidation tenants' do
   end
 
   def seeded_models
-    [ Sponsor, SponsorLevel, Partner, PartnerType, AgendaTime, AgendaDay, Game, Attachment, News ]
+    [ Sponsor, SponsorLevel, Partner, PartnerType, AgendasSpeaker, AgendasTagging, Agenda, Speaker, AgendaTag, Room,
+      AgendaTime, AgendaDay, Game, Attachment, News ]
   end
 
   # A dangling Site whose schema is dropped would break the next example's
@@ -114,6 +115,32 @@ RSpec.shared_context 'with consolidation tenants' do
       game.save!(validate: false)
       game
     end
+  end
+
+  # One agenda with its whole graph: a day, a time, a room, a speaker and, when named,
+  # a tag. begin_at keeps the date prefix older data carries, written past the setter.
+  def seed_agenda(site, subject:, speaker_slug:, tag_name: nil, with_avatar: false)
+    within_tenant(site) do
+      time = seed_agenda_time(site, day_label: 'Day 1', time_label: 'Morning')
+      room = save_raw(Room.new(site_id: site.id, name: 'Hall'))
+      speaker = Speaker.new(site_id: site.id, slug: speaker_slug, name: speaker_slug)
+      speaker.avatar = Rack::Test::UploadedFile.new(test_png, 'image/png') if with_avatar
+      save_raw(speaker)
+      agenda = Agenda.new(site_id: site.id, time_id: time.id, room_id: room.id, subject: subject)
+      agenda[:begin_at] = '2026-07-16 16:30'
+      save_raw(agenda)
+      save_raw(AgendasSpeaker.new(site_id: site.id, agenda_id: agenda.id, speaker_id: speaker.id))
+      if tag_name
+        tag = save_raw(AgendaTag.new(site_id: site.id, name: tag_name))
+        save_raw(AgendasTagging.new(site_id: site.id, agenda_id: agenda.id, agenda_tag_id: tag.id))
+      end
+      agenda
+    end
+  end
+
+  def save_raw(record)
+    record.save!(validate: false)
+    record
   end
 
   def seed_agenda_time(site, day_label:, time_label:)

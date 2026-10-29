@@ -12,6 +12,13 @@ module TenantConsolidation
   class Import
     class Invalid < StandardError; end
 
+    # A row of a model the group lists in SHARED is written once for every site
+    # holding the same columns, and belongs to no site; the first site's copy, its
+    # timestamps included, is the one kept.
+    SHARED_IGNORED = %w[created_at updated_at].freeze
+
+    def self.shared_key(row) = [ row.model, row.attributes.except(*SHARED_IGNORED) ]
+
     def initialize(group, dump)
       @group = group
       @dump = dump
@@ -48,7 +55,11 @@ module TenantConsolidation
           "skipped #{model} #{rows.map { |row| "##{row.id}" }.join(' ')} (left for review)"
         end
         [ line, *skipped ].join("; ")
-      end
+      end + @group::SHARED.map { |model| "shared: #{shared_keys(model).size} #{model}" }
+    end
+
+    def shared_keys(model)
+      plans.flat_map { |plan| plan.rows_of(model) }.map { |row| Import.shared_key(row) }.uniq
     end
 
     # What verify reads to find each dumped row's public counterpart, and what the
@@ -77,7 +88,11 @@ module TenantConsolidation
       ActsAsTenant.with_tenant(site) do
         plan.rows.each do |row|
           refs = row.refs.transform_values { |parent| parent && ids.fetch(parent.first).fetch(parent.last) }
-          record = write(row.model, row.attributes.merge(refs), site)
+          record = if @group::SHARED.include?(row.model)
+            shared_records[Import.shared_key(row)] ||= write(row.model, row.attributes.merge(refs), nil)
+          else
+            write(row.model, row.attributes.merge(refs), site)
+          end
           ids[row.source.first][row.source.last] = record.id
           queue_upload(record, row.upload)
         end
@@ -86,10 +101,14 @@ module TenantConsolidation
       ids
     end
 
+    def shared_records
+      @shared_records ||= {}
+    end
+
     def write(model_name, attributes, site)
       record = model_name.constantize.new
       Records.assign_raw_attributes(record, attributes)
-      record.site_id = site.id
+      record.site_id = site&.id
       record.save!(validate: false)
       Records.verify_written_as_planned(attributes, record, model_name)
       record
