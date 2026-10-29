@@ -28,6 +28,16 @@ module TenantConsolidation
     # Never carried over: the public row gets a fresh id and the importing site's id.
     DROPPED = %w[id site_id].freeze
 
+    # Rows of a model a group lists in SHARED are one row across sites when every
+    # other column matches; the timestamps kept are the first site's.
+    SHARED_IGNORED = %w[created_at updated_at].freeze
+
+    def self.shared_key(row) = [ row.model, row.attributes.except(*SHARED_IGNORED) ]
+
+    def self.shared_keys(plans, model)
+      plans.flat_map { |plan| plan.rows_of(model) }.map { |row| shared_key(row) }.uniq
+    end
+
     attr_reader :site, :rows, :skipped, :stand_ins
 
     # A group whose rows move as they are, each to the model it was dumped from.

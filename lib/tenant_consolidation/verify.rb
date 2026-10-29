@@ -23,11 +23,15 @@ module TenantConsolidation
 
     def problems
       Apartment::Tenant.switch("public") do
-        @dump.sites.flat_map { |site| site_problems(@group.plan(site)) } + shared_problems
+        plans.flat_map { |plan| site_problems(plan) } + shared_problems
       end
     end
 
     private
+
+    def plans
+      @plans ||= @dump.sites.map { |site| @group.plan(site) }
+    end
 
     def site_problems(plan)
       tenant_name = plan.site.tenant_name
@@ -39,13 +43,13 @@ module TenantConsolidation
         (@group::TARGETS - @group::SHARED).flat_map { |model| count_problem(model.constantize, plan.rows_of(model).size, ctx) }
     end
 
-    # A shared model's rows belong to no site, one for each distinct row across sites.
+    # A shared model holds only its shared rows, one for each distinct row across
+    # sites; a row of it under any site is one the plan does not account for.
     def shared_problems
-      import = Import.new(@group, @dump)
       @group::SHARED.filter_map do |model|
-        planned = import.shared_keys(model).size
-        actual = model.constantize.unscoped.where(site_id: nil).count
-        "public holds #{actual} shared #{model} row(s), the plan has #{planned}" unless actual == planned
+        planned = Plan.shared_keys(plans, model).size
+        actual = model.constantize.unscoped.count
+        "public holds #{actual} #{model} row(s), the plan has #{planned} shared" unless actual == planned
       end
     end
 
@@ -64,7 +68,7 @@ module TenantConsolidation
     # A shared row keeps the first site's timestamps, so only its other columns match
     # every site it stands for.
     def skipped_columns(row)
-      return Import::SHARED_IGNORED if shared?(row)
+      return Plan::SHARED_IGNORED if shared?(row)
 
       row.upload ? %w[updated_at] : []
     end

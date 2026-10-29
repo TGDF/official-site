@@ -51,7 +51,7 @@ module TenantConsolidation
           end ],
         [ "Shared tags, each from the tags of every site with the same name",
           plans.flat_map { |plan| plan.rows_of("AgendaTag").map { |row| [ plan.site.tenant_name, row ] } }
-               .group_by { |_tenant_name, row| Import.shared_key(row) }
+               .group_by { |_tenant_name, row| Plan.shared_key(row) }
                .map do |(_model, attributes), rows|
                  "#{attributes['name'].to_json} ← #{rows.map { |name, row| "#{name}##{row.source.last}" }.join(' ')}"
                end ]

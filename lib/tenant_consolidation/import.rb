@@ -12,13 +12,6 @@ module TenantConsolidation
   class Import
     class Invalid < StandardError; end
 
-    # A row of a model the group lists in SHARED is written once for every site
-    # holding the same columns, and belongs to no site; the first site's copy, its
-    # timestamps included, is the one kept.
-    SHARED_IGNORED = %w[created_at updated_at].freeze
-
-    def self.shared_key(row) = [ row.model, row.attributes.except(*SHARED_IGNORED) ]
-
     def initialize(group, dump)
       @group = group
       @dump = dump
@@ -55,11 +48,7 @@ module TenantConsolidation
           "skipped #{model} #{rows.map { |row| "##{row.id}" }.join(' ')} (left for review)"
         end
         [ line, *skipped ].join("; ")
-      end + @group::SHARED.map { |model| "shared: #{shared_keys(model).size} #{model}" }
-    end
-
-    def shared_keys(model)
-      plans.flat_map { |plan| plan.rows_of(model) }.map { |row| Import.shared_key(row) }.uniq
+      end + @group::SHARED.map { |model| "shared: #{Plan.shared_keys(plans, model).size} #{model}" }
     end
 
     # What verify reads to find each dumped row's public counterpart, and what the
@@ -88,8 +77,10 @@ module TenantConsolidation
       ActsAsTenant.with_tenant(site) do
         plan.rows.each do |row|
           refs = row.refs.transform_values { |parent| parent && ids.fetch(parent.first).fetch(parent.last) }
+          # A shared row is written once, for the first site holding it, and belongs
+          # to no site; every later site's copy maps to it.
           record = if @group::SHARED.include?(row.model)
-            shared_records[Import.shared_key(row)] ||= write(row.model, row.attributes.merge(refs), nil)
+            shared_records[Plan.shared_key(row)] ||= write(row.model, row.attributes.merge(refs), nil)
           else
             write(row.model, row.attributes.merge(refs), site)
           end

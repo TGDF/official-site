@@ -72,6 +72,15 @@ RSpec.describe 'the agenda move, backup to switch' do
     end
   end
 
+  it 'reports a shared tag the plan does not account for' do
+    seed_agenda(main_site, subject: 'Opening', speaker_slug: '12', tag_name: '程式')
+    run(:backup)
+    run(:migrate)
+    in_public { AgendaTag.create!(name: '視覺') }
+
+    expect(run(:verify)).to include('public holds 2 AgendaTag row(s), the plan has 1 shared', '[exited 1]')
+  end
+
   it 'leaves out a tagging whose tag is gone, and lists it' do
     agenda = seed_agenda(main_site, subject: 'Opening', speaker_slug: '12', tag_name: '視覺')
     within_tenant(main_site) { AgendaTag.unscoped.delete_all }
