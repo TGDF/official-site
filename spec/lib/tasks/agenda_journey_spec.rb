@@ -72,6 +72,20 @@ RSpec.describe 'the agenda move, backup to switch' do
     end
   end
 
+  it 'can run again after rollback[agenda] clears every table and avatar it wrote' do
+    seed_agenda(main_site, subject: 'Opening', speaker_slug: '12', tag_name: '程式', with_avatar: true)
+    seed_agenda(other_site, subject: 'Keynote', speaker_slug: 'ada', tag_name: '程式', with_avatar: true)
+    run(:backup)
+    run(:migrate)
+    silently { run_task('tenant_consolidation:rollback', 'agenda') }
+
+    models = TenantConsolidation::AgendaGroup::MODELS.map(&:constantize)
+    expect(models.map { |model| public_count(model) }).to all(eq(0))
+    expect(ActiveStorage::Blob.count).to eq(0)
+    run(:migrate)
+    expect(run(:verify)).to start_with('OK')
+  end
+
   it 'reports a shared tag the plan does not account for' do
     seed_agenda(main_site, subject: 'Opening', speaker_slug: '12', tag_name: '程式')
     run(:backup)
