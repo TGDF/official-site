@@ -1,0 +1,32 @@
+name: Sync Cloudflare IPs
+
+# The load balancer only admits Cloudflare's edge, through two managed prefix lists.
+# Cloudflare changes its ranges rarely and without our involvement, so a daily sync
+# keeps a newly added edge range from being refused.
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency: cloudflare-ips
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: aws-actions/configure-aws-credentials@ff717079ee2060e4bcee96c4779b553acc87447c # v4
+        with:
+          role-to-assume: ${{ secrets.CLOUDFLARE_IP_SYNC_ROLE }}
+          aws-region: ap-northeast-1
+
+      - name: Sync prefix lists
+        run: |
+          .github/scripts/sync-cloudflare-ips.sh \
+            "${{ vars.CLOUDFLARE_IPV4_PREFIX_LIST }}" \
+            "${{ vars.CLOUDFLARE_IPV6_PREFIX_LIST }}"
