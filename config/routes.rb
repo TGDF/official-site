@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  # Every upload goes through the server, so Active Storage's direct-upload endpoint has no
+  # caller; open, it hands any visitor a signed blob id. Drawn before Active Storage's routes,
+  # this one shadows it.
+  match "#{ActiveStorage.routes_prefix}/direct_uploads", to: ->(_env) { [ 404, {}, [] ] }, via: :all
+
   # Devise
   devise_for :admin_users, path: :admin
 
