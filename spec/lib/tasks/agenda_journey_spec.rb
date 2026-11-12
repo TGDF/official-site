@@ -11,6 +11,7 @@ Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidati
 # rubocop:disable RSpec/DescribeClass, RSpec/MultipleExpectations, RSpec/ExampleLength
 RSpec.describe 'the agenda move, backup to switch' do
   include_context 'with consolidation tenants'
+  include_context 'with a group before its switch', TenantConsolidation::AgendaGroup
 
   let(:location) { Rails.root.join('tmp/consolidation/spec', SecureRandom.hex(4)).to_s }
   let(:other_site) { create_tenant_site('spec_cons_b') }

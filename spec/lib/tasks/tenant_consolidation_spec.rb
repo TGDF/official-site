@@ -48,12 +48,16 @@ RSpec.describe 'tenant_consolidation rake tasks' do
       end
     end
 
-    it 'aborts the agenda group, which moves through the agenda tasks' do
-      seed_agenda_time(main_site, day_label: 'Day 1', time_label: 'Morning')
+    context 'when agenda is still in the tenant schemas' do
+      include_context 'with a group before its switch', TenantConsolidation::AgendaGroup
 
-      expect { run_task('tenant_consolidation:consolidate', 'agenda') }
-        .to raise_error(SystemExit).and output(/tenant_consolidation:agenda:backup/).to_stdout
-      expect(public_count(AgendaDay)).to eq(0)
+      it 'aborts the agenda group, which moves through the agenda tasks' do
+        seed_agenda_time(main_site, day_label: 'Day 1', time_label: 'Morning')
+
+        expect { run_task('tenant_consolidation:consolidate', 'agenda') }
+          .to raise_error(SystemExit).and output(/tenant_consolidation:agenda:backup/).to_stdout
+        expect(public_count(AgendaDay)).to eq(0)
+      end
     end
 
     it 'sends a dump group to its own verify, which checks every row against its dump' do

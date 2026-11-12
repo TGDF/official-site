@@ -46,7 +46,7 @@ Tags are one vocabulary across every year. Each distinct tag becomes a single `A
 | its timestamps | the first site's copy |
 | every tagging | points at the shared tag |
 
-Tags match on their whole `name`, every locale included. Production's 93 tags give exactly 23 names, with no name differing in one locale only. The census lists each shared tag with the tags it stands for. Tag management becomes shared in the admin, since every year now edits the same list.
+Tags match on their whole `name`, every locale included. Production's 93 tags give exactly 23 names, with no name differing in one locale only. The census lists each shared tag with the tags it stands for. Tags stay under each year's agenda menu in the admin, where an edit now changes every year.
 
 ## Left-out Taggings
 
@@ -70,7 +70,7 @@ Agenda's preparation, step 2 of the sequence, gives every speaker a slug so its 
 | backup | refuses a slugless speaker, or two of a site sharing a slug |
 | migrate | aborts on a save that rewrote any column |
 
-The backfill leaves every page as it was, since FriendlyId already fell back to the id. An id another speaker uses as a slug gets a `-2` suffix. The ids it prints are its undo record, and its slugs stay through any rollback. FriendlyId's `:scoped` module regenerates a slug whenever `site_id` changes, so it joins only in the switch commit.
+The backfill leaves every page as it was, since FriendlyId already fell back to the id. An id another speaker uses as a slug gets a `-2` suffix. The ids it prints are its undo record, and its slugs stay through any rollback.
 
 ## Safety Net
 
@@ -161,12 +161,11 @@ One commit, written in the local run's step 8 with RSpec and Cucumber green.
 | `config/initializers/apartment.rb` | add the eight models to `excluded_models` |
 | the seven site models | plain `acts_as_tenant :site` |
 | `app/models/agenda_tag.rb` | drop `acts_as_tenant` |
-| `app/models/speaker.rb` | FriendlyId `:scoped`, `scope: :site` |
-| admin sidebar | tags under the shared section |
+| `app/models/speaker.rb` | FriendlyId stays `:slugged` |
 | speaker factory, features, admin specs | attach through `avatar_attachment` |
 | the agenda task specs | include `with a group before its switch` |
 
-A plain `acts_as_tenant` would hide every shared tag, whose `site_id` is null. The commit adds a spec that saving a moved speaker keeps its slug.
+A plain `acts_as_tenant` would hide every shared tag, whose `site_id` is null. FriendlyId's `:scoped` stays out: it regenerates a slug whenever `site_id` changes, which every new speaker's does, so it would overwrite each slug an editor gives.
 
 ## Recovery
 

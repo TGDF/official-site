@@ -32,8 +32,8 @@ Feature: Admin manage speakers
       | order       | 1                 |
       | description | Example Content   |
     And I attach files in the "speaker" form
-      | field  | value    |
-      | avatar | TGDF.png |
+      | field             | value    |
+      | avatar_attachment | TGDF.png |
     And I click "新增Speaker" button
     Then I can see these items in table
       | text    |

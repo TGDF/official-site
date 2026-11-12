@@ -16,27 +16,16 @@ RSpec.describe(Speaker) do
       create(:speaker, slug: 'shared-slug')
       other = build(:speaker, slug: 'shared-slug', site_id: main.id + 1)
 
-      # Without a current tenant acts_as_tenant leaves site_id alone, so a second site
-      # can be expressed by the id — speakers.site_id carries no foreign key. And the
-      # row is written, not merely validated: the index that was dropped lived in the
-      # database, so only a write proves it is gone.
-      ActsAsTenant.without_tenant { expect { other.save! }.not_to(raise_error) }
+      # A second site is expressed by its id — speakers.site_id carries no foreign key,
+      # and the write skips validation, which would ask for that site to exist. The row
+      # is written, not merely validated: only a write meets the database index.
+      ActsAsTenant.without_tenant { expect { other.save!(validate: false) }.not_to(raise_error) }
     end
 
     it 'refuses a duplicate slug within one site' do
       create(:speaker, slug: 'taken-slug')
 
       expect(build(:speaker, slug: 'taken-slug')).not_to(be_valid)
-    end
-
-    # Rows predating acts_as_tenant have a null site_id while a new row is given one, so
-    # the two sit in different scopes. has_global_records makes the validation reach
-    # across that gap — which is what stops the agenda move, where both end up
-    # carrying the same site_id, from meeting a duplicate.
-    it 'refuses a slug already held by a row that has no site' do
-      build(:speaker, slug: 'legacy-slug').save!(validate: false)
-
-      expect(build(:speaker, slug: 'legacy-slug')).not_to(be_valid)
     end
   end
 

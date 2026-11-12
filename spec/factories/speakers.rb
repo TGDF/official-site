@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :speaker do
     name { Faker::Name.name }
     description { Faker::Lorem.paragraph }
-    avatar do
+    avatar_attachment do
       Rack::Test::UploadedFile.new(
         Rails.root.join('spec/support/avatars/Aotoki.jpg'),
         'image/jpeg'
@@ -12,7 +12,7 @@ FactoryBot.define do
     end
 
     trait :without_avatar do
-      avatar { nil }
+      avatar_attachment { nil }
 
       to_create do |instance|
         instance.save(validate: false)

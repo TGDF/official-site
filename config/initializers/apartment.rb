@@ -20,6 +20,14 @@ Apartment.configure do |config|
     SponsorLevel
     Sponsor
     Game
+    AgendaDay
+    AgendaTime
+    Room
+    AgendaTag
+    Speaker
+    Agenda
+    AgendasSpeaker
+    AgendasTagging
     ActiveStorage::Blob
     ActiveStorage::Attachment
     ActiveStorage::VariantRecord

@@ -7,15 +7,15 @@ RSpec.describe HasMigratedUpload do
 
   describe 'schema-based routing' do
     context 'with tenant-schema models' do
-      let(:speaker) { create(:speaker) }
+      let(:news) { create(:news) }
 
       it 'always returns CarrierWave URL' do
-        expect(speaker.avatar_url).to include('uploads/')
+        expect(news.thumbnail_url).to include('uploads/')
       end
 
       it 'returns CarrierWave URL even with ActiveStorage attached' do
-        speaker.avatar_attachment.attach(io: File.open(test_file), filename: 'avatar.png')
-        expect(speaker.avatar_url).to include('uploads/')
+        news.thumbnail_attachment.attach(io: File.open(test_file), filename: 'thumbnail.png')
+        expect(news.thumbnail_url).to include('uploads/')
       end
     end
 
@@ -86,21 +86,21 @@ RSpec.describe HasMigratedUpload do
     end
   end
 
-  # Speaker still lives in a tenant schema, so its avatar is CarrierWave-only. Removal
+  # News still lives in a tenant schema, so its thumbnail is CarrierWave-only. Removal
   # used to slip past the presence validation there too: the column was cleared in a
   # before_save, after validation had already read it as present.
   describe 'removal of a required upload' do
-    let(:speaker) { create(:speaker) }
+    let(:news) { create(:news) }
 
-    before { speaker.remove_avatar = '1' }
+    before { news.remove_thumbnail = '1' }
 
     it 'is rejected' do
-      expect(speaker).not_to be_valid
+      expect(news).not_to be_valid
     end
 
     it 'still reports the stored file, so the form keeps showing it' do
-      speaker.valid?
-      expect(speaker.avatar_present?).to be true
+      news.valid?
+      expect(news.thumbnail_present?).to be true
     end
   end
 end

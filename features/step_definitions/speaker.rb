@@ -2,7 +2,7 @@
 
 Given('there are some speakers') do |table|
   table.hashes.each do |speaker|
-    speaker[:avatar] = uploaded_thumbnail(speaker[:avatar])
+    speaker[:avatar_attachment] = uploaded_thumbnail(speaker.delete('avatar'))
     Speaker.create!(**speaker)
   end
 end

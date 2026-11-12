@@ -9,6 +9,7 @@ Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidati
 # rubocop:disable RSpec/DescribeClass
 RSpec.describe 'tenant_consolidation:backfill_speaker_slugs' do
   self.use_transactional_tests = false
+  include_context 'with a group before its switch', TenantConsolidation::AgendaGroup
 
   let(:main_site) { Site.find_by(tenant_name: 'main') }
 

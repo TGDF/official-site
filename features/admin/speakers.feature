@@ -26,8 +26,8 @@ Feature: Manage Speakers
       | order       | 1                 |
       | description | Awesome speaker   |
     And I attach files in the "speaker" form
-      | field  | value    |
-      | avatar | TGDF.png |
+      | field             | value    |
+      | avatar_attachment | TGDF.png |
     And I click "新增Speaker" button
     Then I can see these items in table
       | text |
