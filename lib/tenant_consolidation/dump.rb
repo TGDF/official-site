@@ -3,8 +3,8 @@
 module TenantConsolidation
   # A group's rows exactly as they stood in the tenant schemas: the file a person
   # reviews before a move, the input the import reads, and the baseline verify
-  # compares the public schema against. Restoring is not its job — that is the RDS
-  # snapshot's.
+  # compares the public schema against. Recovery is not its job — that is the RDS
+  # snapshot's; Restore only rebuilds it on a developer's machine for the local run.
   #
   #   { "format": 1, "group": "sponsor", "created_at": "...",
   #     "sites": [ { "tenant_name": "tgdf", "site_id": 3,

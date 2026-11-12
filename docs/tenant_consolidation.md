@@ -264,6 +264,9 @@ bin/rails tenant_consolidation:game:backup
 bin/rails "tenant_consolidation:game:migrate[<location>]"
 bin/rails "tenant_consolidation:game:verify[<location>]"
 
+# Local run only — rebuild a dump's tenant schemas on this machine (see Local Data)
+bin/rails "tenant_consolidation:agenda:restore[<directory holding dump.json>]"
+
 # In-place consolidation, for groups with no dump tasks. Refuses every dump group.
 bin/rails "tenant_consolidation:consolidate[news]"
 bin/rails "tenant_consolidation:consolidate[news,true]"     # Dry run
@@ -486,6 +489,7 @@ The move is one-shot and destructive, so its promises are pinned by integration 
 | `spec/lib/tasks/sponsor_*_spec.rb` | the sponsor tasks, through S3 and the switch |
 | `spec/lib/tasks/game_*_spec.rb` | the game tasks through the switch; asset transfer |
 | `spec/models/speaker_spec.rb`, `backfill_speaker_slugs_spec.rb` | per-site speaker slugs; the backfill |
+| `spec/lib/tasks/restore_spec.rb` | the local rebuild a local backup reads as production's |
 
 ### Pinned Promises
 

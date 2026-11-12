@@ -69,6 +69,27 @@ namespace :tenant_consolidation do
 
         puts "OK: every dumped #{name}-group row is in public as planned, uploads included."
       end
+
+      desc "Rebuild a #{name} dump's tenant schemas on this machine, for the local run (development only)"
+      task :restore, [ :location ] => :environment do |_t, args|
+        if args[:location].blank?
+          puts "Usage: bin/rails 'tenant_consolidation:#{name}:restore[<directory holding dump.json>]'"
+          exit 1
+        end
+
+        dump = TenantConsolidation::Dump.parse(TenantConsolidation::Store.open(args[:location]).read("dump.json"))
+        result = TenantConsolidation::Restore.new(TenantConsolidation::Group.find(name), dump).run
+        puts "Restored #{result.rows} row(s) and #{result.files} file(s) into #{dump.sites.size} tenant schema(s)."
+        if result.unchecked.any?
+          puts "Left out, production could not tell their size (#{result.unchecked.size}):"
+          result.unchecked.each { |line| puts "  - #{line}" }
+        end
+        puts ""
+        puts "Next: the step sequence from step 0, in docs/tenant/migrate_#{name}.md"
+      rescue TenantConsolidation::Restore::Invalid => e
+        puts "ERROR: #{e.message}"
+        exit 1
+      end
     end
   end
 end
