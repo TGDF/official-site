@@ -1,6 +1,6 @@
 # Migrate: Agenda
 
-Agenda moves through the same dump pipeline as [sponsor](migrate_sponsor.md) and [game](migrate_game.md), so this runbook covers what differs.
+Agenda moves through the dump pipeline and the shared step sequence of the [parent document](../tenant_consolidation.md#step-sequence), so this runbook covers what is agenda's own.
 
 | | |
 |---|---|
@@ -12,18 +12,18 @@ Agenda moves through the same dump pipeline as [sponsor](migrate_sponsor.md) and
 The eight tables move together, because each points at another.
 
 ```
- AgendaDay ◀─day_id── AgendaTime ◀─time_id──┐
-                            Room ◀─room_id── Agenda ◀─agenda_id── AgendasSpeaker ─speaker_id─▶ Speaker
- AgendaTag ◀─agenda_tag_id── AgendasTagging ─agenda_id─▶ Agenda
+ AgendaDay <--day_id-- AgendaTime <--time_id--+
+                             Room <--room_id-- Agenda <--agenda_id-- AgendasSpeaker --speaker_id--> Speaker
+ AgendaTag <--agenda_tag_id-- AgendasTagging --agenda_id--> Agenda
 ```
 
 Every foreign key is rewritten to its own site's new parent through the plan's refs (`AgendaGroup::REFS`). Speaker's `avatar` moves into ActiveStorage. A null `time_id` or `room_id` stays null.
 
 ## Production Figures
 
-The census re-takes these at backup, so trust the numbers it prints on the day.
+Local and production backups must print these figures; the census re-takes them on the day.
 
-| Measured read-only, 2026-10-29 | Figure |
+| Measured read-only | Figure |
 |---|---|
 | Sites | 9 |
 | Days / times / rooms | 24 / 179 / 28 |
@@ -31,8 +31,10 @@ The census re-takes these at backup, so trust the numbers it prints on the day.
 | Speaker links / taggings | 412 / 562 |
 | Tags | 93, merged into 23 shared |
 | Taggings left out | 20, all in tgdf_2020 |
-| Speakers without a slug | 175 before backfill |
 | Avatar stand-in | tgdf_2020 Speaker#8 ← `v1_large` |
+| Speakers without a slug | 175, every one `#id → id` |
+
+The rows were measured on 2026-10-29. The slug figure is the 2026-11-12 dry run: tgdf2018 41, tgdf 53, tgdf_2020 38, tgdf_2021 43.
 
 ## Shared Tags
 
@@ -58,15 +60,17 @@ A tagging whose tag or agenda is gone is left out, listed in the census and kept
 
 Before that commit, deleting a tagging also deleted its tag. Removing agendas #28 and #38 on 2020-06-17 took tags #2 and #5 with them. The other agendas' taggings were left pointing at nothing, since the table has no database foreign key. Pages already hide them.
 
-## Speaker Slugs
+## Slug Preparation
 
-Every speaker must carry a slug before backup, so its `/speakers/<id>` link keeps resolving.
+Agenda's preparation, step 2 of the sequence, gives every speaker a slug so its `/speakers/<id>` link survives the new ids.
 
-1. Run `backfill_speaker_slugs` inside the freeze; it writes each missing slug as the speaker's current id.
-2. Run backup; a speaker still without a slug, or two of a site sharing one, makes the plan refuse.
-3. Run migrate; a save that rewrites any column aborts the run before its rows commit.
+| Stage | Guard |
+|---|---|
+| `backfill_speaker_slugs` | writes each missing slug as the speaker's current id |
+| backup | refuses a slugless speaker, or two of a site sharing a slug |
+| migrate | aborts on a save that rewrote any column |
 
-FriendlyId would make a slug from the name for a speaker saved without one. Its `:scoped` module regenerates a slug whenever `site_id` changes, so it joins only in the switch commit.
+The backfill leaves every page as it was, since FriendlyId already fell back to the id. An id another speaker uses as a slug gets a `-2` suffix. The ids it prints are its undo record, and its slugs stay through any rollback. FriendlyId's `:scoped` module regenerates a slug whenever `site_id` changes, so it joins only in the switch commit.
 
 ## Safety Net
 
@@ -74,20 +78,22 @@ Every layer answers a different failure.
 
 | Layer | Catches | When |
 |---|---|---|
-| RDS snapshot | anything, by restoring | before the freeze |
-| `consolidation_freeze_agenda` | admin edits on the old side | backup to switch |
+| Restore point, step 1 | a bad slug backfill | before step 2 |
+| Restore point, step 4 | anything in the move | after the freeze |
+| `consolidation_freeze_agenda` | admin edits on the old side | step 3 to step 9 |
 | Census | missing files, stand-ins, left-out taggings, shared tags | backup |
-| Plan | a slugless speaker, a slug two speakers share, an unmapped key | backup, migrate |
+| Plan | a slugless speaker, a shared slug, an unmapped key | backup, migrate |
 | Write-time check | a column a save rewrote | migrate |
-| `agenda:verify` | every row, ref, locale, avatar, shared tag | after migrate, after the switch |
+| `agenda:verify` | every row, ref, locale, avatar, shared tag | steps 6 to 8 |
 
 `consolidate[agenda]` refuses and points here.
 
 ## Tasks
 
-Each task runs as a detached one-off task on ECS.
+Beta and production run each task as a detached one-off task on ECS; the local run uses the same commands.
 
 ```bash
+bin/rails "tenant_consolidation:agenda:restore[<directory>]"   # local run only
 bin/rails "tenant_consolidation:backfill_speaker_slugs[true]"  # dry run
 bin/rails tenant_consolidation:backfill_speaker_slugs
 bin/rails tenant_consolidation:agenda:backup
@@ -96,26 +102,59 @@ bin/rails "tenant_consolidation:agenda:verify[<location>]"     # read-only; exit
 bin/rails "tenant_consolidation:rollback[agenda]"
 ```
 
-Beta's speakers already carry slugs, so the backfill there writes nothing.
+## Agenda Steps
 
-## Runbook
+Each environment runs the parent's step sequence; this table names what agenda checks at each step.
 
-Beta rehearses the operations, the production dump rehearses the data locally, then production runs.
+| # | Step | Must see for agenda |
+|---|---|---|
+| 0 | Preflight | `status` shows agenda pending; eight public tables empty |
+| 1 | Restore point | identifier recorded |
+| 2 | Slug preparation | dry run list equals the apply list |
+| 3 | Freeze | `consolidation_freeze_agenda` on |
+| 4 | Restore point | identifier recorded |
+| 5 | Backup | census matches the figures above |
+| 6 | Migrate, then verify | `OK` |
+| 7 | Rollback, migrate, verify | public tables empty, then `OK` |
+| 8 | Switch | speaker, agenda and tag pages serve; `OK` |
+| 9 | Unfreeze and record | run noted below |
 
-1. Check the event calendar, the deployed tooling, and that every public agenda table is empty.
-2. On beta, enable `consolidation_freeze_agenda`, then run backup, migrate and verify until `OK`.
-3. Locally, take the production dump read-only as in sponsor's step 2, then run migrate, verify and rollback.
-4. In production, take an RDS snapshot and record its identifier.
-5. Enable `consolidation_freeze_agenda`.
-6. Run `backfill_speaker_slugs` as a dry run, then for real.
-7. Run backup and read the census; stop on anything not in the figures above.
-8. Download the run, then run migrate and verify until `OK`.
-9. Push the switch commit, deploy beta then production, and run verify again.
-10. Disable `consolidation_freeze_agenda` and mark group 8 complete in the parent document.
+Beta checks step 5 against its own census, recorded on its run, since its data is not production's.
+
+## Local Run
+
+The local run rebuilds production's tenant rows first, as the parent's [Local Data](../tenant_consolidation.md#local-data) describes.
+
+1. In production, run `agenda:backup` into the task's own disk.
+2. Bring the dump home through the task log, and compare its SHA256.
+3. Run `agenda:restore` on that directory.
+4. Run steps 0 to 9, with a `pg_dump` of the local database as each restore point.
+
+The production backup refuses on its census while 175 speakers lack slugs. It writes the dump first, so the refusal still leaves the dump step 2 brings home. Step 8 applies the switch commit locally and runs RSpec, Cucumber and the pages.
+
+## Beta Run
+
+Beta runs steps 0 to 9 on its own data, with an RDS snapshot as each restore point.
+
+1. Run steps 0 to 7.
+2. Push the switch commit, as step 8.
+3. Wait for beta's deploy, then run verify again.
+4. Run step 9.
+
+From the push on, approve no production deploy until production's step 6 prints `OK` ([Switch Timing](../tenant_consolidation.md#switch-timing)). Hold every other merge through that window.
+
+## Production Run
+
+Production runs steps 0 to 9 except step 7, with an RDS snapshot as each restore point.
+
+1. Run steps 0 to 6.
+2. Approve the production deploy that carries the switch, as step 8.
+3. Run verify again once the deploy is live.
+4. Run step 9, then mark group 8 complete in the parent document.
 
 ## Switch Commit
 
-One commit, pushed only after production verify prints `OK`, with RSpec and Cucumber green.
+One commit, written in the local run's step 8 with RSpec and Cucumber green.
 
 | File | Change |
 |---|---|
@@ -135,11 +174,12 @@ A failed run is undone and run again whole; it never resumes.
 
 | Where it stopped | What to do |
 |---|---|
+| Slug preparation | undo from the printed ids, or restore step 1 |
 | Plan or preflight refused | fix it at the source, take a new backup |
 | During the rows | run migrate again on the same run |
 | During the avatars | `rollback[agenda]`, then migrate again |
 | verify failed, before the switch | `rollback[agenda]`, fix, migrate again |
 | After the switch deploy | revert the switch commit, deploy, then `rollback[agenda]` |
-| Anything worse | restore the snapshot from step 4 |
+| Anything worse | restore step 4's restore point |
 
-The backfilled slugs stay in the tenant schemas through any rollback. Each equals its speaker's id, so a redo reads the same dump.
+A redo reads the same dump, since each backfilled slug equals its speaker's id.

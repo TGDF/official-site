@@ -200,14 +200,60 @@ Each part of the pipeline lives in `lib/tenant_consolidation/`, and a group supp
 
 Listing a group's name in `DUMP_GROUPS` gives it `backup`, `migrate` and `verify`, and `rollback`, `status` and `reset_sequences` read its models from its module. Game carries each row as it is (`Plan.carry`). Agenda carries its foreign keys as refs and shares its tags across sites (`SHARED`). Sponsor folds Partner in (`SponsorGroup::Transform`). An upload whose original is gone is taken over from its largest CarrierWave version. `consolidate[group]` and `verify[group]` refuse every dump group, partner included.
 
-### What every runbook carries
+### Runbook Contents
 
-- The group's models carry `site_id` and `acts_as_tenant :site`, uploads have `has_migrated_upload`, and any schema change the move needs is **deployed** first (Critical Constraint #5).
-- An **RDS snapshot** with one recorded identifier (below).
-- A **write freeze** from backup until the switch deploy is live ([Write-Freeze Posture](#write-freeze-posture)).
-- **Rehearsal**: the data locally against the production dump, the operations on beta.
-- **The switch commit**, pushed only once verify passes (below).
-- **Recovery** for wherever a run can stop, down to the snapshot ([Rollback Strategy](#rollback-strategy)).
+Each runbook under `docs/tenant/` fills in what is the group's own and points here for the rest.
+
+| Part | Defined in |
+|---|---|
+| Models carry `site_id`, `acts_as_tenant`, `has_migrated_upload`; schema change deployed | Critical Constraint #5 |
+| Environments and the step sequence | below |
+| The group's figures and expected census | the runbook |
+| Preparation, if the group needs any | the runbook |
+| The switch commit | below |
+| Recovery for every stop | [Rollback Strategy](#rollback-strategy) |
+
+### Environments
+
+Local, beta and production each run the same step sequence, in that order. An environment starts only after the one before it passes every step.
+
+| Environment | Data | Restore point |
+|---|---|---|
+| Local | the production dump, restored into tenant schemas | `pg_dump` of the local database |
+| Beta | beta's own | RDS snapshot |
+| Production | production's own | RDS snapshot |
+
+Beta and production share one RDS instance, so each snapshot holds both. A restore creates a new instance, and only the environment being restored moves to it.
+
+### Step Sequence
+
+Each step names what must hold before the next one starts. When it does not, stop at that step and settle it.
+
+| # | Step | Must see | If not |
+|---|---|---|---|
+| 0 | Preflight | no event near, tooling deployed, group pending, public tables empty | settle it first |
+| 1 | Restore point | identifier recorded | stop |
+| 2 | Preparation: dry run, then apply | apply matches the dry run | undo from its log, or restore step 1 |
+| 3 | Freeze | the group's admin screens refuse writes | stop |
+| 4 | Restore point | identifier recorded | stop |
+| 5 | Backup | census matches the runbook's figures | fix at the source, back up again |
+| 6 | Migrate, then verify | `OK` | rollback, fix, migrate again |
+| 7 | Rollback, migrate, verify | public tables empty, then `OK` again | fix rollback before going on |
+| 8 | Switch | pages serve; verify `OK` again | revert the switch, then rollback |
+| 9 | Unfreeze and record | the run noted in the runbook | — |
+
+Steps 1 and 2 apply only to a group with a preparation. A preparation runs before the freeze, so it must leave every page as it was. Step 7 runs locally and on beta only: rollback is production's recovery path, proven twice before production could need it.
+
+### Local Data
+
+Local tenant schemas hold no production rows, so the local run first takes them in.
+
+1. In production, run backup into the task's own disk.
+2. Bring the dump home through the task log, and compare its SHA256.
+3. Run `<group>:restore` locally.
+4. Start the step sequence at step 0.
+
+Backup writes the dump before its census, so a census refusal still leaves a complete dump. `restore` writes every dumped row back into the local tenant schemas with its original id, and leaves every upload readable locally. It refuses outside development and is removed once every group has moved.
 
 ### Create RDS Snapshot
 
@@ -227,7 +273,7 @@ aws rds wait db-snapshot-available \
 
 ### The switch commit
 
-The data move runs against the database and is not in git; the switch is the only committed change, and it goes out after verify passes — committing it first routes the group's queries to an empty public table. A group's commit carries:
+The data move runs against the database and is not in git; the switch is the only committed change, and an environment takes it after its own verify — taking it first routes the group's queries to an empty public table ([Switch Timing](#switch-timing)). A group's commit carries:
 
 1. **Its models in `Apartment.excluded_models`**, all of the group together. Never `Partner` / `PartnerType`: they fold into Sponsor and are removed in Phase 5.
 2. **Plain `acts_as_tenant :site`** on those models — `optional:` and `has_global_records:` go per group, once no public row has a null `site_id` (Critical Constraint #6). Phase 4.2 is only a final sweep. The done groups' commits show the size of it (Slider `4ee2e021`, Block `3afcf1a7`).
@@ -247,6 +293,18 @@ config.excluded_models = %w[
 ```
 
 The freeze lifts only once the switch deploy is live in production.
+
+### Switch Timing
+
+The switch commit reaches each environment at its step 8, while production's deploys wait for approval.
+
+```
+ local   apply the commit locally ---> RSpec, Cucumber, pages
+ beta    push to main --------------> beta deploys itself ---> verify OK
+ prod    deploy waits for approval -> approve after production's step 6 prints OK
+```
+
+From the push until production's step 6 prints `OK`, approve no production deploy, since any of them ships the switch. Hold every other merge through that window, Dependabot's included.
 
 ## Rake Tasks
 
