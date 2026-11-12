@@ -5,7 +5,7 @@ Agenda moves through the dump pipeline and the shared step sequence of the [pare
 | | |
 |---|---|
 | Parent | [../tenant_consolidation.md](../tenant_consolidation.md), group 8 `agenda` |
-| Status | 🔧 Preparing — no environment has run it |
+| Status | ✅ Complete (2026-11-12) — local, beta and production each ran steps 0 to 9; production moved 2,075 rows into 23 shared tags and 371 avatars, and `agenda:verify` printed `OK` before and after the switch. The runbook is kept as the record of how the move ran. |
 
 ## Moved Rows
 
