@@ -128,7 +128,7 @@ The local run rebuilds production's tenant rows first, as the parent's [Local Da
 1. In production, run `agenda:backup` into the task's own disk.
 2. Bring the dump home through the task log, and compare its SHA256.
 3. Run `agenda:restore` on that directory.
-4. Run steps 0 to 9, with a `pg_dump` of the local database as each restore point.
+4. Run steps 0 to 9 with production's `ASSETS_HOST`, taking a `pg_dump` of the local database as each restore point.
 
 The production backup refuses on its census while 175 speakers lack slugs. It writes the dump first, so the refusal still leaves the dump step 2 brings home. Step 8 applies the switch commit locally and runs RSpec, Cucumber and the pages.
 

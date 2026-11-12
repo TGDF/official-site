@@ -253,7 +253,7 @@ Local tenant schemas hold no production rows, so the local run first takes them 
 3. Run `<group>:restore` locally.
 4. Start the step sequence at step 0.
 
-Backup writes the dump before its census, so a census refusal still leaves a complete dump. `restore` writes every dumped row back into the local tenant schemas with its original id, and leaves every upload readable locally. It refuses outside development and is removed once every group has moved.
+Every local step runs with `ASSETS_HOST` set to production's asset host, so the urls a local backup records are the ones migrate can fetch. Backup writes the dump before its census, so a census refusal still leaves a complete dump. `restore` writes every dumped row back into the local tenant schemas with its original id, and leaves every upload readable locally. It refuses outside development and is removed once every group has moved.
 
 ### Create RDS Snapshot
 
