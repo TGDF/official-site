@@ -40,15 +40,13 @@ module TenantConsolidation
     end
 
     def slug_problems(site)
-      by_slug = site.rows("Speaker").group_by { |row| row.attributes["slug"].presence }
-      ids = ->(rows) { rows.map { |row| "##{row.id}" }.join(" ") }
-      problems = by_slug.select { |slug, rows| slug && rows.size > 1 }.map do |slug, rows|
-        "#{site.tenant_name} Speaker #{ids.call(rows)} share the slug #{slug.inspect}"
-      end
-      return problems unless by_slug.key?(nil)
+      clashes = Plan.slug_clashes(site, "Speaker")
+      slugless = site.rows("Speaker").reject { |row| row.attributes["slug"].present? }
+      return clashes if slugless.empty?
 
-      [ "#{site.tenant_name} Speaker #{ids.call(by_slug[nil])} has no slug — run backfill_speaker_slugs before the backup",
-        *problems ]
+      [ "#{site.tenant_name} Speaker #{slugless.map { |row| "##{row.id}" }.join(' ')} has no slug — " \
+        "run backfill_speaker_slugs before the backup",
+        *clashes ]
     end
 
     def census_sections(dump)

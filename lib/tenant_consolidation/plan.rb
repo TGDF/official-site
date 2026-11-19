@@ -68,6 +68,17 @@ module TenantConsolidation
       new(site, rows: rows, skipped: skipped.to_h)
     end
 
+    # The rows of a model that share a slug within one site, one problem per slug. A
+    # null site_id let them past the (site_id, slug) index, which they break once the
+    # move gives both the site's id.
+    def self.slug_clashes(site, model)
+      site.rows(model).group_by { |row| row.attributes["slug"].presence }
+          .select { |slug, rows| slug && rows.size > 1 }
+          .map do |slug, rows|
+            "#{site.tenant_name} #{model} #{rows.map { |row| "##{row.id}" }.join(' ')} share the slug #{slug.inspect}"
+          end
+    end
+
     def self.dangling?(site, row, column, parent)
       id = row.attributes[column]
       id && site.rows(parent).none? { |candidate| candidate.id == id }
