@@ -6,8 +6,8 @@ module TenantConsolidation
   # in the application's own bucket, so the location a task prints can be pasted
   # straight into `aws s3 cp --recursive` to bring the run home.
   #
-  # The S3 side is held to `consolidation/`: `uploads/` is what Phase 5.5 deletes, and
-  # the rest of the bucket is ActiveStorage's. Objects are written private — the
+  # The S3 side is held to `consolidation/`: `uploads/` is CarrierWave's, and the rest
+  # of the bucket is ActiveStorage's. Objects are written private — the
   # buckets carry no policy and no public-access block, so an object is public exactly
   # when its own ACL says so.
   module Store

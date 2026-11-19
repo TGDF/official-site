@@ -20,10 +20,9 @@ namespace :tenant_consolidation do
   CONSOLIDATION_MODELS = MODEL_CONFIGS.reject { |c| c[:model] == "Site" }.uniq { |c| c[:model] }
 
   # Every field that may contain a /uploads/ URL — CKEditor rich-text bodies plus the
-  # URL fields an admin can point at an uploaded asset. The Phase 5 S3-deletion gate
-  # scans ALL of these; a field missing here would let the gate pass while a /uploads/
-  # reference remains, then S3 deletion would 404 it permanently (not snapshot-
-  # recoverable). Keep in sync with the data-editor admin forms and link/target inputs.
+  # URL fields an admin can point at an uploaded asset. verify_uploads_unreferenced
+  # scans ALL of these, so a field missing here hides its /uploads/ references from the
+  # count. Keep in sync with the data-editor admin forms and link/target inputs.
   RICH_TEXT_FIELDS = {
     "Block" => %w[content],
     "News" => %w[content],
@@ -299,8 +298,8 @@ namespace :tenant_consolidation do
 
         # Transactional: attach_asset raises on a bad/corrupt/empty download, and the
         # rollback must undo the attachment row. Without a transaction the bad blob
-        # would persist, the attached? re-run guard would skip it, and the S3-deletion
-        # gate (also attached?-based) would pass — losing the only original.
+        # would persist, the attached? re-run guard would skip it, and the Phase 5 check
+        # (also attached?-based) would pass — breaking the image once its uploader goes.
         ActiveRecord::Base.transaction do
           TenantConsolidation::Assets.attach_asset(record, config[:field], config[:attachment], uploader.url,
                                                    TenantConsolidation::Assets.source_asset_size(uploader))
@@ -344,7 +343,7 @@ namespace :tenant_consolidation do
     end
 
     unless all_ok
-      puts "\nMissing assets — do NOT proceed to Phase 4.5 / 5.5. Re-attach before tenant data is dropped."
+      puts "\nMissing assets — do NOT proceed to Phase 4.5 or Phase 5. Re-attach before tenant data is dropped."
       exit 1
     end
 

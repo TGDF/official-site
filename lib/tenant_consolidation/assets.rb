@@ -3,9 +3,9 @@
 require "open-uri"
 
 module TenantConsolidation
-  # Moving a CarrierWave file into ActiveStorage. Every step fails loud: the RDS
-  # snapshot does not cover S3, so a silently bad transfer that later passed the
-  # Phase 5.5 gate would lose the only original.
+  # Moving a CarrierWave file into ActiveStorage. Every step fails loud: a silently
+  # bad transfer passes every later check that only asks whether an attachment
+  # exists, and shows only once Phase 5 removes the uploader that reads the original.
   module Assets
     module_function
 
