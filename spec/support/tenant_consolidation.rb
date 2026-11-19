@@ -138,6 +138,18 @@ RSpec.shared_context 'with consolidation tenants' do
     end
   end
 
+  # A news item as older data holds it: title and content written past Mobility, and
+  # the author a polymorphic pair the item names however it likes.
+  def seed_news(site, slug:, title:, content: nil, author: nil, status: :published, with_thumbnail: false)
+    within_tenant(site) do
+      news = News.new(site_id: site.id, slug: slug, author: author, status: status)
+      news[:title] = title
+      news[:content] = content
+      news.thumbnail = Rack::Test::UploadedFile.new(test_png, 'image/png') if with_thumbnail
+      save_raw(news)
+    end
+  end
+
   def save_raw(record)
     record.save!(validate: false)
     record

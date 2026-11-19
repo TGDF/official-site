@@ -5,7 +5,7 @@
 # its name when a task runs — tasks load before the application autoloads, so only
 # the names can be listed here — and has its runbook at docs/tenant/migrate_<name>.md.
 namespace :tenant_consolidation do
-  DUMP_GROUPS = %w[sponsor game agenda].freeze
+  DUMP_GROUPS = %w[sponsor game agenda news].freeze
 
   DUMP_GROUPS.each do |name|
     namespace name do

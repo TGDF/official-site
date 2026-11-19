@@ -5,10 +5,10 @@ require 'rails_helper'
 # Load the rake tasks once when this spec file is required (idempotent guard).
 Rails.application.load_tasks unless Rake::Task.task_defined?('tenant_consolidation:consolidate')
 
-# Integration tests for the in-place consolidate task, which the groups without dump
-# tasks still move through: FK ID remapping, dry run, re-run guard, and the guards
-# that refuse a group it must not move. Asset transfer is pinned on the dump path
-# (game_migrate_spec.rb).
+# Integration tests for the in-place consolidate task, which stays until the whole
+# migration ends: attachment, the only group still listed for it, carries the move,
+# dry run and re-run guard, beside the guards that refuse a group it must not move.
+# Asset transfer is pinned on the dump path (game_migrate_spec.rb).
 #
 # Integration examples legitimately drive a whole flow and assert several outcomes,
 # so the per-example RSpec metric cops are relaxed for this file.
@@ -77,66 +77,58 @@ RSpec.describe 'tenant_consolidation rake tasks' do
       expect { run_task('tenant_consolidation:consolidate', 'attachment') }.to raise_error(SystemExit)
     end
 
-    it 'aborts news consolidation when author_type is not AdminUser' do
-      within_tenant(main_site) do
-        news = News.new
-        news[:title] = { 'en' => 'T' }
-        news.slug = 'spec-news'
-        news.author_type = 'Foo'
-        news.author_id = 1
-        news.save!(validate: false)
+    context 'when news is still in the tenant schemas' do
+      include_context 'with a group before its switch', TenantConsolidation::NewsGroup
+
+      it 'aborts the news group, which moves through the news tasks' do
+        seed_news(main_site, slug: 'opening', title: { 'en' => 'Opening' })
+
+        expect { run_task('tenant_consolidation:consolidate', 'news') }
+          .to raise_error(SystemExit).and output(/tenant_consolidation:news:backup/).to_stdout
+        expect(public_count(News)).to eq(0)
       end
-      expect { run_task('tenant_consolidation:consolidate', 'news') }.to raise_error(SystemExit)
     end
   end
 
-  describe 'consolidate[news] across two tenants' do
+  describe 'consolidate[attachment] across two tenants' do
     let(:other_site) { create_tenant_site('spec_cons_b') }
 
-    def seed_news(site, slug)
-      within_tenant(site) do
-        news = News.new(site_id: site.id, slug: slug)
-        news[:title] = { 'en' => slug }
-        news.save!(validate: false)
-      end
+    def seed_attachment(site)
+      within_tenant(site) { Attachment.new(site_id: site.id).save!(validate: false) }
     end
 
     before do
-      seed_news(main_site, 'opening')
-      seed_news(other_site, 'closing')
-      run_task('tenant_consolidation:consolidate', 'news')
+      seed_attachment(main_site)
+      seed_attachment(other_site)
+      run_task('tenant_consolidation:consolidate', 'attachment')
     end
 
     it 'migrates every tenant\'s rows into public with the correct site_id' do
       in_public do
-        expect(News.unscoped.pluck(:site_id, :slug)).to contain_exactly([ main_site.id, 'opening' ], [ other_site.id, 'closing' ])
+        expect(Attachment.unscoped.pluck(:site_id)).to contain_exactly(main_site.id, other_site.id)
       end
     end
 
     it 'aborts a re-run onto a non-empty public target' do
-      expect { run_task('tenant_consolidation:consolidate', 'news') }.to raise_error(SystemExit)
+      expect { run_task('tenant_consolidation:consolidate', 'attachment') }.to raise_error(SystemExit)
     end
 
     it 'leaves the id sequence usable (a fresh insert does not hit a duplicate key)' do
       in_public do
-        news = News.new(site_id: main_site.id, slug: 'fresh')
-        expect { news.save!(validate: false) }.not_to raise_error
-        expect(news.id).to be_present
+        attachment = Attachment.new(site_id: main_site.id)
+        expect { attachment.save!(validate: false) }.not_to raise_error
+        expect(attachment.id).to be_present
       end
     end
   end
 
-  describe 'consolidate[news]' do
+  describe 'consolidate[attachment]' do
     it 'writes nothing to the public schema on a dry run' do
-      within_tenant(main_site) do
-        news = News.new(site_id: main_site.id, slug: 'dry')
-        news[:title] = { 'en' => 'Dry' }
-        news.save!(validate: false)
-      end
+      within_tenant(main_site) { Attachment.new(site_id: main_site.id).save!(validate: false) }
 
-      run_task('tenant_consolidation:consolidate', 'news', 'true')
+      run_task('tenant_consolidation:consolidate', 'attachment', 'true')
 
-      expect(public_count(News)).to eq(0)
+      expect(public_count(Attachment)).to eq(0)
     end
   end
 end

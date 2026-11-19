@@ -46,7 +46,6 @@ namespace :tenant_consolidation do
     "block"      => { order: %w[Block] },
     "plan"       => { order: %w[Plan] },
     "menu_item"  => { order: %w[MenuItem] },
-    "news"       => { order: %w[News] },
     "attachment" => { order: %w[Attachment] },
     "partner"    => { order: %w[PartnerType Partner] }
   }.freeze
