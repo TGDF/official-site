@@ -66,7 +66,7 @@ Taken 2026-08-20 across the nine production tenants, read-only. Recorded here be
 |---|---|---|
 | CarrierWave files to move | **1,071** — Speaker 371, Game 214, Sponsor 206, News 126, Attachment 106, Partner 48 | Worst single tenant: 130 game thumbnails |
 | `Attachment.record_id` set | **0 in every tenant**; all 106 attachments are `Image` rows carrying only `file` | Critical Constraint #3 |
-| Embedded `/uploads/` references | **18** — News.content 15, Block.content 2, Site.indie_space_description 1 | Kept readable: `uploads/` stays |
+| Embedded `/uploads/` references | **18** — News.content 15, Block.content 2, Site.indie_space_description 1; News re-counted 2026-11-19 as 18 urls in 9 items | Kept readable: `uploads/` stays |
 | Rows with `site_id IS NULL` | **uniform within each schema, never mixed** (2026-08-27): tgdf2018, tgdf, tgdf_2020, tgdf_2021, 2022_TGDF and 2023tgdf carry null on *every* row; 2024/2025/2026tgdf carry *their own* site id on every row; no schema holds a foreign one. Speakers 249/371. Games 214/214, 259 agendas, 155 sponsors, 107 attachments are 2026-08-20 totals, not re-measured. | Critical Constraint #6 |
 | Speakers with no slug | **175** (2026-08-27) — tgdf2018, tgdf and tgdf_2021 entirely; tgdf_2020 all but one | `backfill_speaker_slugs` |
 | News with no slug | **0** in every tenant (2026-08-27) — nothing to backfill | — |
@@ -144,7 +144,7 @@ Rich text can embed an upload's URL as inline HTML, which is not a foreign key a
                                            and MenuItem.link, Plan.button_target (RICH_TEXT_FIELDS)
 ```
 
-These URLs stay as they are and keep resolving: the CDN serves them straight from S3, and `uploads/` is never deleted. No move or phase rewrites them.
+These URLs stay as they are and resolve as they do today: the CDN serves them straight from S3, and `uploads/` is never deleted. No move or phase rewrites them. Eight in news already 404 through the retired `https://tgdf.tw` host ([news runbook](tenant/migrate_news.md#embedded-urls)).
 
 | Stage | CKEditor upload lands in | Embedded url |
 |---|---|---|

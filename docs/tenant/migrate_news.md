@@ -18,20 +18,32 @@ Every news item moves as it is, deleted ones included.
 | `author_type`, `author_id` | unchanged; `AdminUser` is already public |
 | `thumbnail` | the original in ActiveStorage, which derives its variants |
 
-Content keeps every `/uploads/` url it embeds. Those files stay readable, because consolidation deletes no file.
+Content keeps every `/uploads/` url it embeds, and each resolves after the move as it did before, because consolidation deletes no file.
 
 ## Production Figures
 
-The census re-takes every figure at backup; the date says when each was last measured.
+Local and production backups must print these figures; the census re-takes them on the day.
 
-| Measured read-only | Figure |
+| Measured read-only, 2026-11-19 | Figure |
 |---|---|
-| Thumbnails to move | 126 (2026-08-20) |
-| `/uploads/` urls in `content` | 15 (2026-08-20) |
-| News without a slug | 0 in every tenant (2026-08-27) |
-| `site_id IS NULL` | every row in six tenants, none in three (2026-08-27) |
+| Sites / news | 9 / 126 |
+| Per site | tgdf2018 11, tgdf 14, tgdf_2020 9, tgdf_2021 16 |
+| | 2022_TGDF 18, 2023tgdf 18, 2024tgdf 16, 2025tgdf 18, 2026tgdf 6 |
+| Status | 115 published, 2 draft, 9 deleted |
+| Authors | 126 `AdminUser` |
+| Thumbnails | 126; stand-ins tgdf_2020 News#2, #4 ← `large` |
+| `site_id IS NULL` | every row in the six tenants up to 2023tgdf |
 
-Rows per site are not measured yet. The local run's backup records them here before beta starts.
+## Embedded Urls
+
+The content embeds 18 `/uploads/` urls, 15 distinct, and the move carries each unchanged.
+
+| Host in the url | Count | Today |
+|---|---|---|
+| `https://files.tgdf.tw` | 10 | resolves |
+| `https://tgdf.tw` | 8 | 404, through a redirect to the current year |
+
+The eight are in tgdf_2021 News #1 to #5, #7 and #12, and their files resolve under `files.tgdf.tw`. Correcting the host is a content edit, outside this move.
 
 ## Plan Rules
 
