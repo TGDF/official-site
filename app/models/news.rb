@@ -4,7 +4,7 @@ class News < ApplicationRecord
   extend FriendlyId
   include HasMigratedUpload
 
-  acts_as_tenant :site, optional: true, has_global_records: true
+  acts_as_tenant :site
   belongs_to :author, polymorphic: true
 
   translates :title, :content
@@ -20,11 +20,6 @@ class News < ApplicationRecord
   }
 
   validates :title, :content, :slug, presence: true
-  # Not plain `uniqueness: { scope: :site_id }`: while `has_global_records` is on, this
-  # also checks a row that has a `site_id` against the rows that do not, and six of the
-  # nine tenants carry null on every row. Without that reach, a new item could take a
-  # slug a legacy row already holds, and `consolidate[news]` — which gives both the same
-  # `site_id` — would then hit the unique index and roll the tenant back.
   validates_uniqueness_to_tenant :slug
 
   scope :latest, -> { order(created_at: :desc) }

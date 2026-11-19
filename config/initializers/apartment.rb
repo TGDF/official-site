@@ -28,6 +28,7 @@ Apartment.configure do |config|
     Agenda
     AgendasSpeaker
     AgendasTagging
+    News
     ActiveStorage::Blob
     ActiveStorage::Attachment
     ActiveStorage::VariantRecord

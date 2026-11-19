@@ -24,8 +24,8 @@ Feature: Manage News
       | slug    | news-3    |
       | content | content 3 |
     And I attach files in the "news" form
-      | field     | value    |
-      | thumbnail | TGDF.png |
+      | field                | value    |
+      | thumbnail_attachment | TGDF.png |
     And I click "新增News"
     Then I can see these items in table
       | text      |

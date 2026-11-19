@@ -24,7 +24,7 @@ RSpec.describe('Admin::News') do
       fill_in 'news_slug', with: 'example'
       fill_in 'news_content', with: 'Example Content'
       attach_file(
-        'news_thumbnail',
+        'news_thumbnail_attachment',
         Rails.root.join('spec/support/brands/logos/TGDF.png')
       )
       click_on '新增News'
