@@ -83,7 +83,7 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 | 6 | **partner** | **→ folds into Sponsor** | **logo** | ✅ Complete — folded into sponsor; Partner stays frozen until Phase 5 |
 | 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | ✅ Complete — [runbook](tenant/migrate_game.md) |
 | 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | ✅ Complete — [runbook](tenant/migrate_agenda.md) |
-| 9 | news | News | thumbnail | ⏳ Pending |
+| 9 | news | News | thumbnail | ⏳ Pending — [runbook](tenant/migrate_news.md) |
 | 10 | attachment | Attachment (+Image STI) | file | ⏳ Pending |
 
 ### Migration Dependencies
@@ -160,7 +160,7 @@ Every group still ahead moves by **dump → transform → import**, and gets its
 | 5 sponsor, with 6 partner folded in | [tenant/migrate_sponsor.md](tenant/migrate_sponsor.md) |
 | 7 game | [tenant/migrate_game.md](tenant/migrate_game.md) |
 | 8 agenda | [tenant/migrate_agenda.md](tenant/migrate_agenda.md) |
-| 9 news, 10 attachment | written when the group's round starts |
+| 9 news | [tenant/migrate_news.md](tenant/migrate_news.md) |
 
 ```
  backup ──▶ dump.json ── S3 (private), downloaded and kept
