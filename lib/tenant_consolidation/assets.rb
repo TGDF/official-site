@@ -62,12 +62,11 @@ module TenantConsolidation
       verify_blob_size!(blob, record, url, expected_size)
       blob.analyze
 
-      record.public_send(attachment).attach(blob)
-      # Persist the attachment with validate: false. `attach` on a persisted record only
-      # auto-saves when the record is valid; a row that is invalid under current
-      # validations (e.g. a tightened rule a legacy row predates) would otherwise leave
-      # the attachment unsaved while the blob checks above still pass — a silent missing
-      # attachment. The whole task migrates with validate: false, so do the same here.
+      # Assigned, then saved with validate: false like every row of the move. `attach`
+      # would validate the record first: a legacy row invalid under today's rules would
+      # keep its attachment unsaved, and one whose validation cannot even read it (a
+      # null translated column) would raise.
+      record.public_send(:"#{attachment}=", blob)
       record.save!(validate: false)
     end
 
