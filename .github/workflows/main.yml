@@ -9,7 +9,7 @@ on:
   merge_group:
 
 env:
-  RUBY_VERSION: '3.3.13'
+  RUBY_VERSION: '3.3.14'
   RAILS_ENV: test
   RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
   DATABASE_URL: "postgres://tgdf:tgdf@localhost/tgdf"
@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
     - name: Set up Ruby
-      uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+      uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
@@ -32,7 +32,7 @@ jobs:
     steps:
     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
     - name: Set up Ruby
-      uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+      uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
@@ -61,7 +61,7 @@ jobs:
     - name: Install libvips
       run: sudo apt-get update && sudo apt-get install -y libvips42
     - name: Set up Ruby
-      uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+      uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
@@ -101,7 +101,7 @@ jobs:
     - name: Install libvips
       run: sudo apt-get update && sudo apt-get install -y libvips42
     - name: Set up Ruby
-      uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+      uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
         bundler-cache: true
