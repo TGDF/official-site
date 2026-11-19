@@ -562,7 +562,7 @@ Note: a group stops accumulating CarrierWave data automatically once consolidate
 
 ## Testing the Consolidation
 
-The move is one-shot and destructive, so its promises are pinned by integration specs that seed real tenant schemas and drive the actual tasks. Each promise of the dump, the group tasks, the asset transfer and the remapping was proven by breaking it on purpose. The older refusal guards (partner, attachment, news) were not.
+The move is one-shot and destructive, so its promises are pinned by integration specs that seed real tenant schemas and drive the actual tasks. Each promise of the dump, the group tasks, the asset transfer and the remapping was proven by breaking it on purpose. The older in-place refusals (partner, attachment) were not.
 
 | Spec | Covers |
 |---|---|
@@ -570,6 +570,8 @@ The move is one-shot and destructive, so its promises are pinned by integration 
 | `spec/lib/tenant_consolidation/` | the dump, the run store, the locale check |
 | `spec/lib/tasks/sponsor_*_spec.rb` | the sponsor tasks, through S3 and the switch |
 | `spec/lib/tasks/game_*_spec.rb` | the game tasks through the switch; asset transfer |
+| `spec/lib/tasks/agenda_journey_spec.rb` | the agenda tasks, refs and shared tags |
+| `spec/lib/tasks/news_journey_spec.rb` | the news tasks and their refusals |
 | `spec/models/speaker_spec.rb`, `backfill_speaker_slugs_spec.rb` | per-site speaker slugs; the backfill |
 | `spec/lib/tasks/restore_spec.rb` | the local rebuild a local backup reads as production's |
 
@@ -579,9 +581,12 @@ Each promise below has a spec that objects when it breaks.
 
 | Promise | Spec |
 |---|---|
-| foreign keys remapped per tenant (day → time) | in-place |
 | dry run, re-run guard, usable sequences | in-place |
-| refusing dump groups, partner, `record_id`, a non-`AdminUser` author | in-place |
+| refusing dump groups, partner, `record_id` | in-place |
+| foreign keys rewritten per site; shared tags | agenda |
+| a slugless speaker; a slug shared within a site | agenda, news |
+| content carried as is; a non-`AdminUser` author refused | news |
+| an upload attached to a row its validations reject | news |
 | every column, microsecond timestamps, a truncated dump refused | dump |
 | uploads keyed on the stored filename, with their versions | dump |
 | runs private and only under `consolidation/` | store |
@@ -594,8 +599,6 @@ Each promise below has a spec that objects when it breaks.
 | rollback after the switch leaves no upload or variant file | game |
 
 The specs run without transactional fixtures (they issue CREATE/DROP SCHEMA) through `spec/support/tenant_consolidation.rb`. CarrierWave stores locally in test, so downloads are stubbed and byte identity is approximated by byte size, but analysis runs real vips — CI installs libvips for it. A task that finds a problem exits non-zero; a spec must catch that exit, because one escaping an example ends the run while still reporting no failures.
-
-Still uncovered: an end-to-end agenda test (8 models, 2 join tables) — to build with agenda's runbook.
 
 ## Technical Reference
 
