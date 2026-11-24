@@ -75,7 +75,7 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
-    acts_as_tenant (1.0.1)
+    acts_as_tenant (2.2.2)
       rails (>= 6.0)
     addressable (2.10.0)
       public_suffix (>= 2.0.2, < 8.0)
@@ -181,7 +181,7 @@ GEM
       railties (>= 6.1, < 9)
     cucumber-tag-expressions (8.1.0)
     database_rewinder (1.1.0)
-    date (3.5.1)
+    date (3.6.0)
     debug (1.11.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
@@ -381,14 +381,14 @@ GEM
       request_store (~> 1.0)
     msgpack (1.8.7)
     multi_test (1.1.0)
-    net-imap (0.6.7)
+    net-imap (0.6.8)
       date
       net-protocol
     net-pop (0.1.2)
       net-protocol
     net-protocol (0.4.0)
       timeout
-    net-smtp (0.5.1)
+    net-smtp (0.5.2)
       net-protocol
     nio4r (2.7.5)
     nokogiri (1.19.7)
@@ -631,10 +631,10 @@ GEM
       bindex (>= 0.4.0)
       railties (>= 8.0.0)
     websocket (1.2.11)
-    websocket-driver (0.8.2)
+    websocket-driver (0.9.0)
       base64
-      websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.5)
+      websocket-extensions (>= 0.2.0)
+    websocket-extensions (0.2.0)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.45)
