@@ -111,14 +111,11 @@ jobs:
       uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       with:
         fetch-depth: 0
-    # The image tag is the revision the app reports to Sentry (REVISION), so
-    # the release must take it as-is; `git rev-parse --short` on this full
-    # clone abbreviates longer than the shallow build clone does.
-    - name: Resolve release version from image tag
+    # Must match REVISION in containerize.yml, which the app reports as its
+    # Sentry release; `git rev-parse --short` varies with the clone's size.
+    - name: Resolve release version
       id: commit
-      env:
-        IMAGE: ${{ inputs.image }}
-      run: echo "version=${IMAGE##*:}" >> "$GITHUB_OUTPUT"
+      run: echo "version=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
     - name: Create Sentry release
       uses: getsentry/action-release@dab6548b3c03c4717878099e43782cf5be654289 # v3.5.0
       continue-on-error: true

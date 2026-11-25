@@ -73,9 +73,11 @@ jobs:
             type=sha
             type=sha,prefix=,format=short
             type=raw,value=latest,enable={{is_default_branch}}
+      # The app reports REVISION as its Sentry release; deployment.yml derives
+      # the same value, so both take a fixed-length prefix of the commit SHA.
       - name: Add short SHA information
         id: commit
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "sha_short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
       - name: Build and push Docker image
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
