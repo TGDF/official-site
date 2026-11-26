@@ -28,7 +28,7 @@ Keeping the tooling means a problem found later can still be traced in the code 
 |-------|--------|-------------|
 | 1. Dual-system setup | ✅ Complete | Both CarrierWave and ActiveStorage coexist |
 | 2. Schema-based routing | ✅ Complete | Public schema → AS, tenant schema → CW |
-| 3. Consolidate models | ⏳ In Progress | Migrate tenant data to public with assets |
+| 3. Consolidate models | ✅ Complete | Migrate tenant data to public with assets; Attachment retires with the rich-text round instead |
 | 4. Remove Apartment | ⏳ Pending | Drop tenant schemas, remove gem |
 | 5. Remove CarrierWave | ⏳ Pending | Delete uploaders and legacy code |
 
@@ -53,8 +53,9 @@ Every group's status is in [Recommended Migration Order](#recommended-migration-
 | sponsor, partner folded in | 2026-10-15, [runbook](tenant/migrate_sponsor.md) | 70 levels, 254 sponsors and logos |
 | game | 2026-10-29, [runbook](tenant/migrate_game.md) | 214 games and thumbnails |
 | agenda | 2026-11-12, [runbook](tenant/migrate_agenda.md) | 2,075 rows, 23 shared tags, 371 avatars |
+| news | 2026-11-26, [runbook](tenant/migrate_news.md) | 126 news and thumbnails |
 
-Every dump group was verified row by row. Agenda was the first run locally, on beta and in production by one step sequence. `news` is next, through its [runbook](tenant/migrate_news.md), and is the last group that moves.
+Every dump group was verified row by row. Agenda was the first run locally, on beta and in production by one step sequence, and news ran the same one. News was the last group that moves: Attachment retires with the rich-text round instead of moving.
 
 > ⚠️ `tenant_consolidation:status` reports a group COMPLETE purely from `Apartment.excluded_models` membership, **not** from actual data presence. Treat `status` as "what the config claims" and `verify[group]` as "what the data shows". `menu_item` is the illustration: it reads ✓ while public *and every tenant table* hold **zero rows**, so that group proved nothing about the tooling.
 
@@ -102,7 +103,7 @@ ALL migrations use groups for consistent behavior. Multi-model groups must be mi
 | 6 | **partner** | **→ folds into Sponsor** | **logo** | ✅ Complete — folded into sponsor; Partner stays frozen until Phase 5 |
 | 7 | game | Game (+IndieSpace::Game, NightMarket::Game STI) | thumbnail | ✅ Complete — [runbook](tenant/migrate_game.md) |
 | 8 | agenda | AgendaDay, AgendaTime, Room, AgendaTag, Speaker, Agenda, AgendasSpeaker, AgendasTagging | avatar | ✅ Complete — [runbook](tenant/migrate_agenda.md) |
-| 9 | news | News | thumbnail | ⏳ Pending — [runbook](tenant/migrate_news.md) |
+| 9 | news | News | thumbnail | ✅ Complete — [runbook](tenant/migrate_news.md) |
 | 10 | attachment | Attachment (+Image STI) | file | Not moved — retires after rich text moves to ActionText |
 
 ### Migration Dependencies
@@ -144,7 +145,7 @@ Rich text can embed an upload's URL as inline HTML, which is not a foreign key a
                                            and MenuItem.link, Plan.button_target (RICH_TEXT_FIELDS)
 ```
 
-These URLs stay as they are and resolve as they do today: the CDN serves them straight from S3, and `uploads/` is never deleted. No move or phase rewrites them. Eight in news already 404 through the retired `https://tgdf.tw` host ([news runbook](tenant/migrate_news.md#embedded-urls)).
+These URLs stay as they are and resolve as they do today: the CDN serves them straight from S3, and `uploads/` is never deleted. No move or phase rewrites them. Eight in news named the retired `https://tgdf.tw` host and were corrected to `files.tgdf.tw` as a content edit ([news runbook](tenant/migrate_news.md#embedded-urls)).
 
 | Stage | CKEditor upload lands in | Embedded url |
 |---|---|---|

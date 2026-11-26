@@ -5,7 +5,7 @@ News moves through the dump pipeline and the shared step sequence of the [parent
 | | |
 |---|---|
 | Parent | [../tenant_consolidation.md](../tenant_consolidation.md), group 9 `news` |
-| Status | ⏳ Pending |
+| Status | ✅ Complete (2026-11-26) — local, beta and production each ran the step sequence; production moved 126 news and thumbnails, and `news:verify` printed `OK` before and after the switch. The runbook is kept as the record of how the move ran. |
 
 ## Moved Rows
 
@@ -36,14 +36,14 @@ Local and production backups must print these figures; the census re-takes them 
 
 ## Embedded Urls
 
-The content embeds 18 `/uploads/` urls, 15 distinct, and the move carries each unchanged.
+The content embeds 18 `/uploads/` urls, 15 distinct, and the move carried each unchanged. Eight named `https://tgdf.tw`, the host CarrierWave wrote while uploads were still served from the app's own disk, before they moved to S3 in March 2022. That host no longer serves `uploads/`, so they had 404'd since; their files resolve under `files.tgdf.tw`.
 
-| Host in the url | Count | Today |
+| Host in the url | Count | Now |
 |---|---|---|
-| `https://files.tgdf.tw` | 10 | resolves |
-| `https://tgdf.tw` | 8 | 404, through a redirect to the current year |
+| `https://files.tgdf.tw` | 10 | resolves, as before |
+| `https://tgdf.tw` → `https://files.tgdf.tw` | 8 | resolves since 2026-11-26 |
 
-The eight are in tgdf_2021 News #1 to #5, #7 and #12, and their files resolve under `files.tgdf.tw`. Correcting the host is a content edit, outside this move.
+The eight sit in tgdf_2021 News #1 to #5, #7 and #12. Their host was corrected in production after the switch and before the unfreeze, as a content edit separate from the move: one `replace` over the JSONB, every locale, `updated_at` untouched. `news:verify` against the run's dump therefore reports those seven items' content. A link to `https://tgdf.tw/` itself, in 2023tgdf News #18, is not an upload and stays.
 
 ## Plan Rules
 
@@ -54,7 +54,18 @@ The plan carries each row as it is, and refuses two cases before anything is wri
 | an author that is not an `AdminUser` | its id names a tenant row the move renumbers |
 | two items of a site sharing a slug | they break the `(site_id, slug)` index once both carry the site's id |
 
-A null author moves as it is. The slug check is the same one agenda runs on speakers (`Plan.slug_clashes`). News needs no preparation, since every item already has a slug.
+A null author moves as it is. The slug check is the same one agenda runs on speakers (`Plan.slug_clashes`). Every item already has a slug, so the one preparation news needs is clearing public's own rows, below.
+
+## Main-site Rows
+
+Public's own `news` table was not empty: it held rows from the retired main site, which preflight refuses (`public news already holds N row(s)`). Each is a test post, or an item posted to the main site by mistake and posted again to its year's site minutes later, so no content lives only there.
+
+| Environment | Rows | What they are |
+|---|---|---|
+| Beta | 4 | test posts |
+| Production | 6 | duplicates of tgdf2018 #1, #3; tgdf_2021 #1; 2024tgdf #6, #8, #13 |
+
+They go at step 2, after step 1's restore point: each row exported in full, then a guarded `delete_all` (exact count, every `site_id` null). Not `rollback[news]`: its `destroy!` lets CarrierWave remove their thumbnails under `uploads/public/`, and `uploads/` stays.
 
 ## Safety Net
 
@@ -62,6 +73,7 @@ Every layer answers a different failure.
 
 | Layer | Catches | When |
 |---|---|---|
+| Restore point, step 1 | the main-site rows cleared at step 2 | before the freeze |
 | Restore point, step 4 | anything in the move | after the freeze |
 | `consolidation_freeze_news` | admin edits on the old side | step 3 to step 9 |
 | Census | missing files, stand-ins, leftover attachments | backup |
@@ -89,8 +101,8 @@ Each environment runs the parent's step sequence; this table names what news che
 
 | # | Step | Must see for news |
 |---|---|---|
-| 0 | Preflight | `status` shows news pending; public `news` empty |
-| 1–2 | Preparation | none; skip |
+| 0 | Preflight | `status` shows news pending; public `news` holds only main-site rows |
+| 1–2 | Preparation | main-site rows exported, then public `news` empty |
 | 3 | Freeze | `consolidation_freeze_news` on |
 | 4 | Restore point | identifier recorded |
 | 5 | Backup | census matches the figures above |
@@ -127,7 +139,7 @@ From the push on, approve no production deploy until production's step 6 prints 
 
 Production runs steps 0 to 9 except step 7, with an RDS snapshot as each restore point.
 
-1. Run steps 0 and 3 to 6.
+1. Run steps 0 to 6.
 2. Approve the production deploy that carries the switch, as step 8.
 3. Run verify again once the deploy is live.
 4. Run step 9, then mark group 9 complete in the parent document.
